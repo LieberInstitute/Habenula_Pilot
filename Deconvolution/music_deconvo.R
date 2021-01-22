@@ -12,16 +12,16 @@ library(reshape2)
 library(sessioninfo)
 
 #### Load Data ####
-## Load rse_gene data
-load(here("exprs_cutoff", "rse_gene.Rdata"), verbose = TRUE)
-rownames(rse_gene) <- rowData(rse_gene)$ensemblID
+## Load rse data
+load(here("count_data","rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata"), 
+     verbose = TRUE)
+rownames(x) <- rowData(x)$ensemblID
 
 ## sce Data
-load(here("deconvolution","data","sce.sacc_filtered.Rdata"), verbose = TRUE)
-load(here("deconvolution","data","sce.amyg_filtered.Rdata"), verbose = TRUE)
+load(here("count_data","sce_deconvolution.rda"), verbose = TRUE)
 
 ## marker data
-load(here("deconvolution","data","marker_stats.Rdata"), verbose = TRUE)
+load(here("Deconvolution","marker_stats.Rdata"), verbose = TRUE)
 top_n <- 5
 
 marker_genes <- map(marker_stats, ~.x %>%
@@ -34,10 +34,9 @@ map_int(marker_genes, length)
 map_int(marker_genes, ~sum(.x %in% rownames(rse_gene)))
 
 
-exp <- list(sacc = list(bulk = rse_gene[,rse_gene$BrainRegion == "sACC"],
-                        sce = sce.sacc), 
-            amyg = list(bulk = rse_gene[,rse_gene$BrainRegion == "Amygdala"],
-                        sce = sce.amyg)
+exp <- list(hb = list(bulk = rse_gene[,rse_gene$Brain.Region == "Habenula"],
+                        sce = sce_deconvolution), 
+  
 )
 map(exp, ~map_int(.x, ncol))
 # $sacc
@@ -57,7 +56,7 @@ exp_set <- map(exp, ~list(bulk = ExpressionSet(assayData = assays(.x$bulk)$count
       
 
 #### estimate cell type props ####
-ct <- list(broad = "cellType.Broad", specific = "cellType")
+ct <- list(broad = "cellType.RS", specific = "cellType")
 
 est_prop <- map2(marker_genes, names(marker_genes), function(mg, n){
     est_prop <- music_prop(bulk.eset = exp_set[[ss(n, "_")]]$bulk,
@@ -86,7 +85,8 @@ map(est_prop, ~round(colMeans(.x$Est.prop.weighted),3))
 # Inhib.2   Oligo   Astro Excit.1   Micro     OPC Inhib.3 Inhib.5 Inhib.1 
 # 0.023   0.296   0.348   0.051   0.189   0.003   0.001   0.053   0.035
 
-save(est_prop, file= here("deconvolution","data",paste0("est_prop_top", top_n,".Rdata")))
+save(est_prop, file= here("Deconvolution", 
+                          paste0("est_prop_top", top_n,".Rdata")))
 
 pd <- as.data.frame(colData(rse_gene))
 
@@ -111,7 +111,7 @@ est_prop_long <- map(est_prop_long, function(x){
   return(x)
 })
 
-save(est_prop_long, file = here("deconvolution","data",paste0("est_prop_top", top_n,"_long.Rdata")))
+save(est_prop_long, file = here("Deconvolution",paste0("est_prop_top", top_n,"_long.Rdata")))
 
 # sgejobs::job_single('music_deconvo', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript music_deconvo.R")
 ## Reproducibility information
@@ -125,7 +125,7 @@ session_info()
 # [1] "2020-12-21 12:15:50 EST"
 # user  system elapsed 
 # 69.009   6.005  77.247 
-# â”€ Session info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# â?? Session info â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??
 # setting  value                                      
 # version  R version 4.0.3 Patched (2020-11-29 r79529)
 # os       CentOS Linux 7 (Core)                      
@@ -137,7 +137,7 @@ session_info()
 # tz       US/Eastern                                 
 # date     2020-12-21                                 
 # 
-# â”€ Packages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# â?? Packages â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??â??
 # package              * version    date       lib source                                   
 # AnnotationDbi        * 1.52.0     2020-10-27 [2] Bioconductor                             
 # assertthat             0.2.1      2019-03-21 [2] CRAN (R 4.0.3)                           
@@ -247,5 +247,4 @@ session_info()
 # [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.0.x/R/4.0.x/lib64/R/library
 # **** Job ends ****
 #   Mon Dec 21 12:15:51 EST 2020
-
 
