@@ -4,15 +4,16 @@ library(edgeR)
 library(limma)
 library(jaffelab)
 library(RColorBrewer)
+library(ggplot2)
 
-
-load("/dcl01/ajaffe/data/lab/brain_swap/count_data/RNAseq_Collection_postQC_n5536_11dataset_2020-10-19_geneRSE.Rdata")
+load("/dcl01/ajaffe/data/lab/brain_swap/count_data/RNAseq_Collection_postQC_n5536_11dataset_2021-01_geneRSE.Rdata")
 
 ## filter to relevant studies and samples
 rel_dataset = c("BrainSeq_Phase2_DLPFC",
 	"BrainSeq_Phase2_HIPPO", "BrainSeq_Phase3_Caudate", "BrainSeq_Phase4and5",
-	"Habenula", "Nicotine_NAc", "psychENCODE_BP", "psychENCODE_MDD",
+	"Habenula", "Nicotine_NAc", "psychENCODE_BP", "psychENCODE_Mood",
 	"VA_PTSD")
+
 keepIndex = which(rse_gene$Dataset %in% rel_dataset &
 	rse_gene$Sex == "M" & rse_gene$Age > 20 & rse_gene$Age < 69 & rse_gene$Dx =="Control")
 rse_gene = rse_gene[,keepIndex]
@@ -47,25 +48,25 @@ pca_vars_lab = paste0("PC", seq(along=pca_vars), ": ",
 
 
 ##########
+## pc1 vs pc2
 pdf("pdfs/PCA_plots_gene_Exprs_control.pdf",w=9)
 par(mar=c(8,6,2,2),cex.axis=1.8,cex.lab=1.8)
 palette(brewer.pal(9,"Pastel1"))
-
-
-###
-table(rse_gene$Dx,rse_gene$Region)
-
-## pc1 vs pc2
 plot(pca$x, pch=21, bg=factor(rse_gene$Dx),cex=1.2,
 	xlab = pca_vars_lab[1], ylab = pca_vars_lab[2])
 legend("topleft", levels(factor(rse_gene$Dx)), col=1:length(levels(factor(rse_gene$Dx))), pch=15,cex=2)
 
 dev.off()
 
+###
+table(rse_gene$Dx,rse_gene$Region)
+
+
+
+
 pdf("pdfs/PCA_plots_gene_Exprs_all_regions.pdf",w=9)
 par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE)
 palette(brewer.pal(11,"Set3"))
-
 ## pc1 vs pc2
 plot(pca$x, pch=21, bg=factor(rse_gene$Region),cex=1.2,
 	xlab = pca_vars_lab[1], ylab = pca_vars_lab[2])
@@ -161,12 +162,27 @@ for(i in 1:nrow(sigGene)) {
 dev.off()
 
 
+pdf(file = "pdfs/DE_boxplots_by_region.pdf")
+par(mar=c(8,6,4,2),cex.axis=1.8,cex.lab=1.8, cex.main=1.8)
+palette(brewer.pal(12,"Paired"))
+for(i in nrow(sigGene)) {
+	yy = exprsClean[i,]
+	boxplot(yy ~ rse_gene$Region, las=3,outline=FALSE,
+		ylim=range(yy), ylab="Normalized log2 Exprs", xlab="",
+		main = paste(sigGene$Symbol[i], "-", sigGene$gencodeID[i]),
+		pch = 21,cex=1.3)
+	stripchart(yy ~ rse_gene$Region, vertical = TRUE,
+    method = "jitter", add = TRUE, pch = 20, alpha=.1, col = "blue")
+	ll = ifelse(sigGene$logFC[i] > 0, "topleft", "topright")
+	legend(ll, paste0("adj.p=", signif(sigGene$adj.P.Val[i],3)), cex=1.3)
+}
+dev.off()
 
 library(clusterProfiler)
 library(org.Hs.eg.db)
 
 ## get significant genes by sign
-sigGene = outGene[outGene$P.Value < 0.005,]
+sigGene = outGene[outGene$adj.P.Val < 0.005,]
 sigGeneList = split(as.character(sigGene$EntrezID), sign(sigGene$logFC))
 sigGeneList = lapply(sigGeneList, function(x) x[!is.na(x)])
 geneUniverse = as.character(outGene$EntrezID)
@@ -200,14 +216,14 @@ goList = list(BP = goBP_Adj, MF = goMF_Adj, CC = goCC_Adj, KEGG = kegg_Adj)
 goDf = dplyr::bind_rows(lapply(goList, as.data.frame), .id = "Ontology")
 goDf = goDf[order(goDf$pvalue),]
 
-write.csv(goDf, file = "tables/geneSet_output.csv", row.names=FALSE)
+write.csv(goDf, file = "tables/geneSet_output_regions.csv", row.names=FALSE)
 
 options(width=130)
-goDf[goDf$p.adjust < 0.05, c(1:5,7)]
+goDf[goDf$p.adjust < 0.05, c(1:5)]
 
 #############################
 ## compare to postmortem ####
 #############################
 
-## read back in stats
-outGene = read.csv("tables/de_stats_allExprs.csv", row.names=1, as.is=TRUE)
+
+
