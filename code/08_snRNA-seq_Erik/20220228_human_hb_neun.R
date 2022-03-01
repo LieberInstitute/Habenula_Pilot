@@ -226,35 +226,37 @@ gtf <- gtf[gtf$type == "gene"]
 names(gtf) <- gtf$gene_id
 
 ## Match the genes
-if (verbose) message(Sys.time(), " adding gene information to the SPE object")
-match_genes <- match(rownames(spe), gtf$gene_id)
+
+## get annotation
+map = read.delim(here("processed-data","07_cellranger","/Br1204/outs/raw_feature_bc_matrix/features.tsv.gz"),
+                 as.is=TRUE, header=FALSE,col.names=c("EnsemblID", "Symbol", "Type"))
+## get GTF, this seems like what they used
+gtf = import("/dcl01/ajaffe/data/lab/singleCell/cellranger_reference/refdata-gex-GRCh38-2020-A/genes/genes.gtf")
+
+match_genes <- match(rownames(s3e.hb), gtf$gene_name)
 
 if (all(is.na(match_genes))) {
 ## Protect against scenario where one set has GENCODE IDs and the other one has ENSEMBL IDs.
 warning("Gene IDs did not match. This typically happens when you are not using the same GTF file as the one that was used by SpaceRanger. For example, one file uses GENCODE IDs and the other one ENSEMBL IDs. read10xVisiumWrapper() will try to convert them to ENSEMBL IDs.", call. = FALSE)
-        match_genes <- match(gsub("\\..*", "", rownames(spe)), gsub("\\..*", "", gtf$gene_id))
+        match_genes <- match(gsub("\\..*", "", rownames(s3e.hb)), gsub("\\..*", "", gtf$gene_id))
     }
 
     if (any(is.na(match_genes))) {
         warning("Dropping ", sum(is.na(match_genes)), " out of ", length(match_genes), " genes for which we don't have information on the reference GTF file. This typically happens when you are not using the same GTF file as the one that was used by SpaceRanger.", call. = FALSE)
         ## Drop the few genes for which we don't have information
-        spe <- spe[!is.na(match_genes), ]
+        s3e.hb <- s3e.hb[!is.na(match_genes), ]
         match_genes <- match_genes[!is.na(match_genes)]
     }
 
     ## Keep only some columns from the gtf
+    gtf_cols = c("source", "type", "gene_id", "gene_version", "gene_name", "gene_type")
     mcols(gtf) <- mcols(gtf)[, gtf_cols[gtf_cols %in% colnames(mcols(gtf))]]
 
     ## Add the gene info to our SPE object
-    rowRanges(spe) <- gtf[match_genes]
+    rowRanges(s3e.hb) <- gtf[match_genes]
 
-library(rtracklayer)
+save(s3e.hb,file = here("processed-data","08_snRNA-seq_Erik","sce_post_qc.Rdata"))
 
-## get annotation
-map = read.delim("/dcl02/lieber/ajaffe/ErikNelson/Habenula/Br1204/outs/raw_feature_bc_matrix/features.tsv.gz",
-                 as.is=TRUE, header=FALSE,col.names=c("EnsemblID", "Symbol", "Type"))
-## get GTF, this seems like what they used
-gtf = import("/dcl01/ajaffe/data/lab/singleCell/cellranger_reference/refdata-gex-GRCh38-2020-A/genes/genes.gtf")
 ## of length 2565061
 gtf = gtf[gtf$type == "gene"]
 ## of length 33538
