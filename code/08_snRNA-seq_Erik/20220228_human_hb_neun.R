@@ -69,6 +69,21 @@ s3e.hb.5639 <- s3e.hb.5639[match(rownames(s3e.hb.5558), rownames(s3e.hb.5639)), 
 s3e.hb.1735 <- s3e.hb.1735[match(rownames(s3e.hb.5558), rownames(s3e.hb.1735)), ]
 s3e.hb.1092 <- s3e.hb.1092[match(rownames(s3e.hb.5558), rownames(s3e.hb.1092)), ]
 s3e.hb.5555 <- s3e.hb.5555[match(rownames(s3e.hb.5558), rownames(s3e.hb.5555)), ]
+
+#######################################
+###########Drop Empties###############
+######################################
+cat(paste0("Simulating empty drops for: s3e.hb... \n"))
+set.seed(109)
+
+e.out.hb.1204 <- emptyDrops(counts(s3e.hb.1204), niters=20000)
+e.out.hb.1469 <- emptyDrops(counts(s3e.hb.1469), niters=20000)
+e.out.hb.5639 <- emptyDrops(counts(s3e.hb.5639), niters=20000)
+e.out.hb.1735 <- emptyDrops(counts(s3e.hb.1735), niters=20000)
+e.out.hb.1092 <- emptyDrops(counts(s3e.hb.1092), niters=20000)
+e.out.hb.5555 <- emptyDrops(counts(s3e.hb.5555), niters=20000)
+
+
 s3e.hb <- cbind(s3e.hb.1204, s3e.hb.5558, s3e.hb.1469, s3e.hb.5639, s3e.hb.1735, s3e.hb.1092, s3e.hb.5555)
 rm(s3e.hb.1469,s3e.hb.1204,s3e.hb.5558,s3e.hb.5639, s3e.hb.1735, s3e.hb.1092,s3e.hb.5555)
 
