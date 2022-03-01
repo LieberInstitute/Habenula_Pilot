@@ -83,13 +83,28 @@ e.out.hb.1735 <- emptyDrops(counts(s3e.hb.1735), niters=20000)
 e.out.hb.1092 <- emptyDrops(counts(s3e.hb.1092), niters=20000)
 e.out.hb.5555 <- emptyDrops(counts(s3e.hb.5555), niters=20000)
 
+####################################
+########subset for empty Drops #####
+####################################
+
+s3e.hb.1204 <- s3e.hb.1204[ ,which(e.out.hb.1204$FDR <= 0.001)]
+s3e.hb.1469 <- s3e.hb.1469[ ,which(e.out.hb.1469$FDR <= 0.001)]
+s3e.hb.5639 <- s3e.hb.5639[ ,which(e.out.hb.5639$FDR <= 0.001)]
+s3e.hb.1735 <- s3e.hb.1735[ ,which(e.out.hb.1735$FDR <= 0.001)]
+s3e.hb.1092 <- s3e.hb.1092[ ,which(e.out.hb.1092$FDR <= 0.001)]
+s3e.hb.5555 <- s3e.hb.5555[ ,which(e.out.hb.5555$FDR <= 0.001)]
 
 s3e.hb <- cbind(s3e.hb.1204, s3e.hb.5558, s3e.hb.1469, s3e.hb.5639, s3e.hb.1735, s3e.hb.1092, s3e.hb.5555)
 rm(s3e.hb.1469,s3e.hb.1204,s3e.hb.5558,s3e.hb.5639, s3e.hb.1735, s3e.hb.1092,s3e.hb.5555)
 
-#36601 x 3326836 dim
+
+dim(s3e.hb)
+# [1]   36601 1193783
 #(barcode whitelist must be ~6.8 million potential barcodes?)
 rownames(s3e.hb) <- uniquifyFeatureNames(rowData(s3e.hb)$ID, rowData(s3e.hb)$Symbol)
+
+save(s3e.hb, e.out.hb.1204, e.out.hb.1469, e.out.hb.5639, e.out.hb.1735, e.out.hb.1092, e.out.hb.5555,
+     file=here("processed-data","08_snRNA-seq_Erik","20220301_human_hb_processing.rda"))
 
 ### Quality control ============================================================
 ## - Going to ignore the adaptive NMAD-approach to outlier detection for UMI/feature count
