@@ -4,7 +4,7 @@ library("scater")
 library("sessioninfo")
 library("here")
 
-load(here("processed-data","08_snRNA-seq_Erik", "20210525_human_hb_processing.rda"), verbose = TRUE)
+load(here("processed-data","08_snRNA-seq_Erik", "20220301_human_hb_processing.rda"), verbose = TRUE)
 
 
 stats.hb <- perCellQCMetrics(s3e.hb, subsets=list(Mito=grep("^MT-", rowData(s3e.hb)$Symbol)))
@@ -54,61 +54,60 @@ s3e.hb$discard_auto <- sce$discard_auto[m]
 
 addmargins(table("Josh QC" = sce$discard, "Auto QC" = sce$discard_auto))
 #        Auto QC
-# Josh QC FALSE  TRUE   Sum
-#   FALSE 16833   675 17508
-#   TRUE    840  3700  4540
-#   Sum   17673  4375 22048
+# Josh QC   FALSE    TRUE     Sum
+#   FALSE     473       1     474
+#   TRUE   678709  514600 1193309
+#   Sum    679182  514601 1193783
 addmargins(table(s3e.hb$cellType, s3e.hb$qc.lib))
-
-  #              FALSE  TRUE   Sum
-  # Astro          603     6   609
-  # Endo           111     7   118
-  # Micro          366    13   379
-  # Oligo.1       1769    31  1800
-  # Oligo.2        426     0   426
-  # OPC.1          252    26   278
-  # OPC.2          760     5   765
-  # Neuron.Ambig    46    33    79
-  # LHb.1         1358     0  1358
-  # LHb.2          765     1   766
-  # LHb.3          615     3   618
-  # LHb.4          510     6   516
-  # LHb.5          302     0   302
-  # LHb.6           73     1    74
-  # MHb.1          495     1   496
-  # MHb.2          197     0   197
-  # Thal.GABA.1   2894    14  2908
-  # Thal.GABA.2   4686    15  4701
-  # Thal.GABA.3     86     8    94
-  # Thal.MD        260     1   261
-  # Thal.PF        238     1   239
-  # Thal.PVT       545     0   545
-  # Sum          17357   172 17529
+  #             FALSE  TRUE   Sum
+  # Astro          585     6   591
+  # Endo           106     4   110
+  # Micro          365     6   371
+  # Oligo.1       1756    27  1783
+  # Oligo.2        425     0   425
+  # OPC.1          226    26   252
+  # OPC.2          755     3   758
+  # Neuron.Ambig    39     7    46
+  # LHb.1         1251     2  1253
+  # LHb.2          681     1   682
+  # LHb.3          556     1   557
+  # LHb.4          412     3   415
+  # LHb.5          291     0   291
+  # LHb.6           70     2    72
+  # MHb.1          441     4   445
+  # MHb.2           93     0    93
+  # Thal.GABA.1   2752    12  2764
+  # Thal.GABA.2   4471    15  4486
+  # Thal.GABA.3     80     7    87
+  # Thal.MD        251     0   251
+  # Thal.PF        233     2   235
+  # Thal.PVT       536     0   536
+  # Sum          16375   128 16503
 addmargins(table(s3e.hb$cellType, s3e.hb$qc.detected))
-  #              FALSE  TRUE   Sum
-  # Astro          592    17   609
-  # Endo           100    18   118
-  # Micro          359    20   379
-  # Oligo.1       1755    45  1800
-  # Oligo.2        426     0   426
-  # OPC.1          244    34   278
-  # OPC.2          756     9   765
-  # Neuron.Ambig    42    37    79
-  # LHb.1         1358     0  1358
-  # LHb.2          764     2   766
-  # LHb.3          614     4   618
-  # LHb.4          507     9   516
-  # LHb.5          302     0   302
-  # LHb.6           73     1    74
-  # MHb.1          493     3   496
-  # MHb.2          197     0   197
-  # Thal.GABA.1   2887    21  2908
-  # Thal.GABA.2   4679    22  4701
-  # Thal.GABA.3     82    12    94
-  # Thal.MD        257     4   261
-  # Thal.PF        233     6   239
-  # Thal.PVT       545     0   545
-  # Sum          17265   264 17529
+  #             FALSE  TRUE   Sum
+  # Astro          584     7   591
+  # Endo           106     4   110
+  # Micro          365     6   371
+  # Oligo.1       1755    28  1783
+  # Oligo.2        425     0   425
+  # OPC.1          223    29   252
+  # OPC.2          753     5   758
+  # Neuron.Ambig    39     7    46
+  # LHb.1         1252     1  1253
+  # LHb.2          681     1   682
+  # LHb.3          556     1   557
+  # LHb.4          412     3   415
+  # LHb.5          291     0   291
+  # LHb.6           68     4    72
+  # MHb.1          440     5   445
+  # MHb.2           93     0    93
+  # Thal.GABA.1   2746    18  2764
+  # Thal.GABA.2   4467    19  4486
+  # Thal.GABA.3     76    11    87
+  # Thal.MD        251     0   251
+  # Thal.PF        230     5   235
+  # Thal.PVT       536     0   536
+  # Sum          16349   154 16503
 addmargins(table(s3e.hb$cellType, s3e.hb$high.mito.sample))
   #              FALSE  TRUE   Sum
   # Astro          526    83   609
@@ -137,34 +136,143 @@ addmargins(table(s3e.hb$cellType, s3e.hb$high.mito.sample))
 x <- addmargins(table(s3e.hb$cellType, s3e.hb$discard_auto))
 round(100 * sweep(x, 1, x[, 3], "/"), 2)
   #               FALSE   TRUE    Sum
-  # Astro         83.74  16.26 100.00
-  # Endo          72.88  27.12 100.00
-  # Micro         86.54  13.46 100.00
-  # Oligo.1       94.17   5.83 100.00
-  # Oligo.2       99.77   0.23 100.00
-  # OPC.1         84.89  15.11 100.00
-  # OPC.2         97.25   2.75 100.00
-  # Neuron.Ambig  16.46  83.54 100.00
-  # LHb.1         99.19   0.81 100.00
-  # LHb.2         99.22   0.78 100.00
-  # LHb.3         99.35   0.65 100.00
-  # LHb.4         97.48   2.52 100.00
+  # Astro         86.97  13.03 100.00
+  # Endo          88.18  11.82 100.00
+  # Micro         89.49  10.51 100.00
+  # Oligo.1       95.46   4.54 100.00
+  # Oligo.2      100.00   0.00 100.00
+  # OPC.1         85.71  14.29 100.00
+  # OPC.2         98.81   1.19 100.00
+  # Neuron.Ambig   2.17  97.83 100.00
+  # LHb.1         98.40   1.60 100.00
+  # LHb.2         98.68   1.32 100.00
+  # LHb.3         99.28   0.72 100.00
+  # LHb.4         97.83   2.17 100.00
   # LHb.5        100.00   0.00 100.00
-  # LHb.6         98.65   1.35 100.00
-  # MHb.1         99.19   0.81 100.00
+  # LHb.6         94.44   5.56 100.00
+  # MHb.1         98.65   1.35 100.00
   # MHb.2        100.00   0.00 100.00
-  # Thal.GABA.1   96.49   3.51 100.00
-  # Thal.GABA.2   98.00   2.00 100.00
-  # Thal.GABA.3   84.04  15.96 100.00
-  # Thal.MD       90.42   9.58 100.00
-  # Thal.PF       92.89   7.11 100.00
-  # Thal.PVT      99.63   0.37 100.00
-  # Sum           95.94   4.06 100.00
+  # Thal.GABA.1   83.50  16.50 100.00
+  # Thal.GABA.2   89.34  10.66 100.00
+  # Thal.GABA.3   83.91  16.09 100.00
+  # Thal.MD       79.28  20.72 100.00
+  # Thal.PF       93.19   6.81 100.00
+  # Thal.PVT      98.51   1.49 100.00
+  # Sum           91.66   8.34 100.00
 
-sessioninfo::session_info()
+library(scDblFinder)
+library(purrr)
+sample_id_names<- names(table(s3e.hb$sample_name))
+names(sample_id_names)<-sample_id_names
 
-# ─ Session info  ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-#  hash: sad but relieved face, classical building, woman police officer: medium-light skin tone
+sample_id_rse<- map(sample_id_names,~s3e.hb[,s3e.hb$sample_name==.x])
+## To speed up, run on sample-level top-HVGs - just take top 1000 ===
+pilot.data.normd <- map(sample_id_rse, ~logNormCounts(.x))
+geneVar.samples <- map(pilot.data.normd, ~modelGeneVar(.x))
+topHVGs <- map(geneVar.samples, ~getTopHVGs(.x, n = 1000))
+
+# Generate doublet density scores
+set.seed(109)
+dbl.dens.focused <- map(names(pilot.data.normd), ~computeDoubletDensity(pilot.data.normd[[.x]], subset.row=topHVGs[[.x]]))
+names(dbl.dens.focused) <- names(pilot.data.normd)
+
+map(dbl.dens.focused, ~round(quantile(.x, probs=seq(0,1,by=0.05)),3))
+# $Br1092
+#     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
+#  0.007  0.062  0.090  0.111  0.138  0.166  0.201  0.235  0.270  0.305  0.350
+#    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
+#  0.395  0.450  0.512  0.582  0.679  0.803  0.990  1.246  1.828 33.547
+#
+# $Br1204
+#    0%    5%   10%   15%   20%   25%   30%   35%   40%   45%   50%   55%   60%
+# 0.024 0.123 0.171 0.195 0.213 0.240 0.304 0.352 0.395 0.445 0.488 0.536 0.581
+#   65%   70%   75%   80%   85%   90%   95%  100%
+# 0.637 0.712 0.770 0.868 0.974 1.138 1.423 6.870
+#
+# $Br1469
+#     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
+#  0.005  0.042  0.066  0.099  0.132  0.156  0.193  0.245  0.292  0.340  0.391
+#    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
+#  0.457  0.533  0.632  0.759  0.938  1.139  1.384  1.745  2.300 12.761
+#
+# $Br1735
+#     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
+#  0.000  0.028  0.043  0.057  0.078  0.107  0.149  0.213  0.277  0.348  0.419
+#    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
+#  0.519  0.621  0.739  0.873  1.031  1.223  1.429  1.735  2.332 19.652
+#
+# $Br5555
+#     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
+#  0.000  0.046  0.067  0.090  0.105  0.120  0.142  0.165  0.187  0.210  0.240
+#    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
+#  0.277  0.315  0.367  0.427  0.494  0.592  0.712  0.914  1.303 29.196
+#
+# $Br5558
+#    0%    5%   10%   15%   20%   25%   30%   35%   40%   45%   50%   55%   60%
+# 0.106 0.264 0.374 0.484 0.587 0.675 0.755 0.855 0.968 1.053 1.161 1.311 1.446
+#   65%   70%   75%   80%   85%   90%   95%  100%
+# 1.629 1.851 2.060 2.271 2.466 2.801 3.381 5.482
+#
+# $Br5639
+#     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
+#  0.000  0.044  0.062  0.093  0.133  0.168  0.212  0.265  0.323  0.402  0.473
+#    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
+#  0.577  0.681  0.787  0.907  1.068  1.243  1.439  1.707  2.187 15.764
+map(dbl.dens.focused,~table(.x >= 5))
+$Br1092
+#
+# FALSE  TRUE
+#  3425    37
+#
+# $Br1204
+#
+# FALSE  TRUE
+#  1331     2
+#
+# $Br1469
+#
+# FALSE  TRUE
+#  2329    29
+#
+# $Br1735
+#
+# FALSE  TRUE
+#  3511    44
+#
+# $Br5555
+#
+# FALSE  TRUE
+#  3672    73
+#
+# $Br5558
+#
+# FALSE  TRUE
+#   862     3
+#
+# $Br5639
+#
+# FALSE  TRUE
+#  2192    19
+# Percent that would be dropped at density score >= 5
+round(sapply(names(dbl.dens.focused), function(x) {
+  table(dbl.dens.focused[[x]] >= 5)["TRUE"] / ncol(sample_id_rse[[x]]) * 100
+}), 3)
+
+#Br1092.TRUE Br1204.TRUE Br1469.TRUE Br1735.TRUE Br5555.TRUE Br5558.TRUE
+#      1.069       0.150       1.230       1.238       1.949       0.347
+#Br5639.TRUE
+#      0.859
+# Add the doublet density scores to the colData
+for(i in names(sample_id_rse)){
+  sample_id_rse[[i]]$doubletScore <- dbl.dens.focused[[i]]
+}
+
+
+
+
+ sessioninfo::session_info()
+# ─ Session info  ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+#  hash: men holding hands: medium-dark skin tone, flag: Palestinian Territories, shushing face
 #
 #  setting  value
 #  version  R version 4.1.0 Patched (2021-05-18 r80330)
@@ -175,10 +283,10 @@ sessioninfo::session_info()
 #  collate  en_US.UTF-8
 #  ctype    en_US.UTF-8
 #  tz       US/Eastern
-#  date     2022-02-25
+#  date     2022-03-02
 #  pandoc   2.12 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1/bin/pandoc
 #
-# ─ Packages ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# ─ Packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 #  package              * version  date (UTC) lib source
 #  assertthat             0.2.1    2019-03-21 [2] CRAN (R 4.1.0)
 #  beachmat               2.8.1    2021-08-12 [2] Bioconductor
@@ -194,16 +302,15 @@ sessioninfo::session_info()
 #  cluster                2.1.2    2021-04-17 [3] CRAN (R 4.1.0)
 #  colorspace             2.0-2    2021-06-24 [2] CRAN (R 4.1.0)
 #  crayon                 1.4.2    2021-10-29 [2] CRAN (R 4.1.0)
+#  data.table             1.14.2   2021-09-27 [2] CRAN (R 4.1.0)
 #  DBI                    1.1.1    2021-01-15 [2] CRAN (R 4.1.0)
 #  DelayedArray           0.18.0   2021-05-19 [2] Bioconductor
 #  DelayedMatrixStats     1.14.3   2021-08-26 [2] Bioconductor
-#  digest                 0.6.28   2021-09-23 [2] CRAN (R 4.1.0)
 #  dplyr                  1.0.7    2021-06-18 [2] CRAN (R 4.1.0)
 #  dqrng                  0.3.0    2021-05-01 [1] CRAN (R 4.1.0)
 #  edgeR                  3.34.1   2021-09-05 [2] Bioconductor
 #  ellipsis               0.3.2    2021-04-29 [2] CRAN (R 4.1.0)
 #  fansi                  0.5.0    2021-05-25 [2] CRAN (R 4.1.0)
-#  farver                 2.1.0    2021-02-28 [2] CRAN (R 4.1.0)
 #  generics               0.1.1    2021-10-25 [2] CRAN (R 4.1.0)
 #  GenomeInfoDb         * 1.28.4   2021-09-05 [2] Bioconductor
 #  GenomeInfoDbData       1.2.6    2021-05-11 [2] Bioconductor
@@ -217,7 +324,7 @@ sessioninfo::session_info()
 #  igraph                 1.2.7    2021-10-15 [2] CRAN (R 4.1.0)
 #  IRanges              * 2.26.0   2021-05-19 [2] Bioconductor
 #  irlba                  2.3.3    2019-02-05 [2] CRAN (R 4.1.0)
-#  labeling               0.4.2    2020-10-20 [2] CRAN (R 4.1.0)
+#  jsonlite               1.7.2    2020-12-09 [2] CRAN (R 4.1.0)
 #  lattice                0.20-45  2021-09-22 [3] CRAN (R 4.1.0)
 #  lifecycle              1.0.1    2021-09-24 [1] CRAN (R 4.1.0)
 #  limma                  3.48.3   2021-08-10 [2] Bioconductor
@@ -230,7 +337,7 @@ sessioninfo::session_info()
 #  munsell                0.5.0    2018-06-12 [2] CRAN (R 4.1.0)
 #  pillar                 1.6.3    2021-09-26 [1] CRAN (R 4.1.0)
 #  pkgconfig              2.0.3    2019-09-22 [2] CRAN (R 4.1.0)
-#  purrr                  0.3.4    2020-04-17 [2] CRAN (R 4.1.0)
+#  purrr                * 0.3.4    2020-04-17 [2] CRAN (R 4.1.0)
 #  R6                     2.5.1    2021-08-19 [1] CRAN (R 4.1.0)
 #  Rcpp                   1.0.7    2021-07-07 [2] CRAN (R 4.1.0)
 #  RCurl                  1.98-1.5 2021-09-17 [2] CRAN (R 4.1.0)
@@ -241,6 +348,7 @@ sessioninfo::session_info()
 #  ScaledMatrix           1.0.0    2021-05-19 [1] Bioconductor
 #  scales                 1.1.1    2020-05-11 [2] CRAN (R 4.1.0)
 #  scater               * 1.20.1   2021-06-15 [1] Bioconductor
+#  scDblFinder          * 1.6.0    2021-05-19 [1] Bioconductor
 #  scran                * 1.20.1   2021-05-24 [1] Bioconductor
 #  scuttle              * 1.2.1    2021-08-05 [1] Bioconductor
 #  sessioninfo          * 1.2.1    2021-11-02 [2] CRAN (R 4.1.0)
@@ -252,15 +360,4 @@ sessioninfo::session_info()
 #  tidyselect             1.1.1    2021-04-30 [2] CRAN (R 4.1.0)
 #  utf8                   1.2.2    2021-07-24 [2] CRAN (R 4.1.0)
 #  vctrs                  0.3.8    2021-04-29 [2] CRAN (R 4.1.0)
-#  vipor                  0.4.5    2017-03-22 [1] CRAN (R 4.1.0)
-#  viridis                0.6.2    2021-10-13 [2] CRAN (R 4.1.0)
-#  viridisLite            0.4.0    2021-04-13 [2] CRAN (R 4.1.0)
-#  withr                  2.4.2    2021-04-18 [2] CRAN (R 4.1.0)
-#  XVector                0.32.0   2021-05-19 [2] Bioconductor
-#  zlibbioc               1.38.0   2021-05-19 [2] Bioconductor
-#
-#  [1] /users/jstolz/R/4.1
-#  [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1/R/4.1/lib64/R/site-library
-#  [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1/R/4.1/lib64/R/library
-#
-# ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+#  vipor                  0.4.5    2017-03-22 [1] C
