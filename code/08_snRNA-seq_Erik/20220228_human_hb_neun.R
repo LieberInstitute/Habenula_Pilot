@@ -69,7 +69,7 @@ s3e.hb.5639 <- s3e.hb.5639[match(rownames(s3e.hb.5558), rownames(s3e.hb.5639)), 
 s3e.hb.1735 <- s3e.hb.1735[match(rownames(s3e.hb.5558), rownames(s3e.hb.1735)), ]
 s3e.hb.1092 <- s3e.hb.1092[match(rownames(s3e.hb.5558), rownames(s3e.hb.1092)), ]
 s3e.hb.5555 <- s3e.hb.5555[match(rownames(s3e.hb.5558), rownames(s3e.hb.5555)), ]
-
+s3e.hb.5558 <- s3e.hb.5558[match(rownames(s3e.hb.1204), rownames(s3e.hb.5558)), ]
 #######################################
 ###########Drop Empties###############
 ######################################
@@ -82,7 +82,7 @@ e.out.hb.5639 <- emptyDrops(counts(s3e.hb.5639), niters=20000)
 e.out.hb.1735 <- emptyDrops(counts(s3e.hb.1735), niters=20000)
 e.out.hb.1092 <- emptyDrops(counts(s3e.hb.1092), niters=20000)
 e.out.hb.5555 <- emptyDrops(counts(s3e.hb.5555), niters=20000)
-
+e.out.hb.5558 <- emptyDrops(counts(s3e.hb.5558), niters=20000)
 ####################################
 ########subset for empty Drops #####
 ####################################
@@ -93,13 +93,15 @@ s3e.hb.5639 <- s3e.hb.5639[ ,which(e.out.hb.5639$FDR <= 0.001)]
 s3e.hb.1735 <- s3e.hb.1735[ ,which(e.out.hb.1735$FDR <= 0.001)]
 s3e.hb.1092 <- s3e.hb.1092[ ,which(e.out.hb.1092$FDR <= 0.001)]
 s3e.hb.5555 <- s3e.hb.5555[ ,which(e.out.hb.5555$FDR <= 0.001)]
+s3e.hb.5558 <- s3e.hb.5558[ ,which(e.out.hb.5558$FDR <= 0.001)]
 
 s3e.hb <- cbind(s3e.hb.1204, s3e.hb.5558, s3e.hb.1469, s3e.hb.5639, s3e.hb.1735, s3e.hb.1092, s3e.hb.5555)
 rm(s3e.hb.1469,s3e.hb.1204,s3e.hb.5558,s3e.hb.5639, s3e.hb.1735, s3e.hb.1092,s3e.hb.5555)
 
 
 dim(s3e.hb)
-# [1]   36601 1193783
+# [1] 36601 19864
+
 #(barcode whitelist must be ~6.8 million potential barcodes?)
 rownames(s3e.hb) <- uniquifyFeatureNames(rowData(s3e.hb)$ID, rowData(s3e.hb)$Symbol)
 
@@ -121,14 +123,14 @@ save(s3e.hb, e.out.hb.1204, e.out.hb.1469, e.out.hb.5639, e.out.hb.1735, e.out.h
 # Additionally:
 # For any Sig==FALSE & Limited==TRUE, may need to increase n iterations (default = 10000) with 'niters='
 #   - this field = whether "the computed p-value for a...barcode is bounded by the number of iterations"
-cat(paste0("Simulating empty drops for: s3e.hb... \n"))
-set.seed(109)
-e.out.hb <- emptyDrops(counts(s3e.hb), niters=20000)
-
- save(s3e.hb, e.out.hb,
-      file="20210524_human_hb_processing.rda")
-
-print(table(Signif = e.out.hb$FDR <= 0.001, Limited = e.out.hb$Limited))
+# cat(paste0("Simulating empty drops for: s3e.hb... \n"))
+# set.seed(109)
+# e.out.hb <- emptyDrops(counts(s3e.hb), niters=20000)
+#
+#  save(s3e.hb, e.out.hb,
+#       file="20210524_human_hb_processing.rda")
+#
+# print(table(Signif = e.out.hb$FDR <= 0.001, Limited = e.out.hb$Limited))
 
 #Limited
 #Signif  FALSE  TRUE
@@ -147,11 +149,11 @@ print(table(Signif = e.out.hb$FDR <= 0.001, Limited = e.out.hb$Limited))
 
 
 # Subset 'nuclei called':
-s3e.hb <- s3e.hb[ ,which(e.out.hb$FDR <= 0.001)]
+#s3e.hb <- s3e.hb[ ,which(e.out.hb$FDR <= 0.001)]
 
 # Save
-save(s3e.hb, e.out.hb,
-     file="20210525_human_hb_processing.rda")
+#save(s3e.hb, e.out.hb,
+ #    file="20210525_human_hb_processing.rda")
 
 ### Mito rate QC ===
 # MAD approach for mito rate thresholding
