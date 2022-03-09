@@ -7,9 +7,9 @@ library("here")
 load(here("processed-data","08_snRNA-seq_Erik", "20220301_human_hb_processing.rda"), verbose = TRUE)
 
 
-stats.hb <- perCellQCMetrics(s3e.hb, subsets=list(Mito=grep("^MT-", rowData(s3e.hb)$Symbol)))
+stats.hb <- perCellQCMetrics(sce.all.hb, subsets=list(Mito=grep("^MT-", rowData(s3e.hb)$Symbol)))
 high.mito.hb <- isOutlier(stats.hb$subsets_Mito_percent, nmads=3, type="higher")
-colData(s3e.hb) <- cbind(colData(s3e.hb), stats.hb, "high.mito" = high.mito.hb)
+colData(sce.all.hb ) <- cbind(colData(sce.all.hb), stats.hb, "high.mito" = high.mito.hb)
 
 
 # Let's also look at low library size and low detected features
@@ -18,28 +18,27 @@ colData(s3e.hb) <- cbind(colData(s3e.hb), stats.hb, "high.mito" = high.mito.hb)
 qc.lib<-s3e.hb$sum < 1000
 qc.detected<-s3e.hb$detected<500
 
-s3e.hb$discard <- qc.lib | qc.detected | high.mito.hb
+sce.all.hb$discard <- qc.lib | qc.detected | high.mito.hb
 
-s3e.hb$qc.lib.manual <- qc.lib
-s3e.hb$qc.detected.manual <- qc.detected
-s3e.hb$sample_short <- basename(gsub("/outs/raw_feature_bc_matrix", "", s3e.hb$Sample))
-s3e.hb$qc.lib <- isOutlier(s3e.hb$sum, log=TRUE, type="lower", batch = s3e.hb$Sample, subset = s3e.hb$sample_short != "Br1204")
-s3e.hb$qc.detected <- isOutlier(s3e.hb$detected, log=TRUE, type="lower", batch = s3e.hb$Sample, subset = s3e.hb$sample_short != "Br1204")
-s3e.hb$high.mito.sample <- isOutlier(stats.hb$subsets_Mito_percent, nmads=3, type="higher", batch = s3e.hb$Sample)
+sce.all.hb$qc.lib.manual <- qc.lib
+sce.all.hb$qc.detected.manual <- qc.detected
+sce.all.hb$sample_short <- basename(gsub("/outs/raw_feature_bc_matrix", "", sce.all.hb$Sample))
+sce.all.hb$qc.lib <- isOutlier(sce.all.hb$sum, log=TRUE, type="lower", batch = sce.all.hb$Sample, subset = sce.all.hb$sample_short != "Br1204")
+sce.all.hb$qc.detected <- isOutlier(sce.all.hb$detected, log=TRUE, type="lower", batch = sce.all.hb$Sample, subset = sce.all.hb$sample_short != "Br1204")
+sce.all.hb$high.mito.sample <- isOutlier(stats.hb$subsets_Mito_percent, nmads=3, type="higher", batch = sce.all.hb$Sample)
 
 
 pdf(here("plots","09_snRNA-seq_re-processed","live_checks.pdf"), width = 21)
-plotColData(s3e.hb, x = "sample_short", y="sum", colour_by="qc.lib") +
+plotColData(sce.all.hb, x = "sample_short", y="sum", colour_by="qc.lib") +
     scale_y_log10() + ggtitle("Total count") + geom_hline(yintercept = 1000)
-plotColData(s3e.hb, x = "sample_short", y="detected", colour_by="qc.detected") +
+plotColData(sce.all.hb, x = "sample_short", y="detected", colour_by="qc.detected") +
     scale_y_log10() + ggtitle("Detected features") + geom_hline(yintercept = 500)
-plotColData(s3e.hb, x = "sample_short", y="subsets_Mito_percent",
+plotColData(sce.all.hb, x = "sample_short", y="subsets_Mito_percent",
               colour_by="high.mito.sample") + geom_hline(yintercept = attr(high.mito.hb, "thresholds")["higher"])
 dev.off()
 
 
-s3e.hb$discard_auto <- s3e.hb$qc.lib | s3e.hb$qc.detected | s3e.hb$high.mito.sample
-sce <- s3e.hb
+sce.all.hb$discard_auto <- sce.all.hb$qc.lib | sce.all.hb$qc.detected | sce.all.hb$high.mito.sample
 
 sce$key <- paste0(sce$sample_short, "_", sce$Barcode)
 

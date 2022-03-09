@@ -86,15 +86,15 @@ s3e.hb.1092 <- s3e.hb.1092[ ,which(e.out.hb.1092$FDR <= 0.001)]
 s3e.hb.5555 <- s3e.hb.5555[ ,which(e.out.hb.5555$FDR <= 0.001)]
 s3e.hb.5558 <- s3e.hb.5558[ ,which(e.out.hb.5558$FDR <= 0.001)]
 
-s3e.hb <- cbind(s3e.hb.1204, s3e.hb.5558, s3e.hb.1469, s3e.hb.5639, s3e.hb.1735, s3e.hb.1092, s3e.hb.5555)
+sce.all.hb <- cbind(s3e.hb.1204, s3e.hb.5558, s3e.hb.1469, s3e.hb.5639, s3e.hb.1735, s3e.hb.1092, s3e.hb.5555)
 rm(s3e.hb.1469,s3e.hb.1204,s3e.hb.5558,s3e.hb.5639, s3e.hb.1735, s3e.hb.1092,s3e.hb.5555)
 
 
-dim(s3e.hb)
+dim(sce.all.hb )
 # [1] 36601 19864
 
 #(barcode whitelist must be ~6.8 million potential barcodes?)
-rownames(s3e.hb) <- uniquifyFeatureNames(rowData(s3e.hb)$ID, rowData(s3e.hb)$Symbol)
+rownames(sce.all.hb ) <- uniquifyFeatureNames(rowData(sce.all.hb )$ID, rowData(sce.all.hb )$Symbol)
 
-save(s3e.hb, e.out.hb.1204, e.out.hb.1469, e.out.hb.5639, e.out.hb.1735, e.out.hb.1092, e.out.hb.5555,
+save(sce.all.hb, e.out.hb.1204, e.out.hb.1469, e.out.hb.5639, e.out.hb.1735, e.out.hb.1092, e.out.hb.5555,
      file=here("processed-data","08_snRNA-seq_Erik","20220301_human_hb_processing.rda"))
