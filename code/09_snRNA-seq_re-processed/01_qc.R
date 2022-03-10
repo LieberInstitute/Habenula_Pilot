@@ -57,7 +57,8 @@ addmargins(table("Josh QC" = sce.all.hb$discard, "Auto QC" = sce.all.hb$discard_
 #   TRUE    391  1247  1638
 #   Sum   18288  1576 19864
 addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.lib))
-  #           FALSE  TRUE   Sum
+  #
+  #              FALSE  TRUE   Sum
   # Astro          585     6   591
   # Endo           102     8   110
   # Micro          360    11   371
@@ -81,8 +82,8 @@ addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.lib))
   # Thal.PF        233     2   235
   # Thal.PVT       537     0   537
   # Sum          16366   159 16525
-addmargins(table(s3e.hb$cellType, s3e.hb$qc.detected))
-  #            FALSE  TRUE   Sum
+addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.detected))
+  #               FALSE  TRUE   Sum
   # Astro          584     7   591
   # Endo           102     8   110
   # Micro          360    11   371
@@ -106,65 +107,64 @@ addmargins(table(s3e.hb$cellType, s3e.hb$qc.detected))
   # Thal.PF        230     5   235
   # Thal.PVT       537     0   537
   # Sum          16329   196 16525
-addmargins(table(s3e.hb$cellType, s3e.hb$high.mito.sample))
-  #           FALSE  TRUE   Sum
-  # Astro          521    70   591
-  # Endo           100    10   110
-  # Micro          343    28   371
-  # Oligo.1       1731    52  1783
-  # Oligo.2        425     0   425
-  # OPC.1          240    12   252
-  # OPC.2          755     1   756
-  # Neuron.Ambig     7    39    46
-  # LHb.1         1235    18  1253
-  # LHb.2          678     8   686
-  # LHb.3          554     3   557
-  # LHb.4          414     6   420
-  # LHb.5          291     0   291
-  # LHb.6           72     0    72
-  # MHb.1          447     1   448
-  # MHb.2           93     0    93
-  # Thal.GABA.1   2683    85  2768
-  # Thal.GABA.2   4427    66  4493
-  # Thal.GABA.3     83     4    87
-  # Thal.MD        232    19   251
-  # Thal.PF        222    13   235
-  # Thal.PVT       528     9   537
-  # Sum          16081   444 16525
-x <- addmargins(table(s3e.hb$cellType, s3e.hb$discard_auto))
+addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$high.mito.sample))
+  #               FALSE   Sum
+  # Astro          591   591
+  # Endo           110   110
+  # Micro          371   371
+  # Oligo.1       1783  1783
+  # Oligo.2        425   425
+  # OPC.1          252   252
+  # OPC.2          756   756
+  # Neuron.Ambig    46    46
+  # LHb.1         1253  1253
+  # LHb.2          686   686
+  # LHb.3          557   557
+  # LHb.4          420   420
+  # LHb.5          291   291
+  # LHb.6           72    72
+  # MHb.1          448   448
+  # MHb.2           93    93
+  # Thal.GABA.1   2768  2768
+  # Thal.GABA.2   4493  4493
+  # Thal.GABA.3     87    87
+  # Thal.MD        251   251
+  # Thal.PF        235   235
+  # Thal.PVT       537   537
+  # Sum          16525 16525
+x <- addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$discard_auto))
 round(100 * sweep(x, 1, x[, 3], "/"), 2)
-
   #               FALSE   TRUE    Sum
-  # Astro         86.97  13.03 100.00
-  # Endo          88.18  11.82 100.00
-  # Micro         89.76  10.24 100.00
-  # Oligo.1       95.46   4.54 100.00
+  # Astro         98.82   1.18 100.00
+  # Endo          92.73   7.27 100.00
+  # Micro         97.04   2.96 100.00
+  # Oligo.1       97.87   2.13 100.00
   # Oligo.2      100.00   0.00 100.00
-  # OPC.1         85.71  14.29 100.00
+  # OPC.1         88.49  11.51 100.00
   # OPC.2         98.94   1.06 100.00
-  # Neuron.Ambig   2.17  97.83 100.00
-  # LHb.1         98.40   1.60 100.00
-  # LHb.2         98.69   1.31 100.00
-  # LHb.3         99.28   0.72 100.00
-  # LHb.4         97.62   2.38 100.00
+  # Neuron.Ambig  65.22  34.78 100.00
+  # LHb.1         99.84   0.16 100.00
+  # LHb.2         99.85   0.15 100.00
+  # LHb.3         99.82   0.18 100.00
+  # LHb.4         99.05   0.95 100.00
   # LHb.5        100.00   0.00 100.00
   # LHb.6         94.44   5.56 100.00
-  # MHb.1         98.66   1.34 100.00
+  # MHb.1         98.88   1.12 100.00
   # MHb.2        100.00   0.00 100.00
-  # Thal.GABA.1   96.35   3.65 100.00
-  # Thal.GABA.2   98.11   1.89 100.00
-  # Thal.GABA.3   83.91  16.09 100.00
-  # Thal.MD       92.03   7.97 100.00
-  # Thal.PF       93.19   6.81 100.00
-  # Thal.PVT      98.32   1.68 100.00
-  # Sum           96.39   3.61 100.00
+  # Thal.GABA.1   99.24   0.76 100.00
+  # Thal.GABA.2   99.49   0.51 100.00
+  # Thal.GABA.3   87.36  12.64 100.00
+  # Thal.MD       98.41   1.59 100.00
+  # Thal.PF       97.87   2.13 100.00
+  # Thal.PVT     100.00   0.00 100.00
+  # Sum           98.80   1.20 100.00
 
 library(scDblFinder)
 library(purrr)
-sample_id_names<- names(table(s3e.hb$sample_name))
+sample_id_names<- names(table(sce.all.hb$sample_short))
 names(sample_id_names)<-sample_id_names
 
-sample_id_rse<- map(sample_id_names,~s3e.hb[,s3e.hb$sample_name==.x])
+sample_id_rse<- map(sample_id_names,~sce.all.hb[,sce.all.hb$sample_short==.x])
 ## To speed up, run on sample-level top-HVGs - just take top 1000 ===
 pilot.data.normd <- map(sample_id_rse, ~logNormCounts(.x))
 geneVar.samples <- map(pilot.data.normd, ~modelGeneVar(.x))
@@ -178,90 +178,91 @@ names(dbl.dens.focused) <- names(pilot.data.normd)
 map(dbl.dens.focused, ~round(quantile(.x, probs=seq(0,1,by=0.05)),3))
 # $Br1092
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.007  0.069  0.097  0.125  0.152  0.187  0.228  0.263  0.298  0.332  0.374
+#  0.007  0.050  0.086  0.114  0.143  0.179  0.207  0.236  0.272  0.308  0.351
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.415  0.471  0.526  0.602  0.713  0.838  1.018  1.321  1.883 32.640
+#  0.386  0.429  0.479  0.531  0.622  0.723  0.870  1.095  1.611 31.871
 #
 # $Br1204
 #    0%    5%   10%   15%   20%   25%   30%   35%   40%   45%   50%   55%   60%
-# 0.024 0.120 0.152 0.176 0.205 0.240 0.296 0.341 0.389 0.440 0.493 0.544 0.598
+# 0.174 0.290 0.353 0.403 0.447 0.507 0.577 0.674 0.770 0.824 0.894 0.983 1.048
 #   65%   70%   75%   80%   85%   90%   95%  100%
-# 0.658 0.730 0.810 0.898 1.008 1.183 1.478 6.948
+# 1.127 1.207 1.353 1.470 1.605 1.680 1.848 5.435
 #
 # $Br1469
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.000  0.038  0.066  0.097  0.127  0.156  0.184  0.231  0.283  0.333  0.387
+#  0.005  0.044  0.082  0.115  0.142  0.170  0.197  0.228  0.263  0.304  0.351
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.462  0.538  0.627  0.759  0.909  1.122  1.344  1.680  2.206 12.422
+#  0.397  0.455  0.537  0.625  0.734  0.866  1.086  1.299  1.777 11.448
 #
 # $Br1735
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.000  0.021  0.036  0.057  0.078  0.107  0.149  0.206  0.270  0.348  0.434
+#  0.000  0.019  0.075  0.159  0.215  0.262  0.299  0.346  0.383  0.430  0.476
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.540  0.633  0.747  0.889  1.042  1.217  1.450  1.778  2.382 19.752
+#  0.532  0.598  0.673  0.747  0.859  0.981  1.158  1.420  1.859 14.602
 #
 # $Br5555
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.007  0.052  0.075  0.097  0.112  0.127  0.150  0.165  0.187  0.210  0.240
+#  0.008  0.053  0.084  0.099  0.122  0.137  0.160  0.175  0.198  0.213  0.236
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.270  0.300  0.345  0.397  0.472  0.556  0.689  0.876  1.287 28.926
+#  0.259  0.290  0.320  0.358  0.404  0.473  0.572  0.755  1.090 26.425
 #
 # $Br5558
 #    0%    5%   10%   15%   20%   25%   30%   35%   40%   45%   50%   55%   60%
-# 0.106 0.251 0.370 0.476 0.581 0.664 0.750 0.843 0.934 1.043 1.144 1.277 1.431
+# 0.044 0.125 0.264 0.340 0.438 0.535 0.629 0.704 0.773 0.859 0.940 1.027 1.127
 #   65%   70%   75%   80%   85%   90%   95%  100%
-# 1.646 1.849 2.078 2.279 2.464 2.747 3.406 5.519
+# 1.278 1.449 1.613 1.778 1.956 2.234 2.562 4.804
 #
 # $Br5639
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.000  0.033  0.053  0.084  0.128  0.177  0.226  0.279  0.340  0.416  0.500
+#  0.007  0.048  0.068  0.102  0.129  0.170  0.224  0.272  0.333  0.401  0.483
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.579  0.685  0.792  0.902  1.048  1.203  1.406  1.672  2.145 15.840
+#  0.578  0.680  0.796  0.932  1.082  1.231  1.449  1.762  2.299 17.257
 map(dbl.dens.focused,~table(.x >= 5))
 # $Br1092
 #
 # FALSE  TRUE
-#  3426    36
+#  3540    37
 #
 # $Br1204
 #
 # FALSE  TRUE
-#  1331     2
+#   713     1
 #
 # $Br1469
 #
 # FALSE  TRUE
-#  2329    29
+#  2713    27
 #
 # $Br1735
 #
 # FALSE  TRUE
-#  3509    46
+#  4628    43
 #
 # $Br5555
 #
 # FALSE  TRUE
-#  3671    74
+#  3737    75
 #
 # $Br5558
 #
-# FALSE  TRUE
-#   862     3
+# FALSE
+#   949
 #
 # $Br5639
 #
 # FALSE  TRUE
-#  2191    20
+#  3371    30
 
 # Percent that would be dropped at density score >= 5
 round(sapply(names(dbl.dens.focused), function(x) {
   table(dbl.dens.focused[[x]] >= 5)["TRUE"] / ncol(sample_id_rse[[x]]) * 100
 }), 3)
 
-# Br1092.TRUE Br1204.TRUE Br1469.TRUE Br1735.TRUE Br5555.TRUE Br5558.TRUE
-#       1.040       0.150       1.230       1.294       1.976       0.347
+# Br1092.TRUE Br1204.TRUE Br1469.TRUE Br1735.TRUE Br5555.TRUE   Br5558.NA
+#       1.034       0.140       0.985       0.921       1.967          NA
 # Br5639.TRUE
-#       0.905
+#       0.882
+
 # Add the doublet density scores to the colData
 for(i in names(sample_id_rse)){
   sample_id_rse[[i]]$doubletScore <- dbl.dens.focused[[i]]
