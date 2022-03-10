@@ -40,7 +40,7 @@ dev.off()
 
 sce.all.hb$discard_auto <- sce.all.hb$qc.lib | sce.all.hb$qc.detected | sce.all.hb$high.mito.sample
 
-sce$key <- paste0(sce$sample_short, "_", sce$Barcode)
+sce.all.hb$key <- paste0(sce.all.hb$sample_short, "_", sce.all.hb$Barcode)
 
 load(here("processed-data","08_snRNA-seq_Erik", "s3e_hb.rda"), verbose = TRUE)
 s3e.hb$key <- paste0(s3e.hb$sample_name, "_", s3e.hb$Barcode)

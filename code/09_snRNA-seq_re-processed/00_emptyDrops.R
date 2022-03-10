@@ -126,7 +126,11 @@ gtf <- rtracklayer::import("/dcs04/lieber/lcolladotor/annotationFiles_LIBD001/10
     ## Add the gene info to our sce.all.hb object
     rowRanges(sce.all.hb) <- gtf[match_genes]
 
+load(here("processed-data","08_snRNA-seq_Erik", "s3e_hb.rda"), verbose = TRUE)
+s3e.hb$key <- paste0(s3e.hb$sample_name, "_", s3e.hb$Barcode)
 
+m <- match(sce.all.hb$key, s3e.hb$key)
+sce.all.hb$cellType_Erik <- s3e.hb$cellTypeb[m]
 
 save(sce.all.hb,
      file=here("processed-data","08_snRNA-seq_Erik","20220301_human_hb_processing.rda"))
