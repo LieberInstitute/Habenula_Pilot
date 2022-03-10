@@ -7,7 +7,7 @@ library("here")
 load(here("processed-data","08_snRNA-seq_Erik", "20220301_human_hb_processing.rda"), verbose = TRUE)
 
 
-stats.hb <- perCellQCMetrics(sce.all.hb, subsets=list(Mito=grep("^MT-", rowData(s3e.hb)$Symbol)))
+stats.hb <- perCellQCMetrics(sce.all.hb, subsets=list(Mito=grep("^MT-", rowData(sce.all.hb)$Symbol)))
 high.mito.hb <- isOutlier(stats.hb$subsets_Mito_percent, nmads=3, type="higher")
 colData(sce.all.hb ) <- cbind(colData(sce.all.hb), stats.hb, "high.mito" = high.mito.hb)
 
@@ -15,14 +15,13 @@ colData(sce.all.hb ) <- cbind(colData(sce.all.hb), stats.hb, "high.mito" = high.
 # Let's also look at low library size and low detected features
 
 #No outliers...so let's set a manual threshold
-qc.lib<-s3e.hb$sum < 1000
-qc.detected<-s3e.hb$detected<500
+qc.lib<-sce.all.hb$sum < 1000
+qc.detected<-sce.all.hb$detected<500
 
 sce.all.hb$discard <- qc.lib | qc.detected | high.mito.hb
 
 sce.all.hb$qc.lib.manual <- qc.lib
 sce.all.hb$qc.detected.manual <- qc.detected
-sce.all.hb$sample_short <- basename(gsub("/outs/raw_feature_bc_matrix", "", sce.all.hb$Sample))
 sce.all.hb$qc.lib <- isOutlier(sce.all.hb$sum, log=TRUE, type="lower", batch = sce.all.hb$Sample, subset = sce.all.hb$sample_short != "Br1204")
 sce.all.hb$qc.detected <- isOutlier(sce.all.hb$detected, log=TRUE, type="lower", batch = sce.all.hb$Sample, subset = sce.all.hb$sample_short != "Br1204")
 sce.all.hb$high.mito.sample <- isOutlier(stats.hb$subsets_Mito_percent, nmads=3, type="higher", batch = sce.all.hb$Sample)
@@ -40,24 +39,24 @@ dev.off()
 
 sce.all.hb$discard_auto <- sce.all.hb$qc.lib | sce.all.hb$qc.detected | sce.all.hb$high.mito.sample
 
-sce.all.hb$key <- paste0(sce.all.hb$sample_short, "_", sce.all.hb$Barcode)
+
 
 load(here("processed-data","08_snRNA-seq_Erik", "s3e_hb.rda"), verbose = TRUE)
 s3e.hb$key <- paste0(s3e.hb$sample_name, "_", s3e.hb$Barcode)
 
-m <- match(s3e.hb$key, sce$key)
-s3e.hb$qc.lib <- sce$qc.lib[m]
-s3e.hb$qc.detected <- sce$qc.detected[m]
-s3e.hb$high.mito.sample <- sce$high.mito.sample[m]
-s3e.hb$discard_auto <- sce$discard_auto[m]
+m <- match(s3e.hb$key, sce.all.hb$key)
+s3e.hb$qc.lib <- sce.all.hb$qc.lib[m]
+s3e.hb$qc.detected <- sce.all.hb$qc.detected[m]
+s3e.hb$high.mito.sample <- sce.all.hb$high.mito.sample[m]
+s3e.hb$discard_auto <- sce.all.hb$discard_auto[m]
 
-addmargins(table("Josh QC" = sce$discard, "Auto QC" = sce$discard_auto))
+addmargins(table("Josh QC" = sce.all.hb$discard, "Auto QC" = sce.all.hb$discard_auto))
 #        Auto QC
 # Josh QC FALSE  TRUE   Sum
-#   FALSE 15891   587 16478
-#   TRUE   1005  2381  3386
-#   Sum   16896  2968 19864
-addmargins(table(s3e.hb$cellType, s3e.hb$qc.lib))
+#   FALSE 17897   329 18226
+#   TRUE    391  1247  1638
+#   Sum   18288  1576 19864
+addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.lib))
   #           FALSE  TRUE   Sum
   # Astro          585     6   591
   # Endo           102     8   110
