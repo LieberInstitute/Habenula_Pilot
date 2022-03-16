@@ -10,6 +10,8 @@ library(jaffelab)
 library(gridExtra)
 library(here)
 library(sessioninfo)
+library(ggplot2)
+
 load(here("processed-data","08_snRNA-seq_Erik", "20220301_human_hb_processing.rda"), verbose = TRUE)
 
 
@@ -62,16 +64,41 @@ Sys.time()
     #[1] "2021-12-31 17:00:37 EST"
 
 # Store this
-reducedDim(sce.lc, "GLMPCA_MNN") <- glmpca.mnn$corrected
+reducedDim(sce.all.hb, "GLMPCA_MNN") <- glmpca.mnn$corrected
 
 
-table(colnames(mnn.hold) == colnames(sce.all.hb))  # all TRUE
-table(mnn.hold$batch == sce.all.hb$sample_short) # all TRUE
 
-# Add them to the SCE, as well as the metadata (though the latter might not be so usefl)
-reducedDim(sce.all.hb, "PCA_corrected") <- reducedDim(mnn.hold, "corrected") # 100 components
-metadata(sce.all.hb) <- metadata(mnn.hold)
+
+
+
+
+
+pdf(file = here("plots","08_snRNA-seq_Erik", "GLMPCA_MNN_sample_id.pdf"), width = 9)
+ggplot(
+    data.frame(reducedDim(sce.all.hb, "GLMPCA_MNN")),
+    aes(x = PC1, y = PC2, color = factor(sce.all.hb$sample_short))
+) +
+    geom_point() +
+    labs(color = "Sample") +
+    theme_bw()
+dev.off()
+
+
+
+pdf(file = here("plots","08_snRNA-seq_Erik", "uncorrected_sample_id.pdf"), width = 9)
+ggplot(
+    data.frame(reducedDim(sce.all.hb)),
+    aes(x = PC1, y = PC2, color = factor(sce.all.hb$sample_short))
+) +
+    geom_point() +
+    labs(color = "Sample") +
+    theme_bw()
+dev.off()
+
 
 # Save into a new region-specific SCE object/flie
 save(sce.all.hb,
-     file="/dcl02/lieber/ajaffe/Roche_Habenula/processed-data/09_snRNA-seq_re-processed/02_normalization.Rda")
+     file=here("processed-data","09_snRNA-seq_re-processed","02_normalization.Rda"))
+
+
+sessionInfo()
