@@ -17,34 +17,34 @@ library(uwot)
 library(DropletUtils)
 library(jaffelab)
 library(Rtsne)
-
+library(here)
 # ===
 
 
-load("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/regionSpecific_DLPFC-n3_cleaned-combined_SCE_LAH2021.rda",
+load(here("processed-data","09_snRNA-seq_re-processed","02_normalization.Rda"),
      verbose=TRUE)
     # sce.dlpfc, chosen.hvgs.dlpfc
 
 ## PCA already done (interactively) - took top 100 PCs
 
 ## getClusteredPCs() to identify working PC space
-pc.choice.dlpfc <- getClusteredPCs(reducedDim(sce.dlpfc))
+pc.choice.hb <- getClusteredPCs(reducedDim(sce.all.hb))
 
 # How many PCs should use in this space?
-metadata(pc.choice.dlpfc)$chosen
-
+metadata(pc.choice.hb)$chosen
+#[1] 82
 
 ## Plot n Clusters vs. d PCs
-pdf("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/pdfs/revision/regionSpecific_DLPFC-n3_getClusteredPCs-results-w100pcs_LAH2021.pdf")
-plot(pc.choice.dlpfc$n.pcs, pc.choice.dlpfc$n.clusters,
-     main=paste0("Combined DLPFC (n=3) samples (d PCs choice = ", metadata(pc.choice.dlpfc)$chosen, ")"))
-abline(v=metadata(pc.choice.dlpfc)$chosen, col="red", lty="dashed", lwd=0.8)
+pdf(here("plots","09_snRNA-seq_re-processed", "PC_choice_habenulan_n7.pdf"))
+plot(pc.choice.hb$n.pcs, pc.choice.hb$n.clusters,
+     main=paste0("Combined Habnela (n=6) samples (d PCs choice = ", metadata(pc.choice.hb)$chosen, ")"))
+abline(v=metadata(pc.choice.hb)$chosen, col="red", lty="dashed", lwd=0.8)
 dev.off()
 
 
 # Save
-save(sce.dlpfc, chosen.hvgs.dlpfc, pc.choice.dlpfc, ref.sampleInfo, ref.sampleInfo.rev,
-     file="/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/regionSpecific_DLPFC-n3_cleaned-combined_SCE_LAH2021.rda")
+save(sce.all.hb, pc.choice.hb,
+     file=here("processed-data","09_snRNA-seq_re-processed","03_clustering.Rda"))
 
 # sgejobs::job_single('R-batchJob_DLPFC-n3_optimalPCselxn_LAH2021', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript R-batchJob_DLPFC-n3_optimalPCselxn_LAH2021.R")
 ## Reproducibility information
@@ -56,7 +56,7 @@ session_info()
 
 
 set.seed(109)
-sce.dlpfc <- runTSNE(sce.dlpfc, dimred="PCA_opt")
+sce.all.hb <- runTSNE(sce.all.hb, dimred="PCA_opt")
 
 
 ## UMAP
