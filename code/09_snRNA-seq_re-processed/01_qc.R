@@ -53,12 +53,11 @@ s3e.hb$discard_auto <- sce.all.hb$discard_auto[m]
 addmargins(table("Josh QC" = sce.all.hb$discard, "Auto QC" = sce.all.hb$discard_auto))
 #        Auto QC
 # Josh QC FALSE  TRUE   Sum
-#   FALSE 17897   329 18226
-#   TRUE    391  1247  1638
-#   Sum   18288  1576 19864
+#   FALSE 15891   587 16478
+#   TRUE   1005  2381  3386
+#   Sum   16896  2968 19864
 addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.lib))
-  #
-  #              FALSE  TRUE   Sum
+  #               FALSE  TRUE   Sum
   # Astro          585     6   591
   # Endo           102     8   110
   # Micro          360    11   371
@@ -83,7 +82,7 @@ addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.lib))
   # Thal.PVT       537     0   537
   # Sum          16366   159 16525
 addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.detected))
-  #               FALSE  TRUE   Sum
+  #            FALSE  TRUE   Sum
   # Astro          584     7   591
   # Endo           102     8   110
   # Micro          360    11   371
@@ -108,56 +107,56 @@ addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.detected))
   # Thal.PVT       537     0   537
   # Sum          16329   196 16525
 addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$high.mito.sample))
-  #               FALSE   Sum
-  # Astro          591   591
-  # Endo           110   110
-  # Micro          371   371
-  # Oligo.1       1783  1783
-  # Oligo.2        425   425
-  # OPC.1          252   252
-  # OPC.2          756   756
-  # Neuron.Ambig    46    46
-  # LHb.1         1253  1253
-  # LHb.2          686   686
-  # LHb.3          557   557
-  # LHb.4          420   420
-  # LHb.5          291   291
-  # LHb.6           72    72
-  # MHb.1          448   448
-  # MHb.2           93    93
-  # Thal.GABA.1   2768  2768
-  # Thal.GABA.2   4493  4493
-  # Thal.GABA.3     87    87
-  # Thal.MD        251   251
-  # Thal.PF        235   235
-  # Thal.PVT       537   537
-  # Sum          16525 16525
+  #              FALSE  TRUE   Sum
+  # Astro          521    70   591
+  # Endo           100    10   110
+  # Micro          343    28   371
+  # Oligo.1       1731    52  1783
+  # Oligo.2        425     0   425
+  # OPC.1          240    12   252
+  # OPC.2          755     1   756
+  # Neuron.Ambig     7    39    46
+  # LHb.1         1235    18  1253
+  # LHb.2          678     8   686
+  # LHb.3          554     3   557
+  # LHb.4          414     6   420
+  # LHb.5          291     0   291
+  # LHb.6           72     0    72
+  # MHb.1          447     1   448
+  # MHb.2           93     0    93
+  # Thal.GABA.1   2683    85  2768
+  # Thal.GABA.2   4427    66  4493
+  # Thal.GABA.3     83     4    87
+  # Thal.MD        232    19   251
+  # Thal.PF        222    13   235
+  # Thal.PVT       528     9   537
+  # Sum          16081   444 16525
 x <- addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$discard_auto))
 round(100 * sweep(x, 1, x[, 3], "/"), 2)
-  #               FALSE   TRUE    Sum
-  # Astro         98.82   1.18 100.00
-  # Endo          92.73   7.27 100.00
-  # Micro         97.04   2.96 100.00
-  # Oligo.1       97.87   2.13 100.00
+  #              FALSE   TRUE    Sum
+  # Astro         86.97  13.03 100.00
+  # Endo          88.18  11.82 100.00
+  # Micro         89.76  10.24 100.00
+  # Oligo.1       95.46   4.54 100.00
   # Oligo.2      100.00   0.00 100.00
-  # OPC.1         88.49  11.51 100.00
+  # OPC.1         85.71  14.29 100.00
   # OPC.2         98.94   1.06 100.00
-  # Neuron.Ambig  65.22  34.78 100.00
-  # LHb.1         99.84   0.16 100.00
-  # LHb.2         99.85   0.15 100.00
-  # LHb.3         99.82   0.18 100.00
-  # LHb.4         99.05   0.95 100.00
+  # Neuron.Ambig   2.17  97.83 100.00
+  # LHb.1         98.40   1.60 100.00
+  # LHb.2         98.69   1.31 100.00
+  # LHb.3         99.28   0.72 100.00
+  # LHb.4         97.62   2.38 100.00
   # LHb.5        100.00   0.00 100.00
   # LHb.6         94.44   5.56 100.00
-  # MHb.1         98.88   1.12 100.00
+  # MHb.1         98.66   1.34 100.00
   # MHb.2        100.00   0.00 100.00
-  # Thal.GABA.1   99.24   0.76 100.00
-  # Thal.GABA.2   99.49   0.51 100.00
-  # Thal.GABA.3   87.36  12.64 100.00
-  # Thal.MD       98.41   1.59 100.00
-  # Thal.PF       97.87   2.13 100.00
-  # Thal.PVT     100.00   0.00 100.00
-  # Sum           98.80   1.20 100.00
+  # Thal.GABA.1   96.35   3.65 100.00
+  # Thal.GABA.2   98.11   1.89 100.00
+  # Thal.GABA.3   83.91  16.09 100.00
+  # Thal.MD       92.03   7.97 100.00
+  # Thal.PF       93.19   6.81 100.00
+  # Thal.PVT      98.32   1.68 100.00
+  # Sum           96.39   3.61 100.00
 
 library(scDblFinder)
 library(purrr)
@@ -265,11 +264,10 @@ round(sapply(names(dbl.dens.focused), function(x) {
 
 # Add the doublet density scores to the colData
 for(i in names(sample_id_rse)){
-  sample_id_rse[[i]]$doubletScore <- dbl.dens.focused[[i]]
+  sce.all.hb[[i]]$doubletScore <- dbl.dens.focused[[i]]
 }
 
-
-
+save(sce.all.hb, file = here("processed-data","08_snRNA-seq_Erik", "01_qc.rda"))
 
  sessioninfo::session_info()
 # ─ Session info  ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
