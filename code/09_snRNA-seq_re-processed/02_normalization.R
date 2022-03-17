@@ -12,7 +12,7 @@ library(here)
 library(sessioninfo)
 library(ggplot2)
 
-load(here("processed-data","08_snRNA-seq_Erik", "20220301_human_hb_processing.rda"), verbose = TRUE)
+load(here("processed-data","08_snRNA-seq_Erik", "01_qc.rda"), verbose = TRUE)
 
 
 # Use `multiBatchNorm()` to compute log-normalized counts, matching the scaling across samples
