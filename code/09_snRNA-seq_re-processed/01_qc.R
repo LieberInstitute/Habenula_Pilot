@@ -7,7 +7,7 @@ library("here")
 load(here("processed-data","08_snRNA-seq_Erik", "20220301_human_hb_processing.rda"), verbose = TRUE)
 
 
-stats.hb <- perCellQCMetrics(sce.all.hb, subsets=list(Mito=grep("^MT-", rowData(sce.all.hb)$Symbol)))
+stats.hb <- perCellQCMetrics(sce.all.hb, subsets=list(Mito=grep("^MT-", rowData(sce.all.hb)$gene_name)))
 high.mito.hb <- isOutlier(stats.hb$subsets_Mito_percent, nmads=3, type="higher")
 colData(sce.all.hb ) <- cbind(colData(sce.all.hb), stats.hb, "high.mito" = high.mito.hb)
 
