@@ -1,7 +1,7 @@
 ################################################################################
 ### LIBD pilot 10x snRNA-seq: DLPFC samples
 ###   **Region-specific analyses**
-###   - R-batch job for detxn of optimal PC space with 'sce.dlpfc' object
+###   - R-batch job for detxn of optimal PC space with 'sce.all.hb' object
 ###         -> see '10x-pilot_region-specific_DLPFC_step02_clust-annot_MNTJan2020.R'
 ###            for setup of the SCE
 ### LAH 03May2021
@@ -23,7 +23,7 @@ library(here)
 
 load(here("processed-data","09_snRNA-seq_re-processed","02_normalization.Rda"),
      verbose=TRUE)
-    # sce.dlpfc, chosen.hvgs.dlpfc
+    # sce.all.hb, chosen.hvgs.dlpfc
 
 ## PCA already done (interactively) - took top 100 PCs
 
@@ -55,55 +55,63 @@ options(width = 120)
 session_info()
 
 
+
+
+
 set.seed(109)
-sce.all.hb <- runTSNE(sce.all.hb, dimred="PCA_opt")
+sce.all.hb <- runTSNE(sce.all.hb, dimred="GLMPCA_approx")
 
 
 ## UMAP
 set.seed(109)
-sce.dlpfc <- runUMAP(sce.dlpfc, dimred="PCA_opt")
+sce.all.hb <- runUMAP(sce.all.hb, dimred="GLMPCA_approx")
 
 
 # How do these look?
-plotReducedDim(sce.dlpfc, dimred="TSNE", colour_by="sampleID")
-plotReducedDim(sce.dlpfc, dimred="UMAP", colour_by="sampleID")
-
+pdf(here("plots","09_snRNA-seq_re-processed", "ReducedDim_habenulan_n7.pdf"))
+plotReducedDim(sce.all.hb, dimred="TSNE", colour_by="sample_short")
+plotReducedDim(sce.all.hb, dimred="UMAP", colour_by="sample_short")
+dev.off()
 
 ### Clustering: Two-step ======================================================
 ### Step 1: Perform graph-based clustering in this optimal PC space
 #         - take k=20 NN to build graph
-snn.gr <- buildSNNGraph(sce.dlpfc, k=20, use.dimred="PCA_opt")
+snn.gr <- buildSNNGraph(sce.all.hb, k=20, use.dimred="GLMPCA_approx")
 clusters.k20 <- igraph::cluster_walktrap(snn.gr)$membership
 table(clusters.k20)
     ## 107 prelim clusters
 
-# Is sample driving this 'high-res' clustering at this level?
-(sample_prelimClusters <- table(sce.dlpfc$prelimCluster, sce.dlpfc$sampleID))  # (a little bit, but is typical)
-sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
-# 39 - only 4 samples all from Br5207
 
-# rbind the ref.sampleInfo[.rev]
-ref.sampleInfo <- rbind(ref.sampleInfo, ref.sampleInfo.rev)
+
+sce.all.hb$prelimCluster <- factor(clusters.k20)
+pdf(here("plots","09_snRNA-seq_re-processed", "prelimCluster_habenulan_n7.pdf"))
+plotReducedDim(sce.all.hb, dimred="TSNE", colour_by="prelimCluster")
+dev.off()
+
+# Is sample driving this 'high-res' clustering at this level?
+(sample_prelimClusters <- table(sce.all.hb$prelimCluster, sce.all.hb$sample_short))  # (a little bit, but is typical)
+sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
+
+
 
 ## check doublet score for each prelim clust
-clusIndexes = splitit(sce.dlpfc$prelimCluster)
+clusIndexes = splitit(sce.all.hb$prelimCluster)
 prelimCluster.medianDoublet <- sapply(clusIndexes, function(ii){
-  median(sce.dlpfc$doubletScore[ii])
+  median(sce.all.hb$doubletScore[ii])
 }
 )
 
 summary(prelimCluster.medianDoublet)
-# Min.  1st Qu.   Median     Mean  3rd Qu.     Max.
-# 0.01059  0.07083  0.14823  0.53264  0.30064 14.79144
+
 
 hist(prelimCluster.medianDoublet)
 
 ## watch in clustering
 prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5]
-# 19       32       73
-# 14.79144  7.98099 10.20462
 
-table(sce.dlpfc$prelimCluster)[c(19, 32, 73)]
+
+#what are numbers here?
+table(sce.all.hb$prelimCluster)[c(19, 32, 73)]
 # 19 32 73
 # 27 32  8
 
@@ -115,16 +123,15 @@ table(sce.dlpfc$prelimCluster)[c(19, 32, 73)]
   #              normalize with `librarySizeFactors()`, log2-transform, then perform HC'ing
 
 # Preliminary cluster index for pseudo-bulking
-clusIndexes = splitit(sce.dlpfc$prelimCluster)
+clusIndexes = splitit(sce.all.hb$prelimCluster)
 prelimCluster.PBcounts <- sapply(clusIndexes, function(ii){
-  rowSums(assays(sce.dlpfc)$counts[ ,ii])
+  rowSums(assays(sce.all.hb)$counts[ ,ii])
   }
 )
 
     # And btw...
     table(rowSums(prelimCluster.PBcounts)==0)
-    # FALSE  TRUE
-    # 29310  4228
+
 
 # Compute LSFs at this level
 sizeFactors.PB.all  <- librarySizeFactors(prelimCluster.PBcounts)
@@ -138,9 +145,10 @@ tree.clusCollapsed <- hclust(dist.clusCollapsed, "ward.D2")
 
 dend <- as.dendrogram(tree.clusCollapsed, hang=0.2)
 
-# labels(dend)[grep(c("19|32|73"),labels(dend))] <- paste0(labels(dend)[grep(c("19|32|73"),labels(dend))], "*")
+
 
 # Just for observation
+pdf(here("plots","09_snRNA-seq_re-processed", "clust_dend_n7_habenula.pdf"))
 par(cex=.6)
 myplclust(tree.clusCollapsed, cex.main=2, cex.lab=1.5, cex=1.8)
 
@@ -148,6 +156,7 @@ dend %>%
   set("labels_cex", 0.8) %>%
   plot(horiz = TRUE)
 abline(v = 325, lty = 2)
+dev.off()
 
 clust.treeCut <- cutreeDynamic(tree.clusCollapsed, distM=as.matrix(dist.clusCollapsed),
                                minClusterSize=2, deepSplit=1, cutHeight=325)
@@ -181,9 +190,9 @@ names(cluster_colors) <- unique(clust.treeCut[order.dendrogram(dend)])
 labels_colors(dend) <- cluster_colors[clust.treeCut[order.dendrogram(dend)]]
 
 # Print for future reference
-pdf("pdfs/revision/regionSpecific_DLPFC-n3_HC-prelimCluster-relationships_LAH2021.pdf", height = 9)
+pdf(here("plots","09_snRNA-seq_re-processed", "perlimCluster-relationships_n7_habenula.pdf"), height = 9)
 par(cex=0.6, font=2)
-plot(dend, main="3x DLPFC prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
+plot(dend, main="Habenula prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
 abline(v = 325, lty = 2)
 dev.off()
 
@@ -194,28 +203,28 @@ clusterRefTab.dlpfc <- data.frame(origClust=order.dendrogram(dend),
 
 
 # Assign as 'collapsedCluster'
-sce.dlpfc$collapsedCluster <- factor(clusterRefTab.dlpfc$merged[match(sce.dlpfc$prelimCluster, clusterRefTab.dlpfc$origClust)])
-n_clusters <- length(levels(sce.dlpfc$collapsedCluster))
+sce.all.hb$collapsedCluster <- factor(clusterRefTab.dlpfc$merged[match(sce.all.hb$prelimCluster, clusterRefTab.dlpfc$origClust)])
+n_clusters <- length(levels(sce.all.hb$collapsedCluster))
 # Print some visualizations:
-pdf("pdfs/revision/regionSpecific_DLPFC-n3_reducedDims-with-collapsedClusters_LAH2021.pdf")
-plotReducedDim(sce.dlpfc, dimred="PCA_corrected", ncomponents=5, colour_by="collapsedCluster", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="sampleID", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="protocol", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="collapsedCluster", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="sum", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="doubletScore", point_alpha=0.5)
+pdf(here("plots","09_snRNA-seq_re-processed", "reducedDims_with-collapsedClusters_n7_habenula.pdf"))
+plotReducedDim(sce.all.hb, dimred="PCA_corrected", ncomponents=5, colour_by="collapsedCluster", point_alpha=0.5)
+plotTSNE(sce.all.hb, colour_by="sample_short", point_alpha=0.5)
+plotTSNE(sce.all.hb, colour_by="cellType_Erik", point_alpha=0.5)
+plotTSNE(sce.all.hb, colour_by="collapsedCluster", point_alpha=0.5)
+plotTSNE(sce.all.hb, colour_by="doubletScore", point_alpha=0.5)
 # And some more informative UMAPs
-plotUMAP(sce.dlpfc, colour_by="sampleID", point_alpha=0.5)
-plotUMAP(sce.dlpfc, colour_by="collapsedCluster", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="sample_short", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="cellType_Erik", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="collapsedCluster", point_alpha=0.5)
 dev.off()
 
 ## Print marker genes for annotation
-load(here("rdas","revision","markers.rda"), verbose = TRUE)
+load("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/tableau_colors.rda", verbose = TRUE)
 
 pdf("pdfs/revision/regionSpecific_DLPFC-n3_marker-logExprs_collapsedClusters_LAH2021.pdf", height=6, width=8)
 for(i in 1:length(markers.mathys.custom)){
   print(
-    plotExpressionCustom(sce = sce.dlpfc,
+    plotExpressionCustom(sce = sce.all.hb,
                          features = markers.mathys.custom[[i]],
                          features_name = names(markers.mathys.custom)[[i]],
                          anno_name = "collapsedCluster")
@@ -223,5 +232,5 @@ for(i in 1:length(markers.mathys.custom)){
 }
 dev.off()
 # Assign as 'prelimCluster'
-sce.dlpfc$prelimCluster <- factor(clusters.k20)
-plotReducedDim(sce.dlpfc, dimred="TSNE", colour_by="prelimCluster")
+sce.all.hb$prelimCluster <- factor(clusters.k20)
+plotReducedDim(sce.all.hb, dimred="TSNE", colour_by="prelimCluster")
