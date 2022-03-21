@@ -6,7 +6,8 @@
 ###            for setup of the SCE
 ### LAH 03May2021
 ################################################################################
-
+library(dendextend)
+library(dynamicTreeCut)
 library(SingleCellExperiment)
 library(scRNAseq)
 library(batchelor)
@@ -32,7 +33,7 @@ pc.choice.hb <- getClusteredPCs(reducedDim(sce.all.hb))
 
 # How many PCs should use in this space?
 metadata(pc.choice.hb)$chosen
-#[1] 82
+#[1] 57
 
 ## Plot n Clusters vs. d PCs
 pdf(here("plots","09_snRNA-seq_re-processed", "PC_choice_habenulan_n7.pdf"))
@@ -90,14 +91,56 @@ dev.off()
 
 # Is sample driving this 'high-res' clustering at this level?
 (sample_prelimClusters <- table(sce.all.hb$prelimCluster, sce.all.hb$sample_short))  # (a little bit, but is typical)
-sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
+  #  Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639
+  # 1      70      0    210    269     30     22    275
+  # 2       3      0     22     19      7      6     33
+  # 3    1054     24     39    158    487     29     47
+  # 4       1      1   1053     22      1      2     19
+  # 5       0      0    241      1      0      6      6
+  # 6      15      0     98    158     17      5     87
+  # 7       2      0     26    270      2      4     16
+  # 8      13     85      0     27    154      0      7
+  # 9     225     18      0      1    256      0      2
+  # 10   1229     10      0   1880    937    354   1047
+  # 11      0      0    232      0      0      0      0
+  # 12      5      0     41    190      1      6     32
+  # 13     41      3      0     26     56     22     14
+  # 14      7      0    173    296      4     12    160
+  # 15    164      0      0      4     29      0      0
+  # 16     57      2      0    151    722      0      0
+  # 17     20      0     84    113      2      2    167
+  # 18      2    205      0      0      2      0      0
+  # 19      3      0    188    132      0      1     19
+  # 20     48      3      0     12    486      0      0
+  # 21     17      0    115    143     31      5     97
+  # 22      4      0     70    129      8      7     37
+  # 23      0    207      0     10      3      0      0
+  # 24     30      1      0     53    346      0      1
+  # 25     11     29      1     52     14    426      8
+  # 26      0     86      0      3      1      0      0
+  # 27      1      0     69    375      4      4    320
+  # 28      1     26      0      0      5      0      0
+  # 29      0      9      0      0      1     26      0
+  # 30      5      5      0      2     24      6      0
+  # 31      0      0     78      2      0      0      6
+  # 32    549      0      0    173    182      4   1001
 
+sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
+  #    Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639
+  # 8      13     85      0     27    154      0      7
+  # 9     225     18      0      1    256      0      2
+  # 19      3      0    188    132      0      1     19
+  # 24     30      1      0     53    346      0      1
+  # 30      5      5      0      2     24      6      0
+  # 32    549      0      0    173    182      4   1001
 
 
 ## check doublet score for each prelim clust
+
+####FORMATED doublet data wrong. Will need to go back and generate later
 clusIndexes = splitit(sce.all.hb$prelimCluster)
 prelimCluster.medianDoublet <- sapply(clusIndexes, function(ii){
-  median(sce.all.hb$doubletScore[ii])
+  median(sce.all.hb[[10]][ii])
 }
 )
 
@@ -131,7 +174,8 @@ prelimCluster.PBcounts <- sapply(clusIndexes, function(ii){
 
     # And btw...
     table(rowSums(prelimCluster.PBcounts)==0)
-
+# FALSE  TRUE
+# 33824  2777
 
 # Compute LSFs at this level
 sizeFactors.PB.all  <- librarySizeFactors(prelimCluster.PBcounts)
@@ -162,7 +206,10 @@ clust.treeCut <- cutreeDynamic(tree.clusCollapsed, distM=as.matrix(dist.clusColl
                                minClusterSize=2, deepSplit=1, cutHeight=325)
 
 table(clust.treeCut)
+#  0  1  2  3  4  5  6
+# 10  6  4  4  3  3  2
 unname(clust.treeCut[order.dendrogram(dend)])
+# [1] 0 0 1 1 1 1 1 1 2 2 2 2 4 4 4 5 5 5 0 0 0 3 3 3 3 0 0 6 6 0 0 0
     ## Cutting at 250 looks good for the main neuronal branch, but a lot of glial
      #    prelim clusters are dropped off (0's)
 
