@@ -1,6 +1,11 @@
 preprocessed-data/
 processed-data/06_deconvolution_trial/sce.all.n12_filtered.Rdata
-processed-data/
 preprocessed-data/
 preprocessed_data/
+<<<<<<< HEAD
 .Rproj.user
+=======
+processed-data/07_cellranger/
+processed-data/08_snRNA-seq_Erik/
+plots/09_snRNA-seq_re-processed/live_checks.pdf
+>>>>>>> update .gitignore
