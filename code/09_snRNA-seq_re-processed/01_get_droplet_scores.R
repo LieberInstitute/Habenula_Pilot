@@ -14,12 +14,14 @@ args <- commandArgs(trailingOnly = TRUE)
 user_sample <- args[[1]]
 user_lower <- as.integer(args[[2]])
 
+
+Br<-unlist(str_split(user_sample, "/"))[9]
 #### Load & Subset raw data ####
 load(here("processed-data","09_snRNA-seq_re-processed","20220601_human_hb_processing.rda"))
 
 stopifnot(user_sample %in% sce.all.hb$Sample)
 
-message("Running Sample: ", user_sample)
+message("Running Sample: ", Br)
 
 sce.all.hb <- sce.all.hb[, sce.all.hb$Sample == user_sample]
 message("ncol:", ncol(sce.all.hb))
@@ -49,7 +51,7 @@ e.out <- DropletUtils::emptyDrops(
 message("Done - saving data")
 Sys.time()
 
-save(e.out, file = here("processed-data","09_snRNA-seq_re-processed", "droplet_scores_troubleshoot", paste0("droplet_scores_", user_sample, ".Rdata")))
+save(e.out, file = here("processed-data","09_snRNA-seq_re-processed", "droplet_scores_troubleshoot", paste0("droplet_scores_", Br, ".Rdata")))
 
 #### QC Plots ####
 message("QC check")
@@ -77,7 +79,7 @@ droplet_elbow_plot <- as.data.frame(bcRanks) %>%
     labs(
         x = "Barcode Rank",
         y = "Total UMIs",
-        title = paste("Sample", user_sample),
+        title = paste("Sample", Br),
         subtitle = n_cell_anno,
         color = paste("FDR <", FDR_cutoff)
     ) +
@@ -94,7 +96,7 @@ droplet_elbow_plot <- as.data.frame(bcRanks) %>%
 # # print(droplet_elbow_plot/droplet_scatter_plot)
 # ggsave(droplet_elbow_plot/droplet_scatter_plot, filename = here("plots","03_build_sce", "droplet_qc_png",paste0("droplet_qc_",sample,".png")))
 
-ggsave(droplet_elbow_plot, filename = here("processed-data","09_snRNA-seq_re-processed", "droplet_knee_plots", paste0("droplet_qc_", user_sample, ".png")))
+ggsave(droplet_elbow_plot, filename = here("plots","09_snRNA-seq_re-processed", "droplet_knee_plots", paste0("droplet_qc_", Br, ".png")))
 
 
 # sgejobs::job_single('get_droplet_scores_troubleshoot', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript get_droplet_scores_troubleshoot.R")
