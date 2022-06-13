@@ -44,7 +44,7 @@ Sys.time()
 e.out <- DropletUtils::emptyDrops(
     sce.all.hb,
     niters = 30000,
-    lower = user_lower
+    lower = knee_lower
     # ,
     # BPPARAM = BiocParallel::MulticoreParam(4)
 )
