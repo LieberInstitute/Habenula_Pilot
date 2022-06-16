@@ -1,0 +1,7 @@
+/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/07_cellranger/Br1204/outs/raw_feature_bc_matrix/
+/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/07_cellranger/Br5558/outs/raw_feature_bc_matrix/
+/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/07_cellranger/Br1469/outs/raw_feature_bc_matrix/
+/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/07_cellranger/Br5639/outs/raw_feature_bc_matrix/
+/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/07_cellranger/Br1735/outs/raw_feature_bc_matrix/
+/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/07_cellranger/Br1092/outs/raw_feature_bc_matrix/
+/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/07_cellranger/Br5555/outs/raw_feature_bc_matrix/

@@ -53,110 +53,139 @@ s3e.hb$discard_auto <- sce.all.hb$discard_auto[m]
 addmargins(table("Josh QC" = sce.all.hb$discard, "Auto QC" = sce.all.hb$discard_auto))
 #        Auto QC
 # Josh QC FALSE  TRUE   Sum
-#   FALSE 15891   587 16478
-#   TRUE   1005  2381  3386
-#   Sum   16896  2968 19864
+#   FALSE 16066   703 16769
+#   TRUE   1050  1983  3033
+#   Sum   17116  2686 19802
 addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.lib))
-  #               FALSE  TRUE   Sum
-  # Astro          585     6   591
-  # Endo           102     8   110
-  # Micro          360    11   371
-  # Oligo.1       1749    34  1783
-  # Oligo.2        425     0   425
-  # OPC.1          226    26   252
-  # OPC.2          750     6   756
-  # Neuron.Ambig    32    14    46
-  # LHb.1         1251     2  1253
-  # LHb.2          685     1   686
-  # LHb.3          556     1   557
-  # LHb.4          416     4   420
-  # LHb.5          291     0   291
-  # LHb.6           70     2    72
-  # MHb.1          445     3   448
-  # MHb.2           93     0    93
-  # Thal.GABA.1   2754    14  2768
-  # Thal.GABA.2   4476    17  4493
-  # Thal.GABA.3     80     7    87
-  # Thal.MD        250     1   251
-  # Thal.PF        233     2   235
-  # Thal.PVT       537     0   537
-  # Sum          16366   159 16525
-addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.detected))
-  #            FALSE  TRUE   Sum
-  # Astro          584     7   591
-  # Endo           102     8   110
-  # Micro          360    11   371
-  # Oligo.1       1745    38  1783
-  # Oligo.2        425     0   425
-  # OPC.1          223    29   252
-  # OPC.2          748     8   756
-  # Neuron.Ambig    30    16    46
-  # LHb.1         1252     1  1253
-  # LHb.2          685     1   686
-  # LHb.3          556     1   557
-  # LHb.4          416     4   420
-  # LHb.5          291     0   291
-  # LHb.6           68     4    72
-  # MHb.1          443     5   448
-  # MHb.2           93     0    93
-  # Thal.GABA.1   2747    21  2768
-  # Thal.GABA.2   4471    22  4493
-  # Thal.GABA.3     76    11    87
-  # Thal.MD        247     4   251
-  # Thal.PF        230     5   235
-  # Thal.PVT       537     0   537
-  # Sum          16329   196 16525
-addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$high.mito.sample))
+  #
   #              FALSE  TRUE   Sum
-  # Astro          521    70   591
-  # Endo           100    10   110
-  # Micro          343    28   371
-  # Oligo.1       1731    52  1783
-  # Oligo.2        425     0   425
-  # OPC.1          240    12   252
-  # OPC.2          755     1   756
-  # Neuron.Ambig     7    39    46
-  # LHb.1         1235    18  1253
-  # LHb.2          678     8   686
-  # LHb.3          554     3   557
-  # LHb.4          414     6   420
-  # LHb.5          291     0   291
-  # LHb.6           72     0    72
-  # MHb.1          447     1   448
-  # MHb.2           93     0    93
-  # Thal.GABA.1   2683    85  2768
-  # Thal.GABA.2   4427    66  4493
-  # Thal.GABA.3     83     4    87
-  # Thal.MD        232    19   251
-  # Thal.PF        222    13   235
-  # Thal.PVT       528     9   537
-  # Sum          16081   444 16525
+  # Astro          602     7   609
+  # Endo           110     8   118
+  # Micro          366    13   379
+  # Oligo.1       1767    32  1799
+  # Oligo.2        426     0   426
+  # OPC.1          243    29   272
+  # OPC.2          759     6   765
+  # Neuron.Ambig    45    26    71
+  # LHb.1         1357     0  1357
+  # LHb.2          749     2   751
+  # LHb.3          614     2   616
+  # LHb.4          500     5   505
+  # LHb.5          302     0   302
+  # LHb.6           72     2    74
+  # MHb.1          488     3   491
+  # MHb.2          197     0   197
+  # Thal.GABA.1   2718    13  2731
+  # Thal.GABA.2   4344    15  4359
+  # Thal.GABA.3     86     8    94
+  # Thal.MD        259     1   260
+  # Thal.PF        235     2   237
+  # Thal.PVT       545     0   545
+  # Sum          16784   174 16958
+addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$qc.detected))
+  #              FALSE  TRUE   Sum
+  # Astro          581    28   609
+  # Endo            97    21   118
+  # Micro          348    31   379
+  # Oligo.1       1740    59  1799
+  # Oligo.2        426     0   426
+  # OPC.1          236    36   272
+  # OPC.2          755    10   765
+  # Neuron.Ambig    41    30    71
+  # LHb.1         1357     0  1357
+  # LHb.2          749     2   751
+  # LHb.3          614     2   616
+  # LHb.4          500     5   505
+  # LHb.5          302     0   302
+  # LHb.6           72     2    74
+  # MHb.1          487     4   491
+  # MHb.2          197     0   197
+  # Thal.GABA.1   2713    18  2731
+  # Thal.GABA.2   4334    25  4359
+  # Thal.GABA.3     82    12    94
+  # Thal.MD        256     4   260
+  # Thal.PF        231     6   237
+  # Thal.PVT       545     0   545
+  # Sum          16663   295 16958
+addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$high.mito.sample))
+
+               FALSE  TRUE   Sum
+  Astro          581    28   609
+  Endo            97    21   118
+  Micro          348    31   379
+  Oligo.1       1740    59  1799
+  Oligo.2        426     0   426
+  OPC.1          236    36   272
+  OPC.2          755    10   765
+  Neuron.Ambig    41    30    71
+  LHb.1         1357     0  1357
+  LHb.2          749     2   751
+  LHb.3          614     2   616
+  LHb.4          500     5   505
+  LHb.5          302     0   302
+  LHb.6           72     2    74
+  MHb.1          487     4   491
+  MHb.2          197     0   197
+  Thal.GABA.1   2713    18  2731
+  Thal.GABA.2   4334    25  4359
+  Thal.GABA.3     82    12    94
+  Thal.MD        256     4   260
+  Thal.PF        231     6   237
+  Thal.PVT       545     0   545
+  Sum          16663   295 16958
+> addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$high.mito.sample))
+  #
+  #              FALSE  TRUE   Sum
+  # Astro          521    88   609
+  # Endo            96    22   118
+  # Micro          346    33   379
+  # Oligo.1       1723    76  1799
+  # Oligo.2        425     1   426
+  # OPC.1          256    16   272
+  # OPC.2          752    13   765
+  # Neuron.Ambig    22    49    71
+  # LHb.1         1341    16  1357
+  # LHb.2          745     6   751
+  # LHb.3          615     1   616
+  # LHb.4          499     6   505
+  # LHb.5          302     0   302
+  # LHb.6           74     0    74
+  # MHb.1          490     1   491
+  # MHb.2          197     0   197
+  # Thal.GABA.1   2643    88  2731
+  # Thal.GABA.2   4280    79  4359
+  # Thal.GABA.3     90     4    94
+  # Thal.MD        232    28   260
+  # Thal.PF        224    13   237
+  # Thal.PVT       541     4   545
+  # Sum          16414   544 16958
 x <- addmargins(table(sce.all.hb$cellType_Erik, sce.all.hb$discard_auto))
 round(100 * sweep(x, 1, x[, 3], "/"), 2)
-  #              FALSE   TRUE    Sum
-  # Astro         86.97  13.03 100.00
-  # Endo          88.18  11.82 100.00
-  # Micro         89.76  10.24 100.00
-  # Oligo.1       95.46   4.54 100.00
-  # Oligo.2      100.00   0.00 100.00
-  # OPC.1         85.71  14.29 100.00
-  # OPC.2         98.94   1.06 100.00
-  # Neuron.Ambig   2.17  97.83 100.00
-  # LHb.1         98.40   1.60 100.00
-  # LHb.2         98.69   1.31 100.00
-  # LHb.3         99.28   0.72 100.00
-  # LHb.4         97.62   2.38 100.00
+
+  #               FALSE   TRUE    Sum
+  # Astro         82.10  17.90 100.00
+  # Endo          69.49  30.51 100.00
+  # Micro         84.43  15.57 100.00
+  # Oligo.1       93.61   6.39 100.00
+  # Oligo.2       99.77   0.23 100.00
+  # OPC.1         82.72  17.28 100.00
+  # OPC.2         97.12   2.88 100.00
+  # Neuron.Ambig   9.86  90.14 100.00
+  # LHb.1         98.82   1.18 100.00
+  # LHb.2         98.93   1.07 100.00
+  # LHb.3         99.51   0.49 100.00
+  # LHb.4         97.82   2.18 100.00
   # LHb.5        100.00   0.00 100.00
-  # LHb.6         94.44   5.56 100.00
-  # MHb.1         98.66   1.34 100.00
+  # LHb.6         97.30   2.70 100.00
+  # MHb.1         98.98   1.02 100.00
   # MHb.2        100.00   0.00 100.00
-  # Thal.GABA.1   96.35   3.65 100.00
-  # Thal.GABA.2   98.11   1.89 100.00
-  # Thal.GABA.3   83.91  16.09 100.00
-  # Thal.MD       92.03   7.97 100.00
-  # Thal.PF       93.19   6.81 100.00
-  # Thal.PVT      98.32   1.68 100.00
-  # Sum           96.39   3.61 100.00
+  # Thal.GABA.1   96.16   3.84 100.00
+  # Thal.GABA.2   97.75   2.25 100.00
+  # Thal.GABA.3   84.04  15.96 100.00
+  # Thal.MD       88.85  11.15 100.00
+  # Thal.PF       92.83   7.17 100.00
+  # Thal.PVT      99.27   0.73 100.00
+  # Sum           95.48   4.52 100.00
 
 library(scDblFinder)
 library(purrr)
@@ -177,80 +206,81 @@ names(dbl.dens.focused) <- names(pilot.data.normd)
 map(dbl.dens.focused, ~round(quantile(.x, probs=seq(0,1,by=0.05)),3))
 # $Br1092
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.007  0.050  0.086  0.114  0.143  0.179  0.207  0.236  0.272  0.308  0.351
+#  0.000  0.051  0.101  0.130  0.159  0.188  0.217  0.246  0.283  0.311  0.340
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.386  0.429  0.479  0.531  0.622  0.723  0.870  1.095  1.611 31.871
+#  0.384  0.427  0.478  0.529  0.616  0.732  0.869  1.108  1.594 31.562
 #
 # $Br1204
 #    0%    5%   10%   15%   20%   25%   30%   35%   40%   45%   50%   55%   60%
-# 0.174 0.290 0.353 0.403 0.447 0.507 0.577 0.674 0.770 0.824 0.894 0.983 1.048
+# 0.000 0.017 0.210 0.292 0.320 0.346 0.374 0.403 0.442 0.493 0.543 0.593 0.653
 #   65%   70%   75%   80%   85%   90%   95%  100%
-# 1.127 1.207 1.353 1.470 1.605 1.680 1.848 5.435
+# 0.696 0.746 0.799 0.876 0.964 1.094 1.311 6.230
 #
 # $Br1469
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.005  0.044  0.082  0.115  0.142  0.170  0.197  0.228  0.263  0.304  0.351
+#  0.000  0.030  0.050  0.070  0.095  0.120  0.142  0.175  0.210  0.255  0.305
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.397  0.455  0.537  0.625  0.734  0.866  1.086  1.299  1.777 11.448
+#  0.360  0.435  0.515  0.605  0.725  0.882  1.086  1.315  1.775 12.120
 #
 # $Br1735
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.000  0.019  0.075  0.159  0.215  0.262  0.299  0.346  0.383  0.430  0.476
+#  0.000  0.022  0.045  0.060  0.082  0.105  0.127  0.157  0.195  0.240  0.299
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.532  0.598  0.673  0.747  0.859  0.981  1.158  1.420  1.859 14.602
+#  0.359  0.427  0.502  0.606  0.726  0.883  1.056  1.303  1.797 17.697
 #
 # $Br5555
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.008  0.053  0.084  0.099  0.122  0.137  0.160  0.175  0.198  0.213  0.236
+#  0.000  0.047  0.078  0.102  0.117  0.133  0.148  0.164  0.187  0.203  0.226
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.259  0.290  0.320  0.358  0.404  0.473  0.572  0.755  1.090 26.425
+#  0.250  0.281  0.312  0.351  0.406  0.476  0.578  0.750  1.107 27.483
 #
 # $Br5558
 #    0%    5%   10%   15%   20%   25%   30%   35%   40%   45%   50%   55%   60%
-# 0.044 0.125 0.264 0.340 0.438 0.535 0.629 0.704 0.773 0.859 0.940 1.027 1.127
+# 0.032 0.136 0.230 0.341 0.429 0.515 0.603 0.689 0.771 0.844 0.942 1.040 1.119
 #   65%   70%   75%   80%   85%   90%   95%  100%
-# 1.278 1.449 1.613 1.778 1.956 2.234 2.562 4.804
+# 1.286 1.465 1.639 1.790 1.988 2.252 2.601 4.925
 #
 # $Br5639
 #     0%     5%    10%    15%    20%    25%    30%    35%    40%    45%    50%
-#  0.007  0.048  0.068  0.102  0.129  0.170  0.224  0.272  0.333  0.401  0.483
+#  0.000  0.027  0.048  0.076  0.103  0.137  0.185  0.240  0.316  0.391  0.480
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
-#  0.578  0.680  0.796  0.932  1.082  1.231  1.449  1.762  2.299 17.257
+#  0.577  0.686  0.803  0.934  1.085  1.241  1.464  1.826  2.409 18.087
 map(dbl.dens.focused,~table(.x >= 5))
 # $Br1092
 #
 # FALSE  TRUE
-#  3540    37
+#  3586    36
 #
 # $Br1204
 #
 # FALSE  TRUE
-#   713     1
+#  1664     1
 #
 # $Br1469
 #
 # FALSE  TRUE
-#  2713    27
+#  2472    27
 #
 # $Br1735
 #
 # FALSE  TRUE
-#  4628    43
+#  3698    45
 #
 # $Br5555
 #
 # FALSE  TRUE
-#  3737    75
+#  3828    77
 #
 # $Br5558
 #
 # FALSE
-#   949
+#   936
 #
 # $Br5639
 #
 # FALSE  TRUE
-#  3371    30
+#  3400    32
+
 
 # Percent that would be dropped at density score >= 5
 round(sapply(names(dbl.dens.focused), function(x) {
@@ -258,9 +288,9 @@ round(sapply(names(dbl.dens.focused), function(x) {
 }), 3)
 
 # Br1092.TRUE Br1204.TRUE Br1469.TRUE Br1735.TRUE Br5555.TRUE   Br5558.NA
-#       1.034       0.140       0.985       0.921       1.967          NA
+#       0.994       0.060       1.080       1.202       1.972          NA
 # Br5639.TRUE
-#       0.882
+#       0.932
 
 # Add the doublet density scores to the colData
 for(i in names(sample_id_rse)){
@@ -269,94 +299,96 @@ for(i in names(sample_id_rse)){
 
 save(sce.all.hb, file = here("processed-data","08_snRNA-seq_Erik", "01_qc.rda"))
 
- sessioninfo::session_info()
-# ─ Session info  ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-#  hash: men holding hands: medium-dark skin tone, flag: Palestinian Territories, shushing face
-#
-#  setting  value
-#  version  R version 4.1.0 Patched (2021-05-18 r80330)
-#  os       CentOS Linux 7 (Core)
-#  system   x86_64, linux-gnu
-#  ui       X11
-#  language (EN)
-#  collate  en_US.UTF-8
-#  ctype    en_US.UTF-8
-#  tz       US/Eastern
-#  date     2022-03-02
-#  pandoc   2.12 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1/bin/pandoc
-#
-# ─ Packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+#  sessioninfo::session_info()
 #  package              * version  date (UTC) lib source
 #  assertthat             0.2.1    2019-03-21 [2] CRAN (R 4.1.0)
-#  beachmat               2.8.1    2021-08-12 [2] Bioconductor
-#  beeswarm               0.4.0    2021-06-01 [1] CRAN (R 4.1.0)
-#  Biobase              * 2.52.0   2021-05-19 [2] Bioconductor
-#  BiocGenerics         * 0.38.0   2021-05-19 [2] Bioconductor
-#  BiocNeighbors          1.10.0   2021-05-19 [1] Bioconductor
-#  BiocParallel           1.26.2   2021-08-22 [2] Bioconductor
-#  BiocSingular           1.8.1    2021-06-08 [1] Bioconductor
+#  beachmat               2.10.0   2021-10-26 [2] Bioconductor
+#  beeswarm               0.4.0    2021-06-01 [2] CRAN (R 4.1.2)
+#  Biobase              * 2.54.0   2021-10-26 [2] Bioconductor
+#  BiocGenerics         * 0.40.0   2021-10-26 [2] Bioconductor
+#  BiocNeighbors          1.12.0   2021-10-26 [2] Bioconductor
+#  BiocParallel           1.28.3   2021-12-09 [2] Bioconductor
+#  BiocSingular           1.10.0   2021-10-26 [2] Bioconductor
 #  bitops                 1.0-7    2021-04-24 [2] CRAN (R 4.1.0)
-#  bluster                1.2.1    2021-05-27 [1] Bioconductor
-#  cli                    3.1.0    2021-10-27 [2] CRAN (R 4.1.0)
-#  cluster                2.1.2    2021-04-17 [3] CRAN (R 4.1.0)
-#  colorspace             2.0-2    2021-06-24 [2] CRAN (R 4.1.0)
-#  crayon                 1.4.2    2021-10-29 [2] CRAN (R 4.1.0)
-#  data.table             1.14.2   2021-09-27 [2] CRAN (R 4.1.0)
-#  DBI                    1.1.1    2021-01-15 [2] CRAN (R 4.1.0)
-#  DelayedArray           0.18.0   2021-05-19 [2] Bioconductor
-#  DelayedMatrixStats     1.14.3   2021-08-26 [2] Bioconductor
-#  dplyr                  1.0.7    2021-06-18 [2] CRAN (R 4.1.0)
-#  dqrng                  0.3.0    2021-05-01 [1] CRAN (R 4.1.0)
-#  edgeR                  3.34.1   2021-09-05 [2] Bioconductor
+#  bluster                1.4.0    2021-10-26 [2] Bioconductor
+#  cli                    3.3.0    2022-04-25 [2] CRAN (R 4.1.2)
+#  cluster                2.1.3    2022-03-28 [3] CRAN (R 4.1.2)
+#  colorspace             2.0-3    2022-02-21 [2] CRAN (R 4.1.2)
+#  cowplot                1.1.1    2020-12-30 [2] CRAN (R 4.1.2)
+#  crayon                 1.5.1    2022-03-26 [2] CRAN (R 4.1.2)
+#  data.table             1.14.2   2021-09-27 [2] CRAN (R 4.1.2)
+#  DBI                    1.1.2    2021-12-20 [2] CRAN (R 4.1.2)
+#  DelayedArray           0.20.0   2021-10-26 [2] Bioconductor
+#  DelayedMatrixStats     1.16.0   2021-10-26 [2] Bioconductor
+#  digest                 0.6.29   2021-12-01 [2] CRAN (R 4.1.2)
+#  dplyr                  1.0.9    2022-04-28 [2] CRAN (R 4.1.2)
+#  dqrng                  0.3.0    2021-05-01 [2] CRAN (R 4.1.2)
+#  edgeR                  3.36.0   2021-10-26 [2] Bioconductor
 #  ellipsis               0.3.2    2021-04-29 [2] CRAN (R 4.1.0)
-#  fansi                  0.5.0    2021-05-25 [2] CRAN (R 4.1.0)
-#  generics               0.1.1    2021-10-25 [2] CRAN (R 4.1.0)
-#  GenomeInfoDb         * 1.28.4   2021-09-05 [2] Bioconductor
-#  GenomeInfoDbData       1.2.6    2021-05-11 [2] Bioconductor
-#  GenomicRanges        * 1.44.0   2021-05-19 [2] Bioconductor
-#  ggbeeswarm             0.6.0    2017-08-07 [1] CRAN (R 4.1.0)
-#  ggplot2              * 3.3.5    2021-06-25 [2] CRAN (R 4.1.0)
-#  glue                   1.4.2    2020-08-27 [2] CRAN (R 4.1.0)
+#  fansi                  1.0.3    2022-03-24 [2] CRAN (R 4.1.2)
+#  farver                 2.1.0    2021-02-28 [2] CRAN (R 4.1.0)
+#  generics               0.1.2    2022-01-31 [2] CRAN (R 4.1.2)
+#  GenomeInfoDb         * 1.30.1   2022-01-30 [2] Bioconductor
+#  GenomeInfoDbData       1.2.7    2021-11-01 [2] Bioconductor
+#  GenomicRanges        * 1.46.1   2021-11-18 [2] Bioconductor
+#  ggbeeswarm             0.6.0    2017-08-07 [2] CRAN (R 4.1.2)
+#  ggplot2              * 3.3.6    2022-05-03 [2] CRAN (R 4.1.2)
+#  ggrepel                0.9.1    2021-01-15 [2] CRAN (R 4.1.0)
+#  glue                   1.6.2    2022-02-24 [2] CRAN (R 4.1.2)
 #  gridExtra              2.3      2017-09-09 [2] CRAN (R 4.1.0)
 #  gtable                 0.3.0    2019-03-25 [2] CRAN (R 4.1.0)
-#  here                 * 1.0.1    2020-12-13 [1] CRAN (R 4.1.0)
-#  igraph                 1.2.7    2021-10-15 [2] CRAN (R 4.1.0)
-#  IRanges              * 2.26.0   2021-05-19 [2] Bioconductor
-#  irlba                  2.3.3    2019-02-05 [2] CRAN (R 4.1.0)
-#  jsonlite               1.7.2    2020-12-09 [2] CRAN (R 4.1.0)
-#  lattice                0.20-45  2021-09-22 [3] CRAN (R 4.1.0)
-#  lifecycle              1.0.1    2021-09-24 [1] CRAN (R 4.1.0)
-#  limma                  3.48.3   2021-08-10 [2] Bioconductor
-#  locfit                 1.5-9.4  2020-03-25 [2] CRAN (R 4.1.0)
-#  magrittr               2.0.1    2020-11-17 [2] CRAN (R 4.1.0)
-#  Matrix                 1.3-4    2021-06-01 [3] CRAN (R 4.1.0)
-#  MatrixGenerics       * 1.4.3    2021-08-26 [2] Bioconductor
-#  matrixStats          * 0.61.0   2021-09-17 [2] CRAN (R 4.1.0)
-#  metapod                1.0.0    2021-05-19 [1] Bioconductor
+#  here                 * 1.0.1    2020-12-13 [2] CRAN (R 4.1.2)
+#  igraph                 1.3.2    2022-06-13 [2] CRAN (R 4.1.2)
+#  IRanges              * 2.28.0   2021-10-26 [2] Bioconductor
+#  irlba                  2.3.5    2021-12-06 [2] CRAN (R 4.1.2)
+#  jsonlite               1.8.0    2022-02-22 [2] CRAN (R 4.1.2)
+#  labeling               0.4.2    2020-10-20 [2] CRAN (R 4.1.0)
+#  lattice                0.20-45  2021-09-22 [3] CRAN (R 4.1.2)
+#  lifecycle              1.0.1    2021-09-24 [2] CRAN (R 4.1.2)
+#  limma                  3.50.3   2022-04-07 [2] Bioconductor
+#  locfit                 1.5-9.5  2022-03-03 [2] CRAN (R 4.1.2)
+#  magrittr               2.0.3    2022-03-30 [2] CRAN (R 4.1.2)
+#  MASS                   7.3-56   2022-03-23 [3] CRAN (R 4.1.2)
+#  Matrix                 1.4-1    2022-03-23 [3] CRAN (R 4.1.2)
+#  MatrixGenerics       * 1.6.0    2021-10-26 [2] Bioconductor
+#  matrixStats          * 0.62.0   2022-04-19 [2] CRAN (R 4.1.2)
+#  metapod                1.2.0    2021-10-26 [2] Bioconductor
 #  munsell                0.5.0    2018-06-12 [2] CRAN (R 4.1.0)
-#  pillar                 1.6.3    2021-09-26 [1] CRAN (R 4.1.0)
+#  pillar                 1.7.0    2022-02-01 [2] CRAN (R 4.1.2)
 #  pkgconfig              2.0.3    2019-09-22 [2] CRAN (R 4.1.0)
 #  purrr                * 0.3.4    2020-04-17 [2] CRAN (R 4.1.0)
-#  R6                     2.5.1    2021-08-19 [1] CRAN (R 4.1.0)
-#  Rcpp                   1.0.7    2021-07-07 [2] CRAN (R 4.1.0)
-#  RCurl                  1.98-1.5 2021-09-17 [2] CRAN (R 4.1.0)
-#  rlang                  0.4.12   2021-10-18 [2] CRAN (R 4.1.0)
-#  rprojroot              2.0.2    2020-11-15 [2] CRAN (R 4.1.0)
-#  rsvd                   1.0.5    2021-04-16 [1] CRAN (R 4.1.0)
-#  S4Vectors            * 0.30.2   2021-10-03 [2] Bioconductor
-#  ScaledMatrix           1.0.0    2021-05-19 [1] Bioconductor
-#  scales                 1.1.1    2020-05-11 [2] CRAN (R 4.1.0)
-#  scater               * 1.20.1   2021-06-15 [1] Bioconductor
-#  scDblFinder          * 1.6.0    2021-05-19 [1] Bioconductor
-#  scran                * 1.20.1   2021-05-24 [1] Bioconductor
-#  scuttle              * 1.2.1    2021-08-05 [1] Bioconductor
-#  sessioninfo          * 1.2.1    2021-11-02 [2] CRAN (R 4.1.0)
-#  SingleCellExperiment * 1.14.1   2021-05-21 [2] Bioconductor
-#  sparseMatrixStats      1.4.2    2021-08-08 [2] Bioconductor
+#  R6                     2.5.1    2021-08-19 [2] CRAN (R 4.1.2)
+#  Rcpp                   1.0.8.3  2022-03-17 [2] CRAN (R 4.1.2)
+#  RCurl                  1.98-1.7 2022-06-09 [2] CRAN (R 4.1.2)
+#  rlang                  1.0.2    2022-03-04 [2] CRAN (R 4.1.2)
+#  rprojroot              2.0.3    2022-04-02 [2] CRAN (R 4.1.2)
+#  rsvd                   1.0.5    2021-04-16 [2] CRAN (R 4.1.2)
+#  S4Vectors            * 0.32.4   2022-03-24 [2] Bioconductor
+#  ScaledMatrix           1.2.0    2021-10-26 [2] Bioconductor
+#  scales                 1.2.0    2022-04-13 [2] CRAN (R 4.1.2)
+#  scater               * 1.22.0   2021-10-26 [2] Bioconductor
+#  scDblFinder          * 1.8.0    2021-10-26 [1] Bioconductor
+#  scran                * 1.22.1   2021-11-14 [2] Bioconductor
+#  scuttle              * 1.4.0    2021-10-26 [2] Bioconductor
+#  sessioninfo          * 1.2.2    2021-12-06 [2] CRAN (R 4.1.2)
+#  SingleCellExperiment * 1.16.0   2021-10-26 [2] Bioconductor
+#  sparseMatrixStats      1.6.0    2021-10-26 [2] Bioconductor
 #  statmod                1.4.36   2021-05-10 [2] CRAN (R 4.1.0)
-#  SummarizedExperiment * 1.22.0   2021-05-19 [2] Bioconductor
-#  tibble                 3.1.5    2021-09-30 [1] CRAN (R 4.1.0)
-#  tidyselect             1.1.1    2021-04-30 [2] CRAN (R 4.1.0)
+#  SummarizedExperiment * 1.24.0   2021-10-26 [2] Bioconductor
+#  tibble                 3.1.7    2022-05-03 [2] CRAN (R 4.1.2)
+#  tidyselect             1.1.2    2022-02-21 [2] CRAN (R 4.1.2)
 #  utf8                   1.2.2    2021-07-24 [2] CRAN (R 4.1.0)
-#  vctrs                  0.3.8    2021-04-29 [2] CRAN (R 4.1.0)
-#  vipor                  0.4.5    2017-03-22 [1] C
+#  vctrs                  0.4.1    2022-04-13 [2] CRAN (R 4.1.2)
+#  vipor                  0.4.5    2017-03-22 [2] CRAN (R 4.1.2)
+#  viridis                0.6.2    2021-10-13 [2] CRAN (R 4.1.2)
+#  viridisLite            0.4.0    2021-04-13 [2] CRAN (R 4.1.0)
+#  withr                  2.5.0    2022-03-03 [2] CRAN (R 4.1.2)
+#  xgboost                1.5.2.1  2022-02-21 [1] CRAN (R 4.1.2)
+#  XVector                0.34.0   2021-10-26 [2] Bioconductor
+#  zlibbioc               1.40.0   2021-10-26 [2] Bioconductor
+#
+#  [1] /users/jstolz/R/4.1.x
+#  [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/site-library
+#  [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/library
+#
+# ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

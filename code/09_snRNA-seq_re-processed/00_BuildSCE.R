@@ -62,24 +62,27 @@ s3e.hb.1735 <- s3e.hb.1735[match(rownames(s3e.hb.5558), rownames(s3e.hb.1735)), 
 s3e.hb.1092 <- s3e.hb.1092[match(rownames(s3e.hb.5558), rownames(s3e.hb.1092)), ]
 s3e.hb.5555 <- s3e.hb.5555[match(rownames(s3e.hb.5558), rownames(s3e.hb.5555)), ]
 s3e.hb.5558 <- s3e.hb.5558[match(rownames(s3e.hb.1204), rownames(s3e.hb.5558)), ]
+
+
+sce.all.hb <- cbind(s3e.hb.1204, s3e.hb.5558, s3e.hb.1469, s3e.hb.5639, s3e.hb.1735, s3e.hb.1092, s3e.hb.5555)
+rm(s3e.hb.1469,s3e.hb.1204,s3e.hb.5558,s3e.hb.5639, s3e.hb.1735, s3e.hb.1092,s3e.hb.5555)
+
+
+save(sce.all.hb,
+     file=here("processed-data","09_snRNA-seq_re-processed","20220601_human_hb_processing.rda"))
 #######################################
 ###########Drop Empties###############
 ######################################
+cat(paste0("Simulating empty drops for: s3e.hb... \n"))
+set.seed(109)
 
-load(here("processed-data","09_snRNA-seq_re-processed","droplet_scores_troubleshoot","droplet_scores_Br5639.Rdata"))
-e.out.hb.5639<-e.out
-load(here("processed-data","09_snRNA-seq_re-processed","droplet_scores_troubleshoot","droplet_scores_Br5558.Rdata"))
-e.out.hb.5558<-e.out
-load(here("processed-data","09_snRNA-seq_re-processed","droplet_scores_troubleshoot","droplet_scores_Br5555.Rdata"))
-e.out.hb.5555<-e.out
-load(here("processed-data","09_snRNA-seq_re-processed","droplet_scores_troubleshoot","droplet_scores_Br1735.Rdata"))
-e.out.hb.1735<-e.out
-load(here("processed-data","09_snRNA-seq_re-processed","droplet_scores_troubleshoot","droplet_scores_Br1469.Rdata"))
-e.out.hb.1469<-e.out
-load(here("processed-data","09_snRNA-seq_re-processed","droplet_scores_troubleshoot","droplet_scores_Br1204.Rdata"))
-e.out.hb.1204<-e.out
-load(here("processed-data","09_snRNA-seq_re-processed","droplet_scores_troubleshoot","droplet_scores_Br1092.Rdata"))
-e.out.hb.1092<-e.out
+e.out.hb.1204 <- emptyDrops(counts(s3e.hb.1204), niters=20000)
+e.out.hb.1469 <- emptyDrops(counts(s3e.hb.1469), niters=20000)
+e.out.hb.5639 <- emptyDrops(counts(s3e.hb.5639), niters=20000)
+e.out.hb.1735 <- emptyDrops(counts(s3e.hb.1735), niters=20000)
+e.out.hb.1092 <- emptyDrops(counts(s3e.hb.1092), niters=20000)
+e.out.hb.5555 <- emptyDrops(counts(s3e.hb.5555), niters=20000)
+e.out.hb.5558 <- emptyDrops(counts(s3e.hb.5558), niters=20000)
 ####################################
 ########Subset for Empty Drops #####
 ####################################
@@ -97,52 +100,9 @@ rm(s3e.hb.1469,s3e.hb.1204,s3e.hb.5558,s3e.hb.5639, s3e.hb.1735, s3e.hb.1092,s3e
 
 
 dim(sce.all.hb)
-# [1] 36601 19864
 
-#(barcode whitelist must be ~6.8 million potential barcodes?)
-rownames(sce.all.hb) <- uniquifyFeatureNames(rowData(sce.all.hb)$Symbol, rowData(sce.all.hb)$ID)
-
-
-gtf_cols = c("source", "type", "gene_id", "gene_version", "gene_name", "gene_type")
-gtf <- rtracklayer::import("/dcs04/lieber/lcolladotor/annotationFiles_LIBD001/10x/refdata-gex-GRCh38-2020-A/genes/genes.gtf")
-    gtf <- gtf[gtf$type == "gene"]
-    names(gtf) <- gtf$gene_id
-
-
-    ## Match the genes
-    if (verbose) message(Sys.time(), " adding gene information to the sce.all.hb object")
-    match_genes <- match(rownames(sce.all.hb), gtf$gene_id)
-
-    if (all(is.na(match_genes))) {
-        ## Protect against scenario where one set has GENCODE IDs and the other one has ENSEMBL IDs.
-        warning("Gene IDs did not match. This typically happens when you are not using the same GTF file as the one that was used by SpaceRanger. For example, one file uses GENCODE IDs and the other one ENSEMBL IDs. read10xVisiumWrapper() will try to convert them to ENSEMBL IDs.", call. = FALSE)
-        match_genes <- match(gsub("\\..*", "", rownames(sce.all.hb)), gsub("\\..*", "", gtf$gene_id))
-    }
-
-    if (any(is.na(match_genes))) {
-        warning("Dropping ", sum(is.na(match_genes)), " out of ", length(match_genes), " genes for which we don't have information on the reference GTF file. This typically happens when you are not using the same GTF file as the one that was used by SpaceRanger.", call. = FALSE)
-        ## Drop the few genes for which we don't have information
-        sce.all.hb <- sce.all.hb[!is.na(match_genes), ]
-        match_genes <- match_genes[!is.na(match_genes)]
-    }
-
-    ## Keep only some columns from the gtf
-    mcols(gtf) <- mcols(gtf)[, gtf_cols[gtf_cols %in% colnames(mcols(gtf))]]
-
-    ## Add the gene info to our sce.all.hb object
-    rowRanges(sce.all.hb) <- gtf[match_genes]
-
-load(here("processed-data","08_snRNA-seq_Erik", "s3e_hb.rda"), verbose = TRUE)
-
-s3e.hb$key <- paste0(s3e.hb$sample_name, "_", s3e.hb$Barcode)
-sce.all.hb$sample_short <- basename(gsub("/outs/raw_feature_bc_matrix", "", sce.all.hb$Sample))
-sce.all.hb$key <- paste0(sce.all.hb$sample_short, "_", sce.all.hb$Barcode)
-m <- match(sce.all.hb$key, s3e.hb$key)
-sce.all.hb$cellType_Erik <- s3e.hb$cellType[m]
 
 save(sce.all.hb,
-     file=here("processed-data","08_snRNA-seq_Erik","20220301_human_hb_processing.rda"))
+     file=here("processed-data","09_snRNA-seq_re-processed","20220601_human_hb_processing.rda"))
 
-save(e.out.hb.1204, e.out.hb.1469, e.out.hb.5639, e.out.hb.1735, e.out.hb.1092, e.out.hb.5555,
-     file=here("processed-data","08_snRNA-seq_Erik","20220301_human_hb_processing_drops.rda"))
 
