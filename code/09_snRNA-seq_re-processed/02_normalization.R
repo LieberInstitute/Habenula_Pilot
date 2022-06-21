@@ -34,7 +34,7 @@ sce.all.hb <- devianceFeatureSelection(sce.all.hb,
                                    batch=as.factor(sce.all.hb$sample_short))
     # This temp file just used for getting batch-corrected components (drops a variety of entries)
 
-pdf(here("processed-data","09_snRNA-seq_re-processed", "binomial_deviance.pdf"))
+pdf(here("plots","09_snRNA-seq_re-processed", "binomial_deviance.pdf"))
 plot(sort(rowData(sce.all.hb)$binomial_deviance, decreasing=T),
      type="l", xlab="ranked genes",
      ylab="binomial deviance", main="Feature Selection with Deviance: LC (n=3)")
