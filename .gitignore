@@ -7,5 +7,6 @@ preprocessed_data/
 =======
 processed-data/07_cellranger/
 processed-data/08_snRNA-seq_Erik/
+processed-data/09_snRNA-seq_re-processed/
 plots/09_snRNA-seq_re-processed/live_checks.pdf
 >>>>>>> update .gitignore
