@@ -11,7 +11,6 @@ library(dynamicTreeCut)
 library(SingleCellExperiment)
 library(scRNAseq)
 library(batchelor)
-library(EnsDb.Hsapiens.v86)
 library(scater)
 library(scran)
 library(uwot)
@@ -77,7 +76,7 @@ dev.off()
 save(sce.all.hb, pc.choice.hb,
      file=here("processed-data","09_snRNA-seq_re-processed","03_clustering.Rda"))
 
-# sgejobs::job_single('R-batchJob_DLPFC-n3_optimalPCselxn_LAH2021', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript R-batchJob_DLPFC-n3_optimalPCselxn_LAH2021.R")
+# sgejobs::job_single('03_clustering', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 03_clustering.R")
 ## Reproducibility information
 print("Reproducibility information:")
 Sys.time()
