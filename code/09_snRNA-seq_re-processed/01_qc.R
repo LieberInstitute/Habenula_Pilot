@@ -189,6 +189,7 @@ round(100 * sweep(x, 1, x[, 3], "/"), 2)
 
 library(scDblFinder)
 library(purrr)
+
 sample_id_names<- names(table(sce.all.hb$sample_short))
 names(sample_id_names)<-sample_id_names
 
@@ -245,8 +246,9 @@ map(dbl.dens.focused, ~round(quantile(.x, probs=seq(0,1,by=0.05)),3))
 #  0.000  0.027  0.048  0.076  0.103  0.137  0.185  0.240  0.316  0.391  0.480
 #    55%    60%    65%    70%    75%    80%    85%    90%    95%   100%
 #  0.577  0.686  0.803  0.934  1.085  1.241  1.464  1.826  2.409 18.087
+
 map(dbl.dens.focused,~table(.x >= 5))
-# $Br1092
+# Br1092
 #
 # FALSE  TRUE
 #  3586    36
@@ -280,8 +282,6 @@ map(dbl.dens.focused,~table(.x >= 5))
 #
 # FALSE  TRUE
 #  3400    32
-
-
 # Percent that would be dropped at density score >= 5
 round(sapply(names(dbl.dens.focused), function(x) {
   table(dbl.dens.focused[[x]] >= 5)["TRUE"] / ncol(sample_id_rse[[x]]) * 100
@@ -295,6 +295,7 @@ round(sapply(names(dbl.dens.focused), function(x) {
 # Add the doublet density scores to the colData
 for(i in names(sample_id_rse)){
   sce.all.hb[[i]]$doubletScore <- dbl.dens.focused[[i]]
+  return(sce.all.hb)
 }
 
 save(sce.all.hb, file = here("processed-data","08_snRNA-seq_Erik", "01_qc.rda"))

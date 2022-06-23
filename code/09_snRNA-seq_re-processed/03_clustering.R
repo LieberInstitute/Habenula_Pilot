@@ -89,13 +89,13 @@ sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
   # 16     63     72      0    153    816      0      1
   # 18      2     30    172    115      0      0     12
 
-# rbind the ref.sampleInfo[.rev]
-ref.sampleInfo <- rbind(ref.sampleInfo, ref.sampleInfo.rev)
+
+
 
 ## check doublet score for each prelim clust
-clusIndexes = splitit(sce.dlpfc$prelimCluster)
+clusIndexes = splitit(sce.all.hb$prelimCluster)
 prelimCluster.medianDoublet <- sapply(clusIndexes, function(ii){
-  median(sce.dlpfc$doubletScore[ii])
+  sce.all.hb[[i]]$doubletScore[ii]
 }
 )
 
