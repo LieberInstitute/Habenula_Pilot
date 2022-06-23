@@ -78,6 +78,40 @@ save(sce.all.hb, pc.choice.hb,
 
 # sgejobs::job_single('03_clustering', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 03_clustering.R")
 ## Reproducibility information
+
+load(here("processed-data","09_snRNA-seq_re-processed","03_clustering.Rda"))
+
+sample_prelimClusters <- table(sce.all.hb$prelimCluster, sce.all.hb$sample_short)  # (a little bit, but is typical)
+sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
+  #    Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639
+  # 2       0     12    250      1      0      8      7
+  # 5      54    107      0     76    490      0      7
+  # 16     63     72      0    153    816      0      1
+  # 18      2     30    172    115      0      0     12
+
+# rbind the ref.sampleInfo[.rev]
+ref.sampleInfo <- rbind(ref.sampleInfo, ref.sampleInfo.rev)
+
+## check doublet score for each prelim clust
+clusIndexes = splitit(sce.dlpfc$prelimCluster)
+prelimCluster.medianDoublet <- sapply(clusIndexes, function(ii){
+  median(sce.dlpfc$doubletScore[ii])
+}
+)
+
+summary(prelimCluster.medianDoublet)
+# Min.  1st Qu.   Median     Mean  3rd Qu.     Max.
+# 0.01059  0.07083  0.14823  0.53264  0.30064 14.79144
+
+hist(prelimCluster.medianDoublet)
+
+## watch in clustering
+prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5]
+# 19       32       73
+# 14.79144  7.98099 10.20462
+
+table(sce.dlpfc$prelimCluster)[c(19, 32, 73)]
+
 print("Reproducibility information:")
 Sys.time()
 proc.time()
