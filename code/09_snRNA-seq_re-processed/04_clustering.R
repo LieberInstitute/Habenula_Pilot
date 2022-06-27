@@ -18,6 +18,7 @@ library(DropletUtils)
 library(jaffelab)
 library(Rtsne)
 library(here)
+library(utils)
 # ===
 
 
@@ -32,7 +33,7 @@ pc.choice.hb <- getClusteredPCs(reducedDim(sce.all.hb))
 
 # How many PCs should use in this space?
 metadata(pc.choice.hb)$chosen
-#[1] 57
+#[1] 61
 
 ## Plot n Clusters vs. d PCs
 pdf(here("plots","09_snRNA-seq_re-processed", "PC_choice_habenulan_n7.pdf"))
@@ -79,7 +80,7 @@ save(sce.all.hb, pc.choice.hb,
 # sgejobs::job_single('03_clustering', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 03_clustering.R")
 ## Reproducibility information
 
-load(here("processed-data","09_snRNA-seq_re-processed","03_clustering.Rda"))
+#load(here("processed-data","09_snRNA-seq_re-processed","03_clustering.Rda"))
 
 sample_prelimClusters <- table(sce.all.hb$prelimCluster, sce.all.hb$sample_short)  # (a little bit, but is typical)
 sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
@@ -90,29 +91,26 @@ sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
   # 18      2     30    172    115      0      0     12
 
 
-names = c("Br1092", "Br1204", "Br1469", "Br1735", "Br5555", "Br5558", "Br5639")
+
 
 ## check doublet score for each prelim clust
 clusIndexes = splitit(sce.all.hb$prelimCluster)
-for(i in names){
-    prelimCluster.Doublet <- sapply(clusIndexes, function(ii){
-     sce.all.hb[[i]]$doubletScore[unlist(ii)]
+prelimCluster.medianDoublet <- sapply(clusIndexes, function(ii){
+     median(sce.all.hb$doubletScore[ii])
     })
-    print(summary(prelimCluster.Doublet))
-}
+
 
 summary(prelimCluster.medianDoublet)
-# Min.  1st Qu.   Median     Mean  3rd Qu.     Max.
-# 0.01059  0.07083  0.14823  0.53264  0.30064 14.79144
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.02246 0.15994 0.28116 0.37690 0.51432 1.75874
 
 hist(prelimCluster.medianDoublet)
 
 ## watch in clustering
 prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5]
-# 19       32       73
-# 14.79144  7.98099 10.20462
+# named numeric(0)
 
-table(sce.dlpfc$prelimCluster)[c(19, 32, 73)]
+#table(sce.dlpfc$prelimCluster)[c(19, 32, 73)]
 
 print("Reproducibility information:")
 Sys.time()
