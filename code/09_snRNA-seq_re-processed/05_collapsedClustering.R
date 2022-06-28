@@ -119,3 +119,5 @@ plotTSNE(sce.all.hb, colour_by="doubletScore", point_alpha=0.5)
 plotUMAP(sce.all.hb, colour_by="sample_short", point_alpha=0.5)
 plotUMAP(sce.all.hb, colour_by="collapsedCluster", point_alpha=0.5)
 dev.off()
+
+save(sce.all.hb, file = here("processed-data","09_snRNA-seq_re-processed","05_collapsedClustering.Rda"))
