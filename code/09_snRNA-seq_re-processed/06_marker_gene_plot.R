@@ -65,7 +65,13 @@ Inhib = list(
     "SLC35F4"
 )
 
-markers.eric.hab = list(Inhib = Inhib,Excit = Excit,Astro = Astro,Micro = Micro,Oligo = Oligo,OPC = OPC)
+
+
+markers.eric.hab = list(Inhib = unlist(Inhib),Excit = unlist(Excit),Astro = unlist(Astro),Micro = unlist(Micro),Oligo = unlist(Oligo),OPC = unlist(OPC))
+markers.mathys.custom$excitatory_neuron<- markers.mathys.custom$excitatory_neuron[c(1,3:5)]
+markers.mathys.custom$oligodendrocyte_precursor <- markers.mathys.custom$oligodendrocyte_precursor[c(1,3)]
+markers.mathys.custom$endothelial <- markers.mathys.custom$endothelial[c(1,2,3)]
+
 plotExpressionCustom <- function(sce, features, features_name, anno_name = "cellType",
                                  point_alpha=0.2, point_size=0.7, ncol=2, xlab = NULL,
                                  exprs_values = "logcounts", scales = "fixed"){
@@ -103,7 +109,7 @@ for(i in 1:length(markers.mathys.custom)){
 }
 dev.off()
 
-rownames(sce.all.hb)<-rowData(sce.all.hb)$gene_name
+
 pdf(here("plots","09_snRNA-seq_re-processed", "regionSpecific_Hab-n7_marker-logExprs_habMarkers_collapsedClusters_JMS2022.pdf"), height=6, width=8)
 for(i in 1:length(markers.eric.hab)){
   print(
