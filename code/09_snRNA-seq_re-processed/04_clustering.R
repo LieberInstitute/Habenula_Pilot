@@ -19,6 +19,7 @@ library(jaffelab)
 library(Rtsne)
 library(here)
 library(utils)
+library(sessioninfo)
 # ===
 
 
