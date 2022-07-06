@@ -14,7 +14,9 @@ library(ggplot2)
 
 load(here("processed-data","08_snRNA-seq_Erik", "01_qc.rda"), verbose = TRUE)
 
-sce.all.hb <- sce.all.hb[sce.all.hb$discard == FALSE | sce.all.hb$discard_auto ==FALSE,]
+table(sce.all.hb$discard, sce.all.hb$discard_auto)
+table(!sce.all.hb$discard &! sce.all.hb$discard_auto)
+sce.all.hb <- sce.all.hb[,!sce.all.hb$discard &! sce.all.hb$discard_auto]
 # Use `multiBatchNorm()` to compute log-normalized counts, matching the scaling across samples
 sce.all.hb <- multiBatchNorm(sce.all.hb, batch=sce.all.hb$sample_short)
 
