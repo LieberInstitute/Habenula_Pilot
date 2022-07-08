@@ -11,6 +11,7 @@ library(jaffelab)
 library(Rtsne)
 library(here)
 library(utils)
+library(sessionInfo)
 ### Step 2: Hierarchical clustering of pseudo-bulked ("PB'd") counts with most robust normalization
   #         (as determined in: 'side-Rscript_testingStep2_HC-normalizn-approaches_wAmygData_MNTJan2020.R')
   #           ** That is, to pseudo-bulk (aka 'cluster-bulk') on raw counts, on all [non-zero] genes,
@@ -28,7 +29,7 @@ prelimCluster.PBcounts <- sapply(clusIndexes, function(ii){
     # And btw...
     table(rowSums(prelimCluster.PBcounts)==0)
 # FALSE  TRUE
-# 33910  2691
+# 33829  2772
 
 # Compute LSFs at this level
 sizeFactors.PB.all  <- librarySizeFactors(prelimCluster.PBcounts)
@@ -60,11 +61,11 @@ clust.treeCut <- cutreeDynamic(tree.clusCollapsed, distM=as.matrix(dist.clusColl
 
 table(clust.treeCut)
 # clust.treeCut
-# 0 1 2 3 4 5 6
-# 7 4 4 4 2 2 2
+# 0 1 2 3 4 5 6 7
+# 4 5 4 4 3 2 2 2
 
 unname(clust.treeCut[order.dendrogram(dend)])
-#6 6 5 5 2 2 2 2 1 1 1 1 0 4 4 0 3 3 3 3 0 0 0 0 0
+#[1] 5 5 1 1 1 1 1 2 2 2 2 4 4 4 6 6 0 0 3 3 3 3 7 7 0 0
     ## Cutting at 250 looks good for the main neuronal branch, but a lot of glial
      #    prelim clusters are dropped off (0's)
 
@@ -80,7 +81,6 @@ unname(clust.treeCut[order.dendrogram(dend)])
 # unname(clust2)
 
 # Add new labels to those prelimClusters cut off
-clust.treeCut[order.dendrogram(dend)][which(clust.treeCut[order.dendrogram(dend)]==0)] <- max(clust.treeCut)+c(1, 6, 2, 3, 4, 5, 5)
 
 # 'Re-write', since there are missing numbers
 # clust.treeCut[order.dendrogram(dend)] <- as.numeric(as.factor(clust2))
@@ -113,11 +113,26 @@ plotReducedDim(sce.all.hb, dimred="GLMPCA_MNN", ncomponents=5, colour_by="collap
 plotTSNE(sce.all.hb, colour_by="sample_short", point_alpha=0.5)
 plotTSNE(sce.all.hb, colour_by="high.mito", point_alpha=0.5)
 plotTSNE(sce.all.hb, colour_by="collapsedCluster", point_alpha=0.5)
+plotTSNE(sce.all.hb, colour_by="prelimCluster", point_alpha=0.5)
 plotTSNE(sce.all.hb, colour_by="sum", point_alpha=0.5)
 plotTSNE(sce.all.hb, colour_by="doubletScore", point_alpha=0.5)
+plotTSNE(sce.all.hb, colour_by="cellType_Erik", point_alpha=0.5)
+
 # And some more informative UMAPs
-plotUMAP(sce.all.hb, colour_by="sample_short", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="prelimCluster", point_alpha=0.5)
 plotUMAP(sce.all.hb, colour_by="collapsedCluster", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="sample_short", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="high.mito", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="sum", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="doubletScore", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="cellType_Erik", point_alpha=0.5)
 dev.off()
 
 save(sce.all.hb, file = here("processed-data","09_snRNA-seq_re-processed","05_collapsedClustering.Rda"))
+
+
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
