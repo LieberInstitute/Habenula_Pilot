@@ -23,7 +23,7 @@ annotationTab.hab$cellType[c(4)] <- c("Inhib")
 annotationTab.hab$cellType[c(1,2,5,6)] <- paste0("Excit_", c("A","B","C","D"))
 annotationTab.hab$cellType[c(9,10)] <- paste0("Astro_",c("A","B"))
 annotationTab.hab$cellType[c(11)] <- c("Micro")
-annotationTab.hab$cellType[c(6)] <- c("OPC")
+annotationTab.hab$cellType[c(7)] <- c("OPC")
 annotationTab.hab$cellType[c(3)] <- c("Oligo")
 annotationTab.hab$cellType[c(8)] <- c("Ambig")
 
@@ -41,12 +41,13 @@ n_Prelimclusters <- length(levels(sce.all.hb$prelimCluster))
 ## Add annotations, looking at marker gene expression
 annotationTab.hab <- data.frame(prelimCluster=c(1:n_Prelimclusters))
 annotationTab.hab$Region <- NA
+annotationTab.hab$Region[c(9,12)] <- c("Habenula_broad")
 annotationTab.hab$Region[c(11,22)] <- paste0("Medial-Hab",c("A","B"))
 annotationTab.hab$Region[c(6,4,8,13,16,19)] <- paste0("Lateral-Hab_", c("A","B","C","D","E","F"))
 annotationTab.hab$Region[c(15,18,20,21,23)] <- paste0("Thalmus_Broad",c("A","B","C","D","E"))
 annotationTab.hab$Region[c(14)] <- c("Thalmus_PF")
 annotationTab.hab$Region[c(3)] <- c("Thalmus_PVT")
-annotationTab.hab$Region[c(1,2,9)] <- paste0("Ambig",c("A","B","C"))
+annotationTab.hab$Region[c(1,2,5,7,5,10,17,24,25,26)] <- paste0("Ambig",c("A","B","C","D","E","F","G","H","I","J"))
 
 
 sce.all.hb$Region <- annotationTab.hab$Region[match(sce.all.hb$prelimCluster,
@@ -54,31 +55,48 @@ sce.all.hb$Region <- annotationTab.hab$Region[match(sce.all.hb$prelimCluster,
 
 sce.all.hb$Region <- factor(sce.all.hb$Region)
 
-table(sce.all.hb$Region)
-  #                Ambig Astro_A Astro_B Excit_A Excit_B Excit_C Inhib Micro Oligo  OPC
-  # AmbigA           225       0       0       0       0       0     0     0     0    0
-  # AmbigB             0       0       0       0       0       0     0     0  1115    0
-  # AmbigC             0       0       0       0       0       0     0   211     0    0
-  # Lateral-Hab_A      0       0       0       0     279       0     0     0     0    0
-  # Lateral-Hab_B      0       0       0     375       0       0     0     0     0    0
-  # Lateral-Hab_C      0       0       0     462       0       0     0     0     0    0
-  # Lateral-Hab_D      0       0       0     899       0       0     0     0     0    0
-  # Lateral-Hab_E      0       0       0     141       0       0     0     0     0    0
-  # Lateral-Hab_F      0       0       0     112       0       0     0     0     0    0
-  # Medial-HabA        0       0       0       0       0     544     0     0     0    0
-  # Medial-HabB        0       0       0       0       0     148     0     0     0    0
-  # Thalmus_BroadA     0       0       0       0     186       0     0     0     0    0
-  # Thalmus_BroadB     0       0       0       0       0       0  3986     0     0    0
-  # Thalmus_BroadC     0       0       0       0       0       0     0     0     0   71
-  # Thalmus_BroadD     0       0       0       0       0       0     0     0     0   39
-  # Thalmus_BroadE     0       0       0       0       0       0  1982     0     0    0
-  # Thalmus_PF         0       0       0       0       0       0   746     0     0    0
-  # Thalmus_PVT        0       0       0       0     577       0     0     0     0    0
+table(sce.all.hb$Region, sce.all.hb$cellType)
+  #                  Ambig Astro_A Astro_B Excit_A Excit_B Excit_C Excit_D Inhib Micro Oligo  OPC
+  # AmbigA           225       0       0       0       0       0       0     0     0     0    0
+  # AmbigB             0       0       0       0       0       0       0     0     0  1115    0
+  # AmbigD             0       0       0       0       0       0       0     0     0   398    0
+  # AmbigE             0     302       0       0       0       0       0     0     0     0    0
+  # AmbigF             0       0       0       0       0       0       0     0     0   306    0
+  # AmbigG             0       0       0       0       0       0       0     0     0     0  798
+  # AmbigH             0       0       0       0       0       0       0     0     0     0   79
+  # AmbigI             0       0     183       0       0       0       0     0     0     0    0
+  # AmbigJ             0       0       0       0       0       0       0     0     0   349    0
+  # Habenula_broad     0       0       0       0    1553       0       0     0   211     0    0
+  # Lateral-Hab_A      0       0       0       0     279       0       0     0     0     0    0
+  # Lateral-Hab_B      0       0       0     375       0       0       0     0     0     0    0
+  # Lateral-Hab_C      0       0       0     462       0       0       0     0     0     0    0
+  # Lateral-Hab_D      0       0       0     899       0       0       0     0     0     0    0
+  # Lateral-Hab_E      0       0       0     141       0       0       0     0     0     0    0
+  # Lateral-Hab_F      0       0       0     112       0       0       0     0     0     0    0
+  # Medial-HabA        0       0       0       0       0     544       0     0     0     0    0
+  # Medial-HabB        0       0       0       0       0     148       0     0     0     0    0
+  # Thalmus_BroadA     0       0       0       0     186       0       0     0     0     0    0
+  # Thalmus_BroadB     0       0       0       0       0       0       0  3986     0     0    0
+  # Thalmus_BroadC     0       0       0       0       0       0      71     0     0     0    0
+  # Thalmus_BroadD     0       0       0       0       0       0      39     0     0     0    0
+  # Thalmus_BroadE     0       0       0       0       0       0       0  1982     0     0    0
+  # Thalmus_PF         0       0       0       0       0       0       0   746     0     0    0
+  # Thalmus_PVT        0       0       0       0     577       0       0     0     0     0    0
 
 
 
 save(sce.all.hb, file = here("processed-data","09_snRNA-seq_re-processed","07_annotation.Rda"))
 
+
+### Make plots ###
+
+
+pdf(here("plots","09_snRNA-seq_re-processed","regionSpecific_HAB-n7_reducedDims-with-annotated.pdf"))
+plotTSNE(sce.all.hb, colour_by="Region", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="Region", point_alpha=0.5)
+plotTSNE(sce.all.hb, colour_by="cellType", point_alpha=0.5)
+plotUMAP(sce.all.hb, colour_by="cellType", point_alpha=0.5)
+dev.off()
 
 print("Reproducibility information:")
 Sys.time()
