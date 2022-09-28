@@ -5,22 +5,26 @@
 library("SummarizedExperiment")
 library("GenomicRanges")
 library("ggplot2")
+library("edgeR")
+library("jaffelab")
 
-# Loads "rse_gene" variable. Then change variabble to "rse" for easier calling.
-load("/dcl02/lieber/ajaffe/Roche_Habenula/processed-data/01_bulk_speaqeasy/rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata")
+# Loads merged rse_gene from Geo, includes data from Leo.
+load("/dcs04/lieber/lcolladotor/dbDev_LIBD001/RNAseq/4Bukola/rse_gene.merged.curated.n5780.rda")
+
+# Changes variabble to "rse" for easier calling.
 rse <- rse_gene
 rm(rse_gene)
 
+# Filters for only Protocol = RiboZeroGold (filters out BSP1 and some BSP2)
+filtRSE <- rse[, rse$Protocol == "RiboZeroGold"]
+
+# Computing logcounts.[ERROR]
+assays(filtRSE, withDimnames = FALSE)$logcounts <-
+    edgeR::cpm(calcNormFactors(filtRSE, method = "TMM"), log = TRUE, prior.count = 0.5)
+
 
 # Subsets rse for GPR151.
-# Geo suggested a quicker method: grse <- rse[rowData(rse)$Symbol==('GPR151'), ]
-findGPR <- rowRanges(rse)[rowRanges(rse)$Symbol == "GPR151"]
-subGPR <- subsetByOverlaps(rse, findGPR)
-
-# Filter out BSP1 and some BSP2 HPC (HIPPO) samples.
-
-
-# Computes logcounts.
+subGPR <- filtRSE[rowData(filtRSE)$Symbol == "GPR151", ]
 
 
 # Makes violin plots for logcounts of GPR151 by brain region.
