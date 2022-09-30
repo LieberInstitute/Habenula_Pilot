@@ -31,4 +31,4 @@ rownames(filtRSE) <- rowData(filtRSE)$Symbol
 # Running code
 p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region")
 
-ggsave(p, filename = "/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_trialPlot2.png")
+ggsave(p, filename = "/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_rseViolin.png")
