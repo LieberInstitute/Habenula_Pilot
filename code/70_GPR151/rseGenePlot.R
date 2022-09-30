@@ -13,31 +13,21 @@ library("scater")
 # Loads merged rse_gene from Geo, includes data from Leo.
 load("/dcs04/lieber/lcolladotor/dbDev_LIBD001/RNAseq/4Bukola/rse_gene.merged.curated.n5780.rda")
 
-# Changes variabble to "rse" for easier calling.
-rse <- rse_gene
-rm(rse_gene)
+# Filters for only RiboZeroGold protocol, age, and sex.
+filtRSE <- rse_gene[, rse_gene$Protocol == "RiboZeroGold" & rse_gene$Sex == "M" &
+                 (rse_gene$Age >= 20.00 & rse_gene$Age <= 69.00)]
 
-# Filters for only Protocol = RiboZeroGold, age, and sex.
-filtRSE <- rse[, rse$Protocol == "RiboZeroGold" & rse$Sex == "M" &
-                 (rse$Age >= 20.00 & rse$Age <= 69.00)]
-
-# Computing logcounts.[ERROR]
+# Computing logcounts for filtRSE.
 assays(filtRSE, withDimnames = FALSE)$logcounts <-
   edgeR::cpm(calcNormFactors(filtRSE, method = "TMM"), log = TRUE, prior.count = 0.5)
 
+# Loading modified violin plot code for rse (my_plotExpression).
+source("/users/bsimbiat/Habenula_Bulk/code/70_GPR151/rseViolin.R")
 
-# Rename filtRSE's rownames by Symbols for RowData
+# Prepping for my_plotExpression by renaming rownames by Symbols for RowData. Easy calling.
 rownames(filtRSE) <- rowData(filtRSE)$Symbol
-
-# (1) Loading Louise's code (save it as R code)
-# source(pwd for file)
 
 # Running code
 p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region")
 
 ggsave(p, filename = "/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_trialPlot2.png")
-
-
- pdf("/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_trialPlot.pdf")
- p
- dev.off()
