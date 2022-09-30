@@ -29,6 +29,7 @@ source("/users/bsimbiat/Habenula_Bulk/code/70_GPR151/rseViolin.R")
 rownames(filtRSE) <- rowData(filtRSE)$Symbol
 
 # Running code
-p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region")
+p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region") + 
 
-ggsave(p, filename = "/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_rseViolin.png")
+ggsave(p, filename = "/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_rseViolin.png", 
+       width = 15, height = 18, units = "in")

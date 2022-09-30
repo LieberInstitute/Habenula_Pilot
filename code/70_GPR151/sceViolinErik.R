@@ -16,7 +16,8 @@ load("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/08
 # Renaming sce.all.hb as sce for the purpose of this script.
 sce <- sce.all.hb
 
-# Calculating logcounts:
+# Calculating logcounts. !Normalization not needed!
+
 assays(sce, withDimnames = FALSE)$logcounts <-
   edgeR::cpm(calcNormFactors(sce, method = "TMM"), log = TRUE, prior.count = 0.5)
 
