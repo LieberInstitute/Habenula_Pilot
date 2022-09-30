@@ -8,6 +8,7 @@ library("ggplot2")
 library("edgeR")
 library ("sessioninfo") # trying to incorporate this package
 library("scater")
+library("utils")
 # library("jaffelab") INSTALL
 
 # Loads merged rse_gene from Geo, includes data from Leo.
