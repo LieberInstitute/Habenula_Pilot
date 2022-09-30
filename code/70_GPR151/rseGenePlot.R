@@ -8,6 +8,7 @@ library("ggplot2")
 library("edgeR")
 library ("sessioninfo") # trying to incorporate this package
 library("scater")
+# library("jaffelab") INSTALL
 
 # Loads merged rse_gene from Geo, includes data from Leo.
 load("/dcs04/lieber/lcolladotor/dbDev_LIBD001/RNAseq/4Bukola/rse_gene.merged.curated.n5780.rda")
@@ -24,30 +25,19 @@ filtRSE <- rse[, rse$Protocol == "RiboZeroGold" & rse$Sex == "M" &
 assays(filtRSE, withDimnames = FALSE)$logcounts <-
   edgeR::cpm(calcNormFactors(filtRSE, method = "TMM"), log = TRUE, prior.count = 0.5)
 
-# Subsets rse for GPR151.
-subGPR <- filtRSE[rowData(filtRSE)$Symbol == "GPR151", ]
 
-# Makes violin plots for logcounts of GPR151 by brain region.
-# Create df (Sample ID, Dx, Sex, Logcounts)
-# Using second method: scater::plotExpression:
+# Rename filtRSE's rownames by Symbols for RowData
+rownames(filtRSE) <- rowData(filtRSE)$Symbol
 
-# Can't be used for rse
-# plotExpression(subGPR,  rownames(levels(colData(subGPR)$Region)))
+# (1) Loading Louise's code (save it as R code)
+# source(pwd for file)
 
-# This is a very sloppy way to do this because any shift in the rows will render
-# all the further analysis negligble. Currently banking on no shift. Hoping for
-# guidance on a cleaner way to do this.
-logcounts <- t(assays(subGPR)$logcounts)
-region <- as.matrix(colData(subGPR)$Region)
+# Running code
+p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region")
 
-df <- cbind(region, logcounts)
-df <- as.data.frame(df)
-
-trialPlot <- ggplot(df, aes(x = region, y = logcounts))
-
-pdf("/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_trialPlot")
-trialPlot
-dev.off()
+ggsave(p, filename = "/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_trialPlot2.png")
 
 
-# expression_long <- reshape2::melt(as.matrix(assays(subGPR)[[assays]][Dx, ]))
+ pdf("/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_trialPlot.pdf")
+ p
+ dev.off()
