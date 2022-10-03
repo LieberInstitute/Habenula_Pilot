@@ -21,7 +21,7 @@ source("/users/bsimbiat/Habenula_Bulk/code/70_GPR151/rseViolin.R")
 
 # Reformatting sce for my_plotExpression:
 rownames(sce) <- rowData(sce)$gene_name
-  
+
 m <- my_plotExpression(sce, "GPR151", assay = "logcounts", ct = "cellType")
 
-ggsave(m, filename = "/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_sceViolin.png")
+ggsave(m, filename = "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/70_GPR151/70_sceViolin.png")

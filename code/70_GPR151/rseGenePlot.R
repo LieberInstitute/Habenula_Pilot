@@ -16,7 +16,7 @@ load("/dcs04/lieber/lcolladotor/dbDev_LIBD001/RNAseq/4Bukola/rse_gene.merged.cur
 
 # Filters for only RiboZeroGold protocol, age, and sex.
 filtRSE <- rse_gene[, rse_gene$Protocol == "RiboZeroGold" & rse_gene$Sex == "M" &
-                 (rse_gene$Age >= 20.00 & rse_gene$Age <= 69.00)]
+                      (rse_gene$Age >= 20.00 & rse_gene$Age <= 69.00)]
 
 # Computing logcounts for filtRSE.
 assays(filtRSE, withDimnames = FALSE)$logcounts <-
@@ -29,7 +29,6 @@ source("/users/bsimbiat/Habenula_Bulk/code/70_GPR151/rseViolin.R")
 rownames(filtRSE) <- rowData(filtRSE)$Symbol
 
 # Running code
-p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region") + 
+p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region")
 
-ggsave(p, filename = "/users/bsimbiat/Habenula_Bulk/plots/70_GPR151/70_rseViolin.png", 
-       width = 15, height = 18, units = "in")
+ggsave(p, filename = "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/70_GPR151/70_rseViolin.png")
