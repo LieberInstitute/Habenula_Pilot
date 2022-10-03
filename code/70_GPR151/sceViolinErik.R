@@ -1,6 +1,6 @@
 # September 30th, 2022
 # SCE Gene Violin Plots (using sce information from Erik, third plot for presentation) - Bukola Ajanaku
-# qrsh -l mem_free=50G,h_vmem=100G
+# qrsh -l mem_free=24G,h_vmem=100G
 
 library("SummarizedExperiment")
 library("GenomicRanges")
@@ -10,11 +10,16 @@ library ("sessioninfo") # trying to incorporate this package
 library("scater")
 library("utils")
 
-# Loading sce data from Erik
-load("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/08_snRNA-seq_Erik/20220301_human_hb_processing.rda")
+# Loading sce data from Erik. Both have issues with logcounts for assays.
+# load("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/08_snRNA-seq_Erik/20210525_human_hb_processing.rda", verbose = TRUE)
+# load("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/08_snRNA-seq_Erik/20220301_human_hb_processing.rda", verbose = TRUE)
+
+# 
+ load("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/08_snRNA-seq_Erik/s3e_hb.rda", verbose = TRUE)
+ 
 
 # Renaming sce.all.hb as sce for the purpose of this script.
-sce <- sce.all.hb
+# sce <- sce.all.hb
 
 # Calculating logcounts. !Normalization not needed!
 
