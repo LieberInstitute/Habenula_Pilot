@@ -2,11 +2,12 @@
 # RSE Gene Violin Plots - Bukola Ajanaku
 # qrsh -l mem_free=24G,h_vmem=100G
 
+library ("sessioninfo")
+
 library("SummarizedExperiment")
 library("GenomicRanges")
 library("ggplot2")
 library("edgeR")
-library ("sessioninfo") # trying to incorporate this package
 library("scater")
 library("utils")
 # library("jaffelab") INSTALL
@@ -33,3 +34,9 @@ p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region")
 
 ggsave(p, filename = "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/70_GPR151/70_rseViolin.png",
           height = 15, width = 18, units = "in")
+
+print('Reproducibility information:')
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
