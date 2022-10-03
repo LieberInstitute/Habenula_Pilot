@@ -23,7 +23,7 @@ assays(filtRSE, withDimnames = FALSE)$logcounts <-
   edgeR::cpm(calcNormFactors(filtRSE, method = "TMM"), log = TRUE, prior.count = 0.5)
 
 # Loading modified violin plot code for rse (my_plotExpression).
-source("/users/bsimbiat/Habenula_Bulk/code/70_GPR151/rseViolin.R")
+source("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/code/70_GPR151/rseViolin.R")
 
 # Prepping for my_plotExpression by renaming rownames by Symbols for RowData. Easy calling.
 rownames(filtRSE) <- rowData(filtRSE)$Symbol
@@ -31,4 +31,5 @@ rownames(filtRSE) <- rowData(filtRSE)$Symbol
 # Running code
 p <- my_plotExpression(filtRSE, genes = c("GPR151"), ct = "Region")
 
-ggsave(p, filename = "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/70_GPR151/70_rseViolin.png")
+ggsave(p, filename = "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/70_GPR151/70_rseViolin.png",
+          height = 15, width = 18, units = "in")

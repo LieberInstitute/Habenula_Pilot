@@ -17,11 +17,12 @@ load("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/09
 sce <- sce.all.hb
 
 # Loading my_plotExpression:
-source("/users/bsimbiat/Habenula_Bulk/code/70_GPR151/rseViolin.R")
+source("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/code/70_GPR151/rseViolin.R")
 
 # Reformatting sce for my_plotExpression:
 rownames(sce) <- rowData(sce)$gene_name
 
 m <- my_plotExpression(sce, "GPR151", assay = "logcounts", ct = "cellType")
 
-ggsave(m, filename = "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/70_GPR151/70_sceViolin.png")
+ggsave(m, filename = "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/70_GPR151/70_sceViolin.png",
+          height = 15, width = 18, units = "in")
