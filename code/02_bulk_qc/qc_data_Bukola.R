@@ -27,11 +27,13 @@ man$Flowcell = ss(ss(man$V1, "/",8), "_",2)
 pd$Flowcell = man$Flowcell[match(pd$SAMPLE_ID, man$V5)]
 
 # Code for boxplot creation of covariates by flowcell
-create_boxplots <- function(objInt, cov_var, yaxTit) {
+  # look into other variables rather than flowcell 
+create_boxplots_flowcell <- function(objInt, cov_var, yaxTit) {
  # I don't have age information so I can't filter by it. ***
   objInt = as.data.frame(objInt)
    plot = ggplot(objInt, aes(x = cov_var, y = Flowcell)) +
-      geom_boxplot() +
+      geom_boxplot(outlier.shape = NA) + 
+      geom_jitter() +
       theme_classic(base_size = 10) +
       theme(legend.position="none", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
             axis.text.x = element_text(vjust = 0.45) ) +
@@ -42,16 +44,58 @@ create_boxplots <- function(objInt, cov_var, yaxTit) {
 
 # Creating boxplots and printing them all onto one pdf.
 pdf("qc_qlots_bukola/technical_covariates_by_flowcell.pdf")
- par(mfrow = , cex.axis=1.8,cex.lab=1.8)
- create_boxplots(pd, pd$ERCCsumLogErr, "ERCC RSS")
- create_boxplots(pd, pd$numReads, "Reads(no log 10)")
- create_boxplots(pd, pd$numMapped, "# Aligns(no log 20)")
- create_boxplots(pd, pd$overallMapRate, "Overall Map Rate")
- create_boxplots(pd, pd$concordMapRate, "Concordant Map Rate")
- create_boxplots(pd, pd$mitoRate, "chrM Map Rate")
- create_boxplots(pd, pd$totalAssignedGene, "Gene Assignment Rate")
- create_boxplots(pd, pd$rRNA_rate, "Gene rRNA Rate")
+# par(mfrow = , cex.axis=1.8,cex.lab=1.8)
+ create_boxplots_flowcell(pd, pd$ERCCsumLogErr, "ERCC RSS")
+ create_boxplots_flowcell(pd, log10(pd$numReads), "Num of Reads (log 10)")
+ create_boxplots_flowcell(pd, log10(pd$numMapped), "Num Mapped (log 10)")
+ create_boxplots_flowcell(pd, pd$overallMapRate, "Overall Map Rate")
+ create_boxplots_flowcell(pd, pd$concordMapRate, "Concordant Map Rate")
+ create_boxplots_flowcell(pd, pd$mitoRate, "chrM Map Rate")
+ create_boxplots_flowcell(pd, pd$totalAssignedGene, "Gene Assignment Rate")
+ create_boxplots_flowcell(pd, pd$rRNA_rate, "Gene rRNA Rate")
+dev.off()
+
+# Phenotype Information
+pheno = read.csv(here("preprocessed_data", "habenula_pheno_data.csv"), as.is=TRUE)
+pd = cbind(pheno[match(pd$SAMPLE_ID, pheno$RNum),], pd[,-1])
+# pd$BrNum[startsWith(pd$BrNum, "Br0") == TRUE]
+pd$BrNum[pd$BrNum == "Br0983"] = "Br983" #Why is this important
+
+# More checks: All male and about the same amount of SCZ and control between flowcells.
+table(pd$Flowcell, pd$PrimaryDx) 
+table(pd$Sex, pd$PrimaryDx) 
+
+# Code for boxplot creation of covariates by disease
+create_boxplots_dx <- function(objInt, cov_var, yaxTit) {
+  # I don't have age information so I can't filter by it. ***
+  objInt = as.data.frame(objInt)
+  plot = ggplot(objInt, aes(x = cov_var, y = PrimaryDx)) +
+    geom_boxplot(outlier.shape = NA) + 
+    geom_jitter() +
+    theme_classic(base_size = 10) +
+    theme(legend.position="none", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+          axis.text.x = element_text(vjust = 0.45) ) + 
+    labs(x=yaxTit, y= "Condition") 
+  
+  return(plot)
+}
+
+# QC by disease
+pdf("qc_qlots_bukola/technical_covariates_by_dx.pdf")
+# par(mar=c(5,6,2,2), cex.axis=1.8,cex.lab=1.8)
+  create_boxplots_dx(pd, pd$ERCCsumLogErr, "ERCC RSS")
+  create_boxplots_dx(pd, log10(pd$numReads), "Reads (log 10)")
+  create_boxplots_dx(pd, pd$numMapped, "# Aligns(no log 10)")
+  create_boxplots_dx(pd, pd$overallMapRate, "Overall Map Rate")
+  create_boxplots_dx(pd, pd$concordMapRate, "Concordant Map Rate")
+  create_boxplots_dx(pd, pd$mitoRate, "chrM Map Rate")
+  create_boxplots_dx(pd, pd$totalAssignedGene, "Gene Assignment Rate")
+  create_boxplots_dx(pd, pd$rRNA_rate, "Gene rRNA Rate")
+  create_boxplots_dx(pd, pd$RIN, "RIN")
+  create_boxplots_dx(pd, pd$AgeDeath, "Age")
 dev.off()
 
 
-# ERCCsumLogErr important 
+
+
+
