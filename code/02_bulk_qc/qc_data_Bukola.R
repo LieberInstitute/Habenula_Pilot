@@ -26,6 +26,12 @@ man = read.delim(here("preprocessed_data", ".samples_unmerged.manifest"),
 man$Flowcell = ss(ss(man$V1, "/",8), "_",2)
 pd$Flowcell = man$Flowcell[match(pd$SAMPLE_ID, man$V5)]
 
+# Phenotype Information
+pheno = read.csv(here("preprocessed_data", "habenula_pheno_data.csv"), as.is=TRUE)
+pd = cbind(pheno[match(pd$SAMPLE_ID, pheno$RNum),], pd[,-1])
+# pd$BrNum[startsWith(pd$BrNum, "Br0") == TRUE]
+pd$BrNum[pd$BrNum == "Br0983"] = "Br983" #Why is this important
+
 # Code for boxplot creation of covariates by flowcell
   # look into other variables rather than flowcell 
 create_boxplots_flowcell <- function(objInt, cov_var, yaxTit) {
@@ -43,7 +49,7 @@ create_boxplots_flowcell <- function(objInt, cov_var, yaxTit) {
 }
 
 ## Base function creation for creating boxplots
-create_boxplots <- function(objInt, cov_var, samp_cond){
+create_boxplots <- function(objInt, cov_var, samp_cond, colorby){
   # creating df of possible titles
   orig_var_name <- c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
     "concordMapRate", "mitoRate", "totalAssignedGene", "rRNA_rate")
@@ -52,21 +58,22 @@ create_boxplots <- function(objInt, cov_var, samp_cond){
                      "Gene Assignment Rate", "Gene rRNA Rate")
   posib_title <- data.frame(orig_var_name, var_plot_title)
   
-  objInt = as.data.frame(objInt)
-  
-  if(samp_cond %in% posib_title$orig_var_name) {
-    newTitle <- posib_title[posib_title$orig_var_name == samp_cond, 2]
+  if(cov_var %in% posib_title$orig_var_name) {
+    newTitle <- posib_title[posib_title$orig_var_name == cov_var, 2]
   } else{
-    newTitle <- samp_cond 
+    newTitle <- cov_var
   }
   
-  plot = ggplot(objInt, aes_(x = print(cov_var), y = print(samp_cond))) +
+  coloring <- 
+  
+  plot = ggplot(objInt, aes_(x = objInt[,cov_var], y = as.factor(objInt[,samp_cond]))) +
     geom_boxplot(outlier.shape = NA) + 
     geom_jitter() +
-    theme_classic(base_size = 10) +
-    theme(legend.position="none", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+    theme_bw(base_size = 10) + 
+    theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
           axis.text.x = element_text(vjust = 0.45) ) +
-    labs(x = newTitle, y = samp_cond)
+    labs(x = newTitle, y = samp_cond, color = colorby) 
+    
 }
 
 # printing for base function
@@ -88,11 +95,7 @@ pdf("qc_qlots_bukola/technical_covariates_by_flowcell.pdf")
  create_boxplots_flowcell(pd, pd$rRNA_rate, "Gene rRNA Rate")
 dev.off()
 
-# Phenotype Information
-pheno = read.csv(here("preprocessed_data", "habenula_pheno_data.csv"), as.is=TRUE)
-pd = cbind(pheno[match(pd$SAMPLE_ID, pheno$RNum),], pd[,-1])
-# pd$BrNum[startsWith(pd$BrNum, "Br0") == TRUE]
-pd$BrNum[pd$BrNum == "Br0983"] = "Br983" #Why is this important
+
 
 # More checks: All male and about the same amount of SCZ and control between flowcells.
 table(pd$Flowcell, pd$PrimaryDx) 
