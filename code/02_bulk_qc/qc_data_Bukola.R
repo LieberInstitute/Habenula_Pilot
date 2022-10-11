@@ -18,8 +18,8 @@ load(here("preprocessed_data","rse_jx_Roche_Habenula_PairedEnd_n73.Rdata")) #jun
 load(here("preprocessed_data", "rse_tx_Roche_Habenula_PairedEnd_n73.Rdata")) #transcript data
 
 # Makes folders.
-dir.create(here("qc_qlots_bukola"))
-dir.create(here("count_data_bukola"))
+dir.create(here("preprocessed_data","qc_qlots_bukola"))
+dir.create(here("preprocessed_data","count_data_bukola"))
 
 # original flow cell [ask Louise about]
 pd = colData(rse_gene)
@@ -87,7 +87,7 @@ for(i in covVarInt){
 }
 
   # printing plots
-pdf("qc_qlots_bukola/qc_qlots_byFlowCell.pdf", height = 7, width = 11)
+pdf("preprocessed_data/qc_qlots_bukola/qc_qlots_byFlowCell.pdf", height = 7, width = 11)
   mget(ls(patt = "plotflow_"))
 dev.off()
 
@@ -100,6 +100,6 @@ for(i in covVarInt){
 }
 
 # printing plots
-pdf("qc_qlots_bukola/qc_qlots_byPrimaryDx.pdf", height = 7, width = 11)
+pdf("preprocessed_data/qc_qlots_bukola/qc_qlots_byPrimaryDx.pdf", height = 7, width = 11)
   mget(ls(patt = "plotdx_"))
 dev.off()
