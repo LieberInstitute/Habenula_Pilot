@@ -42,6 +42,39 @@ create_boxplots_flowcell <- function(objInt, cov_var, yaxTit) {
   return(plot)
 }
 
+## Base function creation for creating boxplots
+create_boxplots <- function(objInt, cov_var, samp_cond){
+  # creating df of possible titles
+  orig_var_name <- c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
+    "concordMapRate", "mitoRate", "totalAssignedGene", "rRNA_rate")
+  var_plot_title <- c("ERCC RSS", "Num of Reads (log 10)", "Num Mapped (log 10)",
+                     "Overall Map Rate", "Concordant Map Rate", "chrM Map Rate",
+                     "Gene Assignment Rate", "Gene rRNA Rate")
+  posib_title <- data.frame(orig_var_name, var_plot_title)
+  
+  objInt = as.data.frame(objInt)
+  
+  if(samp_cond %in% posib_title$orig_var_name) {
+    newTitle <- posib_title[posib_title$orig_var_name == samp_cond, 2]
+  } else{
+    newTitle <- samp_cond 
+  }
+  
+  plot = ggplot(objInt, aes_(x = print(cov_var), y = print(samp_cond))) +
+    geom_boxplot(outlier.shape = NA) + 
+    geom_jitter() +
+    theme_classic(base_size = 10) +
+    theme(legend.position="none", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+          axis.text.x = element_text(vjust = 0.45) ) +
+    labs(x = newTitle, y = samp_cond)
+}
+
+# printing for base function
+pdf("qc_qlots_bukola/tester.pdf")
+  plot
+dev.off()
+
+
 # Creating boxplots and printing them all onto one pdf.
 pdf("qc_qlots_bukola/technical_covariates_by_flowcell.pdf")
 # par(mfrow = , cex.axis=1.8,cex.lab=1.8)
@@ -72,7 +105,7 @@ create_boxplots_dx <- function(objInt, cov_var, yaxTit) {
   plot = ggplot(objInt, aes(x = cov_var, y = PrimaryDx)) +
     geom_boxplot(outlier.shape = NA) + 
     geom_jitter() +
-    theme_classic(base_size = 10) +
+    theme_bw(base_size = 10) +
     theme(legend.position="none", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
           axis.text.x = element_text(vjust = 0.45) ) + 
     labs(x=yaxTit, y= "Condition") 
@@ -96,6 +129,16 @@ pdf("qc_qlots_bukola/technical_covariates_by_dx.pdf")
 dev.off()
 
 
+# QC by other features?
+# Plot all points: outliers = FALSE, and add geom_point or geom_scatter
+# rework function to create one base 
+# use geom_bw instead of geom_classic for grid
+# load and us gg repel 
+# make graphs more visually interesting
+# share in habenula chat
+# plotting flowcell and make samples different colors based on diagnosis 
+# plotting diagnoses and make samples look different by flowcell
+# start reading elsewhere
 
 
 
