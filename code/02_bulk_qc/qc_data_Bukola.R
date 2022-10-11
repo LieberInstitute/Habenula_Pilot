@@ -18,8 +18,8 @@ load(here("preprocessed_data","rse_jx_Roche_Habenula_PairedEnd_n73.Rdata")) #jun
 load(here("preprocessed_data", "rse_tx_Roche_Habenula_PairedEnd_n73.Rdata")) #transcript data
 
 # Makes folders.
-dir.create("qc_qlots_bukola")
-dir.create("count_data_bukola")
+dir.create(here("qc_qlots_bukola"))
+dir.create(here("count_data_bukola"))
 
 # original flow cell [ask Louise about]
 pd = colData(rse_gene)
@@ -37,6 +37,10 @@ pd$BrNum[pd$BrNum == "Br0983"] = "Br983" #Why is this important
 # More checks: All male and about the same amount of SCZ and control between flowcells.
 table(pd$Flowcell, pd$PrimaryDx) 
 table(pd$Sex, pd$PrimaryDx) 
+
+# Fixing columns with log to better view trends
+pd$numReads = log10(pd$numReads)
+pd$numMapped = log10(pd$numMapped)
 
 ## Base function creation for creating boxplots by different variables.
 create_boxplots <- function(objInt, cov_var, samp_cond, colorby){
