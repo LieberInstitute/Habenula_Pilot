@@ -8,6 +8,8 @@ library(SummarizedExperiment)
 library(VariantAnnotation)
 library(here)
 library(ggplot2)
+library(ggrepel)
+library(plot_grid)
 
 # Loading data (pipeline output). 
 load(here("preprocessed_data", "rse_gene_Roche_Habenula_PairedEnd_n73.Rdata")) #gene info
@@ -32,23 +34,11 @@ pd = cbind(pheno[match(pd$SAMPLE_ID, pheno$RNum),], pd[,-1])
 # pd$BrNum[startsWith(pd$BrNum, "Br0") == TRUE]
 pd$BrNum[pd$BrNum == "Br0983"] = "Br983" #Why is this important
 
-# Code for boxplot creation of covariates by flowcell
-  # look into other variables rather than flowcell 
-create_boxplots_flowcell <- function(objInt, cov_var, yaxTit) {
- # I don't have age information so I can't filter by it. ***
-  objInt = as.data.frame(objInt)
-   plot = ggplot(objInt, aes(x = cov_var, y = Flowcell)) +
-      geom_boxplot(outlier.shape = NA) + 
-      geom_jitter() +
-      theme_classic(base_size = 10) +
-      theme(legend.position="none", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
-            axis.text.x = element_text(vjust = 0.45) ) +
-      labs(x=yaxTit, y= "Flowcell") 
-   
-  return(plot)
-}
+# More checks: All male and about the same amount of SCZ and control between flowcells.
+table(pd$Flowcell, pd$PrimaryDx) 
+table(pd$Sex, pd$PrimaryDx) 
 
-## Base function creation for creating boxplots
+## Base function creation for creating boxplots by different variables.
 create_boxplots <- function(objInt, cov_var, samp_cond, colorby){
   # creating df of possible titles
   orig_var_name <- c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
@@ -63,85 +53,49 @@ create_boxplots <- function(objInt, cov_var, samp_cond, colorby){
   } else{
     newTitle <- cov_var
   }
-  
-  coloring <- 
+
+  # In order to make sure geom_jitter and geom_text_repel use the same coordinates 
+  # for points (to prevent mislabeling).
+    pos <- position_jitter(seed = 2)
   
   plot = ggplot(objInt, aes_(x = objInt[,cov_var], y = as.factor(objInt[,samp_cond]))) +
     geom_boxplot(outlier.shape = NA) + 
-    geom_jitter() +
+    geom_jitter(aes_(color = as.factor(objInt[,colorby])), position = pos) +
+    geom_text_repel(aes(label = objInt[,"BrNum"], color = as.factor(objInt[,colorby])), position = pos) +
     theme_bw(base_size = 10) + 
     theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
-          axis.text.x = element_text(vjust = 0.45) ) +
-    labs(x = newTitle, y = samp_cond, color = colorby) 
+          axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+          axis.title = element_text(size=15)) +
+    labs(x = newTitle, y = samp_cond) +
+    guides(color = guide_legend(title = colorby))
     
 }
 
-# printing for base function
-pdf("qc_qlots_bukola/tester.pdf")
-  plot
-dev.off()
+# creating list of covariate names of interet
+covVarInt <-  c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
+                "concordMapRate", "mitoRate", "totalAssignedGene", "rRNA_rate")
 
-
-# Creating boxplots and printing them all onto one pdf.
-pdf("qc_qlots_bukola/technical_covariates_by_flowcell.pdf")
-# par(mfrow = , cex.axis=1.8,cex.lab=1.8)
- create_boxplots_flowcell(pd, pd$ERCCsumLogErr, "ERCC RSS")
- create_boxplots_flowcell(pd, log10(pd$numReads), "Num of Reads (log 10)")
- create_boxplots_flowcell(pd, log10(pd$numMapped), "Num Mapped (log 10)")
- create_boxplots_flowcell(pd, pd$overallMapRate, "Overall Map Rate")
- create_boxplots_flowcell(pd, pd$concordMapRate, "Concordant Map Rate")
- create_boxplots_flowcell(pd, pd$mitoRate, "chrM Map Rate")
- create_boxplots_flowcell(pd, pd$totalAssignedGene, "Gene Assignment Rate")
- create_boxplots_flowcell(pd, pd$rRNA_rate, "Gene rRNA Rate")
-dev.off()
-
-
-
-# More checks: All male and about the same amount of SCZ and control between flowcells.
-table(pd$Flowcell, pd$PrimaryDx) 
-table(pd$Sex, pd$PrimaryDx) 
-
-# Code for boxplot creation of covariates by disease
-create_boxplots_dx <- function(objInt, cov_var, yaxTit) {
-  # I don't have age information so I can't filter by it. ***
-  objInt = as.data.frame(objInt)
-  plot = ggplot(objInt, aes(x = cov_var, y = PrimaryDx)) +
-    geom_boxplot(outlier.shape = NA) + 
-    geom_jitter() +
-    theme_bw(base_size = 10) +
-    theme(legend.position="none", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
-          axis.text.x = element_text(vjust = 0.45) ) + 
-    labs(x=yaxTit, y= "Condition") 
-  
-  return(plot)
+# Covariates by Flowcell
+for(i in covVarInt){
+  # function(objInt, cov_var, samp_cond, colorby)
+  namer <- paste("plotflow", i, sep = "_")
+  assign(namer, create_boxplots(pd, i, "Flowcell", "PrimaryDx"))   
 }
 
-# QC by disease
-pdf("qc_qlots_bukola/technical_covariates_by_dx.pdf")
-# par(mar=c(5,6,2,2), cex.axis=1.8,cex.lab=1.8)
-  create_boxplots_dx(pd, pd$ERCCsumLogErr, "ERCC RSS")
-  create_boxplots_dx(pd, log10(pd$numReads), "Reads (log 10)")
-  create_boxplots_dx(pd, pd$numMapped, "# Aligns(no log 10)")
-  create_boxplots_dx(pd, pd$overallMapRate, "Overall Map Rate")
-  create_boxplots_dx(pd, pd$concordMapRate, "Concordant Map Rate")
-  create_boxplots_dx(pd, pd$mitoRate, "chrM Map Rate")
-  create_boxplots_dx(pd, pd$totalAssignedGene, "Gene Assignment Rate")
-  create_boxplots_dx(pd, pd$rRNA_rate, "Gene rRNA Rate")
-  create_boxplots_dx(pd, pd$RIN, "RIN")
-  create_boxplots_dx(pd, pd$AgeDeath, "Age")
+  # printing plots
+pdf("qc_qlots_bukola/qc_qlots_byFlowCell.pdf", height = 7, width = 11)
+  mget(ls(patt = "plotflow_"))
 dev.off()
 
 
-# QC by other features?
-# Plot all points: outliers = FALSE, and add geom_point or geom_scatter
-# rework function to create one base 
-# use geom_bw instead of geom_classic for grid
-# load and us gg repel 
-# make graphs more visually interesting
-# share in habenula chat
-# plotting flowcell and make samples different colors based on diagnosis 
-# plotting diagnoses and make samples look different by flowcell
-# start reading elsewhere
+# Covariates by Primary Diagnosis
+for(i in covVarInt){
+  # function(objInt, cov_var, samp_cond, colorby)
+  namer <- paste("plotdx", i, sep = "_")
+  assign(namer, create_boxplots(pd, i, "PrimaryDx", "Flowcell"))   
+}
 
-
-
+# printing plots
+pdf("qc_qlots_bukola/qc_qlots_byPrimaryDx.pdf", height = 7, width = 11)
+  mget(ls(patt = "plotdx_"))
+dev.off()
