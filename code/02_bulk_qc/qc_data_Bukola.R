@@ -9,7 +9,6 @@ library(VariantAnnotation)
 library(here)
 library(ggplot2)
 library(ggrepel)
-library(plot_grid)
 
 # Loading data (pipeline output). 
 load(here("preprocessed_data", "rse_gene_Roche_Habenula_PairedEnd_n73.Rdata")) #gene info
@@ -103,3 +102,11 @@ for(i in covVarInt){
 pdf("preprocessed_data/qc_qlots_bukola/qc_qlots_byPrimaryDx.pdf", height = 7, width = 11)
   mget(ls(patt = "plotdx_"))
 dev.off()
+
+####################
+## Genotype data ###
+####################
+
+# Read in VCF
+vcf = readVcf("preprocessed_data/Genotypes/mergedVariants.vcf.gz", "hg38" )
+colnames(vcf) = ss(ss(colnames(vcf), "/", 8), "_")
