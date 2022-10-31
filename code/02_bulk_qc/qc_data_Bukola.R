@@ -17,8 +17,8 @@ load(here("preprocessed_data","rse_jx_Roche_Habenula_PairedEnd_n73.Rdata")) #jun
 load(here("preprocessed_data", "rse_tx_Roche_Habenula_PairedEnd_n73.Rdata")) #transcript data
 
 # Makes folders.
-dir.create(here("preprocessed_data","qc_qlots_bukola"))
-dir.create(here("preprocessed_data","count_data_bukola"))
+# dir.create(here("preprocessed_data","qc_qlots_bukola"))
+# dir.create(here("preprocessed_data","count_data_bukola"))
 
 # original flow cell
 pd = colData(rse_gene)
@@ -116,15 +116,16 @@ colnames(vcf) = ss(basename(colnames(vcf)), "_")
 
 # Match order of RNums 
 all(pd$RNum %in% colnames(vcf))
+# TRUE. Otherwise, find another method of subsetting
 vcf = vcf[,pd$RNum] 
 
 # add rs num
-snpMap = import(here("processed-data","02_bulk_qc","common_missense_SNVs_hg38.bed"))
+snpMap = import(here("/dcs04/lieber/lcolladotor/libdDataSwaps_LIBD001/brain_swap/common_missense_SNVs_hg38.bed"))
 oo = findOverlaps(query = vcf, subject = snpMap, type="equal")
 rowData(vcf)$snpRsNum = NA
 rowData(vcf)$snpRsNum[queryHits(oo)] = snpMap$name[subjectHits(oo)]
 any(is.na(rowData(vcf)$snpRsNum))
-# FALSE. So we will use them as rownames.
+# FALSE. If not false, then we will need another method for rownames.
 rownames(vcf) = rowData(vcf)$snpRsNum
 
 ## filter ****
@@ -133,15 +134,17 @@ vcf = vcf[info(vcf)$DP > 5*ncol(vcf) & info(vcf)$DP < 80 *ncol(vcf) &
             info(vcf)$VDB >0.1,]
 
 ## read in obs
-genotyped = readVcf("/dcl01/ajaffe/data/lab/brain_swap/LIBD_Brain_Illumina_h650_1M_Omni5M_Omni2pt5_Macrogen_QuadsPlus_GenotypingBarcode.vcf.gz")
-br = ss(colnames(genotyped),"_")
-pd$hasGenotype = pd$BrNum %in% br
+genotyped = readVcf("/dcs04/lieber/lcolladotor/libdDataSwaps_LIBD001/brain_swap/LIBD_Brain_Illumina_h650_1M_Omni5M_Omni2pt5_Macrogen_QuadsPlus_GenotypingBarcode.vcf.gz")
+brainNumbers = ss(colnames(genotyped),"_")
+pd$hasGenotype = pd$BrNum %in% brainNumbers
 table(pd$hasGenotype)
 
-pd[!pd$BrNum %in% br,c("BrNum", "RNum")]
-## add genotype info
+# Finds brains without an ID number in the imputed data.
+pd[!(pd$BrNum %in% brainNumbers), c("BrNum", "RNum")]
 
-mm = match(rownames(vcf), rownames(genotyped))
+
+## add genotype info ****
+matcher = match(rownames(vcf), rownames(genotyped))
 vcf = vcf[!is.na(mm),]
 genotyped = genotyped[mm[!is.na(mm)],]
 
