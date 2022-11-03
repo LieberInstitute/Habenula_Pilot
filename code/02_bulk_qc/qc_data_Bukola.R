@@ -30,8 +30,8 @@ pd$Flowcell = man$Flowcell[match(pd$SAMPLE_ID, man$V5)]
 # Phenotype Information
 pheno = read.csv(here("preprocessed_data", "habenula_pheno_data.csv"), as.is=TRUE)
 pd = cbind(pheno[match(pd$SAMPLE_ID, pheno$RNum),], pd[,-1])
-# pd$BrNum[startsWith(pd$BrNum, "Br0") == TRUE]
-pd$BrNum[pd$BrNum == "Br0983"] = "Br983" #Why is this important
+pd$BrNum[startsWith(pd$BrNum, "Br0") == TRUE] 
+pd$BrNum[pd$BrNum == "Br0983"] = "Br983" # Matching LIBD naming conventions.  
 
 # More checks: All male and about the same amount of SCZ and control between flowcells.
 table(pd$Flowcell, pd$PrimaryDx) 
@@ -110,77 +110,83 @@ dev.off()
 ## Genotype data ###
 ####################
 
-# Read in VCF
+# Reads VCF. Contains info on SNPs imputed off of our bulk RNAseq data. 
 vcf = readVcf("preprocessed_data/Genotypes/mergedVariants.vcf.gz", "hg38" )
-colnames(vcf) = ss(basename(colnames(vcf)), "_")
+colnames(vcf) = ss(basename(colnames(vcf)), "_") # Grabs name for each SNP from filename.
 
-# Match order of RNums 
+# Match order of RNums. Makes sure all samples in phenotyped data match the samples of our imputed data. 
 all(pd$RNum %in% colnames(vcf))
-# TRUE. Otherwise, find another method of subsetting
+# Reorders imputec samples to match the order of the phenotyped samples.
 vcf = vcf[,pd$RNum] 
 
-# add rs num
+# Adding RsNum (SNP information). RsNum is a method of naming a specific SNP rather than calling on its chromosome and base location.
 snpMap = import(here("/dcs04/lieber/lcolladotor/libdDataSwaps_LIBD001/brain_swap/common_missense_SNVs_hg38.bed"))
-oo = findOverlaps(query = vcf, subject = snpMap, type="equal")
+oo = findOverlaps(query = vcf, subject = snpMap, type="equal") # finds the matching RsNums between our hg38 snpMap and our imputed RNAseq data.
 rowData(vcf)$snpRsNum = NA
-rowData(vcf)$snpRsNum[queryHits(oo)] = snpMap$name[subjectHits(oo)]
-any(is.na(rowData(vcf)$snpRsNum))
-# FALSE. If not false, then we will need another method for rownames.
+rowData(vcf)$snpRsNum[queryHits(oo)] = snpMap$name[subjectHits(oo)] # Adds correct RsNum to each SNP for all brain samples.
+any(is.na(rowData(vcf)$snpRsNum)) # checks to see if we've missed any SNP names.
+# FALSE. If not false, then we will need another method for naming the vcf. 
 rownames(vcf) = rowData(vcf)$snpRsNum
 
-## filter ****
+## filter
 vcf = vcf[info(vcf)$DP > 5*ncol(vcf) & info(vcf)$DP < 80 *ncol(vcf) &
             nchar(ref(vcf)) == 1 & elementNROWS(alt(vcf)) == 1 &
             info(vcf)$VDB >0.1,]
 
-## read in obs
+## Load genotyped object that contains info on (brains that have already been genotyped across LIBD database).
 genotyped = readVcf("/dcs04/lieber/lcolladotor/libdDataSwaps_LIBD001/brain_swap/LIBD_Brain_Illumina_h650_1M_Omni5M_Omni2pt5_Macrogen_QuadsPlus_GenotypingBarcode.vcf.gz")
-brainNumbers = ss(colnames(genotyped),"_")
-pd$hasGenotype = pd$BrNum %in% brainNumbers
-table(pd$hasGenotype)
+brainNumbers = ss(colnames(genotyped),"_") # Grabs brain number for each sample from file name.
+pd$hasGenotype = pd$BrNum %in% brainNumbers # Checks if our RNA seq samples can be found in the already genotyped database.
+table(pd$hasGenotype) # 3 are not.
 
-# Finds brains without an ID number in the imputed data.
-pd[!(pd$BrNum %in% brainNumbers), c("BrNum", "RNum")]
+# Pulls the 3 and displays their brain number and sample name.
+pd[pd$hasGenotype == FALSE, c("BrNum", "RNum")]
 
+## Adding genotype information to  samples that lack it.
+matcher = match(rownames(vcf), rownames(genotyped)) # Finds location of imputed SNP data among known genotyped object
+vcf = vcf[!is.na(matcher),] # drops all brain samples that have SNP information that cannot be found in our genotyped pool
+genotyped = genotyped[matcher[!is.na(matcher)],]  # subsets database of known genotypes for only samples that are present in our data 
 
-## add genotype info ****
-matcher = match(rownames(vcf), rownames(genotyped))
-vcf = vcf[!is.na(mm),]
-genotyped = genotyped[mm[!is.na(mm)],]
-
-## RNA-seq SNPs
+## RNA-seq SNPs (bulk RNAseq data) imputed off of our RNA data
+### Making a numerical system for each SNP for later correlative analyses.
 snpsCalled = geno(vcf)$GT
-snpsCalled[snpsCalled == "."] = 0
-snpsCalled[snpsCalled == "0/1"] = 1
-snpsCalled[snpsCalled == "1/1"] = 2
+snpsCalled[snpsCalled == "."] = 0 #homozygous reference
+snpsCalled[snpsCalled == "0/1"] = 1 # heterozygous
+snpsCalled[snpsCalled == "1/1"] = 2 # homozygous alternative
 class(snpsCalled) = "numeric"		  
 
-## DNA genotypes
+## DNA genotypes 
+### Making a numerical system for each SNP for later correlative analyses.
+### Idea: RNA SNPs should highly correlate to respective genotype which will confirm identity of unknown samples.
 snpsGeno = geno(genotyped)$GT
-snpsGeno[snpsGeno == "."] = NA
-snpsGeno[snpsGeno == "0/0"] = 0
-snpsGeno[snpsGeno == "0/1"] = 1
-snpsGeno[snpsGeno == "1/1"] = 2
+snpsGeno[snpsGeno == "." | snpsGeno == "./."] = NA
+snpsGeno[snpsGeno == "0/0"] = 0 # homozygous reference
+snpsGeno[snpsGeno == "0/1"] = 1 # heterozygous
+snpsGeno[snpsGeno == "1/1"] = 2 # homozygous alternative
 class(snpsGeno) = "numeric"
 
 ## flip
+## Checking to make sure that SNPs in VCF are either ref or alt bases. Any other value indicates major errors upstream.
 table(rowRanges(vcf)$REF == rowRanges(genotyped)$REF  | 
-        rowRanges(vcf)$REF == as.character(unlist(alt(genotyped))) )
-toFlip = which(rowRanges(vcf)$REF != rowRanges(genotyped)$REF)
-snpsGeno[toFlip,] = 2-snpsGeno[toFlip,] 
+        rowRanges(vcf)$REF == as.character(unlist(rowRanges(genotyped)$ALT))) # no FALSE is good.
+toFlip = which(rowRanges(vcf)$REF == as.character(unlist(rowRanges(genotyped)$ALT)))
+snpsGeno[toFlip,] = 2-snpsGeno[toFlip,] # Changing numerical values of imputed data where reference values match genotyped alt.
 
-## correlate
+## Creating correlation matrix.
 colnames(snpsGeno)= ss(colnames(snpsGeno), "_")
 snpCorObs = cor(snpsCalled, snpsGeno, use="pairwise.complete.obs")
 
 ## check best
 bestCor = data.frame(maxIndex = apply(as.matrix(snpCorObs), 1, which.max),
-                     maxCor = apply(snpCorObs, 1, max, na.rm=TRUE))
-bestCor$RNA_BrNum = pd$BrNum[match(rownames(bestCor), pd$RNum)]
-bestCor$DNA_BrNum = colnames(snpCorObs)[bestCor$maxIndex]
+                     maxCor = apply(snpCorObs, 1, max, na.rm=TRUE)) # Grabs max correlation values from matrix as well as its index. 
+bestCor$RNA_BrNum = pd$BrNum[match(rownames(bestCor), pd$RNum)] # Grabs brain number for each RNum found in imputed pheno data.  
+bestCor$DNA_BrNum = colnames(snpCorObs)[bestCor$maxIndex] # Grabs brain number for each sample based on max correlation between sample and genotyped data.
 bestCor$maxIndex = NULL
 bestCor$RNum = rownames(bestCor)
-bestCor$RNA_Region = pd$Region[match(bestCor$RNum, pd$RNum)]
+bestCor$RNA_Region = pd$Region[match(bestCor$RNum, pd$RNum)] # There is no pd$Region
+ 
+## Ideas:
+bestCor$checker = match(bestCor$RNA_BrNum, bestCor$DNA_BrNum) # Easy fix, no?
 
 checkCor = bestCor[bestCor$RNA_BrNum != bestCor$DNA_BrNum & bestCor$maxCor > 0.6,]
 checkCor
