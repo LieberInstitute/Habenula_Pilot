@@ -1,7 +1,7 @@
 # October 5, 2022
 # Using Erik's qc_data.R file and Daianna's 02_QC.R file, I am updating the 
 # code for checking the techincal effects of our Habenula bulk RNAseq data. 
-# qrsh -l mem_free=100G,h_vmem=100G
+# qrsh -l mem_free=50G,h_vmem=50G
 
 library(jaffelab)
 library(SummarizedExperiment)
@@ -11,10 +11,10 @@ library(ggplot2)
 library(ggrepel)
 
 # Loading data (pipeline output). 
-load(here("preprocessed_data", "rse_gene_Roche_Habenula_PairedEnd_n73.Rdata")) #gene info
-load(here("preprocessed_data", "rse_exon_Roche_Habenula_PairedEnd_n73.Rdata")) #exon data
-load(here("preprocessed_data","rse_jx_Roche_Habenula_PairedEnd_n73.Rdata")) #junction data
-load(here("preprocessed_data", "rse_tx_Roche_Habenula_PairedEnd_n73.Rdata")) #transcript data
+load(here("preprocessed_data", "rse_gene_Roche_Habenula_PairedEnd_n73.Rdata")) # gene info
+load(here("preprocessed_data", "rse_exon_Roche_Habenula_PairedEnd_n73.Rdata")) # exon data
+load(here("preprocessed_data","rse_jx_Roche_Habenula_PairedEnd_n73.Rdata")) # junction data
+load(here("preprocessed_data", "rse_tx_Roche_Habenula_PairedEnd_n73.Rdata")) # transcript data
 
 # Makes folders.
 # dir.create(here("preprocessed_data","qc_qlots_bukola"))
@@ -183,26 +183,36 @@ bestCor$RNA_BrNum = pd$BrNum[match(rownames(bestCor), pd$RNum)] # Grabs brain nu
 bestCor$DNA_BrNum = colnames(snpCorObs)[bestCor$maxIndex] # Grabs brain number for each sample based on max correlation between sample and genotyped data.
 bestCor$maxIndex = NULL
 bestCor$RNum = rownames(bestCor)
-bestCor$RNA_Region = pd$Region[match(bestCor$RNum, pd$RNum)] # There is no pd$Region
- 
-## Ideas:
-bestCor$checker = match(bestCor$RNA_BrNum, bestCor$DNA_BrNum) # Easy fix, no?
+# bestCor$RNA_Region = pd$Region[match(bestCor$RNum, pd$RNum)]  There is no pd$Region
 
-checkCor = bestCor[bestCor$RNA_BrNum != bestCor$DNA_BrNum & bestCor$maxCor > 0.6,]
+# Subsets for area of possible brain swapping where we are confident of the correlation values.
+checkCor = bestCor[bestCor$RNA_BrNum != bestCor$DNA_BrNum & bestCor$maxCor > 0.6,] 
 checkCor
-
-b = unique(c(checkCor$RNA_BrNum, checkCor$DNA_BrNum))
-bestCor[bestCor$RNA_BrNum %in% b | bestCor$DNA_BrNum %in% b,]
-
-bestCor[bestCor$DNA_BrNum == "Br1750",]
-
-### drop some samples for identity/genotype
-dropRNAs = c("R18355", "R18393", "R18421","R18364")
+# Drop samples that are swapped but are not convincingly anything else.
+dropRNAs = rownames(bestCor[bestCor$RNA_BrNum != bestCor$DNA_BrNum & bestCor$maxCor < 0.6,])
 pd = pd[! pd$RNum %in% dropRNAs,]
 
+# Checking the brain samples involved in mixup with high correlations to a known genotype.
+b = unique(c(checkCor$RNA_BrNum, checkCor$DNA_BrNum)) 
+bestCor[bestCor$RNA_BrNum %in% b | bestCor$DNA_BrNum %in% b,] 
+#          maxCor RNA_BrNum DNA_BrNum   RNum
+# R18420 0.8943435    Br5212    Br5212 R18420 # Makes sense. 
+# R18421 0.9406773    Br1350    Br5212 R18421 # We already have this Br5212. No duplicates. [Delete R18421]
+# R18422 0.9424066    Br1225    Br1350 R18422 
+# R18423 0.9043557    Br1750    Br1225 R18423 
+
+# Dropping sample R18421 
+pd = pd[pd$RNum != "R18421",]
+
+# Checking remaining samples
+bestCor[bestCor$DNA_BrNum == "Br1750",] # This brain number doesn't exist in genotyped data.
+bestCor[bestCor$DNA_BrNum == "Br1225",]
+#           maxCor RNA_BrNum DNA_BrNum   RNum
+# R18423 0.9043557    Br1750    Br1225 R18423 
+
 ## swap some samples
-pd[pd$RNum == "R18422",4:8] = pheno[pheno$BrNum == "Br1350",4:8]
-pd[pd$RNum == "R18423",4:8] = pheno[pheno$BrNum == "Br1225",4:8]
+pd[pd$RNum == "R18422",4:8] = pheno[pheno$BrNum == "Br1350",4:8] # Br1225 <- Br1350
+pd[pd$RNum == "R18423",4:8] = pheno[pheno$BrNum == "Br1225",4:8] # Br1750 <-Br1225
 
 ################################
 ############ save counts #######
@@ -211,14 +221,14 @@ pd[pd$RNum == "R18423",4:8] = pheno[pheno$BrNum == "Br1225",4:8]
 ## save gene counts
 rse_gene = rse_gene[,pd$RNum]
 colData(rse_gene) = pd
-save(rse_gene, file = paste0("count_data/rse_gene_Roche_Habenula_qcAndAnnotated_n",
-                             ncol(rse_gene), ".Rdata"))
+save(rse_gene, file = here("preprocessed_data", paste0("count_data_bukola/rse_gene_Roche_Habenula_qcAndAnnotated_n",
+                             ncol(rse_gene), ".Rdata")))
 
 ## save exons counts
 rse_exon = rse_exon[,pd$RNum]
 colData(rse_exon) = pd
-save(rse_exon, file = paste0("count_data/rse_exon_Roche_Habenula_qcAndAnnotated_n",
-                             ncol(rse_exon), ".Rdata"))
+save(rse_exon, file = here("preprocessed_data", paste0("count_data/rse_exon_Roche_Habenula_qcAndAnnotated_n",
+                             ncol(rse_exon), ".Rdata")))
 
 ## save junction counts
 rse_jx = rse_jx[,pd$RNum]
@@ -226,14 +236,14 @@ colData(rse_jx) = pd
 ## filter
 jIndex = (rowSums(assays(rse_jx)$counts) > 9) & (rowData(rse_jx)$Class != "Novel")
 rse_jx = rse_jx[jIndex,]
-save(rse_jx, file = paste0("count_data/rse_jx_Roche_Habenula_qcAndAnnotated_n",
-                           ncol(rse_jx), ".Rdata"))
+save(rse_jx, file = here("preprocessed_data", paste0("count_data/rse_jx_Roche_Habenula_qcAndAnnotated_n",
+                           ncol(rse_jx), ".Rdata")))
 
 ## save tx counts
 rse_tx = rse_tx[,pd$RNum]
 colData(rse_tx) = pd
-save(rse_tx, file = paste0("count_data/rse_tx_Roche_Habenula_qcAndAnnotated_n",
-                           ncol(rse_tx), ".Rdata"))
+save(rse_tx, file = here("preprocessed_data", paste0("count_data/rse_tx_Roche_Habenula_qcAndAnnotated_n",
+                           ncol(rse_tx), ".Rdata")))
 
 
 #######################	
