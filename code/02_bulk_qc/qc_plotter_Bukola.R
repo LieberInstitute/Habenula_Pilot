@@ -86,5 +86,72 @@ covVarInt <-  c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate",
     pdf("preprocessed_data/qc_qlots_bukola/qc_plots_byPrimaryDx.pdf", height = 7, width = 11)
     mget(ls(patt = "plotdx_"))
     dev.off()
+
 #########################
+# based on smokingMouse pipeline:
     
+# stable variables
+pd = colData(rse)
+drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
+           "GCcontent", "Ncontent", "SeqLengthDist", "SeqDuplication",
+           "OverrepSeqs", "AdapterContent", "KmerContent", "SeqLength_R1",
+           "perSeqQual", "perBaseContent", names(pd[,grepl("phred", names(pd))]),
+           names(pd[,grepl("Adapter", names(pd))]), "SeqLength_R2", "bamFile",
+           "trimmed", names(pd[,grepl("gene_", names(pd))]), "hasGenotype")
+
+pd = pd[,!(names(pd)) %in% drop]
+pd_dropped = colData(rse)[,(names(colData(rse))) %in% drop]
+
+
+# Mito Rate vs Ribo Rate ("mitoRate" (change to perc) vs "rRNA_rate")
+mito_vs_ribo = pd[,c("mitoRate", "rRNA_rate", "Flowcell", "PrimaryDx", 
+                     "Sex", "Race", "AgeDeath", 
+                     )]
+for(){
+  
+}    
+    
+mito_vs_ribo<- function (pheno_var, tissue, age, label){
+  if (is.null(age)){
+      RSE<-eval(parse_expr(paste("rse_gene_", tissue, sep="")))
+    }
+    else {
+      RSE<-eval(parse_expr(paste("rse_gene", tissue, age, sep="_")))
+     }
+      if (label==""){
+        plot=ggplot(data=as.data.frame(colData(RSE)), 
+                    aes(x=subsets_Mito_percent, y=subsets_Ribo_percent, color=eval(parse_expr(pheno_var)), 
+                        label=label))+ 
+          geom_point() +
+          theme(text = element_text(size = 10)) +
+          theme(legend.position="right", plot.margin=unit (c (1.5,2,1,2), 'cm')) +
+          labs(x="Percentage of mt counts", y="Percentage of ribosomal counts", color=pheno_var)
+      }
+      else {
+        plot=ggplot(data=as.data.frame(colData(RSE)), 
+                    aes(x=subsets_Mito_percent, y=subsets_Ribo_percent, color=eval(parse_expr(pheno_var)), 
+                        label=eval(parse_expr(label))))+ 
+          geom_point() +
+          ## Add samples' labels
+          geom_text_repel(color="black", size=2, max.overlaps = 100) +
+          theme(text = element_text(size = 10)) +
+          theme(legend.position="right", plot.margin=unit (c (1.5,2,1,2), 'cm')) +
+          labs(x="Percentage of mt counts", y="Percentage of ribosomal counts", color=pheno_var)
+      }
+      return(plot)
+    }
+    
+
+
+    
+    
+    
+## Reproducibility information
+print('Reproducibility information:')
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
+    
+    
+
