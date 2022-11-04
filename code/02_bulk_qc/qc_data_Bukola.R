@@ -246,7 +246,10 @@ save(rse_tx, file = here("preprocessed_data", paste0("count_data/rse_tx_Roche_Ha
                            ncol(rse_tx), ".Rdata")))
 
 
+
+
+
 #######################	
 ## rank on quality ####
-pdList = split(pd, pd$PrimaryDx)
-lapply(pdList, function(x) x[order(x$totalAssignedGene,decreasing=TRUE)[1:5],c(1:8, 49:54)])
+# pdList = split(pd, pd$PrimaryDx)
+# lapply(pdList, function(x) x[order(x$totalAssignedGene,decreasing=TRUE)[1:5],c(1:8, 49:54)])
