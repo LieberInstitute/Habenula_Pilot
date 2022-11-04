@@ -15,6 +15,7 @@ library(cowplot)
 library(ggrepel)
 library(gridExtra)
 library(sessioninfo)
+library(dplyr)
 
 # Loading data (brain swapped objects)
 load(here("preprocessed_data", "count_data_bukola", 
@@ -92,55 +93,51 @@ covVarInt <-  c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate",
     
 # stable variables
 pd = colData(rse)
+pd = as.data.frame(pd)
 drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
            "GCcontent", "Ncontent", "SeqLengthDist", "SeqDuplication",
            "OverrepSeqs", "AdapterContent", "KmerContent", "SeqLength_R1",
            "perSeqQual", "perBaseContent", names(pd[,grepl("phred", names(pd))]),
            names(pd[,grepl("Adapter", names(pd))]), "SeqLength_R2", "bamFile",
-           "trimmed", names(pd[,grepl("gene_", names(pd))]), "hasGenotype")
-
+           "trimmed", names(pd[,grepl("gene_", names(pd))]), "hasGenotype",
+           "Age", "Race")
 pd = pd[,!(names(pd)) %in% drop]
 pd_dropped = colData(rse)[,(names(colData(rse))) %in% drop]
+# dropped Race and Sex because all male and all Cauc.
+QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
+              "numReads", "numMapped", "numUnmapped", "overallMapRate",
+              "concordMapRate", "totalMapped", "mitoMapped", "mitoRate",
+              "totalAssignedGene", "rRNA_rate")
 
+# Creating intervals for AgeDeath
+pd$AgeInterval = NA
+levels = quantile(pd$AgeDeath, probs = c(0, 0.25, 0.5, 0.75, 1))
 
-# Mito Rate vs Ribo Rate ("mitoRate" (change to perc) vs "rRNA_rate")
-mito_vs_ribo = pd[,c("mitoRate", "rRNA_rate", "Flowcell", "PrimaryDx", 
-                     "Sex", "Race", "AgeDeath", 
-                     )]
-for(){
+for (i in 1:length(pd$AgeDeath)){
+  if(levels[1] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[2]){
+      pd[i, "AgeInterval"] <- 1
+  } else if(levels[2] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[3]){
+      pd[i, "AgeInterval"] <- 2
+  } else if(levels[3] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[4]){
+      pd[i, "AgeInterval"] <- 3
+  } else if(levels[4] <= pd$AgeDeath[i] && pd$AgeDeath[i] <= levels[5]){
+    pd[i, "AgeInterval"] <- 4
+  }}
+
+phenoCols = c("AgeInterval", "PrimaryDx", "Flowcell")
   
-}    
-    
-mito_vs_ribo<- function (pheno_var, tissue, age, label){
-  if (is.null(age)){
-      RSE<-eval(parse_expr(paste("rse_gene_", tissue, sep="")))
-    }
-    else {
-      RSE<-eval(parse_expr(paste("rse_gene", tissue, age, sep="_")))
-     }
-      if (label==""){
-        plot=ggplot(data=as.data.frame(colData(RSE)), 
-                    aes(x=subsets_Mito_percent, y=subsets_Ribo_percent, color=eval(parse_expr(pheno_var)), 
-                        label=label))+ 
-          geom_point() +
-          theme(text = element_text(size = 10)) +
-          theme(legend.position="right", plot.margin=unit (c (1.5,2,1,2), 'cm')) +
-          labs(x="Percentage of mt counts", y="Percentage of ribosomal counts", color=pheno_var)
-      }
-      else {
-        plot=ggplot(data=as.data.frame(colData(RSE)), 
-                    aes(x=subsets_Mito_percent, y=subsets_Ribo_percent, color=eval(parse_expr(pheno_var)), 
-                        label=eval(parse_expr(label))))+ 
-          geom_point() +
-          ## Add samples' labels
-          geom_text_repel(color="black", size=2, max.overlaps = 100) +
-          theme(text = element_text(size = 10)) +
-          theme(legend.position="right", plot.margin=unit (c (1.5,2,1,2), 'cm')) +
-          labs(x="Percentage of mt counts", y="Percentage of ribosomal counts", color=pheno_var)
-      }
-      return(plot)
-    }
-    
+#### PLOT 1: Mito Rate vs Ribo Rate ("mitoRate" (change to perc) vs "rRNA_rate")
+for (i in 1:length(phenoCols)){
+  pheno_var = phenoCols[i]
+  namer = paste("mitoribo", pheno_var, sep = "_")
+  assign(namer, ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
+      color = as.factor(pd[,pheno_var]))) + geom_point())
+  }
+
+pdf("preprocessed_data/qc_qlots_bukola/tester.pdf")
+  mget(ls(patt = "mitoribo_"))
+dev.off()
+
 
 
     
