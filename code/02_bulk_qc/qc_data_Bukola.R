@@ -220,33 +220,30 @@ pd[pd$RNum == "R18423",4:8] = pheno[pheno$BrNum == "Br1225",4:8] # Br1750 <-Br12
 
 ## save gene counts
 rse_gene = rse_gene[,pd$RNum]
-colData(rse_gene) = pd
+colData(rse_gene) = DataFrame(pd)
 save(rse_gene, file = here("preprocessed_data", paste0("count_data_bukola/rse_gene_Roche_Habenula_qcAndAnnotated_n",
                              ncol(rse_gene), ".Rdata")))
 
 ## save exons counts
 rse_exon = rse_exon[,pd$RNum]
-colData(rse_exon) = pd
-save(rse_exon, file = here("preprocessed_data", paste0("count_data/rse_exon_Roche_Habenula_qcAndAnnotated_n",
+colData(rse_exon) = DataFrame(pd)
+save(rse_exon, file = here("preprocessed_data", paste0("count_data_bukola/rse_exon_Roche_Habenula_qcAndAnnotated_n",
                              ncol(rse_exon), ".Rdata")))
 
 ## save junction counts
 rse_jx = rse_jx[,pd$RNum]
-colData(rse_jx) = pd
+colData(rse_jx) = DataFrame(pd)
 ## filter
 jIndex = (rowSums(assays(rse_jx)$counts) > 9) & (rowData(rse_jx)$Class != "Novel")
 rse_jx = rse_jx[jIndex,]
-save(rse_jx, file = here("preprocessed_data", paste0("count_data/rse_jx_Roche_Habenula_qcAndAnnotated_n",
+save(rse_jx, file = here("preprocessed_data", paste0("count_data_bukola/rse_jx_Roche_Habenula_qcAndAnnotated_n",
                            ncol(rse_jx), ".Rdata")))
 
 ## save tx counts
 rse_tx = rse_tx[,pd$RNum]
-colData(rse_tx) = pd
-save(rse_tx, file = here("preprocessed_data", paste0("count_data/rse_tx_Roche_Habenula_qcAndAnnotated_n",
+colData(rse_tx) = DataFrame(pd)
+save(rse_tx, file = here("preprocessed_data", paste0("count_data_bukola/rse_tx_Roche_Habenula_qcAndAnnotated_n",
                            ncol(rse_tx), ".Rdata")))
-
-
-
 
 
 #######################	
