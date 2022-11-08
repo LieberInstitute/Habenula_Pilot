@@ -158,8 +158,10 @@ for (i in 1:length(phenoCols)){
     
   pheno_var = phenoCols[i]
   namer = paste("mito_vs_ribo", pheno_var, sep = "_by")
-  assign(namer, ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
-      color = as.factor(pd[,pheno_var]))) + geom_point())
+  assign(namer, 
+        ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
+        color = as.factor(pd[,pheno_var]))) + geom_point()
+        )
   }
 
 pdf("preprocessed_data/qc_qlots_bukola/tester.pdf")
