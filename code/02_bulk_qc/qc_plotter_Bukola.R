@@ -129,6 +129,11 @@ QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
 
 phenoCols = c("AgeInterval", "PrimaryDx", "Flowcell")
 
+# Log10 values
+pd$numReads <- log10(pd$numReads)
+pd$numMapped <- log10(pd$numMapped)
+pd$numUnmapped <- log10(pd$numUnmapped)
+
 # Creating df for plot text for variables:
 orig_var_name <- c("RNum", "RIN", "BrNum", "AgeDeath", "Sex", "PrimaryDx", 
                    "percentGC_R1", "percentGC_R2", "ERCCsumLogErr", 
@@ -136,13 +141,15 @@ orig_var_name <- c("RNum", "RIN", "BrNum", "AgeDeath", "Sex", "PrimaryDx",
                    "concordMapRate", "totalMapped", "mitoMapped", "mitoRate", 
                    "totalAssignedGene", "rRNA_rate", "Flowcell", "AgeInterval" )
 
-
-# var_plot_title <- c("ERCC RSS", "Num of Reads (log 10)", "Num Mapped (log 10)",
-#                    "Overall Map Rate", "Concordant Map Rate", "chrM Map Rate",
-#                    "Gene Assignment Rate", "Gene rRNA Rate")
+var_plot_title <- c("RNum", "RIN", "Brain Number", "Age oof Death", "Sex",
+                    "Primary Dx", "Percent GC R1", "Percent GC R2", 
+                    "ERCC RSS", "Num of Reads (log 10)", "Num Mapped (log 10)",
+                    "Num Unmapped (log10)", "Overall Map Rate", 
+                    "Concordant Map Rate", "Total Mapped", "chrM Mapped",
+                    "chrM Map Rate", "Total Assigned Genes", "Gene rRNA Rate",
+                    "Flowcell", "Age Intervals")
 
 rename_vars <- data.frame(orig_var_name, var_plot_title)
-
 
   
 #### PLOT 1: Mito Rate vs Ribo Rate ("mitoRate" (change to perc) vs "rRNA_rate")
