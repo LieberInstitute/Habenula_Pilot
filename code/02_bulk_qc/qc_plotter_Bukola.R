@@ -88,12 +88,14 @@ covVarInt <-  c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate",
     mget(ls(patt = "plotdx_"))
     dev.off()
 
-#########################
-# based on smokingMouse pipeline:
-    
-# stable variables
+#################################
+# Based on smokingMouse pipeline:
+#################################    
+## Stable Variables ############################################################
+
 pd = colData(rse)
 pd = as.data.frame(pd)
+  # dropped Race and Sex because all male and all Cauc.
 drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
            "GCcontent", "Ncontent", "SeqLengthDist", "SeqDuplication",
            "OverrepSeqs", "AdapterContent", "KmerContent", "SeqLength_R1",
@@ -103,39 +105,58 @@ drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
            "Age", "Race")
 pd = pd[,!(names(pd)) %in% drop]
 pd_dropped = colData(rse)[,(names(colData(rse))) %in% drop]
-# dropped Race and Sex because all male and all Cauc.
+ 
+# QC Metrics: 
 QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
               "numReads", "numMapped", "numUnmapped", "overallMapRate",
               "concordMapRate", "totalMapped", "mitoMapped", "mitoRate",
               "totalAssignedGene", "rRNA_rate")
-
-# Creating intervals for AgeDeath
-pd$AgeInterval = NA
-levels = quantile(pd$AgeDeath, probs = c(0, 0.25, 0.5, 0.75, 1))
-
-for (i in 1:length(pd$AgeDeath)){
-  if(levels[1] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[2]){
+# Pheno Data: 
+  # Creating intervals for AgeDeath
+  pd$AgeInterval = NA
+  levels = quantile(pd$AgeDeath, probs = c(0, 0.25, 0.5, 0.75, 1))
+  
+  for (i in 1:length(pd$AgeDeath)){
+    if(levels[1] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[2]){
       pd[i, "AgeInterval"] <- 1
-  } else if(levels[2] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[3]){
+    } else if(levels[2] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[3]){
       pd[i, "AgeInterval"] <- 2
-  } else if(levels[3] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[4]){
+    } else if(levels[3] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[4]){
       pd[i, "AgeInterval"] <- 3
-  } else if(levels[4] <= pd$AgeDeath[i] && pd$AgeDeath[i] <= levels[5]){
-    pd[i, "AgeInterval"] <- 4
-  }}
+    } else if(levels[4] <= pd$AgeDeath[i] && pd$AgeDeath[i] <= levels[5]){
+      pd[i, "AgeInterval"] <- 4
+    }}
 
 phenoCols = c("AgeInterval", "PrimaryDx", "Flowcell")
+
+# Creating df for plot text for variables:
+orig_var_name <- c("RNum", "RIN", "BrNum", "AgeDeath", "Sex", "PrimaryDx", 
+                   "percentGC_R1", "percentGC_R2", "ERCCsumLogErr", 
+                   "numReads", "numMapped", "numUnmapped", "overallMapRate", 
+                   "concordMapRate", "totalMapped", "mitoMapped", "mitoRate", 
+                   "totalAssignedGene", "rRNA_rate", "Flowcell", "AgeInterval" )
+
+
+# var_plot_title <- c("ERCC RSS", "Num of Reads (log 10)", "Num Mapped (log 10)",
+#                    "Overall Map Rate", "Concordant Map Rate", "chrM Map Rate",
+#                    "Gene Assignment Rate", "Gene rRNA Rate")
+
+rename_vars <- data.frame(orig_var_name, var_plot_title)
+
+
   
 #### PLOT 1: Mito Rate vs Ribo Rate ("mitoRate" (change to perc) vs "rRNA_rate")
 for (i in 1:length(phenoCols)){
+ 
+    
   pheno_var = phenoCols[i]
-  namer = paste("mitoribo", pheno_var, sep = "_")
+  namer = paste("mito_vs_ribo", pheno_var, sep = "_by")
   assign(namer, ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
       color = as.factor(pd[,pheno_var]))) + geom_point())
   }
 
 pdf("preprocessed_data/qc_qlots_bukola/tester.pdf")
-  mget(ls(patt = "mitoribo_"))
+  mget(ls(patt = "mito_vs_ribo"))
 dev.off()
 
 
