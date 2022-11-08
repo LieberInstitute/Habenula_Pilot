@@ -17,6 +17,7 @@ library(gridExtra)
 library(sessioninfo)
 library(dplyr)
 
+
 # Loading data (brain swapped objects)
 load(here("preprocessed_data", "count_data_bukola", 
           "rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata")) # gene info
@@ -154,18 +155,22 @@ rename_vars <- data.frame(orig_var_name, var_plot_title)
   
 #### PLOT 1: Mito Rate vs Ribo Rate ("mitoRate" (change to perc) vs "rRNA_rate")
 for (i in 1:length(phenoCols)){
- 
-    
   pheno_var = phenoCols[i]
   namer = paste("mito_vs_ribo", pheno_var, sep = "_by")
   assign(namer, 
         ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
-        color = as.factor(pd[,pheno_var]))) + geom_point()
+        color = as.factor(pd[,pheno_var]))) + geom_point() +
+        labs(x = "Ribosomal Counts", y = "Percentage of MT Counts") +
+        guides(color = guide_legend(title = 
+          rename_vars[rename_vars$orig_var_name == pheno_var,]$var_plot_title))
         )
+
   }
+# Plot colors are stuck on FlowCell. ****
 
 pdf("preprocessed_data/qc_qlots_bukola/tester.pdf")
-  mget(ls(patt = "mito_vs_ribo"))
+  grid.arrange(mito_vs_ribo_byAgeInterval, mito_vs_ribo_byFlowcell,
+               mito_vs_ribo_byPrimaryDx, ncol = 1)
 dev.off()
 
 
