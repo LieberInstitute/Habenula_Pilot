@@ -141,8 +141,7 @@ levels = quantile(pd$AgeDeath, probs = c(0, 0.25, 0.5, 0.75, 1))
       pd[i, "AgeInterval"] <- 4
     }}
 
-phenoCols = c("AgeInterval", "PrimaryDx", "Flowcell")
-
+phenoCols = as.vector(c("AgeInterval", "PrimaryDx", "Flowcell"))
 
   # rename_vars ####
 # Creating df for plot text to rename variables:
@@ -162,35 +161,49 @@ var_plot_title <- c("RNum", "RIN", "Brain Number", "Age oof Death", "Sex",
 
 rename_vars <- data.frame(orig_var_name, var_plot_title)
 
-### 2. Plotting "Mito_vs_Ribo_" ################################################
+### 2. Plotting "Mito_vs_Ribo_byPhenotype" #####################################
 # For each QC metric plotted against diagnosis/flowcell and color coded by 
-# diagnosis/flowcell.
-for (i in 1:length(phenoCols)){
-  print(i)
-  pheno_var = phenoCols[i]
-  print(phenoCols[i])
-  namer = paste("mito_vs_ribo", pheno_var, sep = "_by")
-  assign(namer, 
-        ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
-        color = as.factor(pd[,pheno_var]))) + geom_point() +
+# diagnosis/Flowcell.
+
+# Base Function
+mito_vs_ribo <- function(phenotype){
+  print(phenotype)
+  
+  ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
+        color = as.factor(pd[,phenotype]))) + geom_point() +
         labs(x = "Ribosomal Counts", y = "Percentage of MT Counts") +
         guides(color = guide_legend(title = 
-          rename_vars[rename_vars$orig_var_name == pheno_var,]$var_plot_title))
-        )
-  rm(pheno_var)
+        rename_vars[rename_vars$orig_var_name == phenotype,]$var_plot_title))
 }
 
-# Plot colors are stuck on FlowCell. ****
+# Plotting
+plots <- list()
+i=1
+for (pheno_var in phenoCols){
+    p<-mito_vs_ribo(pheno_var)
+    plots[[i]]=p
+    i=i+1
+}
+
+# Saving
 pdf("preprocessed_data/qc_qlots_bukola/Mito_vs_Ribo_byPhenotype.pdf")
-  grid.arrange(mito_vs_ribo_byAgeInterval, mito_vs_ribo_byFlowcell,
-               mito_vs_ribo_byPrimaryDx, ncol = 1, 
-               top=textGrob("Mito Rate vs Ribo Rate by Phenotype"))
+  plot_grid(plots[[1]], plots[[2]], plots[[3]], ncol = 1)
 dev.off()
 
+# Reset
+rm(plots)
 
 
-    
-    
+### 3. Plotting "totalCounts_vs_riboCounts_byPhenotype" ########################
+# Plots ribo counts vs total read counts by phenotype
+
+# Base Function
+
+# Plotting
+
+# Saving
+
+# Reset
     
 ## Reproducibility information
 print('Reproducibility information:')
