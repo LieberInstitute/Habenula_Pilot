@@ -11,14 +11,16 @@ library(ggplot2)
 library(rlang)
 library(scater)
 library(jaffelab)
-library(cowplot)
 library(ggrepel)
 library(gridExtra)
 library(sessioninfo)
 library(dplyr)
+library(gridExtra)
+library(grid)
 
 
-# Loading data (brain swapped objects)
+
+## Loading data (brain swapped objects) ########################################
 load(here("preprocessed_data", "count_data_bukola", 
           "rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata")) # gene info
 rse = rse_gene
@@ -27,73 +29,78 @@ rse = rse_gene
 table(rse$Flowcell, rse$PrimaryDx) 
 table(rse$Sex, rse$PrimaryDx) 
 
-## Base function creation for creating boxplots by different variables.
-create_boxplots <- function(objInt, cov_var, samp_cond, colorby){
-  objInt = as.data.frame(colData(objInt))
-  
-  # creating df of possible titles
-  orig_var_name <- c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
-                     "concordMapRate", "mitoRate", "totalAssignedGene", "rRNA_rate")
-  var_plot_title <- c("ERCC RSS", "Num of Reads (log 10)", "Num Mapped (log 10)",
-                      "Overall Map Rate", "Concordant Map Rate", "chrM Map Rate",
-                      "Gene Assignment Rate", "Gene rRNA Rate")
-  posib_title <- data.frame(orig_var_name, var_plot_title)
-  
-  if(cov_var %in% posib_title$orig_var_name) {
-    newTitle <- posib_title[posib_title$orig_var_name == cov_var, 2]
-  } else{
-    newTitle <- cov_var
-  }
-  
-  # In order to make sure geom_jitter and geom_text_repel use the same coordinates 
-  # for points (to prevent mislabeling).
-  pos <- position_jitter(seed = 2)
-  
-  plot = ggplot(objInt, aes_(x = objInt[,cov_var], y = as.factor(objInt[,samp_cond]))) +
-    geom_boxplot(outlier.shape = NA) + 
-    geom_jitter(aes_(color = as.factor(objInt[,colorby])), position = pos) +
-    geom_text_repel(aes(label = objInt[,"BrNum"], color = as.factor(objInt[,colorby])), position = pos) +
-    theme_bw(base_size = 10) + 
-    theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
-          axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
-          axis.title = element_text(size=15)) +
-    labs(x = newTitle, y = samp_cond) +
-    guides(color = guide_legend(title = colorby))
-}
+### 1. Plotting "qc_plots_by.." ################################################
+# For each QC metric plotted against diagnosis/flowcell and color coded by 
+# diagnosis/flowcell.
 
-# Creating list of Covariate names of interest.
+### Base function: 
+  create_boxplots <- function(objInt, cov_var, samp_cond, colorby){
+    objInt = as.data.frame(colData(objInt))
+    
+    # creating df of possible titles
+    orig_var_name <- c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
+                       "concordMapRate", "mitoRate", "totalAssignedGene", "rRNA_rate")
+    var_plot_title <- c("ERCC RSS", "Num of Reads (log 10)", "Num Mapped (log 10)",
+                        "Overall Map Rate", "Concordant Map Rate", "chrM Map Rate",
+                        "Gene Assignment Rate", "Gene rRNA Rate")
+    posib_title <- data.frame(orig_var_name, var_plot_title)
+    
+      if(cov_var %in% posib_title$orig_var_name) {
+        newTitle <- posib_title[posib_title$orig_var_name == cov_var, 2]
+      } else{
+        newTitle <- cov_var
+      }
+      
+    # In order to make sure geom_jitter and geom_text_repel use the same coordinates 
+    # for points (to prevent mislabeling).
+    pos <- position_jitter(seed = 2)
+    
+      plot = ggplot(objInt, aes_(x = objInt[,cov_var], y = as.factor(objInt[,samp_cond]))) +
+        geom_boxplot(outlier.shape = NA) + 
+        geom_jitter(aes_(color = as.factor(objInt[,colorby])), position = pos) +
+        geom_text_repel(aes(label = objInt[,"BrNum"], color = 
+                              as.factor(objInt[,colorby])), position = pos) +
+                              theme_bw(base_size = 10) + 
+        theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+              axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+              axis.title = element_text(size=15)) +
+        labs(x = newTitle, y = samp_cond) +
+        guides(color = guide_legend(title = colorby))
+  }
+
+### Creating list of covariate names of interest:
 covVarInt <-  c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
                 "concordMapRate", "mitoRate", "totalAssignedGene", "rRNA_rate")
-##############################################
 
-## Covariates by Flowcell
+## Creating plots for QC metrics against Flowcell.
   for(i in covVarInt){
     # function(objInt, cov_var, samp_cond, colorby)
     namer <- paste("plotflow", i, sep = "_")
     assign(namer, create_boxplots(rse, i, "Flowcell", "PrimaryDx"))   
   }
-    # printing plots
+  # Print and save
     pdf("preprocessed_data/qc_qlots_bukola/qc_plots_byFlowCell.pdf", height = 7, width = 11)
     mget(ls(patt = "plotflow_"))
     dev.off()
-#########################
     
-## Covariates by Primary Diagnosis
+## Creating plots for QC metrics against PrimaryDx.
   for(i in covVarInt){
     # function(objInt, cov_var, samp_cond, colorby)
     namer <- paste("plotdx", i, sep = "_")
     assign(namer, create_boxplots(rse, i, "PrimaryDx", "Flowcell"))   
   }
-    # printing plots
+  # Print and save
     pdf("preprocessed_data/qc_qlots_bukola/qc_plots_byPrimaryDx.pdf", height = 7, width = 11)
     mget(ls(patt = "plotdx_"))
     dev.off()
 
 #################################
 # Based on smokingMouse pipeline:
-#################################    
+#################################   
 ## Stable Variables ############################################################
-
+# For ease, all downstream functions will utilize these variables.
+  
+  # pd & pd_dropped ####
 pd = colData(rse)
 pd = as.data.frame(pd)
   # dropped Race and Sex because all male and all Cauc.
@@ -106,16 +113,22 @@ drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
            "Age", "Race")
 pd = pd[,!(names(pd)) %in% drop]
 pd_dropped = colData(rse)[,(names(colData(rse))) %in% drop]
- 
-# QC Metrics: 
+
+  # Log10 values
+pd$numReads <- log10(pd$numReads)
+pd$numMapped <- log10(pd$numMapped)
+pd$numUnmapped <- log10(pd$numUnmapped)
+
+  # QCmetCols ####
 QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
               "numReads", "numMapped", "numUnmapped", "overallMapRate",
               "concordMapRate", "totalMapped", "mitoMapped", "mitoRate",
               "totalAssignedGene", "rRNA_rate")
-# Pheno Data: 
+
+  # phenoCols ####
   # Creating intervals for AgeDeath
-  pd$AgeInterval = NA
-  levels = quantile(pd$AgeDeath, probs = c(0, 0.25, 0.5, 0.75, 1))
+pd$AgeInterval = NA
+levels = quantile(pd$AgeDeath, probs = c(0, 0.25, 0.5, 0.75, 1))
   
   for (i in 1:length(pd$AgeDeath)){
     if(levels[1] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[2]){
@@ -130,12 +143,9 @@ QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
 
 phenoCols = c("AgeInterval", "PrimaryDx", "Flowcell")
 
-# Log10 values
-pd$numReads <- log10(pd$numReads)
-pd$numMapped <- log10(pd$numMapped)
-pd$numUnmapped <- log10(pd$numUnmapped)
 
-# Creating df for plot text for variables:
+  # rename_vars ####
+# Creating df for plot text to rename variables:
 orig_var_name <- c("RNum", "RIN", "BrNum", "AgeDeath", "Sex", "PrimaryDx", 
                    "percentGC_R1", "percentGC_R2", "ERCCsumLogErr", 
                    "numReads", "numMapped", "numUnmapped", "overallMapRate", 
@@ -152,10 +162,13 @@ var_plot_title <- c("RNum", "RIN", "Brain Number", "Age oof Death", "Sex",
 
 rename_vars <- data.frame(orig_var_name, var_plot_title)
 
-  
-#### PLOT 1: Mito Rate vs Ribo Rate ("mitoRate" (change to perc) vs "rRNA_rate")
+### 2. Plotting "Mito_vs_Ribo_" ################################################
+# For each QC metric plotted against diagnosis/flowcell and color coded by 
+# diagnosis/flowcell.
 for (i in 1:length(phenoCols)){
+  print(i)
   pheno_var = phenoCols[i]
+  print(phenoCols[i])
   namer = paste("mito_vs_ribo", pheno_var, sep = "_by")
   assign(namer, 
         ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
@@ -164,13 +177,14 @@ for (i in 1:length(phenoCols)){
         guides(color = guide_legend(title = 
           rename_vars[rename_vars$orig_var_name == pheno_var,]$var_plot_title))
         )
+  rm(pheno_var)
+}
 
-  }
 # Plot colors are stuck on FlowCell. ****
-
-pdf("preprocessed_data/qc_qlots_bukola/tester.pdf")
+pdf("preprocessed_data/qc_qlots_bukola/Mito_vs_Ribo_byPhenotype.pdf")
   grid.arrange(mito_vs_ribo_byAgeInterval, mito_vs_ribo_byFlowcell,
-               mito_vs_ribo_byPrimaryDx, ncol = 1)
+               mito_vs_ribo_byPrimaryDx, ncol = 1, 
+               top=textGrob("Mito Rate vs Ribo Rate by Phenotype"))
 dev.off()
 
 
