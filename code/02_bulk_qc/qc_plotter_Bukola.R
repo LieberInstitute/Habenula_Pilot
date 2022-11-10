@@ -18,6 +18,8 @@ library(dplyr)
 library(gridExtra)
 library(grid)
 library(cowplot)
+library(grid)
+library(ggplotify)
 
 
 ## Loading data (brain swapped objects) ########################################
@@ -171,33 +173,30 @@ rename_vars <- data.frame(orig_var_name, var_plot_title)
 # diagnosis/Flowcell.
 
 # Base Function
-mito_vs_ribo <- function(phenotype){
-  print(phenotype)
+mito_vs_ribo <- function(phenos){
   
-  ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate), 
-        color = as.factor(pd[,phenotype]))) + geom_point() +
+  ggplot(pd, aes(x = 100*(mitoRate), y = log10(rRNA_rate),
+        color = as.factor(pd[,phenos]))) + geom_point() +
         labs(x = "Ribosomal Counts", y = "Percentage of MT Counts") +
         guides(color = guide_legend(title = 
-        rename_vars[rename_vars$orig_var_name == phenotype,]$var_plot_title))
+        rename_vars[rename_vars$orig_var_name == 
+        phenos,]$var_plot_title))
 }
 
-# Plotting
-plots <- list()
-i=1
-for (pheno_var in phenoCols){
-    p<-mito_vs_ribo(pheno_var)
-    plots[[i]]=p
-    i=i+1
-}
+# Plot
+plots = lapply(phenoCols, mito_vs_ribo)
 
-# Saving
-pdf("preprocessed_data/qc_qlots_bukola/Mito_vs_Ribo_byPhenotype.pdf")
-  plot_grid(plots[[1]], plots[[2]], plots[[3]], ncol = 1) + 
-    draw_label("Mito vs Ribo Rates by Phenotype")
+# Save
+pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Mito_vs_Ribo_byPhenotype.pdf"))
+  plot_grid(plots[[1]], plots[[2]], plots[[3]], ncol = 1, labels =
+           "Mito vs Ribo Rates by Phenotype", rel_heights = c(.65,.35)) 
 dev.off()
 
-# Reset
-rm(plots)
+
+
+# Plotting
+mito_vs_ribo(phenoCols)
+
 
 
 ### 3. Plotting "totalCounts_vs_riboCounts_byPhenotype" ########################
