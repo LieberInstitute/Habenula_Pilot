@@ -1,7 +1,7 @@
 # November 4, 2022
 # qc_plotter_Bukola.R - Using brainswapped rse objects for Habenula data
 # to create QC plots for possible variable splitting.
-# qrsh -l mem_free=50G,h_vmem=50G
+# qrsh -l mem_free=20G,h_vmem=20G
 
 library(SummarizedExperiment)
 library(recount)
@@ -184,29 +184,36 @@ mito_vs_ribo <- function(phenos){
 }
 
 # Plot
-plots = lapply(phenoCols, mito_vs_ribo)
+plot2 = lapply(phenoCols, mito_vs_ribo)
 
 # Save
 pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Mito_vs_Ribo_byPhenotype.pdf"))
-  plot_grid(plots[[1]], plots[[2]], plots[[3]], ncol = 1, labels =
+  plot_grid(plot2[[1]], plot2[[2]], plot2[[3]], ncol = 1, labels =
            "Mito vs Ribo Rates by Phenotype", rel_heights = c(.65,.35)) 
 dev.off()
-
-
 
 # Plotting
 mito_vs_ribo(phenoCols)
 
 
+### 3. Plotting "boxplot_rRNA_vs_pheno" ########################
 
-### 3. Plotting "totalCounts_vs_riboCounts_byPhenotype" ########################
-# Plots ribo counts vs total read counts by phenotype
+boxplot_rRNA_pheno <- function(phenos){
+  
+  ggplot(pd, aes(y = rRNA_rate, x = as.factor(phenos))) +
+  geom_boxplot()
+  
+}
 
-# Base Function (with plotting)
+# Plot
+plot3 = lapply(phenoCols, boxplot_rRNA_pheno)
 
-# Saving
+# Plotting
+pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Boxplot_rRNA_vs_Pheno.pdf"))
+plot_grid(plot3[[1]], plot3[[2]], plot3[[3]], ncol = 1, labels =
+            "Ribo RNA by Phenotype", rel_heights = c(.65,.35)) 
+dev.off()
 
-# Reset
     
 ## Reproducibility information
 print('Reproducibility information:')
