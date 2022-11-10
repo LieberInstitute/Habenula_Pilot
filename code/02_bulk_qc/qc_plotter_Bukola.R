@@ -17,7 +17,7 @@ library(sessioninfo)
 library(dplyr)
 library(gridExtra)
 library(grid)
-
+library(cowplot)
 
 
 ## Loading data (brain swapped objects) ########################################
@@ -161,6 +161,11 @@ var_plot_title <- c("RNum", "RIN", "Brain Number", "Age oof Death", "Sex",
 
 rename_vars <- data.frame(orig_var_name, var_plot_title)
 
+## Session with Hedia: optimizing code 
+# instead of using for loop, use apply(), purr()
+# use sapply or lappy to make plots and add to function
+# run function while saving
+
 ### 2. Plotting "Mito_vs_Ribo_byPhenotype" #####################################
 # For each QC metric plotted against diagnosis/flowcell and color coded by 
 # diagnosis/Flowcell.
@@ -187,7 +192,8 @@ for (pheno_var in phenoCols){
 
 # Saving
 pdf("preprocessed_data/qc_qlots_bukola/Mito_vs_Ribo_byPhenotype.pdf")
-  plot_grid(plots[[1]], plots[[2]], plots[[3]], ncol = 1)
+  plot_grid(plots[[1]], plots[[2]], plots[[3]], ncol = 1) + 
+    draw_label("Mito vs Ribo Rates by Phenotype")
 dev.off()
 
 # Reset
@@ -197,9 +203,7 @@ rm(plots)
 ### 3. Plotting "totalCounts_vs_riboCounts_byPhenotype" ########################
 # Plots ribo counts vs total read counts by phenotype
 
-# Base Function
-
-# Plotting
+# Base Function (with plotting)
 
 # Saving
 
