@@ -202,7 +202,7 @@ mito_vs_ribo(phenoCols)
 
 ### 3. Plotting "boxplot_[QCmetric]_vs_[pheno]" ########################################
 
-boxplot_rRNA_pheno <- function(QC_mets, phenos){
+boxplot_qc_pheno <- function(QC_mets, phenos){
   plottingpd = pd[, c(QC_mets, phenos)]
   plottingpd[, phenos] = as.factor(plottingpd[, phenos])
 
@@ -219,7 +219,15 @@ boxplot_rRNA_pheno <- function(QC_mets, phenos){
 applyQC = QCmetCols[QCmetCols != "RIN"]
 
 for (i in applyQC){
-  testplot = sapply(phenoCols, FUN = boxplot_rRNA_pheno, QC_mets = i)
+  testplot = lapply(as.list(phenoCols), FUN = boxplot_qc_pheno, QC_mets = i)
+  
+  fileName = here("preprocessed_data", "qc_qlots_bukola", paste("Boxplot", i, "vs_phenos.pdf", 
+                                                                sep = "_"))
+  pdf(file = fileName,  width = 5, height = 10)
+    plot_grid(testplot[[1]], testplot[[2]], testplot[[3]], ncol = 1, 
+    labels = paste0(rename_vars[rename_vars$orig_var_name == i,]$var_plot_title), 
+    " by Phenotype")
+  dev.off()
 }
 
 # Plotting
