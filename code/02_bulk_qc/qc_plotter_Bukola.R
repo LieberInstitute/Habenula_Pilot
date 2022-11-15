@@ -200,7 +200,7 @@ mito_vs_ribo(phenoCols)
 
 boxplot_rRNA_pheno <- function(phenos){
   
-  ggplot(pd, aes(y = rRNA_rate, x = as.factor(phenos))) +
+  ggplot(pd, aes(y = as.factor(phenos), x = rRNA_rate)) +
   geom_boxplot()
   
 }
