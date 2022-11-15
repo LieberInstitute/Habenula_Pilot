@@ -21,7 +21,6 @@ library(cowplot)
 library(grid)
 library(ggplotify)
 
-
 ## Loading data (brain swapped objects) ########################################
 load(here("preprocessed_data", "count_data_bukola", 
           "rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata")) # gene info
@@ -201,23 +200,27 @@ dev.off()
 mito_vs_ribo(phenoCols)
 
 
-### 3. Plotting "boxplot_rRNA_vs_pheno" ########################
+### 3. Plotting "boxplot_[QCmetric]_vs_[pheno]" ########################################
 
-boxplot_rRNA_pheno <- function(phenos){
-  plottingpd = pd[, c("rRNA_rate", phenos)]
+boxplot_rRNA_pheno <- function(QC_mets, phenos){
+  plottingpd = pd[, c(QC_mets, phenos)]
   plottingpd[, phenos] = as.factor(plottingpd[, phenos])
 
-  plot = ggplot(plottingpd, aes_(y = plottingpd[,"rRNA_rate"], 
-                x = plottingpd[,phenos])) + geom_boxplot() +
-                xlab(rename_vars[rename_vars$orig_var_name == 
-                                  phenos,]$var_plot_title) +
-                ylab("rRNA_rate")
+  plot = ggplot(plottingpd, aes_(y = plottingpd[,QC_mets], 
+                x = plottingpd[,phenos]), fill = plottingpd[,phenos]) + 
+                geom_boxplot() + xlab(rename_vars[rename_vars$orig_var_name == 
+                phenos,]$var_plot_title) +
+                ylab(rename_vars[rename_vars$orig_var_name == QC_mets,]$var_plot_title)
   
   return(plot)
 }
 
-# Plot
-plot3 = lapply(phenoCols, FUN = boxplot_rRNA_pheno)
+# Plotting
+applyQC = QCmetCols[QCmetCols != "RIN"]
+
+for (i in applyQC){
+  testplot = sapply(phenoCols, FUN = boxplot_rRNA_pheno, QC_mets = i)
+}
 
 # Plotting
 pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Boxplot_rRNA_vs_Pheno.pdf"),
@@ -227,6 +230,7 @@ pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Boxplot_rRNA_vs_Pheno.p
 
 dev.off()
 
+### 4. Plotting "boxplot_rRNA_vs_pheno" ########################
     
 ## Reproducibility information
 print('Reproducibility information:')
