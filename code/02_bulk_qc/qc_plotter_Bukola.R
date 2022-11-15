@@ -206,8 +206,8 @@ boxplot_qc_pheno <- function(QC_mets, phenos){
   plottingpd = pd[, c(QC_mets, phenos)]
   plottingpd[, phenos] = as.factor(plottingpd[, phenos])
 
-  plot = ggplot(plottingpd, aes_(y = plottingpd[,QC_mets], 
-                x = plottingpd[,phenos]), fill = plottingpd[,phenos]) + 
+  plot = ggplot(plottingpd, aes_(y = plottingpd[, QC_mets], 
+                x = plottingpd[, phenos])) + 
                 geom_boxplot() + xlab(rename_vars[rename_vars$orig_var_name == 
                 phenos,]$var_plot_title) +
                 ylab(rename_vars[rename_vars$orig_var_name == QC_mets,]$var_plot_title)
@@ -217,26 +217,28 @@ boxplot_qc_pheno <- function(QC_mets, phenos){
 
 # Plotting
 applyQC = QCmetCols[QCmetCols != "RIN"]
+phenoCols = as.list(phenoCols)
 
 for (i in applyQC){
-  testplot = lapply(as.list(phenoCols), FUN = boxplot_qc_pheno, QC_mets = i)
+  testplot = lapply(phenoCols, FUN = boxplot_qc_pheno, QC_mets = i)
   
   fileName = here("preprocessed_data", "qc_qlots_bukola", paste("Boxplot", i, "vs_phenos.pdf", 
                                                                 sep = "_"))
+  title = paste0(rename_vars[rename_vars$orig_var_name == i,]$var_plot_title, 
+                 " by Phenotype", sep = "")
+    
   pdf(file = fileName,  width = 5, height = 10)
-    plot_grid(testplot[[1]], testplot[[2]], testplot[[3]], ncol = 1, 
-    labels = paste0(rename_vars[rename_vars$orig_var_name == i,]$var_plot_title), 
-    " by Phenotype")
+    plot_grid(labels = title , testplot[[1]], testplot[[2]], testplot[[3]], ncol = 1)
   dev.off()
+  rm(testplot)
 }
 
 # Plotting
-pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Boxplot_rRNA_vs_Pheno.pdf"),
-    width = 5, height = 10)
- plot_grid(plot3[[1]], plot3[[2]], plot3[[3]], ncol = 1, labels =
-            "Ribo RNA by Phenotype") 
-
-dev.off()
+# pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Boxplot_rRNA_vs_Pheno.pdf"),
+#    width = 5, height = 10)
+# plot_grid(plot3[[1]], plot3[[2]], plot3[[3]], ncol = 1, labels =
+#            "Ribo RNA by Phenotype") 
+# dev.off()
 
 ### 4. Plotting "boxplot_rRNA_vs_pheno" ########################
     
