@@ -145,6 +145,11 @@ levels = quantile(pd$AgeDeath, probs = c(0, 0.25, 0.5, 0.75, 1))
 
 phenoCols = as.vector(c("AgeInterval", "PrimaryDx", "Flowcell"))
 
+  # updating pd for factors
+for (i in phenoCols){
+  pd[,i] <- as.factor(pd[,i])
+}
+
   # rename_vars ####
 # Creating df for plot text to rename variables:
 orig_var_name <- c("RNum", "RIN", "BrNum", "AgeDeath", "Sex", "PrimaryDx", 
@@ -199,19 +204,23 @@ mito_vs_ribo(phenoCols)
 ### 3. Plotting "boxplot_rRNA_vs_pheno" ########################
 
 boxplot_rRNA_pheno <- function(phenos){
+  plottingpd = pd[, c("rRNA_rate", phenos)]
+  plottingpd[, phenos] = as.factor(plottingpd[, phenos])
   
-  ggplot(pd, aes(y = as.factor(phenos), x = rRNA_rate)) +
-  geom_boxplot()
+  testplot = ggplot(plottingpd, aes(x = rRNA_rate, y = phenos)) +
+    geom_boxplot()
   
+  return(plot)
 }
 
 # Plot
-plot3 = lapply(phenoCols, boxplot_rRNA_pheno)
+plot3 = lapply(phenoCols, FUN = boxplot_rRNA_pheno)
 
 # Plotting
 pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Boxplot_rRNA_vs_Pheno.pdf"))
-plot_grid(plot3[[1]], plot3[[2]], plot3[[3]], ncol = 1, labels =
-            "Ribo RNA by Phenotype", rel_heights = c(.65,.35)) 
+# plot_grid(plot3[[1]], plot3[[2]], plot3[[3]], ncol = 1, labels =
+#            "Ribo RNA by Phenotype", rel_heights = c(.65,.35)) 
+testplot
 dev.off()
 
     
