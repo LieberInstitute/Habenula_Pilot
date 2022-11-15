@@ -134,13 +134,13 @@ levels = quantile(pd$AgeDeath, probs = c(0, 0.25, 0.5, 0.75, 1))
   
   for (i in 1:length(pd$AgeDeath)){
     if(levels[1] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[2]){
-      pd[i, "AgeInterval"] <- 1
+      pd[i, "AgeInterval"] <- "20 to 31"
     } else if(levels[2] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[3]){
-      pd[i, "AgeInterval"] <- 2
+      pd[i, "AgeInterval"] <- "31.5 to 43.5"
     } else if(levels[3] <= pd$AgeDeath[i] && pd$AgeDeath[i] < levels[4]){
-      pd[i, "AgeInterval"] <- 3
+      pd[i, "AgeInterval"] <- "43.75 to 55.9"
     } else if(levels[4] <= pd$AgeDeath[i] && pd$AgeDeath[i] <= levels[5]){
-      pd[i, "AgeInterval"] <- 4
+      pd[i, "AgeInterval"] <- "60 to 68"
     }}
 
 phenoCols = as.vector(c("AgeInterval", "PrimaryDx", "Flowcell"))
@@ -206,9 +206,12 @@ mito_vs_ribo(phenoCols)
 boxplot_rRNA_pheno <- function(phenos){
   plottingpd = pd[, c("rRNA_rate", phenos)]
   plottingpd[, phenos] = as.factor(plottingpd[, phenos])
-  
-  testplot = ggplot(plottingpd, aes(x = rRNA_rate, y = phenos)) +
-    geom_boxplot()
+
+  plot = ggplot(plottingpd, aes_(y = plottingpd[,"rRNA_rate"], 
+                x = plottingpd[,phenos])) + geom_boxplot() +
+                xlab(rename_vars[rename_vars$orig_var_name == 
+                                  phenos,]$var_plot_title) +
+                ylab("rRNA_rate")
   
   return(plot)
 }
@@ -217,10 +220,11 @@ boxplot_rRNA_pheno <- function(phenos){
 plot3 = lapply(phenoCols, FUN = boxplot_rRNA_pheno)
 
 # Plotting
-pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Boxplot_rRNA_vs_Pheno.pdf"))
-# plot_grid(plot3[[1]], plot3[[2]], plot3[[3]], ncol = 1, labels =
-#            "Ribo RNA by Phenotype", rel_heights = c(.65,.35)) 
-testplot
+pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Boxplot_rRNA_vs_Pheno.pdf"),
+    width = 5, height = 10)
+ plot_grid(plot3[[1]], plot3[[2]], plot3[[3]], ncol = 1, labels =
+            "Ribo RNA by Phenotype") 
+
 dev.off()
 
     
