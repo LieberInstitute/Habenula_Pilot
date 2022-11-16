@@ -209,31 +209,44 @@ boxplot_qc_pheno <- function(QC_mets, phenos){
   plottingpd[, phenos] = as.factor(plottingpd[, phenos])
   
   plot = ggplot(plottingpd, aes_(y = plottingpd[, QC_mets], 
-                                 x = plottingpd[, phenos])) + 
-    geom_boxplot() + xlab(rename_vars[rename_vars$orig_var_name == 
-                                        phenos,]$var_plot_title) +
-    ylab(rename_vars[rename_vars$orig_var_name == QC_mets,]$var_plot_title)
+                x = plottingpd[, phenos], fill = plottingpd[, phenos])) + 
+    geom_boxplot(color="red", fill="orange") + 
+    xlab(rename_vars[rename_vars$orig_var_name == phenos,]$var_plot_title) +
+    ylab(rename_vars[rename_vars$orig_var_name == QC_mets,]$var_plot_title) 
+#    facet_wrap(vars(pd[, QC_mets])) + labs(title =
+#        paste0(rename_vars[rename_vars$orig_var_name == QC_mets,]$var_plot_title, 
+#        " by Phenotype", sep = ""))
   
-  print(plot)
+  return(plot)
 }
 
 # Plotting
 applyQC = QCmetCols[QCmetCols != "RIN"]
 phenoCols = unlist(phenoCols)
 
+
 for (i in applyQC){
   fileName = here("preprocessed_data", "qc_qlots_bukola", paste("Boxplot", i, "vs_phenos.pdf", 
-                                                                sep = "_"))
-  title = paste0(rename_vars[rename_vars$orig_var_name == i,]$var_plot_title, 
-                 " by Phenotype", sep = "")
-  
+                                                                                                              sep = "_"))
+  plotter <- lapply(phenoCols, FUN = boxplot_qc_pheno, QC_mets = i)
   pdf(file = fileName)
-  lapply(phenoCols, FUN = boxplot_qc_pheno, QC_mets = i)
+     plot_grid(plotter[[1]], plotter[[2]], plotter[[2]], ncol = 1)
   dev.off()
   
 }
-# use facet_wrap to plot all on one page
+##### from Nick
+plot_list = list()
+c = 1
+for (i in applyQC) {
+  for (j in phenoCols) {
+    plot_list[[c]] = boxplot_qc_pheno(QC_mets = i, phenos = j)
+    c = c + 1
+  }
+}
 
+pdf(file = here("preprocessed_data", "qc_qlots_bukola", "whatever.pdf"), width = 7 * length(applyQC), width = 7 * length(phenoCols))
+  plot_grid(plotlist = plot_list, ncol = length(applyQC))
+dev.off()
 
 ## Reproducibility information
 print('Reproducibility information:')
