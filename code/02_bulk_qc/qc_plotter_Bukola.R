@@ -226,8 +226,32 @@ for (i in applyQC){
   dev.off()
 }
 
+### 4. Scatterplotting "QC_vs_QC" #####################################################
+# QCmetCols
+# [1] "RIN"               "percentGC_R1"      "percentGC_R2"     
+# [4] "ERCCsumLogErr"     "numReads"          "numMapped"        
+# [7] "numUnmapped"       "overallMapRate"    "concordMapRate"   
+# [10] "totalMapped"       "mitoMapped"        "mitoRate"         
+# [13] "totalAssignedGene" "rRNA_rate"        
 
+for (i in QCmetCols){
+  qc1 = i
+  fileName = here("preprocessed_data", "qc_qlots_bukola", paste(qc1, 
+            "vs_QC_mets.pdf", sep = "_"))
+  
+  for (j in QCmetCols){
+    qc2 = j
+    scatterer = ggplot(pd, aes(qc1, qc2)) + geom_point() 
+    pdf(file = fileName)
+    do.call(grid.arrange, list(grobs = scatterer, ncol = 1, top = 
+            paste(rename_vars[rename_vars$orig_var_name == i,]$var_plot_title,
+            "vs Other QC Metrics")))
+    
+    dev.off()
+  }
+}
 
+# + geom_text_repel(aes(label = pd[,BrNum]))
 
 ## Reproducibility information
 print('Reproducibility information:')
