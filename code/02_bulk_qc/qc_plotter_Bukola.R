@@ -169,10 +169,6 @@ var_plot_title <- c("RNum", "RIN", "Brain Number", "Age oof Death", "Sex",
 
 rename_vars <- data.frame(orig_var_name, var_plot_title)
 
-## Session with Hedia: optimizing code 
-# instead of using for loop, use apply(), purr()
-# use sapply or lappy to make plots and add to function
-# run function while saving
 
 ### 2. Plotting "Mito_vs_Ribo_byPhenotype" #####################################
 # For each QC metric plotted against diagnosis/flowcell and color coded by 
@@ -212,23 +208,22 @@ boxplot_qc_pheno <- function(QC_mets, phenos){
     xlab(rename_vars[rename_vars$orig_var_name == phenos,]$var_plot_title) +
     ylab(rename_vars[rename_vars$orig_var_name == QC_mets,]$var_plot_title) 
   
-  print(plot)
+  return(plot)
 }
 
 # Plotting
 for (i in applyQC){
   
-  fileName = here("preprocessed_data", "qc_qlots_bukola", 
+  fileName = here("preprocessed_data", "qc_qlots_bukola", "02_boxplot_qc_by_pheno", 
                   paste("Boxplot", i, "vs_phenos.pdf", sep = "_"))
   
   plotter = lapply(phenoCols, FUN = boxplot_qc_pheno, QC_mets = i)
   
-  pdf(file = fileName)
-    grid.arrange(plotter[[1]], plotter[[2]], plotter[[3]], ncol = 1, 
-       main = paste0(rename_vars[rename_vars$orig_var_name == QC_mets,]$var_plot_title,
-       "by Phenotypes", sep = " "))
+  pdf(file = fileName, width = 5, height =  10)
+    do.call(grid.arrange, list(grobs = plotter, ncol = 1, 
+       top = paste(rename_vars[rename_vars$orig_var_name == i,]$var_plot_title,
+       "by Phenotype")))
   dev.off()
-  
 }
 
 
