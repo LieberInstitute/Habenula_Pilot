@@ -195,10 +195,25 @@ save(rse_jx_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola
 # Filtration involves creating potential cut offs since it was already in features per million
 seeder = 12345432
 
-pdf("processed_data/02_bulk_qc/count_data_bukola/tx_potential_cutoff.pdf")
+pdf("processed-data/02_bulk_qc/count_data_bukola/tx_potential_cutoff.pdf")
   expression_cutoff(assays(rse_tx)$tpm, seed = seeder, k = 2)
 dev.off()
-  
+
+# 2022-11-18 14:57:15 the suggested expression cutoff is 0.34
+# percent_features_cut  samples_nonzero_cut 
+# 0.42                 0.26 
+
+cutoff = 0.34
+
+rse_tx_filt = rse_tx[rowMeans(assays(rse_tx)$tpm) > cutoff,]
+save(rse_tx_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
+                              "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+dim(rse_tx_filt)
+# [1] 82434    69
+
+## Considering data separation #################################################
+
+
 ## Reproducibility information
 print('Reproducibility information:')
 Sys.time()
