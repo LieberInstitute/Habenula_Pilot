@@ -211,13 +211,11 @@ save(rse_tx_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola
 dim(rse_tx_filt)
 # [1] 82434    69
 
-## Considering data separation #################################################
-
-
 ## Reproducibility information
 print('Reproducibility information:')
 Sys.time()
 proc.time()
 options(width = 120)
 session_info()
+
 
