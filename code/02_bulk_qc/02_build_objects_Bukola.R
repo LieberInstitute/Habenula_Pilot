@@ -100,6 +100,8 @@ dim(rse_gene_filt)
 # [1] 22756    69
 
 # adding human gene symbols to replace MGI symbols 
+# Note: gene symbols are abbrevation names for particular genes (established by 
+# HUGO - Human Genome Organizatio)
 rowData(rse_gene_filt)$MGI_Symbol<-rowData(rse_gene_filt)$Symbol
 
 symbols<-biomart(genes  = rowData(rse_gene_filt)$ensemblID,
@@ -143,6 +145,7 @@ save(rse_gene_filt, file = here("processed-data", "02_bulk_qc", "count_data_buko
 ## Repeating process for on non-gene rse objects ###############################
 # doesn't require addPerCellQC as those QC metrics are only plotted for genotype
 
+# EXONS
 rse_exon_filt = rse_exon[which(filterByExpr(assay(rse_exon), 
                   design = with(colData(rse_exon), model.matrix(~ AgeDeath + Flowcell + PrimaryDx)))),]
 dim(rse_exon_filt)
@@ -179,9 +182,23 @@ rowData(rse_exon_filt)$Symbol = symbols$external_gene_name # external_gene_name 
 save(rse_exon_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
                                 "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
+# JUNCTIONS
+# filtration only. No symbols applicable since these are transcripts not genes
+rse_jx_filt<-rse_jx[which(filterByExpr(assay(rse_jx), 
+                    design=with(colData(rse_jx), model.matrix(~ AgeDeath + Flowcell + PrimaryDx)))),]
+dim(rse_jx_filt)
+# [1] 150926     69
+save(rse_jx_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
+                                "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
+# TRANSCRIPTS
+# Filtration involves creating potential cut offs since it was already in features per million
+seeder = 12345432
 
-
+pdf("processed_data/02_bulk_qc/count_data_bukola/tx_potential_cutoff.pdf")
+  expression_cutoff(assays(rse_tx)$tpm, seed = seeder, k = 2)
+dev.off()
+  
 ## Reproducibility information
 print('Reproducibility information:')
 Sys.time()
