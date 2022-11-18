@@ -122,7 +122,7 @@ no_symbol = append(no_symbol, na_symbol)
 # Removing problematic genes from symbols obj
 symbols = symbols[-which_na_symbol,]
 
-## Add Ensemble IDs for problematic genes
+# Add Ensemble IDs for problematic genes
 for (gene in no_symbol){
   
   MGI_symbol = rowData(rse_gene_filt)[which(rowData(rse_gene_filt)$ensemblID == gene), "MGI_Symbol"]
@@ -134,24 +134,30 @@ for (gene in no_symbol){
   }
 }
 
+# Adding symbol to filtered rse_gene object while reserving original order of genes
+symbols = symbols[match(rowData(rse_gene_filt)$ensemblID, symbols$ensembl_gene_id), ]
+rowData(rse_gene_filt)$Symbol = symbols$external_gene_name # external_gene_name is the MGI_symbol. 
+save(rse_gene_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
+                                "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+
+## Repeating process for on non-gene rse objects ###############################
+
+
+
+# # dropping irrelevant columns
+# drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
+#          "GCcontent", "Ncontent", "SeqLengthDist", "SeqDuplication",
+#          "OverrepSeqs", "AdapterContent", "KmerContent", "SeqLength_R1",
+#          "perSeqQual", "perBaseContent", names(pd[,grepl("phred", names(pd))]),
+#          names(pd[,grepl("Adapter", names(pd))]), "SeqLength_R2", "bamFile",
+#          "trimmed", names(pd[,grepl("gene_", names(pd))]), "hasGenotype",
+#          "Age", "Race")
+# pd = pd[,!(names(pd)) %in% drop]
 # 
-
-
-
-# dropping irrelevant columns
-drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
-         "GCcontent", "Ncontent", "SeqLengthDist", "SeqDuplication",
-         "OverrepSeqs", "AdapterContent", "KmerContent", "SeqLength_R1",
-         "perSeqQual", "perBaseContent", names(pd[,grepl("phred", names(pd))]),
-         names(pd[,grepl("Adapter", names(pd))]), "SeqLength_R2", "bamFile",
-         "trimmed", names(pd[,grepl("gene_", names(pd))]), "hasGenotype",
-         "Age", "Race")
-pd = pd[,!(names(pd)) %in% drop]
-
-
-# Saving relevant variables for qc plotting
-save(rse_gene, pd, gd, file = here("preprocessed_data", "count_data_bukola", 
-                "built_objects_rse_gene_Roche_Habenula_n69.Rdata"))
+# 
+# # Saving relevant variables for qc plotting
+# save(rse_gene, pd, gd, file = here("preprocessed_data", "count_data_bukola", 
+#                 "built_objects_rse_gene_Roche_Habenula_n69.Rdata"))
 
 
 
