@@ -13,14 +13,29 @@ library(scater)
 # library(biomartr) not available
 library(sessioninfo)
 
-# Loading rse objects after brain swap
-load(here("preprocessed_data", "count_data_bukola",  
-          "rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata")) # gene info
-rse = rse_gene
+# Loading rse objects after brain swap #########################################
 
-# Data dimensions
-dim(rse)
+# gene
+load(here("preprocessed_data", "count_data_bukola",  
+          "rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+# exons
+load(here("preprocessed_data", "count_data_bukola",  
+          "rse_exon_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+# transncripts
+load(here("preprocessed_data", "count_data_bukola",  
+          "rse_tx_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+# junctions
+load(here("preprocessed_data", "count_data_bukola",  
+          "rse_jx_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+
+# Data dimensions ##############################################################
+rses = as.list(c("rse_gene", "rse_exon", "rse_tx", "rse_jx"))
+dimensions <- data.frame(rses, lapply(rses, dim()))
+dim(rse_gene)
 # [1] 58037    69
+dim()
+
+
 
 # Verify data integrity
 ## checks each gene (row) to see if there are any NA values for each sample. 
