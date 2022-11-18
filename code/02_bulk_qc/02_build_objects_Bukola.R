@@ -89,8 +89,8 @@ subsets = list(Mito = which(seqnames(rse_gene)=="chrM"),
 rse_gene <-addPerCellQC(rse_gene, subsets)
 
 # grabbing relevant metadata 
-pd = as.data.frame(colData(rse_gene))
-gd = rowData(rse_gene)
+# pd = as.data.frame(colData(rse_gene))
+# gd = rowData(rse_gene)
 
 # data filtration (getting rid of low expression values)
 rse_gene_filt = rse_gene[which(filterByExpr(assay(rse_gene), 
@@ -111,6 +111,30 @@ symbols<-biomart(genes  = rowData(rse_gene_filt)$ensemblID,
 # finding genes that did not have gene symbols
 no_symbol = rowData(rse_gene_filt)$ensemblID[(! rowData(rse_gene_filt)$ensemblID 
             %in% symbols$ensembl_gene_id)]
+
+# finding genes that have NA/empty symbols 
+which_na_symbol = which(is.na(symbols$external_gene_name) | symbols$external_gene_name=="")
+na_symbol <- symbols[which_na_symbol, 1]
+
+# Compiling problematic gene IDs 
+no_symbol = append(no_symbol, na_symbol)
+
+# Removing problematic genes from symbols obj
+symbols = symbols[-which_na_symbol,]
+
+## Add Ensemble IDs for problematic genes
+for (gene in no_symbol){
+  
+  MGI_symbol = rowData(rse_gene_filt)[which(rowData(rse_gene_filt)$ensemblID == gene), "MGI_Symbol"]
+  if (! is.na(MGI_symbol)) {
+    symbols[nrow(symbols) + 1,] = c(gene, MGI_symbol)
+  }
+  else {
+    symbols[nrow(symbols)+1,]<-c(gene,gene)
+  }
+}
+
+# 
 
 
 
