@@ -8,10 +8,10 @@ library(recount)
 library(edgeR)
 library(jaffelab)
 library(here)
-# library(WGCNA) not available 
 library(scater)
-# library(biomartr) not available
 library(sessioninfo)
+library(WGCNA) 
+library(biomartr) 
 
 # Loading rse objects after brain swap #########################################
 
@@ -79,7 +79,55 @@ assays(rse_jx, withDimnames=FALSE)$logcounts =
   edgeR::cpm(calcNormFactors(rse_jx, method = "TMM"), log = TRUE, prior.count = 0.5)
 
 ## Focusing on rse_gene ########################################################
-# Computing QC metrics for 
+# Computing QC metrics and adding back to column's metadata
+
+# grabbing info on mitochondrial and ribosomal genes
+subsets = list(Mito = which(seqnames(rse_gene)=="chrM"), 
+             Ribo = grep("rRNA",rowData(rse_gene)$gene_type))
+
+# addings qc stats based on the counts 
+rse_gene <-addPerCellQC(rse_gene, subsets)
+
+# grabbing relevant metadata 
+pd = as.data.frame(colData(rse_gene))
+gd = rowData(rse_gene)
+
+# data filtration (getting rid of low expression values)
+rse_gene_filt = rse_gene[which(filterByExpr(assay(rse_gene), 
+      design = with(colData(rse_gene), model.matrix(~ AgeDeath + Flowcell + PrimaryDx)))),]
+
+dim(rse_gene_filt)
+# [1] 22756    69
+
+# adding human gene symbols to replace MGI symbols 
+rowData(rse_gene_filt)$MGI_Symbol<-rowData(rse_gene_filt)$Symbol
+
+symbols<-biomart(genes  = rowData(rse_gene_filt)$ensemblID,
+                 mart       = "ENSEMBL_MART_ENSEMBL",
+                 dataset    = "mmusculus_gene_ensembl",
+                 attributes = c("external_gene_name"),
+                 filters    = "ensembl_gene_id")
+
+# finding genes that did not have gene symbols
+no_symbol = rowData(rse_gene_filt)$ensemblID[(! rowData(rse_gene_filt)$ensemblID 
+            %in% symbols$ensembl_gene_id)]
+
+
+
+# dropping irrelevant columns
+drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
+         "GCcontent", "Ncontent", "SeqLengthDist", "SeqDuplication",
+         "OverrepSeqs", "AdapterContent", "KmerContent", "SeqLength_R1",
+         "perSeqQual", "perBaseContent", names(pd[,grepl("phred", names(pd))]),
+         names(pd[,grepl("Adapter", names(pd))]), "SeqLength_R2", "bamFile",
+         "trimmed", names(pd[,grepl("gene_", names(pd))]), "hasGenotype",
+         "Age", "Race")
+pd = pd[,!(names(pd)) %in% drop]
+
+
+# Saving relevant variables for qc plotting
+save(rse_gene, pd, gd, file = here("preprocessed_data", "count_data_bukola", 
+                "built_objects_rse_gene_Roche_Habenula_n69.Rdata"))
 
 
 
