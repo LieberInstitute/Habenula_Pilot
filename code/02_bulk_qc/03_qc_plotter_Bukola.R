@@ -21,14 +21,31 @@ library(cowplot)
 library(grid)
 library(ggplotify)
 
-## Loading data (brain swapped objects) ########################################
-load(here("preprocessed_data", "count_data_bukola", 
-          "rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata")) # gene info
-rse = rse_gene
+## Loading data (brain swapped and filtered) ###################################
+# gene
+load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+          "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+rse_gene = rse_gene_filt
 
+# exon
+load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+          "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
+rse_exon = rse_exon_filt
+
+# jx
+load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+          "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
+rse_jx = rse_jx_filt
+
+# tx
+load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+          "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+rse_tx = rse_tx_filt
+
+## Focusing on rse_gene ########################################################
 # Checks:
-table(rse$Flowcell, rse$PrimaryDx) 
-table(rse$Sex, rse$PrimaryDx) 
+table(rse_gene$Flowcell, rse_gene$PrimaryDx) 
+table(rse_gene$Sex, rse_gene$PrimaryDx) 
 
 ### 1. Plotting "qc_plots_by.." ################################################
 # For each QC metric plotted against diagnosis/flowcell and color coded by 
