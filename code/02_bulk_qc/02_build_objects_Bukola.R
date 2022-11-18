@@ -141,23 +141,44 @@ save(rse_gene_filt, file = here("processed-data", "02_bulk_qc", "count_data_buko
                                 "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
 ## Repeating process for on non-gene rse objects ###############################
+# doesn't require addPerCellQC as those QC metrics are only plotted for genotype
 
+rse_exon_filt = rse_exon[which(filterByExpr(assay(rse_exon), 
+                  design = with(colData(rse_exon), model.matrix(~ AgeDeath + Flowcell + PrimaryDx)))),]
+dim(rse_exon_filt)
+# [1] 356550     69
 
+rowData(rse_exon_filt)$MGI_Symbol<-rowData(rse_exon_filt)$Symbol
+symbols = biomart(genes  = rowData(rse_exon_filt)$ensemblID,
+                 mart       = "ENSEMBL_MART_ENSEMBL",
+                 dataset    = "mmusculus_gene_ensembl",
+                 attributes = c("external_gene_name"),
+                 filters    = "ensembl_gene_id")
 
-# # dropping irrelevant columns
-# drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
-#          "GCcontent", "Ncontent", "SeqLengthDist", "SeqDuplication",
-#          "OverrepSeqs", "AdapterContent", "KmerContent", "SeqLength_R1",
-#          "perSeqQual", "perBaseContent", names(pd[,grepl("phred", names(pd))]),
-#          names(pd[,grepl("Adapter", names(pd))]), "SeqLength_R2", "bamFile",
-#          "trimmed", names(pd[,grepl("gene_", names(pd))]), "hasGenotype",
-#          "Age", "Race")
-# pd = pd[,!(names(pd)) %in% drop]
-# 
-# 
-# # Saving relevant variables for qc plotting
-# save(rse_gene, pd, gd, file = here("preprocessed_data", "count_data_bukola", 
-#                 "built_objects_rse_gene_Roche_Habenula_n69.Rdata"))
+# unique instead of colData (**)
+no_symbol = unique(rowData(rse_exon_filt))$ensemblID[which(! unique(rowData(rse_exon_filt)$ensemblID) 
+                                                  %in%  symbols$ensembl_gene_id)]
+which_na_symbol = which(is.na(symbols$external_gene_name) | symbols$external_gene_name == "")
+na_symbol = symbols[which_na_symbol, 1]
+no_symbol = append(no_symbol, na_symbol)
+symbols = symbols[-which_na_symbol,]
+
+for (gene in no_symbol){
+  
+  MGI_symbol = unique(rowData(rse_exon_filt)[which(rowData(rse_exon_filt)$ensemblID==gene), "MGI_Symbol"])
+  if (! (is.na(MGI_symbol) | length(MGI_symbol)==0)) {
+    symbols[nrow(symbols)+1,]<-c(gene, MGI_symbol)
+  }
+  else {
+    symbols[nrow(symbols)+1,]<-c(gene,gene)
+  }
+}
+
+symbols = symbols[match(rowData(rse_exon_filt)$ensemblID, symbols$ensembl_gene_id), ]
+rowData(rse_exon_filt)$Symbol = symbols$external_gene_name # external_gene_name is the MGI_symbol. 
+save(rse_exon_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
+                                "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+
 
 
 
