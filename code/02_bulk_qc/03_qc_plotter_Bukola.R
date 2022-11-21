@@ -134,56 +134,54 @@ var_plot_title <- c("RNum", "RIN", "Brain Number", "Age of Death", "Sex",
 rename_vars <- data.frame(orig_var_name, var_plot_title)
 
 ### 1. Plotting "qc_plots_by.." ################################################
-# For each QC metric plotted against diagnosis/flowcell and color coded by 
-# diagnosis/flowcell.
+# QC mets plots by diagnosis/flowcell and colored by vice versa.
 
-### Base function: 
-create_boxplots <- function(objInt, cov_var, samp_cond, colorby){
-  objInt = as.data.frame(colData(objInt))
+# Base function: 
+create_boxplots <- function(pd, qc_metter, pheno, colorby, colorby2){
   
-  # creating df of possible titles
-  orig_var_name <- c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
-                     "concordMapRate", "mitoRate", "totalAssignedGene", "rRNA_rate")
-  var_plot_title <- c("ERCC RSS", "Num of Reads (log 10)", "Num Mapped (log 10)",
-                      "Overall Map Rate", "Concordant Map Rate", "chrM Map Rate",
-                      "Gene Assignment Rate", "Gene rRNA Rate")
-  posib_title <- data.frame(orig_var_name, var_plot_title)
+  titler = rename_vars[rename_vars$orig_var_name == qc_metter, "var_plot_title"]
   
-  if(cov_var %in% posib_title$orig_var_name) {
-    newTitle <- posib_title[posib_title$orig_var_name == cov_var, 2]
-  } else{
-    newTitle <- cov_var
-  }
-  
-  # In order to make sure geom_jitter and geom_text_repel use the same coordinates 
-  # for points (to prevent mislabeling).
+  # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
   pos <- position_jitter(seed = 2)
   
-  plot = ggplot(objInt, aes_(x = objInt[,cov_var], y = as.factor(objInt[,samp_cond]))) +
+  plot = ggplot(pd, aes_(x = pd[,qc_metter], y = as.factor(pd[,pheno]))) +
     geom_boxplot(outlier.shape = NA) + 
-    geom_jitter(aes_(color = as.factor(objInt[,colorby])), position = pos) +
-    geom_text_repel(aes(label = objInt[,"BrNum"], color = 
-                          as.factor(objInt[,colorby])), position = pos) +
+    geom_jitter(aes_(color = as.factor(pd[,colorby])), position = pos) +
+    geom_text_repel(aes(label = pd[,"BrNum"], color = as.factor(pd[,colorby])),
+                    position = pos) +
     theme_bw(base_size = 10) + 
     theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
           axis.title = element_text(size=15)) +
-    labs(x = newTitle, y = samp_cond) +
+    labs(x = newTitle, y = pheno) +
     guides(color = guide_legend(title = colorby))
+  
+  plot2 = ggplot(pd, aes_(x = pd[,qc_metter], y = as.factor(pd[,pheno]))) +
+    geom_boxplot(outlier.shape = NA) + 
+    geom_jitter(aes_(color = as.factor(pd[,colorby2])), position = pos) +
+    geom_text_repel(aes(label = pd[,"BrNum"], color = as.factor(pd[,colorby2])),
+                    position = pos) +
+    theme_bw(base_size = 10) + 
+    theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+          axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+          axis.title = element_text(size=15)) +
+    labs(x = newTitle, y = pheno) +
+    guides(color = guide_legend(title = colorby2))
+  
+  cat(plot, plot2)
 }
 
-### Creating list of covariate names of interest:
-covVarInt <-  c("ERCCsumLogErr", "numReads", "numMapped", "overallMapRate", 
-                "concordMapRate", "mitoRate", "totalAssignedGene", "rRNA_rate")
 
 ## Creating plots for QC metrics against Flowcell.
-for(i in covVarInt){
+
+for(i in QCmetCols){
   # function(objInt, cov_var, samp_cond, colorby)
   namer <- paste("plotflow", i, sep = "_")
   assign(namer, create_boxplots(rse, i, "Flowcell", "PrimaryDx"))   
 }
+
 # Print and save
-pdf("preprocessed_data/qc_qlots_bukola/qc_plots_byFlowCell.pdf", height = 7, width = 11)
+pdf(here("02_bulk_qc", "qc_plots_bukola", "/boxplot_qc_by_pheno", "tester.pdf"), height = 7, width = 11)
 mget(ls(patt = "plotflow_"))
 dev.off()
 
