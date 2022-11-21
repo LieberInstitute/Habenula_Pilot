@@ -102,11 +102,10 @@ phenoCols = as.vector(c("AgeInterval", "PrimaryDx", "Flowcell"))
 
 # Relevant QC metrics  
 QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
-              "numReads", "numMapped", "numUnmapped", "overallMapRate",
+              "overallMapRate",
               "concordMapRate", "totalMapped", "mitoMapped", "mitoRate",
-              "totalAssignedGene", "rRNA_rate", "sum", "detected",
-              "subsets_Mito_sum", "subsets_Mito_detected", "subsets_Mito_percent",
-              "subsets_Ribo_sum", "subsets_Ribo_detected", "subsets_Ribo_percent",
+              "totalAssignedGene", "rRNA_rate", "detected",
+              
               "logNumReads", "logNumMapped", "logNumUnmapped")
 
 # rename_vars ####
@@ -144,11 +143,7 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
   titler = rename_vars[rename_vars$orig_var_name == qc_metter, "var_plot_title"]
   
   # grabbing p value
-  # pval = pairwise.t.test(pd[, qc_metter], pd[, pheno], p.adjust.method = "bonferroni")
-  
-  
-  pval = compare_means(forpval[,1] ~ forpval[,2], data = forpval, paired = TRUE, method = "t.test", 
-                       p.adjust.method = "bonferroni")
+  pval = pairwise.t.test(pd[, qc_metter], pd[, pheno])
   pval = signif(pval$p.value)
   
   # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
@@ -163,13 +158,11 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
     theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
           axis.title = element_text(size=15)) +
-    labs(x = pheno, y = titler) +
-    guides(color = guide_legend(title = colorby)) +
-    stat_pvalue_manual(pval, label = "T-test, p = {p}", vjust = -1, bracket.nudge.y = 1
-  )
+    labs(x = pheno, y = titler, caption = pval) +
+    guides(color = guide_legend(title = colorby)) 
   print(plot)
 }
-# scale_y_continuous(expand = expansion(mult = c( , ))
+# stat_pvalue_manual(pval, label = "T-test, p = {p}", vjust = -1, bracket.nudge.y = 1)
 ##################################
 
 
