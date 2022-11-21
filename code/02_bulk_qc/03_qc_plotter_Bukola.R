@@ -20,6 +20,7 @@ library(grid)
 library(cowplot)
 library(grid)
 library(ggplotify)
+library(rstatix)
 
 ## Loading data (brain swapped and filtered) ###################################
 # gene
@@ -143,7 +144,7 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
   
   # grabbing p val
   pval = pairwise.t.test(pd[, qc_metter], pd[, pheno], p.adjust.method = "bonferroni")
-  pval = signif(pval)
+  pval = signif(pval$p.value)
   
   # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
   pos <- position_jitter(seed = 2)
@@ -158,11 +159,12 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
           axis.title = element_text(size=15)) +
     labs(x = pheno, y = titler) +
-    guides(color = guide_legend(title = colorby))
-  
+    guides(color = guide_legend(title = colorby)) +
+    stat_pvalue_manual(pval, label = "T-test, p = {p}", vjust = -1, bracket.nudge.y = 1
+  )
   print(plot)
 }
-
+# scale_y_continuous(expand = expansion(mult = c( , ))
 ##################################
 
 
