@@ -137,11 +137,7 @@ rename_vars <- data.frame(orig_var_name, var_plot_title)
 # QC mets plots by diagnosis/flowcell and colored by vice versa.
 
 # Base function: 
-<<<<<<< HEAD
-create_boxplots <- function(pd, qc_metter, pheno, colorby, colorby2){
-=======
 create_boxplots <- function(pd, qc_metter, pheno, colorby){
->>>>>>> 17b7683... Trying to get out of hooked commits
   
   titler = rename_vars[rename_vars$orig_var_name == qc_metter, "var_plot_title"]
   
@@ -157,44 +153,13 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
     theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
           axis.title = element_text(size=15)) +
-<<<<<<< HEAD
-    labs(x = newTitle, y = pheno) +
-    guides(color = guide_legend(title = colorby))
-  
-  plot2 = ggplot(pd, aes_(x = pd[,qc_metter], y = as.factor(pd[,pheno]))) +
-    geom_boxplot(outlier.shape = NA) + 
-    geom_jitter(aes_(color = as.factor(pd[,colorby2])), position = pos) +
-    geom_text_repel(aes(label = pd[,"BrNum"], color = as.factor(pd[,colorby2])),
-                    position = pos) +
-    theme_bw(base_size = 10) + 
-    theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
-          axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
-          axis.title = element_text(size=15)) +
-    labs(x = newTitle, y = pheno) +
-    guides(color = guide_legend(title = colorby2))
-  
-  cat(plot, plot2)
-}
-
-
-## Creating plots for QC metrics against Flowcell.
-
-for(i in QCmetCols){
-  # function(objInt, cov_var, samp_cond, colorby)
-  namer <- paste("plotflow", i, sep = "_")
-  assign(namer, create_boxplots(rse, i, "Flowcell", "PrimaryDx"))   
-}
-
-# Print and save
-pdf(here("02_bulk_qc", "qc_plots_bukola", "/boxplot_qc_by_pheno", "tester.pdf"), height = 7, width = 11)
-mget(ls(patt = "plotflow_"))
-=======
     labs(x = titler, y = pheno) +
     guides(color = guide_legend(title = colorby))
   
   print(plot)
 }
 
+# git issues
 ## Creating plots for QC metrics against Flowcell.
 # for(i in QCmetCols){
 #   # function(pd, qc_metter, pheno, colorby, colorby2)
@@ -208,7 +173,6 @@ pdf(here("plots","02_bulk_qc", "qc_plots_bukola", "boxplot_qc_by_pheno", "tester
     create_boxplots(pd, i , "PrimaryDx", "Flowcell")
     create_boxplots(pd, i , "PrimaryDx", "AgeInterval")
   }
->>>>>>> 17b7683... Trying to get out of hooked commits
 dev.off()
 
 ## Creating plots for QC metrics against PrimaryDx.
