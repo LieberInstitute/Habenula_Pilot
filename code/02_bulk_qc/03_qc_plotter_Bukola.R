@@ -27,20 +27,20 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
           "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 rse_gene = rse_gene_filt
 
-# exon
-load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
-          "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
-rse_exon = rse_exon_filt
-
-# jx
-load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
-          "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
-rse_jx = rse_jx_filt
-
-# tx
-load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
-          "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
-rse_tx = rse_tx_filt
+# # exon
+# load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+#           "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
+# rse_exon = rse_exon_filt
+# 
+# # jx
+# load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+#           "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
+# rse_jx = rse_jx_filt
+# 
+# # tx
+# load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+#           "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+# rse_tx = rse_tx_filt
 
 
 ## Focusing on rse_gene ########################################################
@@ -159,31 +159,32 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
   print(plot)
 }
 
-# git issues
-## Creating plots for QC metrics against Flowcell.
-# for(i in QCmetCols){
-#   # function(pd, qc_metter, pheno, colorby, colorby2)
-#   namer <- paste("plotflow", i, sep = "_")
-#   assign(namer, create_boxplots(rse, i, "Flowcell", "PrimaryDx"))   
-# }
-
-# Print and save
-pdf(here("plots","02_bulk_qc", "qc_plots_bukola", "boxplot_qc_by_pheno", "tester.pdf"), height = 7, width = 11)
+# Save for QC by PrimaryDx with Flow colors
+pdf(here("plots","02_bulk_qc", "qc_plots_bukola", "boxplot_qc_by_pheno", "qc_by_dx_boxplot.pdf"), height = 7, width = 11)
   for (i in QCmetCols){
     create_boxplots(pd, i , "PrimaryDx", "Flowcell")
-    create_boxplots(pd, i , "PrimaryDx", "AgeInterval")
   }
 dev.off()
 
-## Creating plots for QC metrics against PrimaryDx.
-for(i in covVarInt){
-  # function(objInt, cov_var, samp_cond, colorby)
-  namer <- paste("plotdx", i, sep = "_")
-  assign(namer, create_boxplots(rse, i, "PrimaryDx", "Flowcell"))   
+# Save for QC by Flowcell with Dx colors
+pdf(here("plots","02_bulk_qc", "qc_plots_bukola", "boxplot_qc_by_pheno", "qc_by_flow_boxplot.pdf"), height = 7, width = 11)
+for (i in QCmetCols){
+  create_boxplots(pd, i , "Flowcell", "Primary Dx")
 }
-# Print and save
-pdf("preprocessed_data/qc_qlots_bukola/qc_plots_byPrimaryDx.pdf", height = 7, width = 11)
-mget(ls(patt = "plotdx_"))
+dev.off()
+
+# Save for QC by AgeInt with Flow colors
+pdf(here("plots","02_bulk_qc", "qc_plots_bukola", "boxplot_qc_by_pheno", "qc_by_age_flow_boxplot.pdf"), height = 7, width = 11)
+for (i in QCmetCols){
+  create_boxplots(pd, i , "AgeInterval", "Flowcell")
+}
+dev.off()
+
+# Save for QC by AgeInt with Dx colors
+pdf(here("plots","02_bulk_qc", "qc_plots_bukola", "boxplot_qc_by_pheno", "qc_by_age_dx_boxplot.pdf"), height = 7, width = 11)
+for (i in QCmetCols){
+  create_boxplots(pd, i , "AgeInterval", "PrimaryDx")
+}
 dev.off()
 
 ### 2. Plotting "Mito_vs_Ribo_byPhenotype" #####################################
