@@ -141,10 +141,14 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
   
   titler = rename_vars[rename_vars$orig_var_name == qc_metter, "var_plot_title"]
   
+  # grabbing p val
+  pval = pairwise.t.test(pd[, qc_metter], pd[, pheno], p.adjust.method = "bonferroni")
+  pval = signif(pval)
+  
   # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
   pos <- position_jitter(seed = 2)
   
-  plot = ggplot(pd, aes_(x = pd[,qc_metter], y = as.factor(pd[,pheno]))) +
+  plot = ggplot(pd, aes_(y = pd[,qc_metter], x = as.factor(pd[,pheno]))) +
     geom_boxplot(outlier.shape = NA) + 
     geom_jitter(aes_(color = as.factor(pd[,colorby])), position = pos) +
     geom_text_repel(aes(label = pd[,"BrNum"], color = as.factor(pd[,colorby])),
@@ -153,11 +157,14 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
     theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
           axis.title = element_text(size=15)) +
-    labs(x = titler, y = pheno) +
+    labs(x = pheno, y = titler) +
     guides(color = guide_legend(title = colorby))
   
   print(plot)
 }
+
+##################################
+
 
 # Save for QC by PrimaryDx with Flow colors
 pdf(here("plots","02_bulk_qc", "qc_plots_bukola", "boxplot_qc_by_pheno", "qc_by_dx_boxplot.pdf"), height = 7, width = 11)
@@ -169,7 +176,7 @@ dev.off()
 # Save for QC by Flowcell with Dx colors
 pdf(here("plots","02_bulk_qc", "qc_plots_bukola", "boxplot_qc_by_pheno", "qc_by_flow_boxplot.pdf"), height = 7, width = 11)
 for (i in QCmetCols){
-  create_boxplots(pd, i , "Flowcell", "Primary Dx")
+  create_boxplots(pd, i , "Flowcell", "PrimaryDx")
 }
 dev.off()
 
