@@ -21,6 +21,7 @@ library(cowplot)
 library(grid)
 library(ggplotify)
 library(rstatix)
+library(ggpubr)
 
 ## Loading data (brain swapped and filtered) ###################################
 # gene
@@ -142,8 +143,12 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
   
   titler = rename_vars[rename_vars$orig_var_name == qc_metter, "var_plot_title"]
   
-  # grabbing p val
-  pval = pairwise.t.test(pd[, qc_metter], pd[, pheno], p.adjust.method = "bonferroni")
+  # grabbing p value
+  # pval = pairwise.t.test(pd[, qc_metter], pd[, pheno], p.adjust.method = "bonferroni")
+  
+  
+  pval = compare_means(forpval[,1] ~ forpval[,2], data = forpval, paired = TRUE, method = "t.test", 
+                       p.adjust.method = "bonferroni")
   pval = signif(pval$p.value)
   
   # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
