@@ -147,10 +147,17 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
     pval = aov(pd[,qc_metter] ~ pd[,pheno], data = pd)
     pval = signif(unlist(summary(pval))["Pr(>F)1"])
       
-  } else if(length(levels(pd[, pheno])) > 2){
+  } else if(length(levels(pd[, pheno])) >= 2){
     
       pval = pairwise.t.test(pd[, qc_metter], pd[, pheno])
       pval = signif(pval$p.value)
+  }
+  
+  # coloring titles in red for significance 
+  if (pval <= 0.05){
+    sigColor = "red"
+  } else {
+    sigColor = "blue"
   }
   
   # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
@@ -162,14 +169,15 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
     geom_text_repel(aes(label = pd[,"BrNum"], color = as.factor(pd[,colorby])),
                     position = pos) +
     theme_bw(base_size = 10) + 
-    theme(legend.position= "top", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+    labs(x = pheno, y = titler, caption = paste("p-value =", pval)) +
+    theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
-          axis.title = element_text(size=15)) +
-    labs(x = pheno, y = titler, caption = pval) +
+          axis.title = element_text(size=15), 
+          plot.caption = element_text(color = sigColor, face = "italic")) +
     guides(color = guide_legend(title = colorby)) 
   print(plot)
 }
-# stat_pvalue_manual(pval, label = "T-test, p = {p}", vjust = -1, bracket.nudge.y = 1)
+
 ##################################
 
 
