@@ -63,9 +63,7 @@ drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
          "perSeqQual", "perBaseContent", names(pd[,grepl("phred", names(pd))]),
          names(pd[,grepl("Adapter", names(pd))]), "SeqLength_R2", "bamFile",
          "trimmed", names(pd[,grepl("gene_", names(pd))]), "hasGenotype",
-         "Age", "Race", "subsets_Mito_sum.1", "subsets_Mito_detected.1",
-         "subsets_Mito_percent.1", "subsets_Ribo_sum.1", "subsets_Ribo_detected.1",
-         "subsets_Ribo_percent.1", "sum.1", "detected.1")
+         "Age", "Race", names(pd[,grepl("subsets_", names(pd))]), "Sex", "sum")
 
 pd = pd[,!(names(pd)) %in% drop]
 
@@ -77,6 +75,9 @@ pd$percentGC_R2 <- as.numeric(as.character(pd$percentGC_R2))
 pd$logNumReads <- log10(pd$numReads)
 pd$logNumMapped <- log10(pd$numMapped)
 pd$logNumUnmapped <- log10(pd$numUnmapped)
+
+drop2 = c("numReads", "numMapped", "numUnmapped")
+pd = pd[,!(names(pd)) %in% drop2]
 
 # Creating intervals for AgeDeath
 pd$AgeInterval = NA
@@ -102,11 +103,9 @@ phenoCols = as.vector(c("AgeInterval", "PrimaryDx", "Flowcell"))
 
 # Relevant QC metrics  
 QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
-              "overallMapRate",
-              "concordMapRate", "totalMapped", "mitoMapped", "mitoRate",
-              "totalAssignedGene", "rRNA_rate", "detected",
-              
-              "logNumReads", "logNumMapped", "logNumUnmapped")
+              "overallMapRate", "concordMapRate", "totalMapped", 
+              "mitoMapped", "mitoRate", "totalAssignedGene", "rRNA_rate", 
+              "detected", "logNumReads", "logNumMapped", "logNumUnmapped")
 
 # rename_vars ####
 # Creating df for plot text to rename variables:
@@ -143,8 +142,16 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
   titler = rename_vars[rename_vars$orig_var_name == qc_metter, "var_plot_title"]
   
   # grabbing p value
-  pval = pairwise.t.test(pd[, qc_metter], pd[, pheno])
-  pval = signif(pval$p.value)
+  if(length(levels(pd[, pheno])) > 2){
+    
+    pval = aov(pd[,qc_metter] ~ pd[,pheno], data = pd)
+    pval = signif(unlist(summary(pval))["Pr(>F)1"])
+      
+  } else if(length(levels(pd[, pheno])) > 2){
+    
+      pval = pairwise.t.test(pd[, qc_metter], pd[, pheno])
+      pval = signif(pval$p.value)
+  }
   
   # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
   pos <- position_jitter(seed = 2)
