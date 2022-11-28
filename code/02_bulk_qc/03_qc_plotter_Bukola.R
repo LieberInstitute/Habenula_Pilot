@@ -215,12 +215,10 @@ dev.off()
 # Base Function
 mito_vs_ribo <- function(phenos){
   
-  pdoriginal = colData(rse_gene)
-  
   # grabbing p value
   if(length(levels(pd[, pheno])) > 2){
     
-    pval = aov(pd[,qc_metter] ~ pd[,pheno], data = pd)
+    pval = aov(pd[,qc_metter] ~ pd[,pheno], data = pdoriginal)
     pval = signif(unlist(summary(pval))["Pr(>F)1"])
     
   } else if(length(levels(pd[, pheno])) <= 2){
