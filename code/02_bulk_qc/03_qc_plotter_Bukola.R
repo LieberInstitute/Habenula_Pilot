@@ -239,12 +239,6 @@ pdf(file = here("plots","02_bulk_qc", "qc_plots_bukola", "Mito_vs_Ribo_byPhenoty
 dev.off()
 
 ### 3. Scatterplotting "QC_vs_QC" #####################################################
-# QCmetCols
-# [1] "RIN"               "percentGC_R1"      "percentGC_R2"     
-# [4] "ERCCsumLogErr"     "numReads"          "numMapped"        
-# [7] "numUnmapped"       "overallMapRate"    "concordMapRate"   
-# [10] "totalMapped"       "mitoMapped"        "mitoRate"         
-# [13] "totalAssignedGene" "rRNA_rate"        
 boxplot_qc_qc <- function(QC1, QC2, pheno){
   
   pos <- position_jitter(seed = 7)
@@ -268,8 +262,29 @@ pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "MapRate_vs_GeneAssign
   plot_grid(plotqcs1[[1]], plotqcs1[[2]], plotqcs1[[3]], ncol = 1)
 dev.off()
 
+# Plotting Detected vs rRNA Rate
+pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "Detected_vs_rRNArate.pdf"), width = 10, height = 15)
+  plotqcs2 = lapply(phenoCols, FUN = boxplot_qc_qc, QC1 = "detected", QC2 = "rRNA_rate")
+  plot_grid(plotqcs2[[1]], plotqcs2[[2]], plotqcs2[[3]], ncol = 1)
+dev.off()
 
+# Plotting log10s of Num Mapped and Num Reads
+pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "NumMapped_vs_NumReads.pdf"), width = 10, height = 15)
+  plotqcs3 = lapply(phenoCols, FUN = boxplot_qc_qc, QC1 = "logNumReads", QC2 = "logNumMapped")
+  plot_grid(plotqcs3[[1]], plotqcs3[[2]], plotqcs3[[3]], ncol = 1)
+dev.off()
 
+# Plotting Total Mapped vs Mito Mapped
+pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "TotalMapped_vs_MitoMapped.pdf"), width = 10, height = 15)
+  plotqcs4 = lapply(phenoCols, FUN = boxplot_qc_qc, QC2 = "mitoMapped", QC1 = "totalMapped")
+  plot_grid(plotqcs4[[1]], plotqcs4[[2]], plotqcs4[[3]], ncol = 1)
+dev.off()
+
+# Plotting Overall Map Rate vs Concordant Map Rate
+pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "Overall_vs_ConcordMapRate.pdf"), width = 10, height = 15)
+  plotqcs5 = lapply(phenoCols, FUN = boxplot_qc_qc, QC2 = "overallMapRate", QC1 = "concordMapRate")
+  plot_grid(plotqcs5[[1]], plotqcs5[[2]], plotqcs5[[3]], ncol = 1)
+dev.off()
 
 ## Reproducibility information
 print('Reproducibility information:')
