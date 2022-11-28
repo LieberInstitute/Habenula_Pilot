@@ -154,7 +154,7 @@ create_boxplots <- function(pd, qc_metter, pheno, colorby){
   }
   
   # coloring p-values in red for significance 
-  if (pval <= 0.05/ length(QCmetCols)){
+  if (pval <= 0.05/length(QCmetCols)){
     sigColor = "red"
   } else {
     sigColor = "blue"
@@ -213,47 +213,32 @@ dev.off()
 # Using subsets data, plotting mito vs ribo rate by phenotype
 
 # Base Function
-mito_vs_ribo <- function(phenos){
+mito_vs_ribo <- function(pheno){
   
-  # grabbing p value
-  if(length(levels(pd[, pheno])) > 2){
-    
-    pval = aov(pd[,qc_metter] ~ pd[,pheno], data = pdoriginal)
-    pval = signif(unlist(summary(pval))["Pr(>F)1"])
-    
-  } else if(length(levels(pd[, pheno])) <= 2){
-    
-    pval = pairwise.t.test(pd[, qc_metter], pd[, pheno])
-    pval = signif(pval$p.value)
-  }
+  # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
+  pos <- position_jitter(seed = 4)
   
-  # coloring p-values in red for significance 
-  if (pval <= 0.05){
-    sigColor = "red"
-  } else {
-    sigColor = "blue"
-  }
-  
-  ggplot(pd, aes(x = subsets_Mito_percent, y = subsets_Ribo_percent,
-                 color = as.factor(pd[,phenos]))) + geom_point() +
-    labs(x = "Ribosomal Counts", y = "Percentage of MT Counts") +
-    guides(color = guide_legend(title = 
-                                  rename_vars[rename_vars$orig_var_name == 
-                                                phenos,]$var_plot_title))
+  ggplot(pd, aes(x = mitoRate, y = rRNA_rate)) + 
+    geom_point() +
+    geom_jitter(aes_(color = as.factor(pd[,pheno])), position = pos) +
+    geom_text_repel(aes(label = pd[,"BrNum"], color = as.factor(pd[,pheno])),
+                    position = pos) +
+    labs(x = "Ribosomal Counts", y = "Percentage of MT Counts", title = 
+           paste("Mito vs Ribo Rates by", rename_vars[rename_vars$orig_var_name == 
+              pheno,]$var_plot_title, sep = " ")) +
+    guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
+                                pheno,]$var_plot_title))
 }
 
 # Plot
-plot2 = lapply(phenoCols, mito_vs_ribo)
+plot2 = lapply(phenoCols, FUN = mito_vs_ribo)
 
 # Save
-pdf(file = here("preprocessed_data", "qc_qlots_bukola", "Mito_vs_Ribo_byPhenotype.pdf"))
-  plot_grid(plot2[[1]], plot2[[2]], plot2[[3]], ncol = 1, labels =
-              "Mito vs Ribo Rates by Phenotype", rel_heights = c(.65,.35)) 
+pdf(file = here("plots","02_bulk_qc", "qc_plots_bukola", "Mito_vs_Ribo_byPhenotype.pdf"), width = 10, height = 15)
+  plot_grid(plot2[[1]], plot2[[2]], plot2[[3]], ncol = 1) 
 dev.off()
 
-### 3. Plotting "boxplot_[QCmetric]_vs_[pheno]" ########################################
-applyQC = QCmetCols[QCmetCols != "RIN"]
-phenoCols = unlist(phenoCols)
+### 3. Plotting "boxplot_[QCmetric]_vs_[QC_metric]" ########################################
 
 boxplot_qc_pheno <- function(QC_mets, phenos){
   plottingpd = pd[, c(QC_mets, phenos)]
