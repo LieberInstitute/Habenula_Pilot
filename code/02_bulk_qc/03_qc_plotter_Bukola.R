@@ -238,60 +238,37 @@ pdf(file = here("plots","02_bulk_qc", "qc_plots_bukola", "Mito_vs_Ribo_byPhenoty
   plot_grid(plot2[[1]], plot2[[2]], plot2[[3]], ncol = 1) 
 dev.off()
 
-### 3. Plotting "boxplot_[QCmetric]_vs_[QC_metric]" ########################################
-
-boxplot_qc_pheno <- function(QC_mets, phenos){
-  plottingpd = pd[, c(QC_mets, phenos)]
-  plottingpd[, phenos] = as.factor(plottingpd[, phenos])
-  
-  plot = ggplot(plottingpd, aes_(y = plottingpd[, QC_mets], 
-                x = plottingpd[, phenos], fill = plottingpd[, phenos])) + 
-    geom_boxplot(color="red", fill="orange") + 
-    xlab(rename_vars[rename_vars$orig_var_name == phenos,]$var_plot_title) +
-    ylab(rename_vars[rename_vars$orig_var_name == QC_mets,]$var_plot_title) 
-  
-  return(plot)
-}
-
-# Plotting
-for (i in applyQC){
-  
-  fileName = here("preprocessed_data", "qc_qlots_bukola", "02_boxplot_qc_by_pheno", 
-                  paste("Boxplot", i, "vs_phenos.pdf", sep = "_"))
-  
-  plotter = lapply(phenoCols, FUN = boxplot_qc_pheno, QC_mets = i)
-  
-  pdf(file = fileName, width = 5, height =  10)
-    do.call(grid.arrange, list(grobs = plotter, ncol = 1, 
-       top = paste(rename_vars[rename_vars$orig_var_name == i,]$var_plot_title,
-       "by Phenotype")))
-  dev.off()
-}
-
-### 4. Scatterplotting "QC_vs_QC" #####################################################
+### 3. Scatterplotting "QC_vs_QC" #####################################################
 # QCmetCols
 # [1] "RIN"               "percentGC_R1"      "percentGC_R2"     
 # [4] "ERCCsumLogErr"     "numReads"          "numMapped"        
 # [7] "numUnmapped"       "overallMapRate"    "concordMapRate"   
 # [10] "totalMapped"       "mitoMapped"        "mitoRate"         
 # [13] "totalAssignedGene" "rRNA_rate"        
-
-for (i in QCmetCols){
-  qc1 = i
-  fileName = here("preprocessed_data", "qc_qlots_bukola", paste(qc1, 
-            "vs_QC_mets.pdf", sep = "_"))
+boxplot_qc_qc <- function(QC1, QC2, pheno){
   
-  for (j in QCmetCols){
-    qc2 = j
-    scatterer = ggplot(pd, aes(qc1, qc2)) + geom_point() 
-    pdf(file = fileName)
-    do.call(grid.arrange, list(grobs = scatterer, ncol = 1, top = 
-            paste(rename_vars[rename_vars$orig_var_name == i,]$var_plot_title,
-            "vs Other QC Metrics")))
-    
-    dev.off()
-  }
+  pos <- position_jitter(seed = 7)
+  
+  plot = ggplot(pd, aes_(y = pd[, QC1], x = pd[, QC2])) + 
+    geom_point() + 
+    geom_jitter(aes_(color = as.factor(pd[,pheno])), position = pos) +
+    geom_text_repel(aes(label = pd[,"BrNum"], color = as.factor(pd[,pheno])),
+                    position = pos) +
+    labs(x = rename_vars[rename_vars$orig_var_name == QC2,]$var_plot_title, 
+    y = rename_vars[rename_vars$orig_var_name == QC1,]$var_plot_title) +
+    guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
+          pheno,]$var_plot_title))
+  
+  return(plot)
 }
+
+# Plotting Overall Map Rate vs Total Assigned Gene
+pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "MapRate_vs_GeneAssigned.pdf"), width = 10, height = 15)
+  plotqcs1 = lapply(phenoCols, FUN = boxplot_qc_qc, QC1 = "overallMapRate", QC2 = "totalAssignedGene")
+  plot_grid(plotqcs1[[1]], plotqcs1[[2]], plotqcs1[[3]], ncol = 1)
+dev.off()
+
+
 
 
 ## Reproducibility information
