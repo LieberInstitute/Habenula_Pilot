@@ -7,6 +7,7 @@ library(SummarizedExperiment)
 library(recount)
 library(jaffelab)
 library(RColorBrewer)
+library(here)
 
 ## Adapted from Josh. Don't really like. 
 rse = read.csv("/dcs04/lieber/lcolladotor/libdDataSwaps_LIBD001/brain_swap/RNAseq_Collection_postQC_n5544_11dataset_2020-09-07_phenotypes.csv")
@@ -27,13 +28,21 @@ table(brain_tab[rse_hab$BrNum])
 rse_subset_same = rse_subset[rse_subset$BrNum %in% rse_hab$BrNum,]
 
 ## Adapted from smokingMouse. Like much better:
-
+load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+          "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+rse_gene = rse_gene_filt
 
 ## Testing pca generator:
-pca<-prcomp(t(assays(rse_hab)$logcounts))
+pca<-prcomp(t(assays(rse_gene)$logcounts))
 
 ## % of the variance explained by each PC
 pca_vars<- getPcaVars(pca)
 pca_vars_labs<- paste0(
   "PC", seq(along = pca_vars), ": ",
   pca_vars, "% Var Expl")
+
+## Joining PC and sample info
+pca_data<-cbind(pca$x,colData(rse_gene))
+
+## Add samples' phenotypes
+pca_data<-as.data.frame(pca_data)
