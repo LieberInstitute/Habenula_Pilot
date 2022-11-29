@@ -29,6 +29,8 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
           "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 rse_gene = rse_gene_filt
 
+
+
 # # exon
 # load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
 #           "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
@@ -55,6 +57,9 @@ table(rse_gene$Sex, rse_gene$PrimaryDx)
 
 # pd & pd_dropped ####
 pd = as.data.frame(colData(rse_gene))
+
+# Changing schizo to SCZD
+pd$PrimaryDx <- recode_factor(pd$PrimaryDx, Schizo = "SCZD")
 
 # dropped Race and Sex because all male and all Cauc.
 drop = c("Brain.Region", "FQCbasicStats", "perBaseQual", "perTileQual",
