@@ -286,6 +286,24 @@ pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "Overall_vs_ConcordMap
   plot_grid(plotqcs5[[1]], plotqcs5[[2]], plotqcs5[[3]], ncol = 1)
 dev.off()
 
+# Plotting Overall Map Rate vs Concordant Map Rate
+pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "Overall_vs_ConcordMapRate.pdf"), width = 10, height = 15)
+  plotqcs5 = lapply(phenoCols, FUN = boxplot_qc_qc, QC2 = "overallMapRate", QC1 = "concordMapRate")
+  plot_grid(plotqcs5[[1]], plotqcs5[[2]], plotqcs5[[3]], ncol = 1)
+dev.off()
+
+# Plotting ERCC vs Mito Mapped Rate
+pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "ERCC_vs_MitoMapRate.pdf"), width = 10, height = 15)
+  plotqcs6 = lapply(phenoCols, FUN = boxplot_qc_qc, QC2 = "ERCCsumLogErr", QC1 = "mitoRate")
+  plot_grid(plotqcs6[[1]], plotqcs6[[2]], plotqcs6[[3]], ncol = 1)
+dev.off()
+
+# Plotting Total Mapped vs Mito Mapped
+pdf(file = here("plots", "02_bulk_qc", "qc_plots_bukola", "Total_vs_MitoMapRate.pdf"), width = 10, height = 15)
+  plotqcs7 = lapply(phenoCols, FUN = boxplot_qc_qc, QC2 = "totalMapped", QC1 = "mitoRate")
+  plot_grid(plotqcs7[[1]], plotqcs7[[2]], plotqcs7[[3]], ncol = 1)
+dev.off()
+
 ## Reproducibility information
 print('Reproducibility information:')
 Sys.time()
