@@ -9,40 +9,59 @@ library(jaffelab)
 library(RColorBrewer)
 library(here)
 
-## Adapted from Josh. Don't really like. 
-rse = read.csv("/dcs04/lieber/lcolladotor/libdDataSwaps_LIBD001/brain_swap/RNAseq_Collection_postQC_n5544_11dataset_2020-09-07_phenotypes.csv")
-
-## filter to relevant studies and samples
-rel_dataset = c("BrainSeq_Phase2_DLPFC",
-                "BrainSeq_Phase2_HIPPO", "BrainSeq_Phase3_Caudate", "BrainSeq_Phase4and5",
-                "Habenula", "Nicotine_NAc", "psychENCODE_BP", "psychENCODE_MDD",
-                "VA_PTSD")
-keepIndex = which(rse$Dataset %in% rel_dataset & 
-                    rse$Sex == "M" & rse$Age > 20 & rse$Age < 69)
-rse_subset = rse[keepIndex,]
-
-## subset to same brains 
-brain_tab = table(rse_subset$BrNum)
-rse_hab = rse_subset[rse_subset$Dataset == "Habenula",]
-table(brain_tab[rse_hab$BrNum])
-rse_subset_same = rse_subset[rse_subset$BrNum %in% rse_hab$BrNum,]
-
-## Adapted from smokingMouse. Like much better:
+# Before Brain Swaps ###########################################################
+# Loading relevant rse objects #################################################
+# gene
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
           "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 rse_gene = rse_gene_filt
 
-## Testing pca generator:
-pca<-prcomp(t(assays(rse_gene)$logcounts))
+# exon: NEED TO REMAKE
+# load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+#           "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
+# rse_exon = rse_exon_filt
+ 
+# jx
+load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+          "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
+rse_jx = rse_jx_filt
+ 
+# tx
+load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+          "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
+rse_tx = rse_tx_filt
 
-## % of the variance explained by each PC
-pca_vars<- getPcaVars(pca)
-pca_vars_labs<- paste0(
-  "PC", seq(along = pca_vars), ": ",
-  pca_vars, "% Var Expl")
+## Creating PCA base function:
+PCA <- function(rse_type){
+  
+  pca <- prcomp(t(assays(rse_type)$logcounts))
+  
+  ## % of the variance explained by each PC
+  pca_vars <- getPcaVars(pca)
+  pca_vars_labs<- paste0("PC", seq(along = pca_vars), ": ",
+    pca_vars, "% Var Expl")
+  
+  ## Joining PC and sample info
+  pca_data<-cbind(pca$x, colData(rse_type))
+  
+  ## Add samples' phenotypes
+  pca_data<-as.data.frame(pca_data)
+  
+  # Returning PCA data as well as their plottable labels.
+  return(list(pca_data, pca_vars_labs))
+}
 
-## Joining PC and sample info
-pca_data<-cbind(pca$x,colData(rse_gene))
+## Applying PCA function per rse type
+pc_rse_gene = PCA(rse_gene)
+pc_rse_gene = PCA(rse_gene)
+pc_rse_gene = PCA(rse_gene)
+pc_rse_gene = PCA(rse_gene)
 
-## Add samples' phenotypes
-pca_data<-as.data.frame(pca_data)
+## Plotting with geom_jitter
+
+## Reproducibility information
+print('Reproducibility information:')
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
