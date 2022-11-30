@@ -15,6 +15,7 @@ library(here)
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
           "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 rse_gene = rse_gene_filt
+rm(rse_gene_filt)
 
 # exon: NEED TO REMAKE
 # load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
@@ -31,8 +32,8 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
           "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 rse_tx = rse_tx_filt
 
-## Creating PCA base function:
-PCA <- function(rse_type){
+## Creating PCA base function ##################################################
+pca_creator <- function(rse_type){
   
   pca <- prcomp(t(assays(rse_type)$logcounts))
   
@@ -51,13 +52,28 @@ PCA <- function(rse_type){
   return(list(pca_data, pca_vars_labs))
 }
 
-## Applying PCA function per rse type
-pc_rse_gene = PCA(rse_gene)
-pc_rse_gene = PCA(rse_gene)
-pc_rse_gene = PCA(rse_gene)
-pc_rse_gene = PCA(rse_gene)
+## Applying PCA function per rse type ##########################################
+pc_rse_gene = pca_creator(rse_gene) # gene only for now 
 
-## Plotting with geom_jitter
+
+## Creating Plotting PC base function ##########################################
+pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
+  
+  pc_data = pc_df[[1]]
+  pc_variables = pc_df[[2]]
+  
+  plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_df[, pcy],
+                  color = pc_data[, colorby])) + 
+    theme(legend.position="right", plot.margin=unit (c (1,1.5,1,1), 'cm')) +
+    geom_point() + 
+    labs(x= pca_vars[strtoi(gsub("PC","", PCx))], y = pca_vars[strtoi(gsub("PC","", PCy))],  
+         color=pheno_var)
+  return(plot)
+}
+
+
+
+## Plotting with geom_repelde
 
 ## Reproducibility information
 print('Reproducibility information:')
