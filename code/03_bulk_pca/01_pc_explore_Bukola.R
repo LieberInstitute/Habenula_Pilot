@@ -8,6 +8,8 @@ library(recount)
 library(jaffelab)
 library(RColorBrewer)
 library(here)
+library(ggrepel)
+
 
 # Before Brain Swaps ###########################################################
 # Loading relevant rse objects #################################################
@@ -34,7 +36,7 @@ rse_tx = rse_tx_filt
 
 ## Including relevant stable variables #########################################
 # Variable phenotypes in our data
-phenoCols = as.vector(c("AgeInterval", "PrimaryDx", "Flowcell"))
+phenoCols = as.vector(c("PrimaryDx", "Flowcell"))
 
 # Relevant QC metrics  
 QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
@@ -108,7 +110,7 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
   y_titler = pc_variables[grepl(paste0(pcy, ":"), pc_variables)]
   
   # plotting with Brain Numbers
-  plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_df[, pcy])) + 
+  plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy])) + 
     geom_jitter(aes_(color = as.factor(pc_data[,colorby])), position = pos) +
     geom_text_repel(aes(label = pc_data[,"BrNum"], color = 
                           as.factor(pc_data[,colorby])), position = pos) +
@@ -124,7 +126,10 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
 
 
 
-## Plotting with geom_repelde
+## Plot and save
+pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC1_vs_PC2_rse_gene_n69.pdf"))
+  lapply(phenoCols, FUN = pc_to_pc, pcx = "PC1", pcy = "PC2", pc_df = pc_rse_gene)
+dev.off()
 
 ## Reproducibility information
 print('Reproducibility information:')
