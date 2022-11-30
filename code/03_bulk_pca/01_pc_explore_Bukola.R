@@ -36,7 +36,7 @@ rse_tx = rse_tx_filt
 
 ## Including relevant stable variables #########################################
 # Variable phenotypes in our data
-phenoCols = as.vector(c("PrimaryDx", "Flowcell"))
+phenoCols = as.vector(c("PrimaryDx", "Flowcell", "AgeDeath"))
 
 # Relevant QC metrics  
 QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
@@ -93,6 +93,9 @@ pca_creator <- function(rse_type){
 ## Applying PCA function per rse type ##########################################
 pc_rse_gene = pca_creator(rse_gene) # gene only for now 
 
+## Updating the variable type for phenotype (discrete vs continuous) ###########
+pc_rse_gene[[1]]$"PrimaryDx" = as.factor(pc_rse_gene[[1]]$"PrimaryDx")
+pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
 
 ## Creating Plotting PC base function ##########################################
 
@@ -110,20 +113,37 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
   y_titler = pc_variables[grepl(paste0(pcy, ":"), pc_variables)]
   
   # plotting with Brain Numbers
+  # for discrete colorby (discrete phenotypes)
+  if (is.factor(pc_data[, colorby]) == TRUE){
   plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy])) + 
-    geom_jitter(aes_(color = as.factor(pc_data[,colorby])), position = pos) +
+    geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
     geom_text_repel(aes(label = pc_data[,"BrNum"], color = 
-                          as.factor(pc_data[,colorby])), position = pos) +
+                          pc_data[,colorby]), position = pos) +
     labs(x = x_titler, y = y_titler) +
     theme_bw(base_size = 10) + 
     theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
           axis.title = element_text(size=15)) +
-    guides(color = guide_legend(title = colorby)) 
+    guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
+           colorby,]$var_plot_title))
+  } else {
+    
+   plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy], 
+                               color = pc_data[,colorby])) +
+     scale_colour_gradient2() +
+     geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
+     geom_text_repel(aes(label = pc_data[,"BrNum"]), position = pos) +
+     labs(x = x_titler, y = y_titler) +
+     theme_bw(base_size = 10) + 
+     theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+          axis.title = element_text(size=15)) +
+     guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
+                                                        colorby,]$var_plot_title))
+ }
   
   return(plot)
 }
-
 
 
 ## Plot and save
