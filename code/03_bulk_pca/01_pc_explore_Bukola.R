@@ -96,7 +96,7 @@ pc_rse_gene = pca_creator(rse_gene) # gene only for now
 ## Updating the variable type for phenotype (discrete vs continuous) ###########
 pc_rse_gene[[1]]$"PrimaryDx" = as.factor(pc_rse_gene[[1]]$"PrimaryDx")
 pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
-pc_rse_gene[[1]]$"AgeDeath" = as.factor(pc_rse_gene[[1]]$"AgeDeath")
+pc_rse_gene[[1]]$"AgeDeath" = as.numeric(pc_rse_gene[[1]]$"AgeDeath")
 
 ## Creating Plotting PC base function ##########################################
 
@@ -161,12 +161,12 @@ dev.off()
 
 # PC3 vs PC4
 pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC3_vs_PC4_rse_gene_n69.pdf"))
-lapply(phenoCols, FUN = pc_to_pc, pcx = "PC2", pcy = "PC3", pc_df = pc_rse_gene)
+lapply(phenoCols, FUN = pc_to_pc, pcx = "PC3", pcy = "PC4", pc_df = pc_rse_gene)
 dev.off()
 
 # PC4 vs PC5
 pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC4_vs_PC5_rse_gene_n69.pdf"))
-lapply(phenoCols, FUN = pc_to_pc, pcx = "PC2", pcy = "PC3", pc_df = pc_rse_gene)
+lapply(phenoCols, FUN = pc_to_pc, pcx = "PC4", pcy = "PC5", pc_df = pc_rse_gene)
 dev.off()
 
 
