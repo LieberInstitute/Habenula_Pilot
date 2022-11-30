@@ -32,6 +32,42 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
           "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 rse_tx = rse_tx_filt
 
+## Including relevant stable variables #########################################
+# Variable phenotypes in our data
+phenoCols = as.vector(c("AgeInterval", "PrimaryDx", "Flowcell"))
+
+# Relevant QC metrics  
+QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
+              "overallMapRate", "concordMapRate", "totalMapped", 
+              "mitoMapped", "mitoRate", "totalAssignedGene", "rRNA_rate", 
+              "detected", "logNumReads", "logNumMapped", "logNumUnmapped")
+
+# rename_vars ####
+# Creating df for plot text to rename variables:
+orig_var_name <- c("RNum", "RIN", "BrNum", "AgeDeath", "Sex", "PrimaryDx", 
+                   "percentGC_R1", "percentGC_R2", "ERCCsumLogErr", 
+                   "numReads", "numMapped", "numUnmapped", "overallMapRate", 
+                   "concordMapRate", "totalMapped", "mitoMapped", "mitoRate", 
+                   "totalAssignedGene", "rRNA_rate", "Flowcell", 
+                   "sum", "detected", "subsets_Mito_sum", "subsets_Mito_detected",
+                   "subsets_Mito_percent", "subsets_Ribo_sum", 
+                   "subsets_Ribo_detected", "subsets_Ribo_percent", "logNumReads",
+                   "logNumMapped", "logNumUnmapped", "AgeInterval")
+
+var_plot_title <- c("RNum", "RIN", "Brain Number", "Age of Death", "Sex",
+                    "Primary Dx", "Percent GC R1", "Percent GC R2", 
+                    "ERCC RSS", "Num of Reads", "Num Mapped", "Num Unmapped", 
+                    "Overall Map Rate", "Concordant Map Rate", "Total Mapped", 
+                    "chrM Mapped", "chrM Map Rate", "Total Assigned Genes", 
+                    "Gene rRNA Rate", "Flowcell", "Sum", "Detected", 
+                    "Sum of Mito Subsets", "Detected Mito Subsets", 
+                    "Percent of Mito Subsets", "Sum of Ribo Subsets", 
+                    "Detected Ribo Subsets", "Percent of Ribo Subsets",
+                    "Num Reads (log 10)", "Num Mapped (log 10)", 
+                    "Num Unmapped (log 10)", "Age Intervals")
+
+rename_vars <- data.frame(orig_var_name, var_plot_title)
+
 ## Creating PCA base function ##################################################
 pca_creator <- function(rse_type){
   
@@ -57,17 +93,32 @@ pc_rse_gene = pca_creator(rse_gene) # gene only for now
 
 
 ## Creating Plotting PC base function ##########################################
+
 pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
   
+  # unlisting returned object from pca_creator function
   pc_data = pc_df[[1]]
   pc_variables = pc_df[[2]]
   
-  plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_df[, pcy],
-                  color = pc_data[, colorby])) + 
-    theme(legend.position="right", plot.margin=unit (c (1,1.5,1,1), 'cm')) +
-    geom_point() + 
-    labs(x= pca_vars[strtoi(gsub("PC","", PCx))], y = pca_vars[strtoi(gsub("PC","", PCy))],  
-         color=pheno_var)
+  # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
+  pos <- position_jitter(seed = 2)
+  
+  # grabbing titles 
+  x_titler = pc_variables[grepl(paste0(pcx, ":"), pc_variables)]
+  y_titler = pc_variables[grepl(paste0(pcy, ":"), pc_variables)]
+  
+  # plotting with Brain Numbers
+  plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_df[, pcy])) + 
+    geom_jitter(aes_(color = as.factor(pc_data[,colorby])), position = pos) +
+    geom_text_repel(aes(label = pc_data[,"BrNum"], color = 
+                          as.factor(pc_data[,colorby])), position = pos) +
+    labs(x = x_titler, y = y_titler) +
+    theme_bw(base_size = 10) + 
+    theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+          axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+          axis.title = element_text(size=15)) +
+    guides(color = guide_legend(title = colorby)) 
+  
   return(plot)
 }
 
