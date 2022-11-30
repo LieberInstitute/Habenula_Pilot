@@ -96,6 +96,7 @@ pc_rse_gene = pca_creator(rse_gene) # gene only for now
 ## Updating the variable type for phenotype (discrete vs continuous) ###########
 pc_rse_gene[[1]]$"PrimaryDx" = as.factor(pc_rse_gene[[1]]$"PrimaryDx")
 pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
+pc_rse_gene[[1]]$"AgeDeath" = as.factor(pc_rse_gene[[1]]$"AgeDeath")
 
 ## Creating Plotting PC base function ##########################################
 
@@ -114,7 +115,8 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
   
   # plotting with Brain Numbers
   # for discrete colorby (discrete phenotypes)
-  if (is.factor(pc_data[, colorby]) == TRUE){
+
+# if (is.factor(pc_data[, colorby]) == TRUE){
   plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy])) + 
     geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
     geom_text_repel(aes(label = pc_data[,"BrNum"], color = 
@@ -126,30 +128,47 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
           axis.title = element_text(size=15)) +
     guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
            colorby,]$var_plot_title))
-  } else {
-    
-   plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy], 
-                               color = pc_data[,colorby])) +
-     scale_colour_gradient2() +
-     geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
-     geom_text_repel(aes(label = pc_data[,"BrNum"]), position = pos) +
-     labs(x = x_titler, y = y_titler) +
-     theme_bw(base_size = 10) + 
-     theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
-           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
-          axis.title = element_text(size=15)) +
-     guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
-                                                        colorby,]$var_plot_title))
- }
+ #  } else {
+ #    
+ #   plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy]) +
+ #     scale_colour_gradient2(colours = pc_data[,colorby])) +
+ #     geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
+ #     geom_text_repel(aes(label = pc_data[,"BrNum"]), position = pos) +
+ #     labs(x = x_titler, y = y_titler) +
+ #     theme_bw(base_size = 10) + 
+ #     theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+ #           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+ #          axis.title = element_text(size=15)) +
+ #     guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
+ #                                                        colorby,]$var_plot_title))
+ # }
   
   return(plot)
 }
 
 
 ## Plot and save
+
+# PC1 vs PC2
 pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC1_vs_PC2_rse_gene_n69.pdf"))
   lapply(phenoCols, FUN = pc_to_pc, pcx = "PC1", pcy = "PC2", pc_df = pc_rse_gene)
 dev.off()
+
+# PC2 vs PC3
+pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC2_vs_PC3_rse_gene_n69.pdf"))
+lapply(phenoCols, FUN = pc_to_pc, pcx = "PC2", pcy = "PC3", pc_df = pc_rse_gene)
+dev.off()
+
+# PC3 vs PC4
+pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC3_vs_PC4_rse_gene_n69.pdf"))
+lapply(phenoCols, FUN = pc_to_pc, pcx = "PC2", pcy = "PC3", pc_df = pc_rse_gene)
+dev.off()
+
+# PC4 vs PC5
+pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC4_vs_PC5_rse_gene_n69.pdf"))
+lapply(phenoCols, FUN = pc_to_pc, pcx = "PC2", pcy = "PC3", pc_df = pc_rse_gene)
+dev.off()
+
 
 ## Reproducibility information
 print('Reproducibility information:')
