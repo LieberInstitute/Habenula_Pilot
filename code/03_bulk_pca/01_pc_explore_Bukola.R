@@ -9,6 +9,7 @@ library(jaffelab)
 library(RColorBrewer)
 library(here)
 library(ggrepel)
+library("viridis")
 
 
 # Before Brain Swaps ###########################################################
@@ -33,6 +34,15 @@ rse_jx = rse_jx_filt
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
           "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 rse_tx = rse_tx_filt
+
+## Correcting rse objects accordingly ##########################################
+# Changing schizo to SCZD
+colData(rse_gene)$PrimaryDx <- recode_factor(colData(rse_gene)$PrimaryDx, Schizo = "SCZD")
+# Adding log 10 of nums 
+colData(rse_gene)$logNumReads <- log10(colData(rse_gene)$numReads)
+colData(rse_gene)$logNumMapped <- log10(colData(rse_gene)$numMapped)
+colData(rse_gene)$logNumUnmapped <- log10(colData(rse_gene)$numUnmapped)
+
 
 ## Including relevant stable variables #########################################
 # Variable phenotypes in our data 
@@ -97,8 +107,9 @@ pc_rse_gene = pca_creator(rse_gene) # gene only for now
 ## Updating the variable type for phenotype (discrete vs continuous) ###########
 pc_rse_gene[[1]]$"PrimaryDx" = as.factor(pc_rse_gene[[1]]$"PrimaryDx")
 pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
+pc_rse_gene[[1]]$"percentGC_R1" = as.factor(pc_rse_gene[[1]]$"percentGC_R1")
+pc_rse_gene[[1]]$"percentGC_R2" = as.factor(pc_rse_gene[[1]]$"percentGC_R2")
 
-pc_rse_gene[[1]]$"AgeDeath" = as.numeric(pc_rse_gene[[1]]$"AgeDeath")
 
 ## Creating Plotting PC base function ##########################################
 pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA) {
@@ -142,9 +153,9 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA) {
       } else {
 
         plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
-          scale_colour_continuous(type = "viridis") +
-          geom_jitter(aes_(color = pc_data[,i]), position = pos) +
-          geom_text_repel(aes(label = pc_data[,"BrNum"]), position = pos) +
+          scale_colour_viridis(option = "magma") +
+          geom_jitter(position = pos, size = 10) +
+          geom_text_repel(aes_string(label = "BrNum"), position = pos, color = "lightgrey") +
           labs (x = x_titler, y = y_titler, 
                 color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title) +
           theme_bw(base_size = 10) +
@@ -174,22 +185,29 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA) {
   dev.off()
 }
 
+## Coloring by
+
+colorbylist = c("PrimaryDx", "Flowcell", "AgeDeath", "RIN", "percentGC_R1",
+                "percentGC_R2", "ERCCsumLogErr", "overallMapRate", "concordMapRate",
+                "totalMapped", "mitoMapped", "mitoRate", "totalAssignedGene", 
+                "rRNA_rate", "detected", "logNumReads", "logNumMapped",
+                "logNumUnmapped")
 
 ## BEFORE DROP #################################################################
 ## rse_gene ####################################################################
 ## PC1 vs PC2
-pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene, colorbylist = phenoCols, dataType = "gene")
+pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
 ## PC2 vs PC3
-pc_to_pc("PC2", "PC3", pc_df = pc_rse_gene, colorbylist = phenoCols, dataType = "gene")
+pc_to_pc("PC2", "PC3", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
 ## PC3 vs PC4
-pc_to_pc("PC3", "PC4", pc_df = pc_rse_gene, colorbylist = phenoCols, dataType = "gene")
+pc_to_pc("PC3", "PC4", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
 ## PC4 vs PC5
-pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist = phenoCols, dataType = "gene")
+pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
 
 
 ## DROPPING SAMPLES ############################################################
 # Drop 1: 
-
+rse_gene2 = 
 
 
 
