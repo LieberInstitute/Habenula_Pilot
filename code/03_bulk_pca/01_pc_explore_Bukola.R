@@ -101,21 +101,17 @@ pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
 pc_rse_gene[[1]]$"AgeDeath" = as.numeric(pc_rse_gene[[1]]$"AgeDeath")
 
 ## Creating Plotting PC base function ##########################################
-
-# Meeting with Nick:
-# 2.b) run as function
-# 3) go through adding collaborators to git commit  
-
-pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType) {
+pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA) {
   # pcx and pcy are the pcas of interest
   # pc_df is the output object from the PCA creator function
   # colorbylist is the list of metrics to color plots buy (changes number of 
   # plots per saved file)
   # dataType options are: "exon" "tx" "jx" "gene"
+  # folder = "before_drop"
   
   # unlisting returned object from pca_creator function
   pc_data = pc_df[[1]]
-  pc_variables = pc_df[[2]]
+  pc_variables = pc_df[[2]] 
   
   # Use pos to ensure jitter and text_repel share coordinates (prevents mislabeling).  
   pos <- position_jitter(seed = 2)
@@ -162,48 +158,42 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType) {
     c = c + 1
 }
   
+  if (is.na(numdrop) == TRUE) {
+    type = "before_drop"
+  } else { 
+    type = paste0("dropped", numdrop, "brain")
+  }
+  
   # Saving plots is easier in the function
   firstnamer = paste(pcx, "vs", pcy, "rse", dataType, sep = "_")
   secondnamer = paste0("_n", as.character(dim(pc_data)[1]), ".pdf") 
   nameFILE = paste0(firstnamer, secondnamer)
   
-  pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", nameFILE))
+  pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", type, nameFILE))
     print(plot_list)
   dev.off()
 }
 
 
-## Plot and save
-# PC1 vs PC2
-# pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType) {
-pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene, colorbylist = phenoCols, 
-         dataType = "gene")
+## BEFORE DROP #################################################################
+## rse_gene ####################################################################
+## PC1 vs PC2
+pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene, colorbylist = phenoCols, dataType = "gene")
+## PC2 vs PC3
+pc_to_pc("PC2", "PC3", pc_df = pc_rse_gene, colorbylist = phenoCols, dataType = "gene")
+## PC3 vs PC4
+pc_to_pc("PC3", "PC4", pc_df = pc_rse_gene, colorbylist = phenoCols, dataType = "gene")
+## PC4 vs PC5
+pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist = phenoCols, dataType = "gene")
 
 
-pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC1_vs_PC2_rse_gene_n69.pdf"))
-  lapply(phenoCols, FUN = pc_to_pc, pcx = "PC1", pcy = "PC2", pc_df = pc_rse_gene)
-dev.off()
-
-# PC2 vs PC3
-pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC2_vs_PC3_rse_gene_n69.pdf"))
-lapply(phenoCols, FUN = pc_to_pc, pcx = "PC2", pcy = "PC3", pc_df = pc_rse_gene)
-dev.off()
-
-# PC3 vs PC4
-pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC3_vs_PC4_rse_gene_n69.pdf"))
-lapply(phenoCols, FUN = pc_to_pc, pcx = "PC3", pcy = "PC4", pc_df = pc_rse_gene)
-dev.off()
-
-# PC4 vs PC5
-pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC4_vs_PC5_rse_gene_n69.pdf"))
-lapply(phenoCols, FUN = pc_to_pc, pcx = "PC4", pcy = "PC5", pc_df = pc_rse_gene)
-dev.off()
+## DROPPING SAMPLES ############################################################
+# Drop 1: 
 
 
-## Dropping samples:
 
 
-## After Drops
+
 
 ## Reproducibility information
 print('Reproducibility information:')
