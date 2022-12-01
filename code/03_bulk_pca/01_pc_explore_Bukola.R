@@ -36,8 +36,8 @@ rse_tx = rse_tx_filt
 
 ## Including relevant stable variables #########################################
 # Variable phenotypes in our data 
-# took out "AgeDeath"
-phenoCols = as.vector(c("PrimaryDx", "Flowcell"))
+
+phenoCols = as.vector(c("PrimaryDx", "Flowcell", "AgeDeath"))
 
 # Relevant QC metrics  
 QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
@@ -97,9 +97,14 @@ pc_rse_gene = pca_creator(rse_gene) # gene only for now
 ## Updating the variable type for phenotype (discrete vs continuous) ###########
 pc_rse_gene[[1]]$"PrimaryDx" = as.factor(pc_rse_gene[[1]]$"PrimaryDx")
 pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
+
 pc_rse_gene[[1]]$"AgeDeath" = as.numeric(pc_rse_gene[[1]]$"AgeDeath")
 
 ## Creating Plotting PC base function ##########################################
+
+# Meeting with Nick:
+# 2.b) run as function
+# 3) go through adding collaborators to git commit  
 
 pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType) {
   # pcx and pcy are the pcas of interest
@@ -128,38 +133,34 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType) {
 
      if (is.factor(pc_data[, i]) == TRUE){
       
-       plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy])) + 
-        geom_jitter(aes_(color = pc_data[, i]), position = pos) +
-        geom_text_repel(aes(label = pc_data[,"BrNum"], color = 
-                              pc_data[, i]), position = pos) +
-        labs(x = x_titler, y = y_titler) +
+       plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
+        geom_jitter(aes_string(color = i), position = pos) +
+        geom_text_repel(aes_string(label = "BrNum", color = i), position = pos) +
+        labs(x = x_titler, y = y_titler,
+             color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title) +
         theme_bw(base_size = 10) + 
         theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
               axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
-              axis.title = element_text(size=15)) +
-        guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
-               i,]$var_plot_title))
+              axis.title = element_text(size=15))
        
       } else {
-     #    
-     #   plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy]) +
-     #     scale_colour_gradient2(colours = pc_data[,colorby])) +
-     #     geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
-     #     geom_text_repel(aes(label = pc_data[,"BrNum"]), position = pos) +
-     #     labs(x = x_titler, y = y_titler) +
-     #     theme_bw(base_size = 10) + 
-     #     theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
-     #           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
-     #          axis.title = element_text(size=15)) +
-     #     guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
-     #                                                        colorby,]$var_plot_title))
-     #
-        print("Error: Continous Variable")
+
+        plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
+          scale_colour_continuous(type = "viridis") +
+          geom_jitter(aes_(color = pc_data[,i]), position = pos) +
+          geom_text_repel(aes(label = pc_data[,"BrNum"]), position = pos) +
+          labs (x = x_titler, y = y_titler, 
+                color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title) +
+          theme_bw(base_size = 10) +
+          theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'),
+                axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+                axis.title = element_text(size=15))  
+       
       }
-  
-   plot_list[[c]] = plot 
-   c = c + 1
-  }
+    
+    plot_list[[c]] = plot 
+    c = c + 1
+}
   
   # Saving plots is easier in the function
   firstnamer = paste(pcx, "vs", pcy, "rse", dataType, sep = "_")
@@ -167,9 +168,7 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType) {
   nameFILE = paste0(firstnamer, secondnamer)
   
   pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", nameFILE))
-    for(i in length(plot_list)){
-      return(plot_list[[i]])
-    }
+    print(plot_list)
   dev.off()
 }
 
