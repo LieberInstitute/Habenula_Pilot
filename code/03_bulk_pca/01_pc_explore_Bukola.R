@@ -35,8 +35,9 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
 rse_tx = rse_tx_filt
 
 ## Including relevant stable variables #########################################
-# Variable phenotypes in our data
-phenoCols = as.vector(c("PrimaryDx", "Flowcell", "AgeDeath"))
+# Variable phenotypes in our data 
+# took out "AgeDeath"
+phenoCols = as.vector(c("PrimaryDx", "Flowcell"))
 
 # Relevant QC metrics  
 QCmetCols = c("RIN", "percentGC_R1", "percentGC_R2", "ERCCsumLogErr",
@@ -100,7 +101,11 @@ pc_rse_gene[[1]]$"AgeDeath" = as.numeric(pc_rse_gene[[1]]$"AgeDeath")
 
 ## Creating Plotting PC base function ##########################################
 
-pc_to_pc <- function (pcx, pcy, pc_df, colorby, dataType) {
+pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType) {
+  # pcx and pcy are the pcas of interest
+  # pc_df is the output object from the PCA creator function
+  # colorbylist is the list of metrics to color plots buy (changes number of 
+  # plots per saved file)
   # dataType options are: "exon" "tx" "jx" "gene"
   
   # unlisting returned object from pca_creator function
@@ -114,54 +119,68 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorby, dataType) {
   x_titler = pc_variables[grepl(paste0(pcx, ":"), pc_variables)]
   y_titler = pc_variables[grepl(paste0(pcy, ":"), pc_variables)]
   
-  # plotting with Brain Numbers
-  # for discrete colorby (discrete phenotypes)
+  # prepping for saving plots into list
+  plot_list = list()
+  c = 1
+ 
+  # plotting by coloring scheme
+  for(i in colorbylist){
 
-# if (is.factor(pc_data[, colorby]) == TRUE){
-  plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy])) + 
-    geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
-    geom_text_repel(aes(label = pc_data[,"BrNum"], color = 
-                          pc_data[,colorby]), position = pos) +
-    labs(x = x_titler, y = y_titler) +
-    theme_bw(base_size = 10) + 
-    theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
-          axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
-          axis.title = element_text(size=15)) +
-    guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
-           colorby,]$var_plot_title))
- #  } else {
- #    
- #   plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy]) +
- #     scale_colour_gradient2(colours = pc_data[,colorby])) +
- #     geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
- #     geom_text_repel(aes(label = pc_data[,"BrNum"]), position = pos) +
- #     labs(x = x_titler, y = y_titler) +
- #     theme_bw(base_size = 10) + 
- #     theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
- #           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
- #          axis.title = element_text(size=15)) +
- #     guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
- #                                                        colorby,]$var_plot_title))
- # }
+     if (is.factor(pc_data[, i]) == TRUE){
+      
+       plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy])) + 
+        geom_jitter(aes_(color = pc_data[, i]), position = pos) +
+        geom_text_repel(aes(label = pc_data[,"BrNum"], color = 
+                              pc_data[, i]), position = pos) +
+        labs(x = x_titler, y = y_titler) +
+        theme_bw(base_size = 10) + 
+        theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+              axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+              axis.title = element_text(size=15)) +
+        guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
+               i,]$var_plot_title))
+       
+      } else {
+     #    
+     #   plot = ggplot(pc_data, aes_(x = pc_data[, pcx], y = pc_data[, pcy]) +
+     #     scale_colour_gradient2(colours = pc_data[,colorby])) +
+     #     geom_jitter(aes_(color = pc_data[,colorby]), position = pos) +
+     #     geom_text_repel(aes(label = pc_data[,"BrNum"]), position = pos) +
+     #     labs(x = x_titler, y = y_titler) +
+     #     theme_bw(base_size = 10) + 
+     #     theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+     #           axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+     #          axis.title = element_text(size=15)) +
+     #     guides(color = guide_legend(title =  rename_vars[rename_vars$orig_var_name == 
+     #                                                        colorby,]$var_plot_title))
+     #
+        print("Error: Continous Variable")
+      }
   
-# Saving plots is easier in the function
+   plot_list[[c]] = plot 
+   c = c + 1
+  }
   
+  # Saving plots is easier in the function
   firstnamer = paste(pcx, "vs", pcy, "rse", dataType, sep = "_")
   secondnamer = paste0("_n", as.character(dim(pc_data)[1]), ".pdf") 
   nameFILE = paste0(firstnamer, secondnamer)
   
   pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", nameFILE))
-    plot
+    for(i in length(plot_list)){
+      return(plot_list[[i]])
+    }
   dev.off()
-  
 }
 
 
 ## Plot and save
-
-
-
 # PC1 vs PC2
+# pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType) {
+pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene, colorbylist = phenoCols, 
+         dataType = "gene")
+
+
 pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC1_vs_PC2_rse_gene_n69.pdf"))
   lapply(phenoCols, FUN = pc_to_pc, pcx = "PC1", pcy = "PC2", pc_df = pc_rse_gene)
 dev.off()
