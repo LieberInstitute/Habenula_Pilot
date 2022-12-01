@@ -100,7 +100,8 @@ pc_rse_gene[[1]]$"AgeDeath" = as.numeric(pc_rse_gene[[1]]$"AgeDeath")
 
 ## Creating Plotting PC base function ##########################################
 
-pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
+pc_to_pc <- function (pcx, pcy, pc_df, colorby, dataType) {
+  # dataType options are: "exon" "tx" "jx" "gene"
   
   # unlisting returned object from pca_creator function
   pc_data = pc_df[[1]]
@@ -143,11 +144,22 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorby) {
  #                                                        colorby,]$var_plot_title))
  # }
   
-  return(plot)
+# Saving plots is easier in the function
+  
+  firstnamer = paste(pcx, "vs", pcy, "rse", dataType, sep = "_")
+  secondnamer = paste0("_n", as.character(dim(pc_data)[1]), ".pdf") 
+  nameFILE = paste0(firstnamer, secondnamer)
+  
+  pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", nameFILE))
+    plot
+  dev.off()
+  
 }
 
 
 ## Plot and save
+
+
 
 # PC1 vs PC2
 pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC1_vs_PC2_rse_gene_n69.pdf"))
@@ -169,6 +181,11 @@ pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "PC4_vs_PC5_rse_gene_
 lapply(phenoCols, FUN = pc_to_pc, pcx = "PC4", pcy = "PC5", pc_df = pc_rse_gene)
 dev.off()
 
+
+## Dropping samples:
+
+
+## After Drops
 
 ## Reproducibility information
 print('Reproducibility information:')
