@@ -113,13 +113,14 @@ pc_rse_gene[[1]]$"percentGC_R2" = as.factor(pc_rse_gene[[1]]$"percentGC_R2")
 
 
 ## Creating Plotting PC base function ##########################################
-pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA) {
+pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA, sampsdropped = NA) {
   # pcx and pcy are the pcas of interest
   # pc_df is the output object from the PCA creator function
   # colorbylist is the list of metrics to color plots buy (changes number of 
   # plots per saved file)
   # dataType options are: "exon" "tx" "jx" "gene"
-  # folder = "before_drop"
+  # sampsdropped is one character string of brains that we dropped 
+  # (numdrop and sampsdropped are either both NA OR both not)
   
   # unlisting returned object from pca_creator function
   pc_data = pc_df[[1]]
@@ -171,21 +172,34 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA) {
     plot_list[[c]] = plot 
     c = c + 1
 }
-  
-  if (is.na(numdrop) == TRUE) {
-    type = "before_drop"
-  } else { 
-    type = paste0("dropped", numdrop, "brain")
-  }
-  
   # Saving plots is easier in the function
   firstnamer = paste(pcx, "vs", pcy, "rse", dataType, sep = "_")
   secondnamer = paste0("_n", as.character(dim(pc_data)[1]), ".pdf") 
   nameFILE = paste0(firstnamer, secondnamer)
   
-  pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", type, nameFILE))
-    print(plot_list)
-  dev.off()
+  if (is.na(numdrop) == TRUE) {
+    type = "before_drop"
+  
+    pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", type, nameFILE))
+      print(plot_list)
+    dev.off()
+    
+  } else if(is.na(numdrop) == FALSE && is.na(sampsdropped) == TRUE) { 
+    
+    print("Error. Which samples are we dropping?")
+    
+  } else if(is.na(numdrop) == FALSE && is.na(sampsdropped) == FALSE){
+    
+    type = paste0("dropped", numdrop, "brain")
+    orgbybrain = paste0("pc_plots_wout_", sampsdropped)
+    
+    dir.create(here("plots", "03_bulk_pca", "pc_plots_bukola", type, orgbybrain))
+    
+    pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", type, orgbybrain, nameFILE))
+      print(plot_list)
+    dev.off()
+  }
+  
 }
 
 ## Coloring by
@@ -246,56 +260,36 @@ dropSample <- function(rse_obj, sample) {
   return(rse_obj)
 }
 
-## Testing drop function
-
+# Drop samples of interest
 rse_gene_drop1a = dropSample(rse_gene, c("Br1676"))
 
+## MASTER: Most upstream function to fun all relevant functions on rse obj of interst
+pca_print <- function(rse_obj, colorbylist, dataType, numdrop, sampsdropped){
+  # rse_obj is output from dropSample or regular rse obj
+  # colorbylist is metrics to color plots by (list)
+  # dataType has to be "gene", "exon", "tx", or "jx"
+  # numdrop 
+  
+  # Calc PC:
+  pc_rse = pca_creator(rse_obj)
+  
+  # Updating variable types 
+  pc_rse[[1]]$"PrimaryDx" = as.factor(pc_rse[[1]]$"PrimaryDx")
+  pc_rse[[1]]$"Flowcell" = as.factor(pc_rse[[1]]$"Flowcell")
+  pc_rse[[1]]$"percentGC_R1" = as.factor(pc_rse[[1]]$"percentGC_R1")
+  pc_rse[[1]]$"percentGC_R2" = as.factor(pc_rse[[1]]$"percentGC_R2")
+  
+  
+  ## PC1 vs PC2
+  pc_to_pc("PC1", "PC2", pc_df = pc_rse, colorbylist, dataType, numdrop, sampsdropped)
+  ## PC2 vs PC3
+  pc_to_pc("PC2", "PC3", pc_df = pc_rse, colorbylist, dataType, numdrop, sampsdropped)
+  ## PC3 vs PC4
+  pc_to_pc("PC3", "PC4", pc_df = pc_rse, colorbylist, dataType, numdrop, sampsdropped)
+  ## PC4 vs PC5
+  pc_to_pc("PC4", "PC5", pc_df = pc_rse, colorbylist, dataType, numdrop, sampsdropped)
 
-# Drop 1: 
-rse_gene_drop1 = rse_gene
-pd = colData(rse_gene_drop1) 
-
-# finding RNum of brain sample we want to drop
-drop1676 = pd[pd$BrNum == "Br1676", ]$RNum
-
-# dropping sample and re-saving gene counts
-pd = pd[pd$RNum != drop1676,]
-assays(rse_gene_drop1) <- assays(rse_gene_drop1)[1]
-rse_gene_drop1 <- rse_gene_drop1[, pd$RNum]
-
-# verify data integrity 
-which(rowSums(is.na(assay(rse_gene_drop1)) | assay(rse_gene_drop1) == "") > 0) 
-# none
-
-(length(which(assay(rse_gene_drop1) == 0)) * 100) / (nrow(rse_gene_drop1)*ncol(rse_gene_drop1))
-# 0.75 which is high proportion of zeros so TMMwsp method instead of TMM for logcounts
-
-# calc logcounts
-assays(rse_gene_drop1, withDimnames=FALSE)$logcounts<- 
-  edgeR::cpm(calcNormFactors(rse_gene_drop1, method = "TMMwsp"), 
-             log = TRUE, prior.count = 0.5)
-
-# Calc PC:
-pc_rse_gene_drop1 = pca_creator(rse_gene_drop1)
-
-# Updating variable types 
-pc_rse_gene_drop1[[1]]$"PrimaryDx" = as.factor(pc_rse_gene_drop1[[1]]$"PrimaryDx")
-pc_rse_gene_drop1[[1]]$"Flowcell" = as.factor(pc_rse_gene_drop1[[1]]$"Flowcell")
-pc_rse_gene_drop1[[1]]$"percentGC_R1" = as.factor(pc_rse_gene_drop1[[1]]$"percentGC_R1")
-pc_rse_gene_drop1[[1]]$"percentGC_R2" = as.factor(pc_rse_gene_drop1[[1]]$"percentGC_R2")
-
-
-# Plotting after drop of Br1676
-## PC1 vs PC2
-pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene_drop1, colorbylist, dataType = "gene", numdrop = 1)
-## PC2 vs PC3
-pc_to_pc("PC2", "PC3", pc_df = pc_rse_gene_drop1, colorbylist, dataType = "gene", numdrop = 1)
-## PC3 vs PC4
-pc_to_pc("PC3", "PC4", pc_df = pc_rse_gene_drop1, colorbylist, dataType = "gene", numdrop = 1)
-## PC4 vs PC5
-pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene_drop1, colorbylist, dataType = "gene", numdrop = 1)
-
-
+}
 
 ## Reproducibility information
 print('Reproducibility information:')
