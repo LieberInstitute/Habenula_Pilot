@@ -227,13 +227,15 @@ pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
 colnames(rse_gene) <- rse_gene$RNum
 
 # Creating dropping function
-dropSample <- function(rse_obj, sample) {
+dropSample <- function(rse_obj, sampler) {
   # rse_obj is the rse object we would like to drop from (specific to rse_gene)
   # sample should be character values in list form :)
-  pd = colData(rse_obj)
-  finder = pd[pd$BrNum == sample, ]$RNum
+  sampler = as.list(sampler)
   
-  pd = pd[pd$RNum != finder,]
+  pd = colData(rse_obj)
+  finder = pd[pd$BrNum %in% sampler, ]$RNum
+  
+  pd = pd[! pd$RNum %in% finder,]
   assays(rse_obj) <- assays(rse_obj)[1]
   
   rse_obj <- rse_obj[, pd$RNum]
@@ -260,8 +262,18 @@ dropSample <- function(rse_obj, sample) {
   return(rse_obj)
 }
 
-# Drop samples of interest
-rse_gene_drop1a = dropSample(rse_gene, c("Br1676"))
+# Dropping 1 sample
+rse_drop1676 = dropSample(rse_gene, c("Br1676"))
+rse_drop5459 = dropSample(rse_gene, c("Br5459"))
+rse_drop6323 = dropSample(rse_gene, c("Br6323"))
+
+# Dropping 2 samples
+rse_drop1676and5459 = dropSample(rse_gene, c("Br1676", "Br5459"))
+rse_drop5459and6323 = dropSample(rse_gene, c("Br5459", "Br6323"))
+
+
+# Dropping all 3 samples
+rse_drop_all3 = 
 
 ## MASTER: Most upstream function to fun all relevant functions on rse obj of interst
 pca_print <- function(rse_obj, colorbylist, dataType, numdrop, sampsdropped){
