@@ -9,7 +9,8 @@ library(jaffelab)
 library(RColorBrewer)
 library(here)
 library(ggrepel)
-library("viridis")
+library(viridis)
+library(dplyr)
 
 
 # Before Brain Swaps ###########################################################
@@ -207,7 +208,17 @@ pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
 
 ## DROPPING SAMPLES ############################################################
 # Drop 1: 
-rse_gene2 = 
+rse_gene2 = rse_gene
+pd = colData(rse_gene2)
+
+# finding RNum of brain sample we want to drop
+drop1676 = pd[pd$BrNum == "Br1676", ]$RNum
+
+# dropping sample and resaving gene counts
+pd = pd[pd$RNum != drop1676,]
+
+
+
 
 
 
