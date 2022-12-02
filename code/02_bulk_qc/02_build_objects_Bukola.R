@@ -192,7 +192,9 @@ rse_jx_filt<-rse_jx[which(filterByExpr(assay(rse_jx),
                     design=with(colData(rse_jx), model.matrix(~ AgeDeath + Flowcell + PrimaryDx)))),]
 dim(rse_jx_filt)
 # [1] 150926     69
-save(rse_jx_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
+rse_jx_filt = rse_jx
+rm(rse_jx_filt)
+save(rse_jx, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
                                 "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
 # TRANSCRIPTS
@@ -210,10 +212,13 @@ dev.off()
 cutoff = 0.34
 
 rse_tx_filt = rse_tx[rowMeans(assays(rse_tx)$tpm) > cutoff,]
-save(rse_tx_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
-                              "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 dim(rse_tx_filt)
 # [1] 82434    69
+
+rse_tx = rse_tx_filt
+rm(rse_tx_filt)
+save(rse_tx, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
+                              "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
 ## Reproducibility information
 print('Reproducibility information:')

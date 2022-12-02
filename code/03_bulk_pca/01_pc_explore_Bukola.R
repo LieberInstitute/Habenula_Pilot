@@ -23,23 +23,18 @@ library(sessioninfo)
 # gene
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
           "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
-rse_gene = rse_gene_filt
-rm(rse_gene_filt)
 
 # exon
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
          "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
-rse_exon = rse_exon_filt
- 
+
 # jx
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
           "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
-rse_jx = rse_jx_filt
- 
+
 # tx
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
           "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
-rse_tx = rse_tx_filt
 
 ## Correcting rse objects accordingly ##########################################
 # Changing schizo to SCZD
@@ -147,7 +142,8 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA) {
      if (is.factor(pc_data[, i]) == TRUE){
       
        plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
-        geom_jitter(aes_string(color = i), position = pos) +
+        scale_color_viridis(option = "plasma", discrete = TRUE) +
+        geom_jitter(aes_string(colour = i), position = pos, size = 7) +
         geom_text_repel(aes_string(label = "BrNum", color = i), position = pos) +
         labs(x = x_titler, y = y_titler,
              color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title) +
@@ -159,13 +155,14 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA) {
       } else {
 
         plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
-          scale_colour_viridis(option = "magma") +
-          geom_jitter(position = pos, size = 10) +
+          scale_colour_viridis() +
+          geom_jitter(aes_string(colour = i), position = pos, size = 7) +
           geom_text_repel(aes_string(label = "BrNum"), position = pos, color = "lightgrey") +
           labs (x = x_titler, y = y_titler, 
                 color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title) +
           theme_bw(base_size = 10) +
-          theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'),
+          theme(legend.position= "bottom", legend.key.width = unit(1.5, 'cm'),
+                plot.margin=unit (c (1.5,2,1,2), 'cm'),
                 axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
                 axis.title = element_text(size=15))  
        
@@ -241,6 +238,13 @@ assays(rse_gene_drop1, withDimnames=FALSE)$logcounts<-
 
 # Calc PC:
 pc_rse_gene_drop1 = pca_creator(rse_gene_drop1)
+
+# Updating variable types 
+pc_rse_gene_drop1[[1]]$"PrimaryDx" = as.factor(pc_rse_gene_drop1[[1]]$"PrimaryDx")
+pc_rse_gene_drop1[[1]]$"Flowcell" = as.factor(pc_rse_gene_drop1[[1]]$"Flowcell")
+pc_rse_gene_drop1[[1]]$"percentGC_R1" = as.factor(pc_rse_gene_drop1[[1]]$"percentGC_R1")
+pc_rse_gene_drop1[[1]]$"percentGC_R2" = as.factor(pc_rse_gene_drop1[[1]]$"percentGC_R2")
+
 
 # Plotting after drop of Br1676
 ## PC1 vs PC2
