@@ -141,6 +141,7 @@ symbols = symbols[match(rowData(rse_gene_filt)$ensemblID, symbols$ensembl_gene_i
 rse_gene = rse_gene_filt
 rm(rse_gene_filt)
 rowData(rse_gene)$Symbol = symbols$external_gene_name # external_gene_name is the MGI_symbol. 
+colnames(rse_gene) <- rse_gene$RNum
 save(rse_gene, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
                                 "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
@@ -183,6 +184,7 @@ symbols = symbols[match(rowData(rse_exon_filt)$ensemblID, symbols$ensembl_gene_i
 rse_exon = rse_exon_filt
 rm(rse_exon_filt)
 rowData(rse_exon)$Symbol = symbols$external_gene_name # external_gene_name is the MGI_symbol. 
+colnames(rse_exon) <- rse_exon$RNum
 save(rse_exon, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
                                 "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
@@ -194,6 +196,7 @@ dim(rse_jx_filt)
 # [1] 150926     69
 rse_jx_filt = rse_jx
 rm(rse_jx_filt)
+colnames(rse_jx) <- rse_jx$RNum
 save(rse_jx, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
                                 "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
@@ -217,6 +220,7 @@ dim(rse_tx_filt)
 
 rse_tx = rse_tx_filt
 rm(rse_tx_filt)
+colnames(rse_tx) <- rse_tx$RNum
 save(rse_tx, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
                               "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 

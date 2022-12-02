@@ -212,6 +212,45 @@ pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
 ## Fixing RNums onto colnames of rse
 colnames(rse_gene) <- rse_gene$RNum
 
+# Creating dropping function
+dropSample <- function(rse_obj, sample) {
+  # rse_obj is the rse object we would like to drop from (specific to rse_gene)
+  # sample should be character values in list form :)
+  pd = colData(rse_obj)
+  finder = pd[pd$BrNum == sample, ]$RNum
+  
+  pd = pd[pd$RNum != finder,]
+  assays(rse_obj) <- assays(rse_obj)[1]
+  
+  rse_obj <- rse_obj[, pd$RNum]
+  
+  testInteg = sum(rowSums(is.na(assay(rse_obj)) | assay(rse_obj) == "") > 0) 
+  
+  if(testInteg != 0){
+    return("Error. NAs introduced after drop.")
+  }
+  
+  determine = (length(which(assay(rse_obj) == 0)) * 100) / 
+    (nrow(rse_obj)*ncol(rse_obj))
+
+  if (determine > 0.75){
+    assays(rse_obj, withDimnames=FALSE)$logcounts<- 
+      edgeR::cpm(calcNormFactors(rse_obj, method = "TMMwsp"), 
+                 log = TRUE, prior.count = 0.5)
+  } else if (determine <= 0.75){
+    assays(rse_obj, withDimnames=FALSE)$logcounts = 
+      edgeR::cpm(calcNormFactors(rse_obj, method = "TMM"), 
+                 log = TRUE, prior.count = 0.5)
+  }
+
+  return(rse_obj)
+}
+
+## Testing drop function
+
+rse_gene_drop1a = dropSample(rse_gene, c("Br1676"))
+
+
 # Drop 1: 
 rse_gene_drop1 = rse_gene
 pd = colData(rse_gene_drop1) 
