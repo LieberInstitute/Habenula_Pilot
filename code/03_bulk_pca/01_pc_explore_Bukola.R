@@ -11,6 +11,11 @@ library(here)
 library(ggrepel)
 library(viridis)
 library(dplyr)
+library(VariantAnnotation)
+library(WGCNA) 
+library(biomartr) 
+library(edgeR)
+library(sessioninfo)
 
 
 # Before Brain Swaps ###########################################################
@@ -21,10 +26,10 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
 rse_gene = rse_gene_filt
 rm(rse_gene_filt)
 
-# exon: NEED TO REMAKE
-# load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
-#           "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
-# rse_exon = rse_exon_filt
+# exon
+load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
+         "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata")) 
+rse_exon = rse_exon_filt
  
 # jx
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
@@ -207,20 +212,45 @@ pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
 
 
 ## DROPPING SAMPLES ############################################################
+## Fixing RNums onto colnames of rse
+colnames(rse_gene) <- rse_gene$RNum
+
 # Drop 1: 
-rse_gene2 = rse_gene
-pd = colData(rse_gene2)
+rse_gene_drop1 = rse_gene
+pd = colData(rse_gene_drop1) 
 
 # finding RNum of brain sample we want to drop
 drop1676 = pd[pd$BrNum == "Br1676", ]$RNum
 
-# dropping sample and resaving gene counts
+# dropping sample and re-saving gene counts
 pd = pd[pd$RNum != drop1676,]
+assays(rse_gene_drop1) <- assays(rse_gene_drop1)[1]
+rse_gene_drop1 <- rse_gene_drop1[, pd$RNum]
 
+# verify data integrity 
+which(rowSums(is.na(assay(rse_gene_drop1)) | assay(rse_gene_drop1) == "") > 0) 
+# none
 
+(length(which(assay(rse_gene_drop1) == 0)) * 100) / (nrow(rse_gene_drop1)*ncol(rse_gene_drop1))
+# 0.75 which is high proportion of zeros so TMMwsp method instead of TMM for logcounts
 
+# calc logcounts
+assays(rse_gene_drop1, withDimnames=FALSE)$logcounts<- 
+  edgeR::cpm(calcNormFactors(rse_gene_drop1, method = "TMMwsp"), 
+             log = TRUE, prior.count = 0.5)
 
+# Calc PC:
+pc_rse_gene_drop1 = pca_creator(rse_gene_drop1)
 
+# Plotting after drop of Br1676
+## PC1 vs PC2
+pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene_drop1, colorbylist, dataType = "gene", numdrop = 1)
+## PC2 vs PC3
+pc_to_pc("PC2", "PC3", pc_df = pc_rse_gene_drop1, colorbylist, dataType = "gene", numdrop = 1)
+## PC3 vs PC4
+pc_to_pc("PC3", "PC4", pc_df = pc_rse_gene_drop1, colorbylist, dataType = "gene", numdrop = 1)
+## PC4 vs PC5
+pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene_drop1, colorbylist, dataType = "gene", numdrop = 1)
 
 
 

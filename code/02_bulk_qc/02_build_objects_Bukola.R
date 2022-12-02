@@ -138,8 +138,10 @@ for (gene in no_symbol){
 
 # Adding symbol to filtered rse_gene object while reserving original order of genes
 symbols = symbols[match(rowData(rse_gene_filt)$ensemblID, symbols$ensembl_gene_id), ]
-rowData(rse_gene_filt)$Symbol = symbols$external_gene_name # external_gene_name is the MGI_symbol. 
-save(rse_gene_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
+rse_gene = rse_gene_filt
+rm(rse_gene_filt)
+rowData(rse_gene)$Symbol = symbols$external_gene_name # external_gene_name is the MGI_symbol. 
+save(rse_gene, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
                                 "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
 ## Repeating process for on non-gene rse objects ###############################
@@ -178,8 +180,10 @@ for (gene in no_symbol){
 }
 
 symbols = symbols[match(rowData(rse_exon_filt)$ensemblID, symbols$ensembl_gene_id), ]
-rowData(rse_exon_filt)$Symbol = symbols$external_gene_name # external_gene_name is the MGI_symbol. 
-save(rse_exon_filt, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
+rse_exon = rse_exon_filt
+rm(rse_exon_filt)
+rowData(rse_exon)$Symbol = symbols$external_gene_name # external_gene_name is the MGI_symbol. 
+save(rse_exon, file = here("processed-data", "02_bulk_qc", "count_data_bukola",  
                                 "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
 # JUNCTIONS
