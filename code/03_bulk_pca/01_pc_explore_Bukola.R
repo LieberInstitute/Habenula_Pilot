@@ -36,23 +36,8 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
           "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
 
-## Correcting rse objects accordingly ##########################################
-# Changing schizo to SCZD
-# for (i in ls(pattern = "rse_")){
-#   print(colData(i))
-#   # $PrimaryDx <- recode_factor(colData(i)$PrimaryDx, Schizo = "SCZD")
-# }
-
-colData(rse_gene)$PrimaryDx <- recode_factor(colData(rse_gene)$PrimaryDx, Schizo = "SCZD")
-# Adding log 10 of nums 
-colData(rse_gene)$logNumReads <- log10(colData(rse_gene)$numReads)
-colData(rse_gene)$logNumMapped <- log10(colData(rse_gene)$numMapped)
-colData(rse_gene)$logNumUnmapped <- log10(colData(rse_gene)$numUnmapped)
-
-
 ## Including relevant stable variables #########################################
 # Variable phenotypes in our data 
-
 phenoCols = as.vector(c("PrimaryDx", "Flowcell", "AgeDeath"))
 
 # Relevant QC metrics  
@@ -98,7 +83,7 @@ colorbylist = c("PrimaryDx", "Flowcell", "AgeDeath", "RIN", "percentGC_R1",
 pca_creator <- function(rse_type){
   
   pca <- prcomp(t(assays(rse_type)$logcounts))
-  
+
   ## % of the variance explained by each PC
   pca_vars <- getPcaVars(pca)
   pca_vars_labs<- paste0("PC", seq(along = pca_vars), ": ",
@@ -209,9 +194,6 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA,
 }
 
 ## FUNCTION 3: TO FROP SAMPLES #################################################
-## Fixing RNums onto colnames of rse
-colnames(rse_gene) <- rse_gene$RNum
-
 # Creating dropping function
 dropSample <- function(rse_obj, sampler) {
   # rse_obj is the rse object we would like to drop from (specific to rse_gene)
@@ -250,7 +232,6 @@ dropSample <- function(rse_obj, sampler) {
 
 ### FUNCTION 4: MASTER FUNCTION TO RUN ALL RELEVANT FUNCTIONS ABOVE ############
 # MASTER: Most upstream function to fun all relevant functions on rse obj of interst
-
 pca_print <- function(rse_obj, colorbylist, dataType, numdrop, sampsdropped){
   # rse_obj is output from dropSample or regular rse obj
   # colorbylist is metrics to color plots by (list)
@@ -275,42 +256,111 @@ pca_print <- function(rse_obj, colorbylist, dataType, numdrop, sampsdropped){
   pc_to_pc("PC3", "PC4", pc_df = pc_rse, colorbylist, dataType, numdrop, sampsdropped)
   ## PC4 vs PC5
   pc_to_pc("PC4", "PC5", pc_df = pc_rse, colorbylist, dataType, numdrop, sampsdropped)
-  
+
 }
 
 ### RUNNING CODE ON DATA #######################################################
-## Applying PCA function per rse type ##########################################
+## BEFORE DROPS ################################################################ 
+## Gene:
 pc_rse_gene = pca_creator(rse_gene) # gene only for now 
 
-## Updating the variable type for phenotype (discrete vs continuous) ###########
-pc_rse_gene[[1]]$"PrimaryDx" = as.factor(pc_rse_gene[[1]]$"PrimaryDx")
-pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
-pc_rse_gene[[1]]$"percentGC_R1" = as.factor(pc_rse_gene[[1]]$"percentGC_R1")
-pc_rse_gene[[1]]$"percentGC_R2" = as.factor(pc_rse_gene[[1]]$"percentGC_R2")
+## Correcting rse objects 
+colData(rse_gene)$PrimaryDx <- recode_factor(colData(rse_gene)$PrimaryDx, 
+                                             Schizo = "SCZD")
+# Adding log 10 of nums 
+colData(rse_gene)$logNumReads <- log10(colData(rse_gene)$numReads)
+colData(rse_gene)$logNumMapped <- log10(colData(rse_gene)$numMapped)
+colData(rse_gene)$logNumUnmapped <- log10(colData(rse_gene)$numUnmapped)
 
-## BEFORE DROP #################################################################
-## rse_gene ####################################################################
-## PC1 vs PC2
-pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
-## PC2 vs PC3
-pc_to_pc("PC2", "PC3", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
-## PC3 vs PC4
-pc_to_pc("PC3", "PC4", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
-## PC4 vs PC5
-pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
+# Running all codes with master:
+pca_print(rse_gene, colorbylist, "gene", numdrop = NA, sampsdropped = NA)
+  
 
-
-# Dropping 1 sample
+# DROPPING 1 SAMPLE ############################################################
 rse_drop1676 = dropSample(rse_gene, c("Br1676"))
 rse_drop5459 = dropSample(rse_gene, c("Br5459"))
 rse_drop6323 = dropSample(rse_gene, c("Br6323"))
 
-# Dropping 2 samples
+########## PCA after dropping Br1676 ###########################################
+colData(rse_drop1676)$PrimaryDx <- recode_factor(colData(rse_drop1676)$PrimaryDx, 
+                                             Schizo = "SCZD")
+# Adding log 10 of nums 
+colData(rse_drop1676)$logNumReads <- log10(colData(rse_drop1676)$numReads)
+colData(rse_drop1676)$logNumMapped <- log10(colData(rse_drop1676)$numMapped)
+colData(rse_drop1676)$logNumUnmapped <- log10(colData(rse_drop1676)$numUnmapped)
+
+# Running all codes with master:
+pca_print(rse_drop1676, colorbylist, "gene", numdrop = 1, sampsdropped = "Br1676")
+
+########## PCA after dropping Br5459 ###########################################
+colData(rse_drop5459)$PrimaryDx <- recode_factor(colData(rse_drop5459)$PrimaryDx, 
+                                                 Schizo = "SCZD")
+# Adding log 10 of nums 
+colData(rse_drop5459)$logNumReads <- log10(colData(rse_drop5459)$numReads)
+colData(rse_drop5459)$logNumMapped <- log10(colData(rse_drop5459)$numMapped)
+colData(rse_drop5459)$logNumUnmapped <- log10(colData(rse_drop5459)$numUnmapped)
+
+# Running all codes with master:
+pca_print(rse_drop5459, colorbylist, "gene", numdrop = 1, sampsdropped = "Br5459")
+
+########## PCA after dropping Br6323 ###########################################
+colData(rse_drop6323)$PrimaryDx <- recode_factor(colData(rse_drop6323)$PrimaryDx, 
+                                                 Schizo = "SCZD")
+# Adding log 10 of nums 
+colData(rse_drop6323)$logNumReads <- log10(colData(rse_drop6323)$numReads)
+colData(rse_drop6323)$logNumMapped <- log10(colData(rse_drop6323)$numMapped)
+colData(rse_drop6323)$logNumUnmapped <- log10(colData(rse_drop6323)$numUnmapped)
+
+# Running all codes with master:
+pca_print(rse_drop6323, colorbylist, "gene", numdrop = 1, sampsdropped = "Br6323")
+
+# DROPPING 2 SAMPLES ###########################################################
 rse_drop1676and5459 = dropSample(rse_gene, c("Br1676", "Br5459"))
 rse_drop5459and6323 = dropSample(rse_gene, c("Br5459", "Br6323"))
 
-# Dropping all 3 samples
+########## PCA after dropping Br1676 and Br5459 ################################
+colData(rse_drop1676and5459)$PrimaryDx <- 
+  recode_factor(colData(rse_drop1676and5459)$PrimaryDx, Schizo = "SCZD")
+
+# Adding log 10 of nums 
+colData(rse_drop1676and5459)$logNumReads <- log10(colData(rse_drop1676and5459)$numReads)
+colData(rse_drop1676and5459)$logNumMapped <- log10(colData(rse_drop1676and5459)$numMapped)
+colData(rse_drop1676and5459)$logNumUnmapped <- log10(colData(rse_drop1676and5459)$numUnmapped)
+
+# Running all codes with master:
+pca_print(rse_drop1676and5459, colorbylist, "gene", numdrop = 2, 
+          sampsdropped = c("Br1676_Br5459"))
+
+########## PCA after dropping Br5459 and Br6323 ################################
+colData(rse_drop5459and6323)$PrimaryDx <- 
+  recode_factor(colData(rse_drop5459and6323)$PrimaryDx, Schizo = "SCZD")
+
+# Adding log 10 of nums 
+colData(rse_drop5459and6323)$logNumReads <- log10(colData(rse_drop5459and6323)$numReads)
+colData(rse_drop5459and6323)$logNumMapped <- log10(colData(rse_drop5459and6323)$numMapped)
+colData(rse_drop5459and6323)$logNumUnmapped <- log10(colData(rse_drop5459and6323)$numUnmapped)
+
+# Running all codes with master:
+pca_print(rse_drop5459and6323, colorbylist, "gene", numdrop = 2, 
+          sampsdropped = c("Br5459_Br6323"))
+
+# DROPPING ALL 3 SAMPLES #######################################################
 rse_drop_all3 = dropSample(rse_gene, c("Br5459", "Br6323", "Br1676"))
+
+########## PCA after dropping all 3 ############################################
+colData(rse_drop_all3)$PrimaryDx <- 
+  recode_factor(colData(rse_drop_all3)$PrimaryDx, Schizo = "SCZD")
+
+# Adding log 10 of nums 
+colData(rse_drop_all3)$logNumReads <- log10(colData(rse_drop_all3)$numReads)
+colData(rse_drop_all3)$logNumMapped <- log10(colData(rse_drop_all3)$numMapped)
+colData(rse_drop_all3)$logNumUnmapped <- log10(colData(rse_drop_all3)$numUnmapped)
+
+# Running all codes with master:
+pca_print(rse_drop_all3, colorbylist, "gene", numdrop = 2, 
+          sampsdropped = c("all3"))
+
+
 
 
 
