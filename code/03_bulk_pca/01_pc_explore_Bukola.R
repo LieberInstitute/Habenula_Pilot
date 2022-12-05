@@ -38,6 +38,11 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
 
 ## Correcting rse objects accordingly ##########################################
 # Changing schizo to SCZD
+# for (i in ls(pattern = "rse_")){
+#   print(colData(i))
+#   # $PrimaryDx <- recode_factor(colData(i)$PrimaryDx, Schizo = "SCZD")
+# }
+
 colData(rse_gene)$PrimaryDx <- recode_factor(colData(rse_gene)$PrimaryDx, Schizo = "SCZD")
 # Adding log 10 of nums 
 colData(rse_gene)$logNumReads <- log10(colData(rse_gene)$numReads)
@@ -82,7 +87,14 @@ var_plot_title <- c("RNum", "RIN", "Brain Number", "Age of Death", "Sex",
 
 rename_vars <- data.frame(orig_var_name, var_plot_title)
 
-## Creating PCA base function ##################################################
+## Coloring by
+colorbylist = c("PrimaryDx", "Flowcell", "AgeDeath", "RIN", "percentGC_R1",
+                "percentGC_R2", "ERCCsumLogErr", "overallMapRate", "concordMapRate",
+                "totalMapped", "mitoMapped", "mitoRate", "totalAssignedGene", 
+                "rRNA_rate", "detected", "logNumReads", "logNumMapped",
+                "logNumUnmapped")
+
+## FUNCTION 1: CREATES PCA VALUES FOR RSE OBJECT ###############################
 pca_creator <- function(rse_type){
   
   pca <- prcomp(t(assays(rse_type)$logcounts))
@@ -102,18 +114,9 @@ pca_creator <- function(rse_type){
   return(list(pca_data, pca_vars_labs))
 }
 
-## Applying PCA function per rse type ##########################################
-pc_rse_gene = pca_creator(rse_gene) # gene only for now 
-
-## Updating the variable type for phenotype (discrete vs continuous) ###########
-pc_rse_gene[[1]]$"PrimaryDx" = as.factor(pc_rse_gene[[1]]$"PrimaryDx")
-pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
-pc_rse_gene[[1]]$"percentGC_R1" = as.factor(pc_rse_gene[[1]]$"percentGC_R1")
-pc_rse_gene[[1]]$"percentGC_R2" = as.factor(pc_rse_gene[[1]]$"percentGC_R2")
-
-
-## Creating Plotting PC base function ##########################################
-pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA, sampsdropped = NA) {
+## FUNCTION 2: CREATES PCA PLOTS ###############################################
+pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA, 
+                      sampsdropped = NA) {
   # pcx and pcy are the pcas of interest
   # pc_df is the output object from the PCA creator function
   # colorbylist is the list of metrics to color plots buy (changes number of 
@@ -158,13 +161,16 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA, samp
         plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
           scale_colour_viridis() +
           geom_jitter(aes_string(colour = i), position = pos, size = 7) +
-          geom_text_repel(aes_string(label = "BrNum"), position = pos, color = "lightgrey") +
+          geom_text_repel(aes_string(label = "BrNum"), position = pos, 
+                          color = "lightgrey") +
           labs (x = x_titler, y = y_titler, 
-                color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title) +
+                color = rename_vars[rename_vars$orig_var_name ==  
+                                      i,]$var_plot_title) +
           theme_bw(base_size = 10) +
           theme(legend.position= "bottom", legend.key.width = unit(1.5, 'cm'),
                 plot.margin=unit (c (1.5,2,1,2), 'cm'),
-                axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+                axis.text.x = element_text(vjust = 0.7), 
+                text = element_text(size=15),
                 axis.title = element_text(size=15))  
        
       }
@@ -202,27 +208,7 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA, samp
   
 }
 
-## Coloring by
-
-colorbylist = c("PrimaryDx", "Flowcell", "AgeDeath", "RIN", "percentGC_R1",
-                "percentGC_R2", "ERCCsumLogErr", "overallMapRate", "concordMapRate",
-                "totalMapped", "mitoMapped", "mitoRate", "totalAssignedGene", 
-                "rRNA_rate", "detected", "logNumReads", "logNumMapped",
-                "logNumUnmapped")
-
-## BEFORE DROP #################################################################
-## rse_gene ####################################################################
-## PC1 vs PC2
-pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
-## PC2 vs PC3
-pc_to_pc("PC2", "PC3", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
-## PC3 vs PC4
-pc_to_pc("PC3", "PC4", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
-## PC4 vs PC5
-pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
-
-
-## DROPPING SAMPLES ############################################################
+## FUNCTION 3: TO FROP SAMPLES #################################################
 ## Fixing RNums onto colnames of rse
 colnames(rse_gene) <- rse_gene$RNum
 
@@ -248,7 +234,7 @@ dropSample <- function(rse_obj, sampler) {
   
   determine = (length(which(assay(rse_obj) == 0)) * 100) / 
     (nrow(rse_obj)*ncol(rse_obj))
-
+  
   if (determine > 0.75){
     assays(rse_obj, withDimnames=FALSE)$logcounts<- 
       edgeR::cpm(calcNormFactors(rse_obj, method = "TMMwsp"), 
@@ -258,24 +244,13 @@ dropSample <- function(rse_obj, sampler) {
       edgeR::cpm(calcNormFactors(rse_obj, method = "TMM"), 
                  log = TRUE, prior.count = 0.5)
   }
-
+  
   return(rse_obj)
 }
 
-# Dropping 1 sample
-rse_drop1676 = dropSample(rse_gene, c("Br1676"))
-rse_drop5459 = dropSample(rse_gene, c("Br5459"))
-rse_drop6323 = dropSample(rse_gene, c("Br6323"))
+### FUNCTION 4: MASTER FUNCTION TO RUN ALL RELEVANT FUNCTIONS ABOVE ############
+# MASTER: Most upstream function to fun all relevant functions on rse obj of interst
 
-# Dropping 2 samples
-rse_drop1676and5459 = dropSample(rse_gene, c("Br1676", "Br5459"))
-rse_drop5459and6323 = dropSample(rse_gene, c("Br5459", "Br6323"))
-
-
-# Dropping all 3 samples
-rse_drop_all3 = 
-
-## MASTER: Most upstream function to fun all relevant functions on rse obj of interst
 pca_print <- function(rse_obj, colorbylist, dataType, numdrop, sampsdropped){
   # rse_obj is output from dropSample or regular rse obj
   # colorbylist is metrics to color plots by (list)
@@ -300,8 +275,45 @@ pca_print <- function(rse_obj, colorbylist, dataType, numdrop, sampsdropped){
   pc_to_pc("PC3", "PC4", pc_df = pc_rse, colorbylist, dataType, numdrop, sampsdropped)
   ## PC4 vs PC5
   pc_to_pc("PC4", "PC5", pc_df = pc_rse, colorbylist, dataType, numdrop, sampsdropped)
-
+  
 }
+
+### RUNNING CODE ON DATA #######################################################
+## Applying PCA function per rse type ##########################################
+pc_rse_gene = pca_creator(rse_gene) # gene only for now 
+
+## Updating the variable type for phenotype (discrete vs continuous) ###########
+pc_rse_gene[[1]]$"PrimaryDx" = as.factor(pc_rse_gene[[1]]$"PrimaryDx")
+pc_rse_gene[[1]]$"Flowcell" = as.factor(pc_rse_gene[[1]]$"Flowcell")
+pc_rse_gene[[1]]$"percentGC_R1" = as.factor(pc_rse_gene[[1]]$"percentGC_R1")
+pc_rse_gene[[1]]$"percentGC_R2" = as.factor(pc_rse_gene[[1]]$"percentGC_R2")
+
+## BEFORE DROP #################################################################
+## rse_gene ####################################################################
+## PC1 vs PC2
+pc_to_pc("PC1", "PC2", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
+## PC2 vs PC3
+pc_to_pc("PC2", "PC3", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
+## PC3 vs PC4
+pc_to_pc("PC3", "PC4", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
+## PC4 vs PC5
+pc_to_pc("PC4", "PC5", pc_df = pc_rse_gene, colorbylist, dataType = "gene")
+
+
+# Dropping 1 sample
+rse_drop1676 = dropSample(rse_gene, c("Br1676"))
+rse_drop5459 = dropSample(rse_gene, c("Br5459"))
+rse_drop6323 = dropSample(rse_gene, c("Br6323"))
+
+# Dropping 2 samples
+rse_drop1676and5459 = dropSample(rse_gene, c("Br1676", "Br5459"))
+rse_drop5459and6323 = dropSample(rse_gene, c("Br5459", "Br6323"))
+
+# Dropping all 3 samples
+rse_drop_all3 = dropSample(rse_gene, c("Br5459", "Br6323", "Br1676"))
+
+
+
 
 ## Reproducibility information
 print('Reproducibility information:')
