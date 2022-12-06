@@ -170,7 +170,7 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA,
       } else {
 
         plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
-          scale_color_gradient()+
+          scale_color_gradientn(colors = wes_palette("Darjeeling1", type = "continuous")) +
           geom_jitter(aes_string(colour = i), data = nothighlight, alpha = 0.7,
                       position = pos, size = 5) +
           geom_jitter(aes_string(x = pcx, y = pcy), colour = "darkblue", 
