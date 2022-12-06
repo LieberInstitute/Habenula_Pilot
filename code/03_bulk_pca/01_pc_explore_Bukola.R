@@ -128,12 +128,17 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA,
   # plotting by coloring scheme
   for(i in colorbylist){
 
-     if (is.factor(pc_data[, i]) == TRUE){
+     if (i == "PrimaryDx"){
       
+       forhighlight = pc_data[pc_data$BrNum %in% c("Br1676","Br5459", "Br6323"),]
+       nothighlight = pc_data[! pc_data$BrNum %in% c("Br1676","Br5459", "Br6323"),]
+         
        plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
-        scale_color_viridis(option = "plasma", discrete = TRUE) +
-        geom_jitter(aes_string(colour = i), position = pos, size = 7) +
-        geom_text_repel(aes_string(label = "BrNum", color = i), position = pos) +
+        geom_jitter(aes_string(colour = i), data = nothighlight, alpha = 0.8, position = pos, size = 5) +
+         geom_jitter(aes_string(x = pcx, y = pcy), colour = "red", 
+                     data = forhighlight,alpha = 0.8, position = pos, size = 5) +
+        geom_text_repel(aes_string(label = "BrNum"), position = pos, 
+                        color = "lightgrey", max.overlaps = 5) +
         labs(x = x_titler, y = y_titler,
              color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title) +
         theme_bw(base_size = 10) + 
@@ -361,9 +366,10 @@ pca_print(rse_drop_all3, colorbylist, "gene", numdrop = 2,
           sampsdropped = c("all3"))
 
 
-
-
-
+### printing tester
+pdf(file = here("plots", "03_bulk_pca", "pc_plots_bukola", "before_drop", "tester.pdf"))
+  plot 
+dev.off()
 
 ## Reproducibility information
 print('Reproducibility information:')
