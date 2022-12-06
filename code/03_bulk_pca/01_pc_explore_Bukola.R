@@ -16,6 +16,7 @@ library(WGCNA)
 library(biomartr) 
 library(edgeR)
 library(sessioninfo)
+library(wesanderson)
 
 
 # Before Brain Swaps ###########################################################
@@ -127,41 +128,63 @@ pc_to_pc <- function (pcx, pcy, pc_df, colorbylist, dataType, numdrop = NA,
  
   # plotting by coloring scheme
   for(i in colorbylist){
-
+    
+    forhighlight = pc_data[pc_data$BrNum %in% c("Br1676","Br5459", "Br6323"),]
+    nothighlight = pc_data[! pc_data$BrNum %in% c("Br1676","Br5459", "Br6323"),]
+    
      if (i == "PrimaryDx"){
-      
-       forhighlight = pc_data[pc_data$BrNum %in% c("Br1676","Br5459", "Br6323"),]
-       nothighlight = pc_data[! pc_data$BrNum %in% c("Br1676","Br5459", "Br6323"),]
-         
        plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
-        geom_jitter(aes_string(colour = i), data = nothighlight, alpha = 0.8, position = pos, size = 5) +
-         geom_jitter(aes_string(x = pcx, y = pcy), colour = "red", 
-                     data = forhighlight,alpha = 0.8, position = pos, size = 5) +
+        scale_color_manual(values=wes_palette(n=2, name="GrandBudapest1"))+
+        geom_jitter(aes_string(colour = i), data = nothighlight, alpha = 0.8, position = pos, size = 6) +
+         geom_jitter(aes_string(x = pcx, y = pcy), colour = "darkblue", 
+                     data = forhighlight, alpha = 0.8, position = pos, size = 6) +
         geom_text_repel(aes_string(label = "BrNum"), position = pos, 
                         color = "lightgrey", max.overlaps = 5) +
         labs(x = x_titler, y = y_titler,
-             color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title) +
+             color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title,
+             caption = "Br1676, Br5459, and Br6323") +
         theme_bw(base_size = 10) + 
         theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
               axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
-              axis.title = element_text(size=15))
+              axis.title = element_text(size=15),
+              plot.caption = element_text(color = "darkblue", face = "italic")) 
+       
+     } else if (i == "Flowcell"){
+       
+       plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
+         scale_color_manual(values=wes_palette(n=2, name="IsleofDogs1"))+
+         geom_jitter(aes_string(colour = i), data = nothighlight, alpha = 0.8, position = pos, size = 6) +
+         geom_jitter(aes_string(x = pcx, y = pcy), colour = "darkblue", 
+                     data = forhighlight, alpha = 0.8, position = pos, size = 6) +
+         geom_text_repel(aes_string(label = "BrNum"), position = pos, 
+                         color = "lightgrey", max.overlaps = 5) +
+         labs(x = x_titler, y = y_titler,
+              color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title,
+              caption = "Br1676, Br5459, and Br6323") +
+         theme_bw(base_size = 10) + 
+         theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+               axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+               axis.title = element_text(size=15),
+               plot.caption = element_text(color = "darkblue", face = "italic")) 
        
       } else {
 
         plot = ggplot(pc_data, aes_string(x = pcx, y = pcy)) +
-          scale_colour_viridis() +
-          geom_jitter(aes_string(colour = i), position = pos, size = 7) +
+          scale_color_gradient()+
+          geom_jitter(aes_string(colour = i), data = nothighlight, alpha = 0.7,
+                      position = pos, size = 5) +
+          geom_jitter(aes_string(x = pcx, y = pcy), colour = "darkblue", 
+                      data = forhighlight, alpha = 0.8, position = pos, size = 6) +
           geom_text_repel(aes_string(label = "BrNum"), position = pos, 
-                          color = "lightgrey") +
-          labs (x = x_titler, y = y_titler, 
-                color = rename_vars[rename_vars$orig_var_name ==  
-                                      i,]$var_plot_title) +
-          theme_bw(base_size = 10) +
-          theme(legend.position= "bottom", legend.key.width = unit(1.5, 'cm'),
-                plot.margin=unit (c (1.5,2,1,2), 'cm'),
-                axis.text.x = element_text(vjust = 0.7), 
-                text = element_text(size=15),
-                axis.title = element_text(size=15))  
+                          color = "lightgrey", max.overlaps = 6) +
+          labs(x = x_titler, y = y_titler,
+               color = rename_vars[rename_vars$orig_var_name ==  i,]$var_plot_title,
+               caption = "Br1676, Br5459, and Br6323") +
+          theme_bw(base_size = 10) + 
+          theme(legend.position= "bottom", plot.margin=unit (c (1.5,2,1,2), 'cm'), 
+                axis.text.x = element_text(vjust = 0.7), text = element_text(size=15),
+                axis.title = element_text(size=15),
+                plot.caption = element_text(color = "darkblue", face = "italic")) 
        
       }
     
