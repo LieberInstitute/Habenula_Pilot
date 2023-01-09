@@ -16,7 +16,7 @@ sample <- args[[1]]
 sample_path <- here("processed-data", "07_cellranger", sample, "outs", "raw_feature_bc_matrix") 
 stopifnot(file.exists(sample_path))
 
-message(Sys.time(), "Reading data from", sample_path)
+message(Sys.time(), " Reading data from ", sample_path)
 
 #### Load & Subset raw data ####
 sce <- read10xCounts(sample_path, col.names=TRUE) 
@@ -92,7 +92,12 @@ droplet_elbow_plot <- as.data.frame(bcRanks) %>%
 ggsave(droplet_elbow_plot, filename = here("plots", "04b_snRNA-seq_Bukola", "01_get_droplet_scores", paste0("droplet_qc_", sample, ".png")))
 
 
-# sgejobs::job_single('get_droplet_scores', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript get_droplet_scores.R")
+# sgejobs::job_single('01_get_droplet_scores', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 01_get_droplet_scores.R Br1092")
+# sample_list <- list.files("/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/07_cellranger")
+# sgejobs::job_loop(loops = list(sample = sample_list), name = "01_get_droplet_scores_loop", 
+#          create_shell = TRUE, queue = "bluejay", memory = "50G")
+
+
 
 ## Reproducibility information
 print("Reproducibility information:")
