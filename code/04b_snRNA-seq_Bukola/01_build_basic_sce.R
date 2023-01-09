@@ -16,6 +16,7 @@ library("rtracklayer")
 library("lobstr")
 library("sessioninfo")
 library("dplyr")
+library("scater")
 
 # Loading raw data:
 load(here("processed-data","09_snRNA-seq_re-processed","20220601_human_hb_processing.rda"))
@@ -24,4 +25,24 @@ load(here("processed-data","09_snRNA-seq_re-processed","20220601_human_hb_proces
 addressRawData <- unique(sce.all.hb$Sample)
 
 # Reading in data
-testRead <- read10xCounts(addressRawData[1], col.names=TRUE) 
+sce_all = list()
+
+for (i in 1:length(addressRawData)){
+  sce_all[[i]] <- read10xCounts(addressRawData[i], col.names=TRUE) 
+}
+
+# Match rownames and appending by column
+for(i in 2:length(sce_all)){
+  sce_all[[i]] <- sce_all[[i]][match(rownames(sce_all[[1]]), rownames(sce_all[[i]])),]
+}
+
+sce_hb <- cbind(sce_all[[1]], sce_all[[2]], sce_all[[3]], sce_all[[4]], sce_all[[5]],
+                sce_all[[6]], sce_all[[7]])
+# 36601x7438664 dim. Much bigger than what Erik got (36601 x 3326836 dim)
+rm(sce_all)
+
+rownames(sce_hb) <- uniquifyFeatureNames(rowData(sce_hb)$ID, rowData(sce_hb)$Symbol)
+
+
+
+# 
