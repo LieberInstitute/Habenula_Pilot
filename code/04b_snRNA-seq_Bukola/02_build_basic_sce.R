@@ -5,7 +5,7 @@
 # 1) https://github.com/LieberInstitute/Habenula_Bulk/blob/master/code/08_snRNA-seq_Erik/20210323_human_hb_neun.R
 # 2) https://github.com/LieberInstitute/DLPFC_snRNAseq/blob/main/code/03_build_sce/01_build_basic_sce.R
 # 3) https://github.com/LieberInstitute/Habenula_Bulk/blob/master/code/09_snRNA-seq_re-processed/00_get_droplet_scores.R
-# qrsh -l mem_free=50G,h_vmem=50G
+# qrsh -l mem_free=75G,h_vmem=75G
 
 # Loading relevant libraries
 library("SingleCellExperiment")
@@ -17,31 +17,42 @@ library("lobstr")
 library("sessioninfo")
 library("dplyr")
 library("scater")
+library("purrr")
 
-# Loading raw data:
-load(here("processed-data","09_snRNA-seq_re-processed","20220601_human_hb_processing.rda"))
+# Sample names 
+sample_list <- list.files(here("processed-data", "07_cellranger"))
 
-# Grabbing locations of raw data for reading in
-addressRawData <- unique(sce.all.hb$Sample)
-# rm(sce.all.hb)
+sce_list <- map(sample_list, function(sample){
+  fn10x <-  here("processed-data", "07_cellranger", sample, "outs", "raw_feature_bc_matrix") 
+  fnDropScore <- here("processed-data", "04b_snRNA-seq_Bukola", "01_get_droplet_scores", paste0("droplet_scores_", sample, ".Rdata"))
+  
+  sce <- read10xCounts(fn10x, col.names=TRUE)
+  load(fnDropScore, verbose = TRUE)
+  ncol_preDrop = ncol(sce)
+  # 1148322
+  
+  sce <- sce[, which(e.out$FDR <= 0.001)]
+  ncol_postDrop = ncol(sce)
+  # 3622
+  
+  message(sample, ": Pre-Drop = ", ncol_preDrop, " and Post-Drop = ", ncol_postDrop)
 
-# Reading in data
-sce_all = list()
-
-for (i in 1:length(addressRawData)){
-  sce_all[[i]] <- read10xCounts(addressRawData[i], col.names=TRUE) 
-}
+  return(sce)
+})
 
 # Match rownames and appending by column
-for(i in 2:length(sce_all)){
-  sce_all[[i]] <- sce_all[[i]][match(rownames(sce_all[[1]]), rownames(sce_all[[i]])),]
-}
-sce_hb <- do.call("cbind", sce_all)
+make_Rows <- rownames(sce_list[[1]])
+sce_list <- map(sce_list, ~.x[make_Rows,])
+# identical(rownames(sce_list2[[1]]), rownames(sce_list2[[7]]))
+# TRUE
 
-# 36601 x 7438664 dim. Much bigger than what Erik got (36601 x 3326836 dim)
-rm(sce_all)
+# OFFICIAL SCE HB OBJECT PRE-QC. 
+sce_hb_preQC <- do.call("cbind", sce_list)
 
-rownames(sce_hb) <- uniquifyFeatureNames(rowData(sce_hb)$ID, rowData(sce_hb)$Symbol)
+save(sce_hb_preQC, file = here("processed-data", "04b_snRNA-seq_Bukola", "sce_objects", 
+                               "sce_hb_preQC.Rdata"))
+# sgejobs::job_single('02_build_basic_sce', create_shell = TRUE, queue= 'bluejay', memory = '100G', command = "Rscript 02_build_basic_sce.R")
+
 
 ## QUALITY CONTROL
 # Thought process: (this is 10x Genomics data)
@@ -55,29 +66,15 @@ rownames(sce_hb) <- uniquifyFeatureNames(rowData(sce_hb)$ID, rowData(sce_hb)$Sym
 # is a useful QC metric because it shows samples where cytoplasm 
 # was not fully or successfully stripped.
 # Game plan:
-# 1) Drop empty droplets.
-# 2) Use subsets_Mito_percent to drop high mito content droplets.
-# 2) Use DLPFC example of utilizing knee inflection plots to create further drop
-# thresholds.
-
-
-## 1) Discarding cells with high mito proportions:
-
-# Saving unfiltered sce for future reference and plotting purposes.
-unfiltered_sce <- sce_hb
-
-# finding genes associated with mitochondrial genome
-is.mito <- grep("^MT-", rowData(sce_hb)$Symbol)
-stats <- perCellQCMetrics(sce_hb, subsets = list(Mito = is.mito))
-
-# grabbing droplets with relatively high mito (based on MADs, no preset threshold)
-high.mito <- isOutlier(stats$subsets_Mito_percent, type = "higher")
-
-# dropping high mito content
-discard <- high.mito
-sce_hb <- sce_hb[,!discard]
+# 1) Drop empty droplets. (script 1, completed)
+# 2) Build sce objects. (this script, script 2)
+# 3) Dropping high mito content (script 3, next script)
 
 
 
-
-# 
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
