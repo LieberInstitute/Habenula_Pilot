@@ -23,6 +23,7 @@ load(here("processed-data","09_snRNA-seq_re-processed","20220601_human_hb_proces
 
 # Grabbing locations of raw data for reading in
 addressRawData <- unique(sce.all.hb$Sample)
+# rm(sce.all.hb)
 
 # Reading in data
 sce_all = list()
@@ -35,10 +36,9 @@ for (i in 1:length(addressRawData)){
 for(i in 2:length(sce_all)){
   sce_all[[i]] <- sce_all[[i]][match(rownames(sce_all[[1]]), rownames(sce_all[[i]])),]
 }
+sce_hb <- do.call("cbind", sce_all)
 
-sce_hb <- cbind(sce_all[[1]], sce_all[[2]], sce_all[[3]], sce_all[[4]], sce_all[[5]],
-                sce_all[[6]], sce_all[[7]])
-# 36601x7438664 dim. Much bigger than what Erik got (36601 x 3326836 dim)
+# 36601 x 7438664 dim. Much bigger than what Erik got (36601 x 3326836 dim)
 rm(sce_all)
 
 rownames(sce_hb) <- uniquifyFeatureNames(rowData(sce_hb)$ID, rowData(sce_hb)$Symbol)
@@ -55,7 +55,8 @@ rownames(sce_hb) <- uniquifyFeatureNames(rowData(sce_hb)$ID, rowData(sce_hb)$Sym
 # is a useful QC metric because it shows samples where cytoplasm 
 # was not fully or successfully stripped.
 # Game plan:
-# 1) Use subsets_Mito_percent to drop high mito content droplets.
+# 1) Drop empty droplets.
+# 2) Use subsets_Mito_percent to drop high mito content droplets.
 # 2) Use DLPFC example of utilizing knee inflection plots to create further drop
 # thresholds.
 
@@ -75,9 +76,6 @@ high.mito <- isOutlier(stats$subsets_Mito_percent, type = "higher")
 # dropping high mito content
 discard <- high.mito
 sce_hb <- sce_hb[,!discard]
-
-# Logical scripts contain NAs error. 
-
 
 
 
