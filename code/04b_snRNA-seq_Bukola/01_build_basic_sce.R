@@ -43,6 +43,25 @@ rm(sce_all)
 
 rownames(sce_hb) <- uniquifyFeatureNames(rowData(sce_hb)$ID, rowData(sce_hb)$Symbol)
 
+## QUALITY CONTROL
+# Thought process: (this is 10x Genomics data)
+# 1) Based on OSCA book, can use mean absolute deviation (MADs) approach to 
+# determine outliers but this is not as "straightforward" as it may through 
+# away neurons.
+# 2) There is a test using UMI/barcode rank (the knee plots), to determine 
+# individual thresholds for what is too low of quality but this may drop cells 
+# with organically low RNA content.
+# 3) This is a single-nuc RNA project meaning that dropping high mito content
+# is a useful QC metric because it shows samples where cytoplasm 
+# was not fully or successfully stripped.
+# Game plan:
+# 1) Use altexps_ERCC_percent to drop high mito content droplets.
+# 2) Use DLPFC example of utilizing knee inflection plots to create further drop
+# thresholds.
+
+
+
+
 
 
 # 
