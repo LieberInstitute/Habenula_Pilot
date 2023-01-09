@@ -55,10 +55,28 @@ rownames(sce_hb) <- uniquifyFeatureNames(rowData(sce_hb)$ID, rowData(sce_hb)$Sym
 # is a useful QC metric because it shows samples where cytoplasm 
 # was not fully or successfully stripped.
 # Game plan:
-# 1) Use altexps_ERCC_percent to drop high mito content droplets.
+# 1) Use subsets_Mito_percent to drop high mito content droplets.
 # 2) Use DLPFC example of utilizing knee inflection plots to create further drop
 # thresholds.
 
+
+## 1) Discarding cells with high mito proportions:
+
+# Saving unfiltered sce for future reference and plotting purposes.
+unfiltered_sce <- sce_hb
+
+# finding genes associated with mitochondrial genome
+is.mito <- grep("^MT-", rowData(sce_hb)$Symbol)
+stats <- perCellQCMetrics(sce_hb, subsets = list(Mito = is.mito))
+
+# grabbing droplets with relatively high mito (based on MADs, no preset threshold)
+high.mito <- isOutlier(stats$subsets_Mito_percent, type = "higher")
+
+# dropping high mito content
+discard <- high.mito
+sce_hb <- sce_hb[,!discard]
+
+# Logical scripts contain NAs error. 
 
 
 
