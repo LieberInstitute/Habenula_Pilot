@@ -50,6 +50,29 @@ table(high_mito)
     # high_mito
     # FALSE  TRUE
     # 17245  2557
+# attributes() from Erik?
+
+# recording sce pre drop
+dim_premitodrop = dim(sce)
+    # 36601 19802
+
+# Dropping high mito
+sce <- sce[,!high_mito]
+
+# recording sce post drop
+dim_postmitodrop = dim(sce)
+    # 36601 17245
+
+# Binding stats to colData of sce
+colData(sce) <- cbind(colData(sce), "mitoTF" = stats, "highMitoTF" = high_mito)
+
+############### LOW LIBRARY SIZE DROP
+
+
+
+############### LOW DETECTED FEATURES DROP
+
+
 
 # Notes (from Erik):
 # 1) Compare (location=="MT") vs grep("^MT-")
@@ -59,8 +82,8 @@ table(high_mito)
 # Getting cluster annotations from Erik's sce object
 load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda")) 
 
-annoData <- Data.frame(row.names = colnames(s3e.hb), "SampleID" = s3e.hb$Sample,
-                         colData(s3e.hb)$S
+annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = s3e.hb$sample_name,
+                         "ClusterID" = s3e.hb$cellType)
 
 
 
