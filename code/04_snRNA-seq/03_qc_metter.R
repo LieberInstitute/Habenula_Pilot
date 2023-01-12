@@ -4,12 +4,10 @@
 
 # Loading relevant libraries
 library("SingleCellExperiment")
-library("SpatialExperiment")
-library("DropletUtils")
+library("jaffelab")
+library("VariantAnnotation")
 library("here")
-library("rtracklayer")
-library("lobstr")
-library("sessioninfo")
-library("dplyr")
-library("scater")
-library("purrr")
+library("ggplot2")
+library("ggrepel")
+
+# Loading filtered pre-QC sce object for all 7 Habenula samples
