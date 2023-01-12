@@ -27,6 +27,8 @@ rm(sce_hb_preQC)
 # QC approach based on Workflow 3.3 in OSCA:
 # http://bioconductor.org/books/3.16/OSCA.workflows/unfiltered-human-pbmcs-10x-genomics.html#quality-control-2
 
+############### HIGH MITO DROP 
+# --------------- Way 1:
 # MADs approach for high mito droplets (indicates nuclei where cytoplasm wasn't
 # successfully stripped):
 set.seed(777)
@@ -49,7 +51,16 @@ table(high_mito)
     # FALSE  TRUE
     # 17245  2557
 
+# Notes (from Erik):
+# 1) Compare (location=="MT") vs grep("^MT-")
+# 2) Drop based on qc metrics
+# 3) Drop any genes with 0 counts in any nuclei 
 
+# Getting cluster annotations from Erik's sce object
+load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda")) 
+
+annoData <- Data.frame(row.names = colnames(s3e.hb), "SampleID" = s3e.hb$Sample,
+                         colData(s3e.hb)$S
 
 
 
