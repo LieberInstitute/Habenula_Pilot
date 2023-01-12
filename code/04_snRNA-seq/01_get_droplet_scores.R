@@ -1,4 +1,3 @@
-# January 10, 2023 - Bukola Ajanaku
 # Collaborated with Louise Huuki 
 # Based on
 # https://github.com/LieberInstitute/10xPilot_snRNAseq-human/blob/master/10x_all-FACS-n10_2021rev_step01_processing-QC_MNT.R
@@ -49,7 +48,7 @@ e.out <- DropletUtils::emptyDrops(
 )
 message(Sys.time(), "Done - saving data")
 
-save(e.out, file = here("processed-data", "04_snRNA-seq_Bukola", "01_get_droplet_scores", paste0("droplet_scores_", sample, ".Rdata")))
+save(e.out, file = here("processed-data", "04_snRNA-seq", "01_get_droplet_scores", paste0("droplet_scores_", sample, ".Rdata")))
 
 #### QC Plots ####
 message("QC check")
@@ -92,7 +91,7 @@ droplet_elbow_plot <- as.data.frame(bcRanks) %>%
 # # print(droplet_elbow_plot/droplet_scatter_plot)
 # ggsave(droplet_elbow_plot/droplet_scatter_plot, filename = here("plots","03_build_sce", "droplet_qc_png",paste0("droplet_qc_",sample,".png")))
 
-ggsave(droplet_elbow_plot, filename = here("plots", "04_snRNA-seq_Bukola", "01_get_droplet_scores", paste0("droplet_qc_", sample, ".png")))
+ggsave(droplet_elbow_plot, filename = here("plots", "04_snRNA-seq", "01_get_droplet_scores", paste0("droplet_qc_", sample, ".png")))
 
 
 # sgejobs::job_single('01_get_droplet_scores', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 01_get_droplet_scores.R Br1092")

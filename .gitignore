@@ -10,4 +10,5 @@ processed-data/08_snRNA-seq_Erik/
 processed-data/09_snRNA-seq_re-processed/
 plots/09_snRNA-seq_re-processed/live_checks.pdf
 processed-data/02_bulk_qc/count_data_bukola/
+processed-data/04_snRNA-seq/
 >>>>>>> update .gitignore

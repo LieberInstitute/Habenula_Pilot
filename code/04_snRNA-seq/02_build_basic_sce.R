@@ -24,7 +24,7 @@ sample_list <- list.files(here("processed-data", "07_cellranger"))
 
 sce_list <- map(sample_list, function(sample){
   fn10x <-  here("processed-data", "07_cellranger", sample, "outs", "raw_feature_bc_matrix") 
-  fnDropScore <- here("processed-data", "04_snRNA-seq_Bukola", "01_get_droplet_scores", paste0("droplet_scores_", sample, ".Rdata"))
+  fnDropScore <- here("processed-data", "04_snRNA-seq", "01_get_droplet_scores", paste0("droplet_scores_", sample, ".Rdata"))
   
   sce <- read10xCounts(fn10x, col.names=TRUE)
   load(fnDropScore, verbose = TRUE)
@@ -49,7 +49,7 @@ sce_list <- map(sce_list, ~.x[make_Rows,])
 # OFFICIAL SCE HB OBJECT PRE-QC. 
 sce_hb_preQC <- do.call("cbind", sce_list)
 
-save(sce_hb_preQC, file = here("processed-data", "04_snRNA-seq_Bukola", "sce_objects", 
+save(sce_hb_preQC, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                                "sce_hb_preQC.Rdata"))
 # sgejobs::job_single('02_build_basic_sce', create_shell = TRUE, queue= 'bluejay', memory = '100G', command = "Rscript 02_build_basic_sce.R")
 
