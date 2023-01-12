@@ -64,7 +64,7 @@ dim_postmitodrop = dim(sce)
     # 36601 17245
 
 # Binding stats to colData of sce
-colData(sce) <- cbind(colData(sce), "mitoTF" = stats, "highMitoTF" = high_mito)
+colData(sce) <- cbind(colData(sce), "mitoTF" = stats, "highMitoTF" = high_mito) # ERROR! *
 
 ############### LOW LIBRARY SIZE DROP
 
