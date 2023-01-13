@@ -41,12 +41,12 @@ location <- mapIds(EnsDb.Hsapiens.v86, keys = rowData(sce)$ID,
 # Identifying mito reads
 stats <- perCellQCMetrics(sce, subsets = list(Mito = which(location=="MT")))
 
-# Binding stats to colData of sce
-colData(sce) <- cbind(colData(sce), stats, high_mito) 
-
 # Changing Sample ID names from locations 
 sce$path <- sce$Sample
 sce$Sample <- ss(sce$Sample, "/", 9)
+
+# Binding stats to colData of sce
+colData(sce) <- cbind(colData(sce), stats)
 
 # Identifying high mito reads
 sce$high_mito <- isOutlier(sce$subsets_Mito_percent, nmads=3, type="higher", 
@@ -55,34 +55,27 @@ table(sce$high_mito)
     # high_mito
     # FALSE  TRUE 
     # 17702  2100 
-# attributes() from Erik?
 
 # recording sce pre drop
 dim_premitodrop = dim(sce)
+dim_premitodrop
     # 36601 19802
 
 # Dropping high mito
-sce <- sce[,!high_mito]
+sce <- sce[, sce$high_mito == FALSE]
 
 # recording sce post drop
 dim_postmitodrop = dim(sce)
+dim_postmitodrop
     # 36601 17245
 
 # for plotting
 sce$discard = sce$high_mito
 
 # Plotting qc metric distribution
-pdf(file = here("plots", "04_snRNA-seq", "03_qc_distribution.pdf"))
-
-    plotColData(sce, x = "Sample", y="sum", colour_by="discard") +
-      scale_y_log10() + ggtitle("Total count")
-    
-    plotColData(sce, x = "Sample", y="detected", colour_by="discard") +
-      scale_y_log10() + ggtitle("Detected features")
-    
-    plotColData(sce, x = "Sample", y="subsets_Mito_percent",
-                colour_by="discard") + ggtitle("Mito percent")
-
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "high_mito_dist.R"))
+  plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
+    ggtitle("Mito Precent")
 dev.off()
 
 ############### LOW LIBRARY SIZE DROP
