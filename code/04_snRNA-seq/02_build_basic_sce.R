@@ -2,7 +2,7 @@
 # Building basic sce objects. This follows the initial pca analysis for bulk 
 # Habenula data. Only 7 samples, all control.
 # Based on: 
-# 1) https://github.com/LieberInstitute/Habenula_Bulk/blob/master/code/08_snRNA-seq_Erik/20210323_human_hb_neun.R
+# 1) https://github.com/LieberInstitute/Habenula_Bulk/blob/master/code/09_snRNA-seq_re-processed/02_qc.R
 # 2) https://github.com/LieberInstitute/DLPFC_snRNAseq/blob/main/code/03_build_sce/01_build_basic_sce.R
 # 3) https://github.com/LieberInstitute/Habenula_Bulk/blob/master/code/09_snRNA-seq_re-processed/00_get_droplet_scores.R
 # qrsh -l mem_free=75G,h_vmem=75G

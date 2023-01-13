@@ -33,9 +33,6 @@ rm(sce_hb_preQC)
 # successfully stripped):
 set.seed(777)
 
-# Prepping sce object to be scanned for mito labels
-rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ID, rowData(sce)$Symbol)
-
 # Defining locations
 location <- mapIds(EnsDb.Hsapiens.v86, keys = rowData(sce)$ID, 
                    column = "SEQNAME", keytype = "GENEID")
@@ -44,12 +41,20 @@ location <- mapIds(EnsDb.Hsapiens.v86, keys = rowData(sce)$ID,
 # Identifying mito reads
 stats <- perCellQCMetrics(sce, subsets = list(Mito = which(location=="MT")))
 
+# Binding stats to colData of sce
+colData(sce) <- cbind(colData(sce), stats, high_mito) 
+
+# Changing Sample ID names from locations 
+sce$path <- sce$Sample
+sce$Sample <- ss(sce$Sample, "/", 9)
+
 # Identifying high mito reads
-high_mito <- isOutlier(stats$subsets_Mito_percent, nmads=3, type="higher")
-table(high_mito)
+sce$high_mito <- isOutlier(sce$subsets_Mito_percent, nmads=3, type="higher", 
+                            batch = sce$Sample)
+table(sce$high_mito)
     # high_mito
-    # FALSE  TRUE
-    # 17245  2557
+    # FALSE  TRUE 
+    # 17702  2100 
 # attributes() from Erik?
 
 # recording sce pre drop
@@ -63,8 +68,22 @@ sce <- sce[,!high_mito]
 dim_postmitodrop = dim(sce)
     # 36601 17245
 
-# Binding stats to colData of sce
-colData(sce) <- cbind(colData(sce), "mitoTF" = stats, "highMitoTF" = high_mito) # ERROR! *
+# for plotting
+sce$discard = sce$high_mito
+
+# Plotting qc metric distribution
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_distribution.pdf"))
+
+    plotColData(sce, x = "Sample", y="sum", colour_by="discard") +
+      scale_y_log10() + ggtitle("Total count")
+    
+    plotColData(sce, x = "Sample", y="detected", colour_by="discard") +
+      scale_y_log10() + ggtitle("Detected features")
+    
+    plotColData(sce, x = "Sample", y="subsets_Mito_percent",
+                colour_by="discard") + ggtitle("Mito percent")
+
+dev.off()
 
 ############### LOW LIBRARY SIZE DROP
 
@@ -88,4 +107,17 @@ annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = s3e.hb$sample_
 
 
 
-# 
+# Questions for Louise:
+# 1) Should we run qc per sample before combining them for the sce object
+
+## 1a: No, add column for batch and then add argument to qc mito 
+
+# 2) Why does the sce object look like that. Sample and Barcode only in colData vs 
+# that of Erik's s3e.hb.
+## 2a: Change the Sample to the Br name it is asscociated with 
+
+# 3) should we use josh's or erik's way of grabbing mito gennes
+
+# 4) aren't we supposed to run addpercellQC because I can't find sum, detected, 
+# etc for plotting
+# 4a: that was unfilitered. just add all info to same sce object and 
