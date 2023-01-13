@@ -73,20 +73,11 @@ table(sce$discard)
     # FALSE  TRUE 
     # 17082  2720 
 
-
 ############### Plotting before and after drops 
-  # recording sce pre drop
-  dim_premitodrop = dim(sce)
-dim_premitodrop
-# 36601 19802
-
-# Dropping high mito
-sce <- sce[, sce$high_mito == FALSE]
-
-# recording sce post drop
-dim_postmitodrop = dim(sce)
-dim_postmitodrop
-# 36601 17245
+# recording sce pre drop
+dim_predrop = dim(sce)
+dim_predrop
+    # 36601 19802
 
 # Plotting qc metric distribution
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "high_mito_dist.R"))
@@ -95,10 +86,13 @@ plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mit
 dev.off()
 
 
-# Notes (from Erik):
-# 1) Compare (location=="MT") vs grep("^MT-")
-# 2) Drop based on qc metrics
-# 3) Drop any genes with 0 counts in any nuclei 
+# Dropping high mito
+sce <- sce[, sce$high_mito == FALSE]
+
+# recording sce post drop
+dim_postmitodrop = dim(sce)
+dim_postmitodrop
+# 36601 17245
 
 # Getting cluster annotations from Erik's sce object
 load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda")) 
@@ -123,3 +117,5 @@ annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = s3e.hb$sample_
 # 4) aren't we supposed to run addpercellQC because I can't find sum, detected, 
 # etc for plotting
 # 4a: that was unfilitered. just add all info to same sce object and 
+
+# LATER: 3) Drop any genes with 0 counts in any nuclei 
