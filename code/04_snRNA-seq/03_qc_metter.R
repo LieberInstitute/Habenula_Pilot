@@ -27,8 +27,7 @@ rm(sce_hb_preQC)
 # QC approach based on Workflow 3.3 in OSCA:
 # http://bioconductor.org/books/3.16/OSCA.workflows/unfiltered-human-pbmcs-10x-genomics.html#quality-control-2
 
-############### HIGH MITO DROP 
-# --------------- Way 1:
+############### FINDING HIGH MITO ##############################################
 # MADs approach for high mito droplets (indicates nuclei where cytoplasm wasn't
 # successfully stripped):
 set.seed(777)
@@ -56,10 +55,30 @@ table(sce$high_mito)
     # FALSE  TRUE 
     # 17702  2100 
 
-# recording sce pre drop
-dim_premitodrop = dim(sce)
+############### LOW LIBRARY SIZE ###############################################
+sce$lowLib <- isOutlier(sce$sum, log=TRUE, type="lower", batch = sce$Sample)
+table(sce$lowLib)
+    # FALSE  TRUE 
+    # 18889   913 
+
+############### LOW DETECTED FEATURES ##########################################
+sce$lowDetecFea <- isOutlier(sce$detected, log=TRUE, type="lower", batch = sce$Sample)
+table(sce$lowDetecFea)
+    # FALSE  TRUE 
+    # 18393  1409 
+
+############### DROPPING TRUES #################################################
+sce$discard <- sce$high_mito | sce$lowLib | sce$lowDetecFea
+table(sce$discard)
+    # FALSE  TRUE 
+    # 17082  2720 
+
+
+############### Plotting before and after drops 
+  # recording sce pre drop
+  dim_premitodrop = dim(sce)
 dim_premitodrop
-    # 36601 19802
+# 36601 19802
 
 # Dropping high mito
 sce <- sce[, sce$high_mito == FALSE]
@@ -67,23 +86,13 @@ sce <- sce[, sce$high_mito == FALSE]
 # recording sce post drop
 dim_postmitodrop = dim(sce)
 dim_postmitodrop
-    # 36601 17245
-
-# for plotting
-sce$discard = sce$high_mito
+# 36601 17245
 
 # Plotting qc metric distribution
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "high_mito_dist.R"))
-  plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
-    ggtitle("Mito Precent")
+plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
+  ggtitle("Mito Precent")
 dev.off()
-
-############### LOW LIBRARY SIZE DROP
-
-
-
-############### LOW DETECTED FEATURES DROP
-
 
 
 # Notes (from Erik):
