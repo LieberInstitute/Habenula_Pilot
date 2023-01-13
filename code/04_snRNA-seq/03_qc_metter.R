@@ -101,10 +101,13 @@ plotDropbySamp$ToF <- ss(as.character(plotDropbySamp$variable), "_", 1)
 
 plotDropbySamp$Metric <- sub("*._", "", as.character(plotDropbySamp$variable)) 
 
-ggplot(toDropbySamp,
-       aes(x = 
-         
-       ))
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_drops.pdf"))
+  ggplot(plotDropbySamp,
+         aes(x = Sample,
+             y = Metric, 
+             fill = ToF)) + geom_bar(stat="identity")
+dev.off()
+
 
 # recording sce pre drop
 dim_predrop = dim(sce)
@@ -145,7 +148,7 @@ sce <- sce[rowSums(counts(sce)) > 0, ]
 # recording sce post drop
 dim_postmitodrop = dim(sce)
 dim_postmitodrop
-# 33910 17082
+# 33848 17082
 
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_post_drop.pdf"))
   plotColData(sce, x = "Sample", y = "subsets_Mito_percent") + ggtitle("Mito Precent")
@@ -154,6 +157,12 @@ pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_post_
   
   plotColData(sce, x = "Sample", y = "detected") + ggtitle("Detected Features")
 dev.off()
+
+sce_hb_postQC <- sce 
+rm(sce)
+
+save(sce_hb_postQC, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                                "sce_hb_postQC.Rdata"))
 
 ############### CLUSTER ANNOTATIOS {Erik's} ####################################
 load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda")) 
