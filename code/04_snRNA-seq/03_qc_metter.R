@@ -18,6 +18,7 @@ library("DropletUtils")
 library("Rtsne")
 library("gridExtra")
 library("EnsDb.Hsapiens.v86")
+library("reshape")
 
 # Loading filtered pre-QC sce object for all 7 Habenula samples
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_hb_preQC.Rdata"))
@@ -47,58 +48,118 @@ sce$Sample <- ss(sce$Sample, "/", 9)
 # Binding stats to colData of sce
 colData(sce) <- cbind(colData(sce), stats)
 
-# Identifying high mito reads
+############### HIGH MITO ######################################################
 sce$high_mito <- isOutlier(sce$subsets_Mito_percent, nmads=3, type="higher", 
                             batch = sce$Sample)
-table(sce$high_mito)
-    # high_mito
-    # FALSE  TRUE 
-    # 17702  2100 
+table(sce$high_mito, by = sce$Sample)
+    #       Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639
+    # FALSE   3352   1391   2185   3199   3600    801   3174
+    # TRUE     270    274    314    544    305    135    258
 
 ############### LOW LIBRARY SIZE ###############################################
 sce$lowLib <- isOutlier(sce$sum, log=TRUE, type="lower", batch = sce$Sample)
-table(sce$lowLib)
-    # FALSE  TRUE 
-    # 18889   913 
+table(sce$lowLib, by = sce$Sample)
+    #       Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639
+    # FALSE   3430   1445   2414   3633   3772    847   3348
+    # TRUE     192    220     85    110    133     89     84
 
 ############### LOW DETECTED FEATURES ##########################################
 sce$lowDetecFea <- isOutlier(sce$detected, log=TRUE, type="lower", batch = sce$Sample)
-table(sce$lowDetecFea)
-    # FALSE  TRUE 
-    # 18393  1409 
+table(sce$lowDetecFea, by = sce$Sample)
+    #       Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639
+    # FALSE   3394   1334   2347   3437   3766    826   3289
+    # TRUE     228    331    152    306    139    110    143
 
-############### DROPPING TRUES #################################################
+############### Plotting before drops. #########################################
+# total we want to drop
 sce$discard <- sce$high_mito | sce$lowLib | sce$lowDetecFea
 table(sce$discard)
-    # FALSE  TRUE 
-    # 17082  2720 
+# FALSE  TRUE 
+# 17082  2720 
 
-############### Plotting before and after drops 
+# data frame of qc met stats 
+toDropbySamp <- t(table(sce$high_mito, by = sce$Sample))
+colnames(toDropbySamp) <- c("F_High_Mito", "T_High_Mito") 
+
+toDropbySamp <- cbind(toDropbySamp, t(table(sce$lowLib, by = sce$Sample)))
+colnames(toDropbySamp)[3:4] <- c("F_Low_Lib", "T_Low_Lib") 
+
+toDropbySamp <- cbind(toDropbySamp, t(table(sce$lowDetecFea, by = sce$Sample)))
+colnames(toDropbySamp)[5:6] <- c("F_Low_Det_Feat", "T_Low_Det_Feat") 
+
+toDropbySamp <- cbind(toDropbySamp, t(table(sce$discard, by = sce$Sample))[,2])
+colnames(toDropbySamp)[7] <- c("TotalDiscard") 
+
+toDropbySamp <- cbind(toDropbySamp, t(table(sce$discard, by = sce$Sample))[,1])
+colnames(toDropbySamp)[8] <- c("NucleiKept") 
+
+toDropbySamp <- as.data.frame(toDropbySamp)
+toDropbySamp$Sample <- rownames(toDropbySamp)
+
+plotDropbySamp <- melt(toDropbySamp, id = "Sample")
+plotDropbySamp$ToF <- ss(as.character(plotDropbySamp$variable), "_", 1)
+
+plotDropbySamp$Metric <- sub("*._", "", as.character(plotDropbySamp$variable)) 
+
+ggplot(toDropbySamp,
+       aes(x = 
+         
+       ))
+
 # recording sce pre drop
 dim_predrop = dim(sce)
 dim_predrop
     # 36601 19802
 
 # Plotting qc metric distribution
-pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "high_mito_dist.R"))
-plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
-  ggtitle("Mito Precent")
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_per_met.pdf"))
+  plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
+    ggtitle("Mito Precent")
+  
+  plotColData(sce, x = "Sample", y = "sum", colour_by = "lowLib") +
+    ggtitle("Library Size")
+  
+  plotColData(sce, x = "Sample", y = "detected", colour_by = "lowDetecFea") +
+    ggtitle("Detected Features")
+dev.off()
+
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_by_all_discard.pdf"))
+ plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "discard") +
+    ggtitle("Mito Precent")
+  
+  plotColData(sce, x = "Sample", y = "sum", colour_by = "discard") +
+    ggtitle("Library Siz")
+  
+  plotColData(sce, x = "Sample", y = "detected", colour_by = "discard") +
+    ggtitle("Detected Features")
 dev.off()
 
 
-# Dropping high mito
-sce <- sce[, sce$high_mito == FALSE]
+############### DROPPING TRUES #################################################
+# Dropping high mito, low library size, and low features
+sce <- sce[, sce$discard == FALSE]
+
+# Dropping 0 count genes across samples
+sce <- sce[rowSums(counts(sce)) > 0, ]
 
 # recording sce post drop
 dim_postmitodrop = dim(sce)
 dim_postmitodrop
-# 36601 17245
+# 33910 17082
 
-# Getting cluster annotations from Erik's sce object
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_post_drop.pdf"))
+  plotColData(sce, x = "Sample", y = "subsets_Mito_percent") + ggtitle("Mito Precent")
+  
+  plotColData(sce, x = "Sample", y = "sum") + ggtitle("Library Size")
+  
+  plotColData(sce, x = "Sample", y = "detected") + ggtitle("Detected Features")
+dev.off()
+
+############### CLUSTER ANNOTATIOS {Erik's} ####################################
 load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda")) 
 
-annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = s3e.hb$sample_name,
-                         "ClusterID" = s3e.hb$cellType)
+annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
+                         s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
 
 
 
