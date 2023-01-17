@@ -97,17 +97,34 @@ colnames(overallDropDF) <- c("totalKeep", "totalDiscard")
 overallDropDF <- cbind(overallDropDF, rowSums(overallDropDF))
 colnames(overallDropDF)[3] <- "totalDroplets"
 
-
+# Plotting before and after dropping info
+# per metric 
 plotDropbySamp <- melt(toDropbySamp, id = "Sample")
 plotDropbySamp$ToF <- ss(as.character(plotDropbySamp$variable), "_", 1)
-
 plotDropbySamp$Metric <- sub("*._", "", as.character(plotDropbySamp$variable)) 
 
+forSummaryTable <- function(BrNumber){
+  plotting <- plotDropbySamp[plotDropbySamp$Sample == BrNumber,]
+  plot <- ggplot(plotDropbySamp,
+       aes(x = Metric,
+           y = value, 
+           fill = ToF)) + 
+    geom_bar(stat="identity", position = "dodge") +
+    labs(title = BrNumber, fill = "Drop?", x = "Metric", "Value") +
+    geom_text(aes(label = value)) +
+    theme(
+      plot.title = element_text(size = 14, face ="bold.italic", hjust = 0.5),
+      axis.title.x = element_text(size = 12),
+      axis.title.y = element_text(size = 12)
+    )
+  
+  return(plot)
+}
+
+plottingDropbySamp <- lapply(unique(plotDropbySamp$Sample), forSummaryTable)
+
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_drops.pdf"))
-  ggplot(plotDropbySamp,
-         aes(x = Sample,
-             y = Metric, 
-             fill = ToF)) + geom_bar(stat="identity")
+  plottingDropbySamp[1]
 dev.off()
 
 
