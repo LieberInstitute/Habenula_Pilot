@@ -239,6 +239,6 @@ load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda"))
 annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
                          s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
 
-# save(sce_hb_postQC, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
-#                                "sce_hb_postQC.Rdata"))
+save(annoData, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                                "annoData.Rdata"))
 
