@@ -78,6 +78,7 @@ table(sce$discard)
 # 17082  2720 
 
 # data frame of qc met stats 
+# Per Metric
 toDropbySamp <- t(table(sce$high_mito, by = sce$Sample))
 colnames(toDropbySamp) <- c("F_High_Mito", "T_High_Mito") 
 
@@ -87,14 +88,15 @@ colnames(toDropbySamp)[3:4] <- c("F_Low_Lib", "T_Low_Lib")
 toDropbySamp <- cbind(toDropbySamp, t(table(sce$lowDetecFea, by = sce$Sample)))
 colnames(toDropbySamp)[5:6] <- c("F_Low_Det_Feat", "T_Low_Det_Feat") 
 
-toDropbySamp <- cbind(toDropbySamp, t(table(sce$discard, by = sce$Sample))[,2])
-colnames(toDropbySamp)[7] <- c("TotalDiscard") 
-
-toDropbySamp <- cbind(toDropbySamp, t(table(sce$discard, by = sce$Sample))[,1])
-colnames(toDropbySamp)[8] <- c("NucleiKept") 
-
 toDropbySamp <- as.data.frame(toDropbySamp)
 toDropbySamp$Sample <- rownames(toDropbySamp)
+
+# Overall 
+overallDropDF <- t(table(sce$discard, by = sce$Sample))
+colnames(overallDropDF) <- c("totalKeep", "totalDiscard") 
+overallDropDF <- cbind(overallDropDF, rowSums(overallDropDF))
+colnames(overallDropDF)[3] <- "totalDroplets"
+
 
 plotDropbySamp <- melt(toDropbySamp, id = "Sample")
 plotDropbySamp$ToF <- ss(as.character(plotDropbySamp$variable), "_", 1)
