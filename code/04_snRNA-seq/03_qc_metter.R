@@ -123,19 +123,25 @@ forSummaryTable <- function(BrNumber){
     scale_fill_brewer(palette = "Reds") +
     theme_minimal() + 
     theme(
-      plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
-      axis.title.x = element_text(size = 12),
-      axis.title.y = element_text(size = 12),
+      plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+      axis.title.x = element_text(size = 12, vjust = 0.2),
+      axis.title.y = element_text(size = 12, vjust = 0.2),
+      axis.text = element_text(face = "bold")
     )
   
   return(plot)
 }
 
 plottingDropbySamp <- lapply(unique(plotDropbySamp$Sample), forSummaryTable)
-plottingDropbySamp[[8]] <- get_legend(plottingDropbySamp[[1]])
+plottingDropbySamp[[8]] <- get_legend(plottingDropbySamp[[1]]) 
 
-pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_drops.pdf"))
-  do.call("grid.arrange", c(plottingDropbySamp, ncol = 2))
+for (i in 1:7) {
+  plottingDropbySamp[[i]] <- plottingDropbySamp[[i]] + theme(legend.position="none")
+}
+
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_drops.pdf"), 
+    width = 9, height = 16)
+      do.call("grid.arrange", c(plottingDropbySamp, ncol = 2))
 dev.off()
 
 
@@ -146,7 +152,6 @@ dim_predrop
 
 # Plotting qc metric distribution
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_per_met.pdf"))
-  plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
     ggtitle("Mito Precent")
   
   plotColData(sce, x = "Sample", y = "sum", colour_by = "lowLib") +
