@@ -21,6 +21,12 @@ load(here("processed-data", "04_snRNA-seq", "sce_objects",
 sce <- sce_hb_postQC
 rm(sce_hb_postQC)
 
+# Normalization?
+mbk <- mbkmeans(sce, whichAssay = "counts", reduceMethod = NA,
+                clusters=10, batch_size = 500)
+sce$mbk10 <- paste0("mbk", mbk$Clusters)
+table(mbk$Clusters)
+
 # Deviance featuring selection
 sce <- devianceFeatureSelection(sce,
         assay = "counts", fam = "binomial", sorted = F,
@@ -44,11 +50,12 @@ sce <- nullResiduals(sce,
 sce <- scater::runPCA(sce, ncomponents = 50,
                       exprs_values = "binomial_deviance_residuals",
                       scale = TRUE, name = "GLMPCA_approx",
-                      BSPARAM = BiocSingular::IrlbaParam())
+                      BSPARAM = BiocSingular::RandomParam())
 
 # Plotting using GLM-PCA functions
 pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_pca_plot.pdf"))
   plotReducedDim(sce, dimred = "GLMPCA_approx", colour_by = "Sample")
+  plotReducedDim(sce, dimred = "GLMPCA_approx", colour_by = "mbk10")
 dev.off()
 
 
