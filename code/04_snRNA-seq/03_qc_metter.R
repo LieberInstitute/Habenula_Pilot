@@ -20,6 +20,7 @@ library("gridExtra")
 library("EnsDb.Hsapiens.v86")
 library("reshape")
 library("cowplot")
+library("dplyr")
 
 # Loading filtered pre-QC sce object for all 7 Habenula samples
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_hb_preQC.Rdata"))
@@ -97,6 +98,7 @@ overallDropDF <- t(table(sce$discard, by = sce$Sample))
 colnames(overallDropDF) <- c("totalKeep", "totalDiscard") 
 overallDropDF <- cbind(overallDropDF, rowSums(overallDropDF))
 colnames(overallDropDF)[3] <- "totalDroplets"
+overallDropDF <- as.data.frame(overallDropDF)
 
 # Plotting before and after dropping info
 # per metric 
@@ -116,7 +118,7 @@ forSummaryTable <- function(BrNumber){
        aes(x = Metric,
            y = value, 
            fill = ToF)) + 
-    geom_bar(stat="identity", position = position_dodge()) +
+    geom_bar(stat = "identity", position = position_dodge()) +
     labs(title = BrNumber, fill = "Drop?", x = "Metric", y = element_blank()) +
     geom_text(aes(label = value), vjust  = -0.3, position = position_dodge(0.9), 
               size = 4, fontface = "bold") +
@@ -144,11 +146,41 @@ pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_dro
       do.call("grid.arrange", c(plottingDropbySamp, ncol = 2))
 dev.off()
 
-
 # recording sce pre drop
 dim_predrop = dim(sce)
 dim_predrop
     # 36601 19802
+
+# Overall drop info bar plot summary 
+overallDropDF$Sample <- rownames(overallDropDF) 
+overallDropDF <- melt(overallDropDF, by = Sample)
+overallDropDF$variable <- recode(overallDropDF$variable,  "totalKeep" = 
+                                 "Total Post-Drop", "totalDiscard" = "Dropped",
+                                 "totalDroplets" = "Total Pre-Drop")
+overallDropDF$variable <- factor(overallDropDF$variable, levels = 
+                                   c("Total Pre-Drop", "Total Post-Drop", "Dropped"))
+
+plotOverall <- ggplot(overallDropDF,
+               aes(x = Sample,
+                   y = value, 
+                   fill = variable)) + 
+  geom_bar(stat = "identity", position = position_dodge()) +
+  labs(title = "Dropping Metrics", fill = "Sum Type", x = "Sample", y = element_blank()) +
+  geom_text(aes(label = value), vjust  = -0.3, position = position_dodge(0.9), 
+            size = 4, fontface = "bold") +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 12, vjust = 0.2),
+    axis.title.y = element_text(size = 12, vjust = 0.2),
+    axis.text = element_text(face = "bold")
+  )
+
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "overall_drop_barplot.pdf"), 
+    width = 8, height = 6)
+  plotOverall
+dev.off()
 
 # Plotting qc metric distribution
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_per_met.pdf"))
@@ -173,7 +205,7 @@ pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_by_al
 dev.off()
 
 
-############### DROPPING TRUES #################################################
+############### DROPPING TRUES & PLOTTING ######################################
 # Dropping high mito, low library size, and low features
 sce <- sce[, sce$discard == FALSE]
 
@@ -183,7 +215,9 @@ sce <- sce[rowSums(counts(sce)) > 0, ]
 # recording sce post drop
 dim_postmitodrop = dim(sce)
 dim_postmitodrop
-# 33848 17082
+    # 33848 17082
+
+#### Plotting post drop!
 
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_post_drop.pdf"))
   plotColData(sce, x = "Sample", y = "subsets_Mito_percent") + ggtitle("Mito Precent")
@@ -205,22 +239,6 @@ load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda"))
 annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
                          s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
 
+# save(sce_hb_postQC, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+#                                "sce_hb_postQC.Rdata"))
 
-
-
-# Questions for Louise:
-# 1) Should we run qc per sample before combining them for the sce object
-
-## 1a: No, add column for batch and then add argument to qc mito 
-
-# 2) Why does the sce object look like that. Sample and Barcode only in colData vs 
-# that of Erik's s3e.hb.
-## 2a: Change the Sample to the Br name it is asscociated with 
-
-# 3) should we use josh's or erik's way of grabbing mito gennes
-
-# 4) aren't we supposed to run addpercellQC because I can't find sum, detected, 
-# etc for plotting
-# 4a: that was unfilitered. just add all info to same sce object and 
-
-# LATER: 3) Drop any genes with 0 counts in any nuclei 
