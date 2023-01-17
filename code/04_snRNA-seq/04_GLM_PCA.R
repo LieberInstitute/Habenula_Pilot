@@ -58,6 +58,23 @@ pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_pca_plot.pdf"))
   plotReducedDim(sce, dimred = "GLMPCA_approx", colour_by = "mbk10")
 dev.off()
 
+# Normal PCA
+# had to re-load sce 
+sce <- computeSumFactors(sce, cluster = mbk$Clusters, min.mean = 0.1)
+sce <- logNormCounts(sce)
+
+sce <- scater::runPCA(sce, ncomponents = 50,
+                      ntop = 1000,
+                      scale = TRUE,
+                      BSPARAM = BiocSingular::RandomParam())
+
+sce$mbk10 <- paste0("mbk", mbk$Clusters)
+
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "normal_pca_plot.pdf"))
+  plotPCA(sce, colour_by = "Sample")
+  plotPCA(sce, colour_by = "mbk10")
+dev.off()
+
 
 
 # Plotting PCA (personal function)
