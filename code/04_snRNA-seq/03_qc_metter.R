@@ -19,6 +19,7 @@ library("Rtsne")
 library("gridExtra")
 library("EnsDb.Hsapiens.v86")
 library("reshape")
+library("cowplot")
 
 # Loading filtered pre-QC sce object for all 7 Habenula samples
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_hb_preQC.Rdata"))
@@ -105,26 +106,36 @@ plotDropbySamp$Metric <- sub("*._", "", as.character(plotDropbySamp$variable))
 
 forSummaryTable <- function(BrNumber){
   plotting <- plotDropbySamp[plotDropbySamp$Sample == BrNumber,]
-  plot <- ggplot(plotDropbySamp,
+  plotting[plotting == "T"] <- "True"
+  plotting[plotting == "F"] <- "False"
+  plotting[plotting == "High_Mito"] <- "High Mito?"
+  plotting[plotting == "Low_Lib"] <- "Low Lib?"
+  plotting[plotting == "Low_Det_Feat"] <- "Low Det Fea?"
+  
+  plot <- ggplot(plotting,
        aes(x = Metric,
            y = value, 
            fill = ToF)) + 
-    geom_bar(stat="identity", position = "dodge") +
-    labs(title = BrNumber, fill = "Drop?", x = "Metric", "Value") +
-    geom_text(aes(label = value)) +
+    geom_bar(stat="identity", position = position_dodge()) +
+    labs(title = BrNumber, fill = "Drop?", x = "Metric", y = element_blank()) +
+    geom_text(aes(label = value), vjust  = -0.3, position = position_dodge(0.9), 
+              size = 4, fontface = "bold") +
+    scale_fill_brewer(palette = "Reds") +
+    theme_minimal() + 
     theme(
-      plot.title = element_text(size = 14, face ="bold.italic", hjust = 0.5),
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
       axis.title.x = element_text(size = 12),
-      axis.title.y = element_text(size = 12)
+      axis.title.y = element_text(size = 12),
     )
   
   return(plot)
 }
 
 plottingDropbySamp <- lapply(unique(plotDropbySamp$Sample), forSummaryTable)
+plottingDropbySamp[[8]] <- get_legend(plottingDropbySamp[[1]])
 
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_drops.pdf"))
-  plottingDropbySamp[1]
+  do.call("grid.arrange", c(plottingDropbySamp, ncol = 2))
 dev.off()
 
 
