@@ -177,7 +177,7 @@ plotOverall <- ggplot(overallDropDF,
     axis.text = element_text(face = "bold")
   )
 
-pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "overall_drop_barplot.pdf"), 
+pdf(file = here("plots", "04_snRNA-seq", "j03_qc_metter_plots", "overall_drop_barplot.pdf"), 
     width = 8, height = 6)
   plotOverall
 dev.off()
