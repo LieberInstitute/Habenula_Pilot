@@ -12,6 +12,7 @@ library("harmony")
 library("scater")
 library("here")
 library("sessioninfo")
+library("HDF5Array")
 
 # Loading sce_uncorrected
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
@@ -46,17 +47,81 @@ sce_corrbySamp <- runUMAP(sce_corrbySamp, dimred = "HARMONY")
 # sce_corrbyRun <- runUMAP(sce_corrbyRun, dimred = "HARMONY")
 
 ####### PLOTTING ###############################################################
+# GLM by Sample
+pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "GLM_harmony_plot_by_Sample.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = c(2,3)) # looks batchy
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = c(2,3)) + 
+    facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = 5)
+dev.off()
 
+# GLM by Continous Metrics 
+pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "GLM_harmony_plot_continous_metrics.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "sum") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "sum")  + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "sum")  + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "detected")  + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "detected")  + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "subsets_Mito_percent") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "subsets_Mito_percent")  + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "subsets_Mito_percent")  + facet_wrap(~ sce_uncorrected$Run)
+dev.off()
 
+# TSNE by Sample
+pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "TSNE_harmony_plot.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Sample") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") + facet_wrap(~ sce_uncorrected$Sample)
+dev.off()
 
+# TSNE by continuous data
+pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "TSNE_harmony_plot_continous_mets.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "sum") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "sum") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "sum") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "detected") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "detected") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_uncorrected$Run)
+dev.off()
+
+# UMAP by Sample 
+pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "UMAP_harmony_plot.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Sample")
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Run") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Run") + facet_wrap(~ sce_uncorrected$Sample)
+dev.off()
+
+# UMAP by continuous data 
+pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "UMAP_harmony_plot_continous_mets.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "sum") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "sum") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "sum") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "detected") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "detected") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_uncorrected$Run)
+dev.off()
 
 
 ####### saving ###############################################################
+## Saving harmonized (by Sample) sce object 
+save(sce_corrbySamp, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                                  "sce_harmony_by_Samp.Rdata"))
+
+# Saving harmonized (by Sample) sce object (Saved as HDF5 for later clustering)
+saveHDF5SummarizedExperiment(sce_corrbySamp, dir = here("processed-data", "04_snRNA-seq", 
+                                  "sce_objects", "sce_harmony_by_Samp"))
 
 
 
-
-
-
-# 
 

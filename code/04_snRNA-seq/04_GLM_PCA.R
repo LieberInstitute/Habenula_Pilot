@@ -142,7 +142,7 @@ pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "UMAP_uncorrected_plot_con
 dev.off()
 
 
-## Save uncorrected sce object post pca 
+## Saving uncorrected sce object post pca 
 save(sce_uncorrected, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                                   "sce_uncorrected_PCA.Rdata"))
 
