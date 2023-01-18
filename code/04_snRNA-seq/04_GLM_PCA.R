@@ -14,18 +14,13 @@ library("scry")
 library("here")
 library("sessioninfo")
 library("mbkmeans")
+library("HDF5Array")
 
 # loading post qc sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
            "sce_hb_postQC.Rdata"))
 sce <- sce_hb_postQC
 rm(sce_hb_postQC)
-
-# Normalization?
-mbk <- mbkmeans(sce, whichAssay = "counts", reduceMethod = NA,
-                clusters=10, batch_size = 500)
-sce$mbk10 <- paste0("mbk", mbk$Clusters)
-table(mbk$Clusters)
 
 # Deviance featuring selection
 sce <- devianceFeatureSelection(sce,
@@ -46,34 +41,55 @@ sce <- nullResiduals(sce,
                      assay = "counts", fam = "binomial", # default params
                      type = "deviance")
 
+# Selects for the top 2000 most variable genes
+hdgs.hb <- rownames(sce)[order(rowData(sce)$binomial_deviance, decreasing = T)][1:2000]
+
 # Running PCA 
-sce <- scater::runPCA(sce, ncomponents = 50,
-                      exprs_values = "binomial_deviance_residuals",
-                      scale = TRUE, name = "GLMPCA_approx",
-                      BSPARAM = BiocSingular::RandomParam())
+sce_uncorrected <- runPCA(sce,
+                          exprs_values = "binomial_deviance_residuals",
+                          subset_row = hdgs.hb, ncomponents = 100,
+                          name = "GLMPCA_approx",
+                          BSPARAM = BiocSingular::IrlbaParam()
+)
 
-# Plotting using GLM-PCA functions
-pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_pca_plot.pdf"))
-  plotReducedDim(sce, dimred = "GLMPCA_approx", colour_by = "Sample")
-  plotReducedDim(sce, dimred = "GLMPCA_approx", colour_by = "mbk10")
+# Plotting using GLM-PCA functions 
+# We should color by batches but we must track that down
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "main_GLM_pca_plot.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") # plot PC1&2, facet_wrap by sample
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = c(2,3)) # looks batchy
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = 5)
 dev.off()
 
-# Normal PCA
-# had to re-load sce 
-sce <- computeSumFactors(sce, cluster = mbk$Clusters, min.mean = 0.1)
-sce <- logNormCounts(sce)
+# Running TSNE and UMAP
+sce_uncorrected <- runTSNE(sce_uncorrected, dimred = "GLMPCA_approx")
+sce_uncorrected <- runUMAP(sce_uncorrected, dimred = "GLMPCA_approx")
 
-sce <- scater::runPCA(sce, ncomponents = 50,
-                      ntop = 1000,
-                      scale = TRUE,
-                      BSPARAM = BiocSingular::RandomParam())
-
-sce$mbk10 <- paste0("mbk", mbk$Clusters)
-
-pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "normal_pca_plot.pdf"))
-  plotPCA(sce, colour_by = "Sample")
-  plotPCA(sce, colour_by = "mbk10")
+# Plotting TSNE
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "TSNE_uncorrected_plot.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Sample") 
 dev.off()
+
+# Plotting UMAP
+# Plotting TSNE
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "UMAP_uncorrected_plot.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Sample") 
+dev.off()
+
+
+
+
+
+
+## Save uncorrected sce object post pca 
+save(sce_uncorrected, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                                  "sce_uncorrected_PCA.Rdata"))
+
+# Saving as HDF5 for later clustering
+saveHDF5SummarizedExperiment(sce_uncorrected, dir = here("processed-data", "04_snRNA-seq", 
+                            "sce_objects", "sce_uncorrected"))
+
+
+
 
 ## Q for Louise: Should we color by cell type? And why does our sce object not have 
 # cell-type? Is that something we compute on our own or did we lose this in our various
@@ -84,10 +100,12 @@ dev.off()
 # 6) Cell Type Annotation
 
 
+# TO DO:
+# ** Push with Collabo
+# Slack Write up 
+# 1) Track down batch info in code to color by.
+# 2) Plot everything again by batch data but also qc metrics.
+# 3) Share on Slack 
+# 4) Run harmony by sample.
+# 5) 1/18/23 (Louise): Work on doublet detection for sn qc.
 
-
-
-
-
-
-## 
