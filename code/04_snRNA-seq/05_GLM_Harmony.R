@@ -14,7 +14,8 @@ library("here")
 library("sessioninfo")
 
 # Loading sce_uncorrected
-load(here())
+load(here("processed-data", "04_snRNA-seq", "sce_objects", 
+          "sce_uncorrected_PCA.Rdata"))
 
 ####### RUNNING HARMONY ########################################################
 # Note: We used GLM PCA not normal PCA but harmony function searches for something

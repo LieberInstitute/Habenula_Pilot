@@ -24,12 +24,13 @@ load(here("processed-data", "04_snRNA-seq", "sce_objects",
 sce <- sce_hb_postQC
 rm(sce_hb_postQC)
 
-####### QC Metrics (add now before subsetting) #################################
+####### Adding new metric: Run Data (before subsetting) ########################
 # Adding Run data 
 colData(sce)$Run <- NA
 colData(sce)[colData(sce)$Sample == "Br1469", "Run"] <- 1
 colData(sce)[colData(sce)$Sample %in% c("Br5558", "Br1204"), "Run"] <- 2
 colData(sce)[colData(sce)$Sample %in% c("Br1092", "Br1735", "Br5555", "Br5639"), "Run"] <- 3
+################################################################################
 
 # Deviance featuring selection
 sce <- devianceFeatureSelection(sce,
@@ -53,16 +54,13 @@ sce <- nullResiduals(sce,
 # Selects for the top 2000 most variable genes
 hdgs.hb <- rownames(sce)[order(rowData(sce)$binomial_deviance, decreasing = T)][1:2000]
 
-# Running PCA 
+# RUNNING PCA --
 sce_uncorrected <- runPCA(sce,
                           exprs_values = "binomial_deviance_residuals",
                           subset_row = hdgs.hb, ncomponents = 100,
                           name = "GLMPCA_approx",
                           BSPARAM = BiocSingular::IrlbaParam()
 )
-
-# Creating color by metrics to plot by
-colorby = c("Sample", "Run")
 
 # Plotting using GLM-PCA functions [color by Sample]
 pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot_by_Sample.pdf"))
@@ -84,23 +82,64 @@ pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot_by_R
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run", ncomponents = 5)
 dev.off()
 
-# Running TSNE and UMAP
+# Plotting by continuous data
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_continous_metrics.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "sum") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "sum")  + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "sum")  + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "detected")  + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "detected")  + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "subsets_Mito_percent") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "subsets_Mito_percent")  + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "subsets_Mito_percent")  + facet_wrap(~ sce_uncorrected$Run)
+dev.off()
+
+# RUNNING TSNE and UMAP --
 sce_uncorrected <- runTSNE(sce_uncorrected, dimred = "GLMPCA_approx")
 sce_uncorrected <- runUMAP(sce_uncorrected, dimred = "GLMPCA_approx")
 
-# Plotting TSNE
+# Plotting TSNE 
 pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "TSNE_uncorrected_plot.pdf"))
   plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Sample") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Run)
   plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") + facet_wrap(~ sce_uncorrected$Sample)
 dev.off()
 
 # Plotting UMAP
-# Plotting TSNE
 pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "UMAP_uncorrected_plot.pdf"))
-  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Sample") 
-  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Sample")
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Run") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Run") + facet_wrap(~ sce_uncorrected$Sample)
 dev.off()
 
+# Plotting by continuous data, TSNE
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "TSNE_uncorrected_plot_continous_mets.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "sum") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "sum") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "sum") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "detected") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "detected") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_uncorrected$Run)
+dev.off()
+
+# Plotting by continous data, UMAP
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "UMAP_uncorrected_plot_continous_mets.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "sum") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "sum") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "sum") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "detected") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "detected") + facet_wrap(~ sce_uncorrected$Run)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "detected") 
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_uncorrected$Run)
+dev.off()
 
 
 ## Save uncorrected sce object post pca 
