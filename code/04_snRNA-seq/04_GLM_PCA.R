@@ -22,13 +22,20 @@ load(here("processed-data", "04_snRNA-seq", "sce_objects",
 sce <- sce_hb_postQC
 rm(sce_hb_postQC)
 
+# Modifying sce object with QC metrics [before subsetting]
+colData(sce)$Run <- NA
+colData(sce)[colData(sce)$Sample == "Br1469", "Run"] <- 1
+colData(sce)[colData(sce)$Sample %in% c("Br5558", "Br1204"), "Run"] <- 2
+colData(sce)[colData(sce)$Sample %in% c("Br1092", "Br1735", "Br5555", "Br5639"), "Run"] <- 3
+
+
 # Deviance featuring selection
 sce <- devianceFeatureSelection(sce,
         assay = "counts", fam = "binomial", sorted = F,
         batch = as.factor(sce$Sample))
 
 # Checking outputs for deviance ft selection function
-pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "binomial_deviance.pdf"))
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "binomial_deviance_uncorrected.pdf"))
   plot(sort(rowData(sce)$binomial_deviance, decreasing = T),
        type = "l", xlab = "ranked genes",
        ylab = "binomial deviance", main = "Feature Selection with Deviance"
@@ -52,9 +59,10 @@ sce_uncorrected <- runPCA(sce,
                           BSPARAM = BiocSingular::IrlbaParam()
 )
 
+
 # Plotting using GLM-PCA functions 
 # We should color by batches but we must track that down
-pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "main_GLM_pca_plot.pdf"))
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot.pdf"))
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") # plot PC1&2, facet_wrap by sample
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = c(2,3)) # looks batchy
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = 5)
@@ -101,8 +109,6 @@ saveHDF5SummarizedExperiment(sce_uncorrected, dir = here("processed-data", "04_s
 
 
 # TO DO:
-# ** Push with Collabo
-# Slack Write up 
 # 1) Track down batch info in code to color by.
 # 2) Plot everything again by batch data but also qc metrics.
 # 3) Share on Slack 
