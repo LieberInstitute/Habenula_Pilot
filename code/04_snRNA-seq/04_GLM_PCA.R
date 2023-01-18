@@ -15,6 +15,8 @@ library("here")
 library("sessioninfo")
 library("mbkmeans")
 library("HDF5Array")
+library("ggplot2")
+library("dplyr")
 
 # loading post qc sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
@@ -22,12 +24,12 @@ load(here("processed-data", "04_snRNA-seq", "sce_objects",
 sce <- sce_hb_postQC
 rm(sce_hb_postQC)
 
-# Modifying sce object with QC metrics [before subsetting]
+####### QC Metrics (add now before subsetting) #################################
+# Adding Run data 
 colData(sce)$Run <- NA
 colData(sce)[colData(sce)$Sample == "Br1469", "Run"] <- 1
 colData(sce)[colData(sce)$Sample %in% c("Br5558", "Br1204"), "Run"] <- 2
 colData(sce)[colData(sce)$Sample %in% c("Br1092", "Br1735", "Br5555", "Br5639"), "Run"] <- 3
-
 
 # Deviance featuring selection
 sce <- devianceFeatureSelection(sce,
@@ -59,13 +61,27 @@ sce_uncorrected <- runPCA(sce,
                           BSPARAM = BiocSingular::IrlbaParam()
 )
 
+# Creating color by metrics to plot by
+colorby = c("Sample", "Run")
 
-# Plotting using GLM-PCA functions 
-# We should color by batches but we must track that down
-pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot.pdf"))
-  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") # plot PC1&2, facet_wrap by sample
+# Plotting using GLM-PCA functions [color by Sample]
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot_by_Sample.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Sample)
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = c(2,3)) # looks batchy
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = c(2,3)) + 
+    facet_wrap(~ sce_uncorrected$Sample)
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = 5)
+dev.off()
+
+# Plotting using GLM-PCA functions [color by Run]
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot_by_Run.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run") 
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run", ncomponents = c(2,3)) # looks batchy
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run", ncomponents = c(2,3)) + 
+    facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run", ncomponents = 5)
 dev.off()
 
 # Running TSNE and UMAP
@@ -75,16 +91,15 @@ sce_uncorrected <- runUMAP(sce_uncorrected, dimred = "GLMPCA_approx")
 # Plotting TSNE
 pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "TSNE_uncorrected_plot.pdf"))
   plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Sample") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") 
 dev.off()
 
 # Plotting UMAP
 # Plotting TSNE
 pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "UMAP_uncorrected_plot.pdf"))
   plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Sample") 
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") 
 dev.off()
-
-
-
 
 
 
@@ -97,15 +112,6 @@ saveHDF5SummarizedExperiment(sce_uncorrected, dir = here("processed-data", "04_s
                             "sce_objects", "sce_uncorrected"))
 
 
-
-
-## Q for Louise: Should we color by cell type? And why does our sce object not have 
-# cell-type? Is that something we compute on our own or did we lose this in our various
-# saves?
-
-# Steps: 1) Normalization, 2) Feature Selection (get rid of features with low variance),
-# 3) Dimensionality Reduction, 4) Clustering, 5) Marker gene detection,
-# 6) Cell Type Annotation
 
 
 # TO DO:
