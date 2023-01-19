@@ -21,6 +21,7 @@ library("EnsDb.Hsapiens.v86")
 library("reshape")
 library("cowplot")
 library("dplyr")
+library("scDblFinder")
 
 # Loading filtered pre-QC sce object for all 7 Habenula samples
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_hb_preQC.Rdata"))
@@ -71,6 +72,28 @@ table(sce$lowDetecFea, by = sce$Sample)
     #       Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639
     # FALSE   3394   1334   2347   3437   3766    826   3289
     # TRUE     228    331    152    306    139    110    143
+
+############### DOUBLET SCORE DROP #############################################
+set.seed(234)
+
+colData(sce)$doubletScore <- NA
+
+for (i in splitit(sce$Sample)) {
+  sce_temp <- sce[, i]
+  ## To speed up, run on sample-level top-HVGs - just take top 1000
+  normd <- logNormCounts(sce_temp)
+  geneVar <- modelGeneVar(normd)
+  topHVGs <- getTopHVGs(geneVar, n = 1000)
+  
+  dbl_dens <- computeDoubletDensity(normd, subset.row = topHVGs)
+  colData(sce)$doubletScore[i] <- dbl_dens
+}
+
+summary(sce$doubletScore)
+# Mode    NA's 
+# logical   19802 
+
+
 
 ############### Plotting before drops. #########################################
 # total we want to drop
