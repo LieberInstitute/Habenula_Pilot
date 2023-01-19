@@ -177,8 +177,7 @@ table(is.na(sce$ct_Erik))
     # FALSE  TRUE 
     # 17000  2802
 
-
-############### Plotting before drops. #########################################
+############### Re-organizing drop info. #######################################
 # recording sce pre drop
 dim_predrop = dim(sce)
 dim_predrop
@@ -211,7 +210,22 @@ overallDropDF <- cbind(overallDropDF, rowSums(overallDropDF))
 colnames(overallDropDF)[3] <- "totalDroplets"
 overallDropDF <- as.data.frame(overallDropDF)
 
-# Plotting before and after dropping info
+
+######## Table summary for drops by ct_Erik
+ctErik_drop <- table(sce$discard, sce$ct_Erik, by = sce$Sample)
+
+plotErik <- function(sce_object_with_cT){
+  ggplot(sce_object_with_cT, aes(x= )
+  )
+}
+
+
+# Saving for future reference
+save(ctErik_drop, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                           "ctErik_drop.Rdata"))
+
+
+############### Plotting before drops. #########################################
 # per metric 
 plotDropbySamp <- melt(toDropbySamp, id = "Sample")
 plotDropbySamp$ToF <- ss(as.character(plotDropbySamp$variable), "_", 1)
