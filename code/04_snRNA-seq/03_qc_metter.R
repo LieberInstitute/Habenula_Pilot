@@ -93,7 +93,16 @@ summary(sce$doubletScore)
 # Mode    NA's 
 # logical   19802 
 
-
+# Troubletshooting doublet scoring
+for(i in splitit(sce$Sample)[1]){
+  sce_temp <- sce[, i]
+  
+}
+normd <- logNormCounts(sce_temp)
+geneVar <- modelGeneVar(normd)
+topHVGs <- getTopHVGs(geneVar, n = 1000)
+dbl_dens <- computeDoubletDensity(normd, subset.row = topHVGs)
+# works on numerical subset of Sample
 
 ############### Plotting before drops. #########################################
 # total we want to drop
