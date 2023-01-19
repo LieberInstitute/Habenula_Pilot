@@ -122,13 +122,14 @@ dbl_density_plot <- dbl_df %>%
   facet_grid(Sample ~ .) +
   theme_bw()
 
-dbl_density_plot <- ggplot(dbl_df, )
-
-
-pdf(filename = here("plots", "04_snRNA-seq", "03_qc_metter_plots",
-                    "doublet_scores_density.pdf"))
+png(filename = here("plots", "04_snRNA-seq", "03_qc_metter_plots",
+                    "doublet_scores_density.png") , width = 700, height = 600)
   dbl_density_plot
 dev.off()
+
+table(sce$doubletScore >= 5)
+    # FALSE  TRUE 
+    # 19587   215 
 
 
 
