@@ -87,11 +87,11 @@ for (i in splitit(sce$Sample)) {
   
   dbl_dens <- computeDoubletDensity(normd, subset.row = topHVGs)
   colData(sce)$doubletScore[i] <- dbl_dens
-}s
+}
 
 summary(sce$doubletScore)
     # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    # 0.0000  0.1484  0.3436  0.6897  0.7560 32.0909 
+    # 0.0000  0.1484  0.3449  0.6870  0.7550 31.9605 
 
 ### Plotting (gotten from:  
 # https://github.com/LieberInstitute/DLPFC_snRNAseq/blob/main/code/03_build_sce/03_droplet_qc.R)
@@ -129,9 +129,7 @@ dev.off()
 
 table(sce$doubletScore >= 5)
     # FALSE  TRUE 
-    # 19587   215 
-
-
+    # 19585   217 
 
 # returning table regarding drop by doublet score
 dbl_df %>%
@@ -142,23 +140,55 @@ dbl_df %>%
     drop = sum(doubletScore >= 5),
     drop_precent = 100 * drop / n()
   )
-      # Sample median   q95  drop drop_precent
-      # <chr>   <dbl> <dbl> <int>        <dbl>
-      #   1 Br1092  0.340  1.58    35       0.966 
-      # 2 Br1204  0.533  1.33     1       0.0601
-      # 3 Br1469  0.305  1.86    27       1.08  
-      # 4 Br1735  0.299  1.81    45       1.20  
-      # 5 Br5555  0.234  1.12    77       1.97  
-      # 6 Br5558  0.951  2.57     0       0     
-      # 7 Br5639  0.487  2.41    30       0.874 
+    # Sample median   q95  drop drop_precent
+    # <chr>   <dbl> <dbl> <int>        <dbl>
+    #   1 Br1092  0.355  1.56    35       0.966 
+    # 2 Br1204  0.556  1.32     1       0.0601
+    # 3 Br1469  0.290  1.80    27       1.08  
+    # 4 Br1735  0.299  1.76    45       1.20  
+    # 5 Br5555  0.226  1.11    77       1.97  
+    # 6 Br5558  0.958  2.52     0       0     
+    # 7 Br5639  0.494  2.42    32       0.932 
 
+############### LOADING ERIK'S ANNOTATED CLUSTERS ##############################
+load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda"))
+
+# Grabbing BrainNumber and Cell Type by Erik for each droplet
+annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
+                         s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
+# Clearly identifying that each droplet is a nucleus
+annoData$Nuc <- rownames(annoData)
+
+
+# dimensions for future reference [data from Erik]
+dim(annoData)
+    # 17529     3
+
+# dimesions for future reference [undropped sce, no qc applied just yet]
+    #  36601 19802
+
+# Creating a cell-type indicator in sce object's colData 
+sce$ct_Erik <- NA
+
+for (i in annoData$Nuc) {
+  if (i %in% sce$Barcode){
+    sce[sce$Barcode == i,]$ct_Erik <- annoData[annoData$Nuc == i,]$ClusterID
+  } else {
+    sce[sce$Barcode == i,]$ct_Erik <- "NA"
+  }
+} 
 
 ############### Plotting before drops. #########################################
+# recording sce pre drop
+dim_predrop = dim(sce)
+dim_predrop
+   # 36601 19802
+
 # total we want to drop
 sce$discard <- sce$high_mito | sce$lowLib | sce$lowDetecFea
 table(sce$discard)
-# FALSE  TRUE 
-# 17082  2720 
+    # FALSE  TRUE 
+    # 17082  2720 
 
 # data frame of qc met stats 
 # Per Metric
@@ -226,11 +256,6 @@ pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_dro
     width = 9, height = 16)
       do.call("grid.arrange", c(plottingDropbySamp, ncol = 2))
 dev.off()
-
-# recording sce pre drop
-dim_predrop = dim(sce)
-dim_predrop
-    # 36601 19802
 
 # Overall drop info bar plot summary 
 overallDropDF$Sample <- rownames(overallDropDF) 
@@ -311,15 +336,16 @@ dev.off()
 sce_hb_postQC <- sce 
 rm(sce)
 
+
+
+############### Saving sce objects made here. ##################################
 save(sce_hb_postQC, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                                 "sce_hb_postQC.Rdata"))
-
-############### CLUSTER ANNOTATIOS {Erik's} ####################################
-load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda")) 
-
-annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
-                         s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
 
 save(annoData, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                                 "annoData.Rdata"))
 
+
+
+## Do doublet scores before dropping doublet scores and then make a table regarding
+# how many cells are dropped after QC. - Erik 
