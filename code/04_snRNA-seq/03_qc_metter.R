@@ -157,7 +157,7 @@ load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda"))
 annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
                          s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
 # Clearly identifying that each droplet is a nucleus
-annoData$Nuc <- rownames(annoData)
+annoData$Barcode <- rownames(annoData)
 
 
 # dimensions for future reference [data from Erik]
@@ -165,18 +165,18 @@ dim(annoData)
     # 17529     3
 
 # dimesions for future reference [undropped sce, no qc applied just yet]
-    #  36601 19802
+dim(colData(sce))  
+  #  36601 19802
 
 # Creating a cell-type indicator in sce object's colData 
 sce$ct_Erik <- NA
+sce$ct_Erik <- annoData$ClusterID[match(sce$Barcode, annoData$Barcode)]
 
-for (i in annoData$Nuc) {
-  if (i %in% sce$Barcode){
-    sce[sce$Barcode == i,]$ct_Erik <- annoData[annoData$Nuc == i,]$ClusterID
-  } else {
-    sce[sce$Barcode == i,]$ct_Erik <- "NA"
-  }
-} 
+# Sanity check!
+table(is.na(sce$ct_Erik))
+    # FALSE  TRUE 
+    # 17000  2802
+
 
 ############### Plotting before drops. #########################################
 # recording sce pre drop
@@ -184,7 +184,7 @@ dim_predrop = dim(sce)
 dim_predrop
    # 36601 19802
 
-# total we want to drop
+# total we want to drop 
 sce$discard <- sce$high_mito | sce$lowLib | sce$lowDetecFea
 table(sce$discard)
     # FALSE  TRUE 
