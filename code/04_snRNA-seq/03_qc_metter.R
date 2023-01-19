@@ -87,22 +87,70 @@ for (i in splitit(sce$Sample)) {
   
   dbl_dens <- computeDoubletDensity(normd, subset.row = topHVGs)
   colData(sce)$doubletScore[i] <- dbl_dens
-}
+}s
 
 summary(sce$doubletScore)
-# Mode    NA's 
-# logical   19802 
+    # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    # 0.0000  0.1484  0.3436  0.6897  0.7560 32.0909 
 
-# Troubletshooting doublet scoring
-for(i in splitit(sce$Sample)[1]){
-  sce_temp <- sce[, i]
-  
-}
-normd <- logNormCounts(sce_temp)
-geneVar <- modelGeneVar(normd)
-topHVGs <- getTopHVGs(geneVar, n = 1000)
-dbl_dens <- computeDoubletDensity(normd, subset.row = topHVGs)
-# works on numerical subset of Sample
+### Plotting (gotten from:  
+# https://github.com/LieberInstitute/DLPFC_snRNAseq/blob/main/code/03_build_sce/03_droplet_qc.R)
+
+# plotting per Sample and indicating line of doublet score 5. Any higher is not good.
+dbl_df <- colData(sce) %>%
+  as.data.frame() %>%
+  select(Sample, doubletScore)
+
+dbl_box_plot <- dbl_df %>%
+  ggplot(aes(x = reorder(Sample, doubletScore, FUN = median), y = doubletScore)) +
+  geom_boxplot() +
+  labs(x = "Sample") +
+  geom_hline(yintercept = 5, color = "red", linetype = "dashed") +
+  coord_flip() +
+  theme_bw()
+
+png(filename = here("plots", "04_snRNA-seq", "03_qc_metter_plots",
+                    "doublet_scores_boxplot.png"))
+  dbl_box_plot
+dev.off()
+
+# plotting density for doublet score 
+dbl_density_plot <- dbl_df %>%
+  ggplot(aes(x = doubletScore)) +
+  geom_density() +
+  labs(x = "doublet score") +
+  facet_grid(Sample ~ .) +
+  theme_bw()
+
+dbl_density_plot <- ggplot(dbl_df, )
+
+
+pdf(filename = here("plots", "04_snRNA-seq", "03_qc_metter_plots",
+                    "doublet_scores_density.pdf"))
+  dbl_density_plot
+dev.off()
+
+
+
+# returning table regarding drop by doublet score
+dbl_df %>%
+  group_by(Sample) %>%
+  summarize(
+    median = median(doubletScore),
+    q95 = quantile(doubletScore, .95),
+    drop = sum(doubletScore >= 5),
+    drop_precent = 100 * drop / n()
+  )
+      # Sample median   q95  drop drop_precent
+      # <chr>   <dbl> <dbl> <int>        <dbl>
+      #   1 Br1092  0.340  1.58    35       0.966 
+      # 2 Br1204  0.533  1.33     1       0.0601
+      # 3 Br1469  0.305  1.86    27       1.08  
+      # 4 Br1735  0.299  1.81    45       1.20  
+      # 5 Br5555  0.234  1.12    77       1.97  
+      # 6 Br5558  0.951  2.57     0       0     
+      # 7 Br5639  0.487  2.41    30       0.874 
+
 
 ############### Plotting before drops. #########################################
 # total we want to drop
