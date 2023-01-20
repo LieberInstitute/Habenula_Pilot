@@ -227,10 +227,9 @@ barPlotErik <- function(BrNumber){
   geom_text(
     aes(label = Frequency),
     colour = "darkblue", 
-    size = 3,
-    y = 50 , 
-    position = position_dodge(.9)
-  ) + 
+    size = 3 , 
+    position = position_dodge(.9),
+    mapping = aes(y = 50)) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   coord_cartesian(ylim = c(0, 250))
   
@@ -240,11 +239,7 @@ barPlotErik <- function(BrNumber){
 
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "sce_qc_cellType_Erik.pdf"),
     width = 14, height = 7)
-  # for(i in unique(ctErik_drop$BrNum)){
-  #   barPlotErik(i)
-  # }
-  # lapply(unique(ctErik_drop$BrNum), barPlotErik)
-  plotted
+  lapply(unique(ctErik_drop$BrNum), barPlotErik)
 dev.off()
 
 ############### Plotting before drops. #########################################
