@@ -212,18 +212,25 @@ overallDropDF <- as.data.frame(overallDropDF)
 
 
 ######## Table summary for drops by ct_Erik
-ctErik_drop <- table(sce$discard, sce$ct_Erik, by = sce$Sample)
+ctErik_drop <- as.data.frame(table(sce$discard, sce$ct_Erik, by = sce$Sample))
+names(ctErik_drop) <- c("T_F", "cellType", "BrNum", "Freq")
 
-plotErik <- function(sce_object_with_cT){
-  ggplot(sce_object_with_cT, aes(x= )
-  )
+barPlotErik <- function(BrNumber){
+  plotter <- ctErik_drop[ctErik_drop$BrNum == BrNumber,]
+  
+  plotted <- ggplot(ctErik_drop, aes(x = cellType, y = Freq, fill = T_F)) +
+  geom_bar(stat="identity", position = position_dodge()) +
+  theme_bw() + 
+  scale_fill_brewer(palette = "Reds")
+  
+  return(plotted)
 }
 
 
-# Saving for future reference
-save(ctErik_drop, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
-                           "ctErik_drop.Rdata"))
-
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "sce_qc_cellType_Erik.pdf"),
+    width = 9, height = 16)
+  lapply(unique(ctErik_drop$BrNum), barPlotErik)
+dev.off()
 
 ############### Plotting before drops. #########################################
 # per metric 
@@ -304,7 +311,8 @@ dev.off()
 
 # Plotting qc metric distribution
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_per_met.pdf"))
-    ggtitle("Mito Precent")
+  plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") + 
+  ggtitle("Mito Precent")
   
   plotColData(sce, x = "Sample", y = "sum", colour_by = "lowLib") +
     ggtitle("Library Size")
@@ -359,6 +367,9 @@ save(sce_hb_postQC, file = here("processed-data", "04_snRNA-seq", "sce_objects",
 save(annoData, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                                 "annoData.Rdata"))
 
+# Saving for future reference
+save(ctErik_drop, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                              "ctErik_drop.Rdata"))
 
 
 ## Do doublet scores before dropping doublet scores and then make a table regarding
