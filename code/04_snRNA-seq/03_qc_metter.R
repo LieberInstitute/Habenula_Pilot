@@ -221,14 +221,18 @@ barPlotErik <- function(BrNumber){
   plotted <- ggplot(ctErik_drop, aes(x = cellType, y = Freq, fill = T_F)) +
   geom_bar(stat="identity", position = position_dodge()) +
   theme_bw() + 
-  scale_fill_brewer(palette = "Reds")
+  scale_fill_brewer(palette = "Greens") +
+  labs(title = BrNumber, fill = "Drop?", x = "Cell Type", y = element_blank()) +
+  geom_text(aes(label = value), vjust  = -0.3, position = position_dodge(0.9), 
+      size = 4, fontface = "bold") +
+  coord_cartesian(ylim = c(0, 500))
   
   return(plotted)
 }
 
 
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "sce_qc_cellType_Erik.pdf"),
-    width = 9, height = 16)
+    width = 10, height = 7)
   lapply(unique(ctErik_drop$BrNum), barPlotErik)
 dev.off()
 
