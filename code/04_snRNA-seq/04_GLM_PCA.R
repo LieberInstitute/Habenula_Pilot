@@ -69,7 +69,8 @@ sce_uncorrected <- runPCA(sce,
 # Plotting using GLM-PCA functions [color by Sample]
 pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot_by_Sample.pdf"))
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") 
-  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample") + 
+    facet_wrap(~ sce_uncorrected$Sample)
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = c(2,3)) # looks batchy
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Sample", ncomponents = c(2,3)) + 
     facet_wrap(~ sce_uncorrected$Sample)
@@ -81,10 +82,23 @@ pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot_by_R
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run") 
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run") + 
     facet_wrap(~ sce_uncorrected$Sample)              
-  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run", ncomponents = c(2,3)) # looks batchy
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run", ncomponents = c(2,3)) 
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run", ncomponents = c(2,3)) + 
     facet_wrap(~ sce_uncorrected$Sample)
   plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "Run", ncomponents = 5)
+dev.off()
+
+# Plotting using GLM-PCA functions [color by Erik Cluster]
+pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "GLM_uncorrected_plot_by_ct_Erik.pdf"))
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "ct_Erik") + labs(caption = "887 NAs")
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "ct_Erik") + 
+    facet_wrap(~ sce_uncorrected$Sample)  + labs(caption = "887 NAs")            
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "ct_Erik", ncomponents = c(2,3)) + 
+    labs(caption = "887 NAs")
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "ct_Erik", ncomponents = c(2,3)) + 
+    facet_wrap(~ sce_uncorrected$Sample) + labs(caption = "887 NAs")
+  plotReducedDim(sce_uncorrected, dimred = "GLMPCA_approx", colour_by = "ct_Erik", ncomponents = 5) + 
+    labs(caption = "887 NAs")
 dev.off()
 
 # Plotting by continuous data
@@ -116,6 +130,11 @@ pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "TSNE_uncorrected_plot.pdf
   plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Sample)
   plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") 
   plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "Run") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "ct_Erik") + 
+    labs(caption = "887 NAs")
+  plotReducedDim(sce_uncorrected, dimred = "TSNE", colour_by = "ct_Erik") + 
+    facet_wrap(~ sce_uncorrected$Sample) + 
+    labs(caption = "887 NAs")
 dev.off()
 
 # Plotting UMAP
@@ -124,6 +143,11 @@ pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "UMAP_uncorrected_plot.pdf
   plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Sample") + facet_wrap(~ sce_uncorrected$Sample)
   plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Run") 
   plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "Run") + facet_wrap(~ sce_uncorrected$Sample)
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "ct_Erik") + 
+    labs(caption = "887 NAs")
+  plotReducedDim(sce_uncorrected, dimred = "UMAP", colour_by = "ct_Erik") + 
+    facet_wrap(~ sce_uncorrected$Sample) + 
+    labs(caption = "887 NAs")
 dev.off()
 
 # Plotting by continuous data, TSNE
@@ -163,7 +187,6 @@ pdf(here("plots", "04_snRNA-seq", "04_GLM_PCA_plots", "UMAP_uncorrected_plot_con
     facet_wrap(~ sce_uncorrected$Sample) +
     scale_color_viridis(option = "G", begin = 0.19) 
 dev.off()
-
 
 ## Saving uncorrected sce object post pca 
 save(sce_uncorrected, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
