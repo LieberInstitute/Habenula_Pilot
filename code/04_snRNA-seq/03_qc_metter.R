@@ -228,8 +228,8 @@ barPlotErik <- function(BrNumber){
     aes(label = Frequency),
     colour = "darkblue", 
     size = 3 , 
-    position = position_dodge(.9),
-    mapping = aes(y = 50)) + 
+    position = position_dodge(.9)) +
+#    mapping = aes(y = 50)) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   coord_cartesian(ylim = c(0, 250))
   
