@@ -108,6 +108,8 @@ dev.off()
 pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "TSNE_harmony_plot.pdf"))
   plotReducedDim(sce_corrbySamp, dimred = "TSNE", colour_by = "Sample") 
   plotReducedDim(sce_corrbySamp, dimred = "TSNE", colour_by = "Sample") + facet_wrap(~ sce_corrbySamp$Sample)
+  plotReducedDim(sce_corrbySamp, dimred = "TSNE", colour_by = "ct_Erik") 
+  plotReducedDim(sce_corrbySamp, dimred = "TSNE", colour_by = "ct_Erik") + facet_wrap(~ sce_corrbySamp$Sample)
   plotReducedDim(sce_corrbySamp, dimred = "TSNE", colour_by = "Run") 
   plotReducedDim(sce_corrbySamp, dimred = "TSNE", colour_by = "Run") + facet_wrap(~ sce_corrbySamp$Sample)
 dev.off()
@@ -126,6 +128,8 @@ dev.off()
 pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "UMAP_harmony_plot.pdf"))
   plotReducedDim(sce_corrbySamp, dimred = "UMAP", colour_by = "Sample")
   plotReducedDim(sce_corrbySamp, dimred = "UMAP", colour_by = "Sample") + facet_wrap(~ sce_corrbySamp$Sample)
+  plotReducedDim(sce_corrbySamp, dimred = "UMAP", colour_by = "ct_Erik") 
+  plotReducedDim(sce_corrbySamp, dimred = "UMAP", colour_by = "ct_Erik") + facet_wrap(~ sce_corrbySamp$Sample)
   plotReducedDim(sce_corrbySamp, dimred = "UMAP", colour_by = "Run") 
   plotReducedDim(sce_corrbySamp, dimred = "UMAP", colour_by = "Run") + facet_wrap(~ sce_corrbySamp$Sample)
 dev.off()
@@ -148,7 +152,7 @@ save(sce_corrbySamp, file = here("processed-data", "04_snRNA-seq", "sce_objects"
 
 # Saving harmonized (by Sample) sce object (Saved as HDF5 for later clustering)
 saveHDF5SummarizedExperiment(sce_corrbySamp, dir = here("processed-data", "04_snRNA-seq", 
-                                  "sce_objects", "sce_harmony_by_Samp"))
+                                  "sce_objects", "sce_harmony_by_Samp"), replace = TRUE)
 
 
 
