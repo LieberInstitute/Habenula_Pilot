@@ -13,6 +13,9 @@ library("scater")
 library("here")
 library("sessioninfo")
 library("HDF5Array")
+library("viridis")
+library("ggplot2")
+
 
 # Loading sce_uncorrected
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
@@ -84,20 +87,20 @@ dev.off()
 
 # GLM by Continous Metrics 
 pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "GLM_harmony_continous_metrics.pdf"))
-  plotReducedDim(sce_uncorrected, dimred = "HARMONY", colour_by = "sum") +
+  plotReducedDim(sce_corrbySamp, dimred = "HARMONY", colour_by = "sum") +
     scale_color_viridis(option = "G", begin = 0.19) 
-  plotReducedDim(sce_uncorrected, dimred = "HARMONY", colour_by = "sum")  + 
-    facet_wrap(~ sce_uncorrected$Sample) +
+  plotReducedDim(sce_corrbySamp, dimred = "HARMONY", colour_by = "sum")  + 
+    facet_wrap(~ sce_corrbySamp$Sample) +
     scale_color_viridis(option = "G", begin = 0.19) 
-  plotReducedDim(sce_uncorrected, dimred = "HARMONY", colour_by = "detected") +
+  plotReducedDim(sce_corrbySamp, dimred = "HARMONY", colour_by = "detected") +
     scale_color_viridis(option = "G", begin = 0.19) 
-  plotReducedDim(sce_uncorrected, dimred = "HARMONY", colour_by = "detected")  + 
-    facet_wrap(~ sce_uncorrected$Sample) +
+  plotReducedDim(sce_corrbySamp, dimred = "HARMONY", colour_by = "detected")  + 
+    facet_wrap(~ sce_corrbySamp$Sample) +
     scale_color_viridis(option = "G", begin = 0.19) 
-  plotReducedDim(sce_uncorrected, dimred = "HARMONY", colour_by = "subsets_Mito_percent") +
+  plotReducedDim(sce_corrbySamp, dimred = "HARMONY", colour_by = "subsets_Mito_percent") +
     scale_color_viridis(option = "G", begin = 0.19) 
-  plotReducedDim(sce_uncorrected, dimred = "HARMONY", colour_by = "subsets_Mito_percent") + 
-    facet_wrap(~ sce_uncorrected$Sample) +
+  plotReducedDim(sce_corrbySamp, dimred = "HARMONY", colour_by = "subsets_Mito_percent") + 
+    facet_wrap(~ sce_corrbySamp$Sample) +
     scale_color_viridis(option = "G", begin = 0.19) 
 dev.off()
 
