@@ -194,7 +194,7 @@ save(sce_uncorrected, file = here("processed-data", "04_snRNA-seq", "sce_objects
 
 # Saving as HDF5 for later clustering
 saveHDF5SummarizedExperiment(sce_uncorrected, dir = here("processed-data", "04_snRNA-seq", 
-                            "sce_objects", "sce_uncorrected"))
+                            "sce_objects", "sce_uncorrected"), replace = TRUE)
 
 
 

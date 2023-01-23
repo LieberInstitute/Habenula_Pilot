@@ -302,7 +302,7 @@ plotOverall <- ggplot(overallDropDF,
                    fill = variable)) + 
   geom_bar(stat = "identity", position = position_dodge()) +
   labs(title = "Dropping Metrics", fill = "Sum Type", x = "Sample", y = element_blank()) +
-  geom_text(aes(label = value), vjust  = -0.3, position = position_dodge(0.9), 
+  geom_text(aes(label = value), vjust  = -0.2, position = position_dodge(0.9), 
             size = 4, fontface = "bold") +
   scale_fill_brewer(palette = "Set1") +
   theme_minimal() + 
