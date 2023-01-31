@@ -159,7 +159,6 @@ annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" =
 # Clearly identifying that each droplet is a nucleus
 annoData$Barcode <- rownames(annoData)
 
-
 # dimensions for future reference [data from Erik]
 dim(annoData)
     # 17529     3
@@ -200,13 +199,6 @@ notinEriks$inBukolas <- "Yes"
 notinEriks$ClusterID <- "New.TBD"
 notinEriks <- as.data.frame(notinEriks)
 
-# Combining my kept barcodes to Erik's df of annotated barcordes
-annoData <- rbind(annoData, notinEriks)
-table(annoData$inBukolas)
-  # No   Yes 
-  # 570 19761
-
-
 ############### Re-organizing drop info. #######################################
 # recording sce pre drop
 dim_predrop = dim(sce)
@@ -240,11 +232,54 @@ overallDropDF <- cbind(overallDropDF, rowSums(overallDropDF))
 colnames(overallDropDF)[3] <- "totalDroplets"
 overallDropDF <- as.data.frame(overallDropDF)
 
+######## Table summary for drops by ct_Erik 
+      # 1) Previous bar plots using my sce object 
+      # ctErik_drop <- as.data.frame(table(sce$discard, sce$ct_Erik, by = sce$Sample))
+      # names(ctErik_drop) <- c("T_F", "CellType", "BrNum", "Frequency")
+      # ctErik_drop$BrNum <- as.character(ctErik_drop$BrNum)
 
-######## Table summary for drops by ct_Erik
-ctErik_drop <- as.data.frame(table(sce$discard, sce$ct_Erik, by = sce$Sample))
-names(ctErik_drop) <- c("T_F", "CellType", "BrNum", "Frequency")
-ctErik_drop$BrNum <- as.character(ctErik_drop$BrNum)
+# 2) Current bar plots subsetting sce by annoData and adding new nuc from annoData:
+      # # Combining my kept barcodes to Erik's df of annotated barcordes
+      # annoData <- rbind(annoData, notinEriks)
+      # table(annoData$inBukolas)
+      # # No   Yes 
+      # # 570 19761
+
+
+# grabbing from my sce
+combinedData <- colData(sce)[c("Sample", "ct_Erik", "high_mito", "lowDetecFea", "lowLib", "discard")]
+colnames(combinedData)[1] <- "SampleID"
+colnames(combinedData)[2] <- "ClusterID"
+combinedData$Barcode <- rownames(combinedData)
+rownames(combinedData) <- NULL
+# make sure to prep for combination
+combinedData$inBukolas <- "Yes"
+combinedData <- as.data.frame(combinedData)
+
+# Subsetting annoData for only nuc that are not already in my sce object
+annoData
+ErikOnly <- annoData[!(annoData$Barcode %in% combinedData$Barcode),]
+
+# prepping annoData for combination
+ErikOnly$high_mito <- "ErikKept"
+ErikOnly$lowDetecFea <- "ErikKept"
+ErikOnly$lowLib <- "ErikKept"
+ErikOnly$discard <- "ErikKept"
+ErikOnly$inBukolas <- "No" 
+  # Should be 570 Nos
+
+# Sanity check
+dim(ErikOnly)
+  # 570   8
+dim(combinedData) #pre-combination
+  # 19802     8
+
+# officially creating combinedData
+combinedData <- rbind(combinedData, ErikOnly)
+dim(combinedData)
+  # 20372     8
+
+
 
 barPlotErik <- function(BrNumber){
   plotter <- ctErik_drop[ctErik_drop$BrNum == BrNumber,]
