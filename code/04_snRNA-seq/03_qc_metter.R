@@ -187,20 +187,24 @@ annoData$inBukolas <- "No"
 # Confirming if present in my sce object
 annoData[annoData$Barcode %in% sce$Barcode,]$inBukolas <- "Yes"
 
-# grabbing data from my sce object that is not present in Erik's
+# grabbing barcode data that are not present in Erik's
 notinEriks <- colData(sce[, !(sce$Barcode %in% annoData$Barcode)])
 
 # subsetting to only relevant data per barcode
-notinEriks <- notinEriks[c("Sample", "Barcode")]
+notinEriks <- notinEriks[, c("Sample", "Barcode")]
 rownames(notinEriks) <- NULL
+colnames(notinEriks)[1] <- "SampleID"
 
-# sanity check
-length(sce$Barcode)
-  # 19802
-length(annoData$Barcode)
-  # 17529
-dim(notinEriks)
-  # 2802    2
+# Adding columns to notinEriks pre-rbind
+notinEriks$inBukolas <- "Yes"
+notinEriks$ClusterID <- "New.TBD"
+notinEriks <- as.data.frame(notinEriks)
+
+# Combining my kept barcodes to Erik's df of annotated barcordes
+annoData <- rbind(annoData, notinEriks)
+table(annoData$inBukolas)
+  # No   Yes 
+  # 570 19761
 
 
 ############### Re-organizing drop info. #######################################
