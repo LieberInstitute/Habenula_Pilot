@@ -177,6 +177,32 @@ table(is.na(sce$ct_Erik))
     # FALSE  TRUE 
     # 17000  2802
 
+## Updating annoData with my sce information
+# Barcode only in Barcode column
+rownames(annoData) <- NULL
+
+# Defaulting all barcodes to No and only changing if confirmed to be in my sce object
+annoData$inBukolas <- "No"
+
+# Confirming if present in my sce object
+annoData[annoData$Barcode %in% sce$Barcode,]$inBukolas <- "Yes"
+
+# grabbing data from my sce object that is not present in Erik's
+notinEriks <- colData(sce[, !(sce$Barcode %in% annoData$Barcode)])
+
+# subsetting to only relevant data per barcode
+notinEriks <- notinEriks[c("Sample", "Barcode")]
+rownames(notinEriks) <- NULL
+
+# sanity check
+length(sce$Barcode)
+  # 19802
+length(annoData$Barcode)
+  # 17529
+dim(notinEriks)
+  # 2802    2
+
+
 ############### Re-organizing drop info. #######################################
 # recording sce pre drop
 dim_predrop = dim(sce)
