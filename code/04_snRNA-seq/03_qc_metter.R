@@ -198,6 +198,7 @@ colnames(notinEriks)[1] <- "SampleID"
 notinEriks$inBukolas <- "Yes"
 notinEriks$ClusterID <- "New.TBD"
 notinEriks <- as.data.frame(notinEriks)
+# continuing with Erik df after reorganization of drop info.
 
 ############### Re-organizing drop info. #######################################
 # recording sce pre drop
@@ -232,19 +233,16 @@ overallDropDF <- cbind(overallDropDF, rowSums(overallDropDF))
 colnames(overallDropDF)[3] <- "totalDroplets"
 overallDropDF <- as.data.frame(overallDropDF)
 
-######## Table summary for drops by ct_Erik 
-      # 1) Previous bar plots using my sce object 
-      # ctErik_drop <- as.data.frame(table(sce$discard, sce$ct_Erik, by = sce$Sample))
-      # names(ctErik_drop) <- c("T_F", "CellType", "BrNum", "Frequency")
-      # ctErik_drop$BrNum <- as.character(ctErik_drop$BrNum)
-
-# 2) Current bar plots subsetting sce by annoData and adding new nuc from annoData:
+######## Continuing ERIK'S ANNOTATED CLUSTERS DF ###############################
+# Current bar plots subsetting sce by annoData and adding new nuc from annoData:
       # # Combining my kept barcodes to Erik's df of annotated barcordes
       # annoData <- rbind(annoData, notinEriks)
       # table(annoData$inBukolas)
       # # No   Yes 
       # # 570 19761
 
+# Goal: saving df regarding sce object from Erik, indicating samples he kept that I didn't
+# and my samples that made the cut for my sce object that aren't in his.
 
 # grabbing from my sce
 combinedData <- colData(sce)[c("Sample", "ct_Erik", "high_mito", "lowDetecFea", "lowLib", "discard")]
@@ -257,7 +255,6 @@ combinedData$inBukolas <- "Yes"
 combinedData <- as.data.frame(combinedData)
 
 # Subsetting annoData for only nuc that are not already in my sce object
-annoData
 ErikOnly <- annoData[!(annoData$Barcode %in% combinedData$Barcode),]
 
 # prepping annoData for combination
@@ -279,7 +276,29 @@ combinedData <- rbind(combinedData, ErikOnly)
 dim(combinedData)
   # 20372     8
 
+# Adding the info for a possible new cluster made by me
+forNewCluster <- annoData[annoData$ClusterID == "New.TBD",]$Barcode
+length(forNewCluster)
+  # 2802
 
+### OFFICIALLY COMPLETE COMBINED DATA (annoData including Bukola new samples) ***
+combinedData[combinedData$Barcode %in% forNewCluster,]$ClusterID <- "New.TBD"
+
+table(combinedData$inBukolas)
+    # No   Yes 
+    # 570 19802 
+
+table(combinedData$ClusterID)
+    # Astro         Endo        Micro      Oligo.1      Oligo.2        OPC.1 
+    # 612          118          381         1807          427          278 
+    # OPC.2 Neuron.Ambig        LHb.1        LHb.2        LHb.3        LHb.4 
+    # 767           79         1361          767          619          516 
+    # LHb.5        LHb.6        MHb.1        MHb.2  Thal.GABA.1  Thal.GABA.2 
+    # 302           74          497          197         2916         4709 
+    # Thal.GABA.3      Thal.MD      Thal.PF     Thal.PVT      New.TBD 
+    # 95          262          239          547         2802
+
+############################ Plotting ##########################################
 
 barPlotErik <- function(BrNumber){
   plotter <- ctErik_drop[ctErik_drop$BrNum == BrNumber,]
@@ -444,7 +463,10 @@ save(annoData, file = here("processed-data", "04_snRNA-seq", "sce_objects",
 # Saving for future reference
 save(ctErik_drop, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                               "ctErik_drop.Rdata"))
-
+# Saving combined info regard sce object from Erik, indicating sample he kept that I didn't
+# and my samples that made the cut for my sce object that aren't in his.
+save(combinedData, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                              "combinedData.Rdata"))
 
 ## Do doublet scores before dropping doublet scores and then make a table regarding
 # how many cells are dropped after QC. - Erik 
