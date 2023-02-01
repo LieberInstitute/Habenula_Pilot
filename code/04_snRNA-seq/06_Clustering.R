@@ -7,6 +7,7 @@
 # 3) https://github.com/LieberInstitute/Habenula_Bulk/blob/master/code/09_snRNA-seq_re-processed/04_clustering.R
 # 4) https://www.stephaniehicks.com/biocdemo/articles/Demo.html
 # 5) OSCA workflows and multi-sample example sections: https://bioconductor.org/books/release/OSCA/book-contents.html
+# qrsh -l mem_free=50G,h_vmem=50G
 
 # Loading relevant libraries:
 library("SingleCellExperiment")
@@ -19,33 +20,35 @@ library("mbkmeans") # potentially not needed?
 
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
+sce <- sce_corrbySamp
+rm(sce_corrbySamp)
 
 ##### Approach 1: Louvain Clustering (Steph Hicks) #############################
-g <- buildSNNGraph(sce, k=10, use.dimred = "GLM-PCA")
-lou <- igraph::cluster_louvain(g)
+firstWay <- buildSNNGraph(sce, k=10, use.dimred = "HARMONY")
+lou <- igraph::cluster_louvain(firstWay)
 sce$louvain <- paste0("Louvain", lou$membership)
 table(sce$louvain)
 
 ##### Approach 2: WalkTrap Clustering (Erik) ###################################
-g20 <- buildSNNGraph(s3e.hb, k=20, use.dimred = 'PCA')
-clust <- igraph::cluster_walktrap(g20)$membership
-colData(s3e.hb)$label <- factor(clust)
-table(colLabels(s3e.hb))
+g20 <- buildSNNGraph(sce, k = 20, use.dimred = 'HARMONY')
+clust20 <- igraph::cluster_walktrap(g20)$membership
+colData(sce)$k_20_Erik <- factor(clust20)
+table(colLabels(sce)$k_20_Erik)
 
-g50 <- buildSNNGraph(s3e.hb, k=50, use.dimred = 'PCA')
+g50 <- buildSNNGraph(sce, k=50, use.dimred = 'HARMONY')
 clust50 <- igraph::cluster_walktrap(g50)$membership
-colData(s3e.hb)$k_50_label <- factor(clust50)
-table(colData(s3e.hb)$k_50_label)
+colData(sce)$k_50_Erik <- factor(clust50)
+table(colData(sce)$k_50_Erik)
 
-g10 <- buildSNNGraph(s3e.hb, k=10, use.dimred = 'PCA')
+g10 <- buildSNNGraph(sce, k=10, use.dimred = 'HARMONY')
 clust10 <- igraph::cluster_walktrap(g10)$membership
-colData(s3e.hb)$k_10_label <- factor(clust10)
-table(colData(s3e.hb)$k_10_label)
+colData(sce)$k_50_Erik <- factor(clust10)
+table(colData(sce)$k_50_Erik)
 
-g5 <- buildSNNGraph(s3e.hb, k=5, use.dimred = 'PCA')
+g5 <- buildSNNGraph(sce, k=5, use.dimred = 'HARMONY')
 clust5 <- igraph::cluster_walktrap(g5)$membership
-colData(s3e.hb)$k_5_label <- factor(clust5)
-table(colData(s3e.hb)$k_5_label)
+colData(sce)$k_50_Erik <- factor(clust5)
+table(colData(sce)$k_50_Erik)
 
 ##### Approach 3: Mini-batch k Means (Steph Hicks Example) #####################
 k_list <- seq(5, 20)
@@ -58,9 +61,4 @@ km_res <- lapply(k_list, function(k) {
 wcss <- sapply(km_res, function(x) sum(x$WCSS_per_cluster))
 plot(k_list, wcss, type = "b")
 
-##### Approach 4: DLPFC Clustering (Louise) ####################################
-snn.gr <- buildSNNGraph(sce, k = 20, use.dimred = "HARMONY")
-clusters <- igraph::cluster_walktrap(snn.gr)$membership
-
-table(clusters)
 
