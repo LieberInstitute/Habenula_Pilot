@@ -73,7 +73,7 @@ table(sce$lowDetecFea, by = sce$Sample)
     # FALSE   3394   1334   2347   3437   3766    826   3289
     # TRUE     228    331    152    306    139    110    143
 
-############### DOUBLET SCORE DROP #############################################
+############### DOUBLET SCORE ##################################################
 set.seed(234)
 
 colData(sce)$doubletScore <- NA
@@ -299,14 +299,22 @@ table(combinedData$ClusterID)
     # 95          262          239          547         2802
 
 ############################ Plotting ##########################################
+# ctErik_drop <- table(sce$discard, sce$ct_Erik, by = sce$Sample)
+ctErik_drop <- table(combinedData$discard, combinedData$ClusterID, by = combinedData$SampleID)
+ctErik_drop <- as.data.frame(ctErik_drop)
+  # True = Drop for me 
+  # False = Do not drop for me
+  # Erik Kept = What Erik Kept but I didn't
+names(ctErik_drop) <- c("NotKept", "ClusterID", "SampleID", "Frequency")
 
 barPlotErik <- function(BrNumber){
-  plotter <- ctErik_drop[ctErik_drop$BrNum == BrNumber,]
+  plotter <- ctErik_drop[ctErik_drop$SampleID == BrNumber,]
   
-  plotted <- ggplot(plotter, aes(x = CellType, y = Frequency, fill = T_F)) +
+  plotted <- ggplot(plotter, 
+                    aes(x = ClusterID, y = Frequency, fill = NotKept)) +
   geom_col(position = position_dodge()) +
   theme_bw() + 
-  scale_fill_brewer(palette = "Greens") +
+  scale_fill_brewer(palette="Dark2") +
   labs(title = BrNumber, fill = "Drop?", x = "Cell Type", y = element_blank()) +
   geom_text(
     aes(label = Frequency),
@@ -322,17 +330,48 @@ barPlotErik <- function(BrNumber){
 
 pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "sce_qc_cellType_Erik.pdf"),
     width = 14, height = 7)
-  lapply(unique(ctErik_drop$BrNum), barPlotErik)
+  lapply(unique(ctErik_drop$SampleID), barPlotErik)
 dev.off()
+
+############### TAKE 2: Re-organizing drop info. ###############################
+# Using combinedData df 
+
+# data frame of qc met stats 
+# Per Metric *Need to split Erik Kept by type*
+newDropbySamp <- t(table(combinedData$high_mito, by = combinedData$SampleID))
+colnames(newDropbySamp) <- c("ErikKept", "F_High_Mito", "T_High_Mito") 
+
+newDropbySamp <- cbind(newDropbySamp, t(table(combinedData$lowLib, by = combinedData$SampleID)))
+colnames(newDropbySamp)[4:6] <- c("ErikKept", "F_Low_Lib", "T_Low_Lib") 
+
+newDropbySamp <- cbind(newDropbySamp, t(table(combinedData$lowDetecFea, by = combinedData$SampleID)))
+colnames(newDropbySamp)[7:9] <- c("ErikKept", "F_Low_Det_Feat", "T_Low_Det_Feat") 
+
+newDropbySamp <- as.data.frame(newDropbySamp)
+newDropbySamp$Sample <- rownames(newDropbySamp)
+
+# Overall 
+newOverallDropDF <- t(table(combinedData$discard, by = combinedData$Sample))
+colnames(newOverallDropDF) <- c("ErikKept","totalKeep", "totalDiscard") 
+newOverallDropDF <- cbind(newOverallDropDF, rowSums(newOverallDropDF))
+colnames(newOverallDropDF)[4] <- "totalDroplets"
+newOverallDropDF <- as.data.frame(newOverallDropDF)
+newOverallDropDF$Sample <- rownames(newDropbySamp)
 
 ############### Plotting before drops. #########################################
 # per metric 
-plotDropbySamp <- melt(toDropbySamp, id = "Sample")
-plotDropbySamp$ToF <- ss(as.character(plotDropbySamp$variable), "_", 1)
-plotDropbySamp$Metric <- sub("*._", "", as.character(plotDropbySamp$variable)) 
+newPlotDropbySamp <- newDropbySamp
+newPlotDropbySamp <- newPlotDropbySamp[-c(4,7)]
+rownames(newPlotDropbySamp) <- NULL
+newPlotDropbySamp <- melt(newPlotDropbySamp, by = newPlotDropbySamp$Sample)
+colnames(newPlotDropbySamp) <- c("Sample", "NotKept", "Value")
+
+newPlotDropbySamp$ToF <- ss(as.character(newPlotDropbySamp$NotKept), "_", 1)
+newPlotDropbySamp$Metric <- sub("*._", "", as.character(newPlotDropbySamp$NotKept)) 
+newPlotDropbySamp$Sample <- as.character(newPlotDropbySamp$Sample)
 
 forSummaryTable <- function(BrNumber){
-  plotting <- plotDropbySamp[plotDropbySamp$Sample == BrNumber,]
+  plotting <- newPlotDropbySamp[newPlotDropbySamp$Sample == BrNumber,]
   plotting[plotting == "T"] <- "True"
   plotting[plotting == "F"] <- "False"
   plotting[plotting == "High_Mito"] <- "High Mito?"
@@ -341,13 +380,13 @@ forSummaryTable <- function(BrNumber){
   
   plot <- ggplot(plotting,
        aes(x = Metric,
-           y = value, 
+           y = Value, 
            fill = ToF)) + 
     geom_bar(stat = "identity", position = position_dodge()) +
     labs(title = BrNumber, fill = "Drop?", x = "Metric", y = element_blank()) +
-    geom_text(aes(label = value), vjust  = -0.3, position = position_dodge(0.9), 
+    geom_text(aes(label = Value), vjust  = -0.3, position = position_dodge(0.9), 
               size = 4, fontface = "bold") +
-    scale_fill_brewer(palette = "Reds") +
+    scale_fill_brewer(palette = "Accent") +
     theme_minimal() + 
     theme(
       plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
@@ -359,28 +398,30 @@ forSummaryTable <- function(BrNumber){
   return(plot)
 }
 
-plottingDropbySamp <- lapply(unique(plotDropbySamp$Sample), forSummaryTable)
+plottingDropbySamp <- lapply(unique(newPlotDropbySamp$Sample), forSummaryTable)
 plottingDropbySamp[[8]] <- get_legend(plottingDropbySamp[[1]]) 
 
 for (i in 1:7) {
   plottingDropbySamp[[i]] <- plottingDropbySamp[[i]] + theme(legend.position="none")
 }
 
-pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_drops.pdf"), 
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "bar_plots_tf_drops_update.pdf"), 
     width = 9, height = 16)
       do.call("grid.arrange", c(plottingDropbySamp, ncol = 2))
 dev.off()
 
 # Overall drop info bar plot summary 
-overallDropDF$Sample <- rownames(overallDropDF) 
-overallDropDF <- melt(overallDropDF, by = Sample)
-overallDropDF$variable <- recode(overallDropDF$variable,  "totalKeep" = 
+newOverallDropDF$Sample <- rownames(overallDropDF) 
+newOverallDropDF <- melt(newOverallDropDF, by = Sample)
+newOverallDropDF$variable <- recode(newOverallDropDF$variable,  "totalKeep" = 
                                  "Total Post-Drop", "totalDiscard" = "Dropped",
-                                 "totalDroplets" = "Total Pre-Drop")
-overallDropDF$variable <- factor(overallDropDF$variable, levels = 
-                                   c("Total Pre-Drop", "Total Post-Drop", "Dropped"))
+                                 "totalDroplets" = "Total Pre-Drop", 
+                                 "ErikKept" = "Erik Kept It")
+newOverallDropDF$variable <- factor(newOverallDropDF$variable, levels = 
+                                   c("Total Pre-Drop", "Total Post-Drop", "Dropped",
+                                     "Erik Kept It"))
 
-plotOverall <- ggplot(overallDropDF,
+plotOverall <- ggplot(newOverallDropDF,
                aes(x = Sample,
                    y = value, 
                    fill = variable)) + 
@@ -397,7 +438,7 @@ plotOverall <- ggplot(overallDropDF,
     axis.text = element_text(face = "bold")
   )
 
-pdf(file = here("plots", "04_snRNA-seq", "j03_qc_metter_plots", "overall_drop_barplot.pdf"), 
+pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "overall_drop_barplot_update.pdf"), 
     width = 8, height = 6)
   plotOverall
 dev.off()
@@ -422,7 +463,7 @@ pdf(file = here("plots", "04_snRNA-seq", "03_qc_metter_plots", "dist_vplot_by_al
     ggtitle("Library Siz")
   
   plotColData(sce, x = "Sample", y = "detected", colour_by = "discard") +
-    ggtitle("Detected Features")
+    ggtitle("Detected Features") + 
 dev.off()
 
 
