@@ -146,19 +146,21 @@ sce$kmeans20 <- paste0("mbk", km_res[[which(k_list==20)]]$Clusters)
 
 ############# PLOTTING #########################################################
 ### Creating list to color by 
-colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik", "k_5_Erik", 
+colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik", 
                   colnames(colData(sce)[grepl("kmeans", colnames(colData(sce)))]))
-    # [1] "louvain"   "k_20_Erik" "k_50_Erik" "k_10_Erik" "k_5_Erik"  "kmeans5"  
+## Getting rid of walkTrap 5 because we do not need 100+ grups 
+    # [1] "louvain"   "k_20_Erik" "k_50_Erik" "k_10_Erik"  "kmeans5"  
     # [7] "kmeans6"   "kmeans7"   "kmeans8"   "kmeans9"   "kmeans10"  "kmeans11" 
     # [13] "kmeans12"  "kmeans13"  "kmeans14"  "kmeans15"  "kmeans16"  "kmeans17" 
     # [19] "kmeans18"  "kmeans19"  "kmeans20"
 
 # Plotting harmonized UMAPS with colorbyGroup 
 pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clustering_trails.pdf"),
-    width = 10, height = 11)
+    width = 7, height = 8)
 
       lapply(colorbyGroup, function(m) {
-        plotUMAP(sce, colour_by = m) + theme(legend.position="bottom")
+        plotUMAP(sce, colour_by = m) + theme(legend.position="bottom") + 
+          ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,m]))))
       })
       
 dev.off()
@@ -167,10 +169,11 @@ dev.off()
 
 # Plotting harmonized TSNE with colorbyGroup
 pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails.pdf"),
-    width = 10, height = 11)
+    width = 7, height = 8)
 
 lapply(colorbyGroup, function(n) {
-  plotTSNE(sce, colour_by = n) + theme(legend.position="bottom")
+  plotTSNE(sce, colour_by = n) + theme(legend.position="bottom") + 
+    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n]))))
 })
 
 dev.off()
