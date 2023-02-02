@@ -115,15 +115,19 @@ save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects",
 
 ##### Approach 3: Mini-batch k Means (Steph Hicks Example) #####################
 k_list <- seq(5, 20)
+
 km_res <- lapply(k_list, function(k) {
   mbkmeans(sce, clusters = k, 
            batch_size = 500,
-           reduceMethod = "GLM-PCA",
+           reduceMethod = "HARMONY",
            calc_wcss = TRUE)
 })
-wcss <- sapply(km_res, function(x) sum(x$WCSS_per_cluster))
-plot(k_list, wcss, type = "b")
 
+wcss <- sapply(km_res, function(x) sum(x$WCSS_per_cluster))
+
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "mini_batch_klist_vs_wcss.pdf"))
+  plot(k_list, wcss, type = "b")
+dev.off()
 
 
 
