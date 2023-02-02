@@ -108,11 +108,6 @@ table(colData(sce)$k_5_Erik)
     # 5wTrap96  5wTrap97  5wTrap98  5wTrap99
     # 6        16        17        11
 
-### Saving data so far
-save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
-                      "sce_mid_clustering.Rdata"))
-
-
 ##### Approach 3: Mini-batch k Means (Steph Hicks Example) #####################
 k_list <- seq(5, 20)
 
@@ -125,9 +120,39 @@ km_res <- lapply(k_list, function(k) {
 
 wcss <- sapply(km_res, function(x) sum(x$WCSS_per_cluster))
 
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "mini_batch_klist_vs_wcss.pdf"))
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "mini_batch_klist_vs_wcss.pdf"),
+      width = 5, height = 4)
   plot(k_list, wcss, type = "b")
 dev.off()
+# interesting plot, going to save all k-means tho
 
+# saving 
+sce$kmeans5 <- paste0("mbk", km_res[[which(k_list==5)]]$Clusters)
+sce$kmeans6 <- paste0("mbk", km_res[[which(k_list==6)]]$Clusters)
+sce$kmeans7 <- paste0("mbk", km_res[[which(k_list==7)]]$Clusters)
+sce$kmeans8 <- paste0("mbk", km_res[[which(k_list==8)]]$Clusters)
+sce$kmeans9 <- paste0("mbk", km_res[[which(k_list==9)]]$Clusters)
+sce$kmeans10 <- paste0("mbk", km_res[[which(k_list==10)]]$Clusters)
+sce$kmeans11 <- paste0("mbk", km_res[[which(k_list==11)]]$Clusters)
+sce$kmeans12 <- paste0("mbk", km_res[[which(k_list==12)]]$Clusters)
+sce$kmeans13 <- paste0("mbk", km_res[[which(k_list==13)]]$Clusters)
+sce$kmeans14 <- paste0("mbk", km_res[[which(k_list==14)]]$Clusters)
+sce$kmeans15 <- paste0("mbk", km_res[[which(k_list==15)]]$Clusters)
+sce$kmeans16 <- paste0("mbk", km_res[[which(k_list==16)]]$Clusters)
+sce$kmeans17 <- paste0("mbk", km_res[[which(k_list==17)]]$Clusters)
+sce$kmeans18 <- paste0("mbk", km_res[[which(k_list==18)]]$Clusters)
+sce$kmeans19 <- paste0("mbk", km_res[[which(k_list==19)]]$Clusters)
+sce$kmeans20 <- paste0("mbk", km_res[[which(k_list==20)]]$Clusters)
+
+############# PLOTTING #########################################################
+
+
+
+
+
+
+### Saving sce object with clusters
+save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                      "sce_mid_clustering.Rdata"))
 
 
