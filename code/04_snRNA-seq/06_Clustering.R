@@ -7,10 +7,9 @@
 # 3) https://github.com/LieberInstitute/Habenula_Bulk/blob/master/code/09_snRNA-seq_re-processed/04_clustering.R
 # 4) https://www.stephaniehicks.com/biocdemo/articles/Demo.html
 # 5) OSCA workflows and multi-sample example sections: https://bioconductor.org/books/release/OSCA/book-contents.html
-# qrsh -l mem_free=200G,h_vmem=200G
+# qrsh -l mem_free=20G,h_vmem=20G
 
 ### TO DO:
-# 1) Set seed for each random numerical generator piece and save re-runs
 # 2) Make plot by Sample and per Erik's cell type annotation
 # 3) Create heatmap of comparing clusters
 
@@ -167,8 +166,9 @@ pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clustering_trail
     width = 7, height = 8)
 
 lapply(colorbyGroup, function(m) {
-  plotUMAP(sce, colour_by = m) + theme(legend.position="bottom") + 
-    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,m]))))
+#  plotUMAP(sce, colour_by = m) + theme(legend.position="bottom") + 
+#    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,m])))) 
+    
 })
 
 dev.off()
@@ -176,18 +176,31 @@ dev.off()
 
 
 # Plotting harmonized TSNE with colorbyGroup
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails.pdf"),
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails2.pdf"),
     width = 7, height = 8)
 
-lapply(colorbyGroup, function(n) {
-  plotTSNE(sce, colour_by = n) + theme(legend.position="bottom") + 
-    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n]))))
-})
+#lapply(colorbyGroup, function(n) {
+#  plotTSNE(sce, colour_by = n) + theme(legend.position="bottom") + 
+#  ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n]))))
+  # # ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
+    ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = "louvain")) +
+        geom_point(size = 0.2, alpha = 0.3)  +
+        my_theme +
+        coord_equal() +
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") +
+        facet_wrap(~ Sample)
+#})
 
 dev.off()
-
 
 ### Saving sce object with clusters
 save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                       "sce_mid_clustering.Rdata"))
+
+
+## Issue with ^ sce save:
+# table(duplicated(colnames(sce)))
+# 
+# FALSE  TRUE 
+# 17048    34 
 
