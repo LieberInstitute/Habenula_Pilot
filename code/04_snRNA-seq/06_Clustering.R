@@ -22,10 +22,6 @@ library("scran")
 library("here")
 library("sessioninfo")
 library("mbkmeans") # potentially not needed?
-# library("readr") # for 3d tsne
-library("Rtsne") # for 3d tsne
-library("rgl") # for 3d tsne
-# ERROR library("scatterplot3d") # for 3d tsne
 
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
@@ -152,19 +148,6 @@ sce$kmeans17 <- paste0("mbk", km_res[[which(k_list==17)]]$Clusters)
 sce$kmeans18 <- paste0("mbk", km_res[[which(k_list==18)]]$Clusters)
 sce$kmeans19 <- paste0("mbk", km_res[[which(k_list==19)]]$Clusters)
 sce$kmeans20 <- paste0("mbk", km_res[[which(k_list==20)]]$Clusters)
-
-##### PLAYING AROUND WITH 3D TSNE AND UMAPS ####################################
-
-pullHarmony <- reducedDims(sce)$HARMONY
-tsne_out <- Rtsne(as.matrix(pullHarmony),dims=3) # Run TSNE
-# tsne_out <- Rtsne(train[,-1], dims = 3, perplexity=20, verbose=FALSE, max_iter = max_iter)
-
-
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "tester_TSNE_3D.pdf"),
-    width = 7, height = 8)
-plot3d(x = tsne_out$Y[,1], y=tsne_out$Y[,2], z=tsne_out$Y[,3], type = 's', 
-       col = c("red","green","blue")) 
-dev.off()
 
 ############# PLOTTING #########################################################
 ### Creating list to color by 
