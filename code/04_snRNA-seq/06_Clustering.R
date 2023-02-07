@@ -9,6 +9,11 @@
 # 5) OSCA workflows and multi-sample example sections: https://bioconductor.org/books/release/OSCA/book-contents.html
 # qrsh -l mem_free=200G,h_vmem=200G
 
+### TO DO:
+# 1) Set seed for each random numerical generator piece and save re-runs
+# 2) Make plot by Sample and per Erik's cell type annotation
+# 3) Create heatmap of comparing clusters
+
 # Loading relevant libraries:
 library("SingleCellExperiment")
 library("jaffelab")
