@@ -20,6 +20,8 @@ library("scater")
 library("scran")
 library("here")
 library("sessioninfo")
+library("ggplot2")
+library("cowplot")
 
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
@@ -102,6 +104,14 @@ table(colData(sce)$k_5_Erik)
 sce$ct_Erik <- as.character(sce$ct_Erik)
 sce$ct_Erik[is.na(sce$ct_Erik)] <- "Bukola"
 
+## Fixing factors for sce$ct_Erik
+sce$ct_Erik <- as.factor(sce$ct_Erik)
+levels(sce$ct_Erik)<- c("Astro", "Endo", "Micro", "Oligo.1", "Oligo.2", "OPC.1", 
+                        "OPC.2", "LHb.1", "LHb.2", "LHb.3", "LHb.4", "LHb.5", "LHb.6", 
+                        "MHb.1", "MHb.2", "Neuron.Ambig", "Thal.GABA.1", 
+                        "Thal.GABA.2", "Thal.GABA.3", "Thal.MD", "Thal.PF", "Thal.PVT", 
+                        "Bukola")
+
 # Grouping Erik Cell Types into Particular Groups
 sce$groupErik <- NA
 
@@ -117,13 +127,6 @@ colData(sce)[sce$ct_Erik == "Bukola", "groupErik"] <- "Bukola_New"
 any(is.na(sce$groupErik))
 # FALSE
 
-## Fixing factors for sce$ct_Erik
-sce$ct_Erik <- as.factor(sce$ct_Erik)
-levels(sce$ct_Erik)<- c("Astro", "Endo", "Micro", "Oligo.1", "Oligo.2", "OPC.1", 
-                        "OPC.2", "LHb.1", "LHb.2", "LHb.3", "LHb.4", "LHb.5", "LHb.6", 
-                        "MHb.1", "MHb.2", "Neuron.Ambig", "Thal.GABA.1", 
-                        "Thal.GABA.2", "Thal.GABA.3", "Thal.MD", "Thal.PF", "Thal.PVT", 
-                        "Bukola")
 
 # Creating list to color by 
 colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik", 
@@ -132,24 +135,28 @@ colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik",
 ############# PLOTTING #########################################################
 # Plotting harmonized TSNE with colorbyGroup
 pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails2.pdf"),
-    width = 7, height = 8)
+   height = 6,  width = 12)
 
-lapply(colorbyGroup, function(n) {
+#lapply(colorbyGroup, function(n) {
   
   # creating regular unsplit plot on left side of page 
-  regplot <- plotTSNE(sce, colour_by = n) + theme(legend.position = "bottom") + 
-   ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n]))))
+  regplot <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
+    geom_point()  +
+    coord_equal() +
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + 
+   ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n])))) 
   
   # creating split by original cell type Erik for right hand side
-  faceted <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .isdata(n))) +
+  faceted <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
       geom_point(size = 0.2, alpha = 0.3)  +
       coord_equal() +
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") +
-      facet_wrap(~ "ct_Erik")
+      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + facet_wrap(~ ct_Erik) +
+      guides(colour = guide_legend(override.aes = list(size=10)))
+
+  # +  theme(legend.position = "None")
   
-  regplot
-  faceted 
-})
+  plot_grid(regplot, faceted, nrow = 1)
+#})
 
 dev.off()
 
