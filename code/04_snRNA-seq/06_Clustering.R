@@ -94,14 +94,56 @@ table(colData(sce)$k_5_Erik)
     # 5wTrap30  ...
 
 
-############# PLOTTING #########################################################
-### Creating list to color by 
-colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik", 
-                  "ct_Erik")
-## Getting rid of walkTrap 5 because we do not need 100+ grups 
-# [1] "louvain"   "k_20_Erik" "k_50_Erik" "k_10_Erik"  
+############# Pre-PLOTTING #####################################################
+## NOTE: 1) Previously included mini-batch k-means. No longer.
+## 2) Getting rid of walkTrap 5 because we do not need 100+ grups 
 
-#### Previously included minibatch k means. No longer.
+# Fixing NAs in ct_Erik
+sce$ct_Erik <- as.character(sce$ct_Erik)
+sce$ct_Erik[is.na(sce$ct_Erik)] <- "Bukola"
+
+# Grouping Erik Cell Types into Particular Groups
+sce$groupErik <- NA
+
+colData(sce)[sce$ct_Erik %in% c("Astro", "Endo", "Micro", "Oligo.1", "Oligo.2", "OPC.1", "OPC.2"), 
+             "groupErik"] <- "Glia_and_Endo"
+colData(sce)[sce$ct_Erik %in% c("LHb.1", "LHb.2", "LHb.3", "LHb.4", "LHb.5", "LHb.6", 
+                                "MHb.1", "MHb.2"), "groupErik"] <- "Hb_Neurons"
+colData(sce)[sce$ct_Erik %in% c("Thal.GABA.1", "Thal.GABA.2", "Thal.GABA.3", "Thal.MD",
+                                "Thal.PF", "Thal.PVT"), "groupErik"] <- "Thal_Neurons"
+colData(sce)[sce$ct_Erik == "Neuron.Ambig", "groupErik"] <- "Erik_Neuron.Ambig"
+colData(sce)[sce$ct_Erik == "Bukola", "groupErik"] <- "Bukola_New"
+
+any(is.na(sce$groupErik))
+# FALSE
+
+# Creating list to color by 
+colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik", 
+                  "groupErik")
+
+############# PLOTTING #########################################################
+# Plotting harmonized TSNE with colorbyGroup
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails2.pdf"),
+    width = 7, height = 8)
+
+lapply(colorbyGroup, function(n) {
+  
+  # creating regular unsplit plot on left side of page 
+  regplot <- plotTSNE(sce, colour_by = n) + theme(legend.position = "bottom") + 
+   ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n]))))
+  
+  # creating split by original cell type Erik for right hand side
+  faceted <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = n)) +
+      geom_point(size = 0.2, alpha = 0.3)  +
+      coord_equal() +
+      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") +
+      facet_wrap(~ "ct_Erik")
+  
+  regplot
+  faceted 
+})
+
+dev.off()
 
 
 # Plotting harmonized UMAPS with colorbyGroup 
@@ -109,30 +151,10 @@ pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clustering_trail
     width = 7, height = 8)
 
 lapply(colorbyGroup, function(m) {
-#  plotUMAP(sce, colour_by = m) + theme(legend.position="bottom") + 
-#    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,m])))) 
-    
+  #  plotUMAP(sce, colour_by = m) + theme(legend.position="bottom") + 
+  #    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,m])))) 
+  
 })
-
-dev.off()
-
-
-
-# Plotting harmonized TSNE with colorbyGroup
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails2.pdf"),
-    width = 7, height = 8)
-
-#lapply(colorbyGroup, function(n) {
-#  plotTSNE(sce, colour_by = n) + theme(legend.position="bottom") + 
-#  ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n]))))
-  # # ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
-    ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = "louvain")) +
-        geom_point(size = 0.2, alpha = 0.3)  +
-        my_theme +
-        coord_equal() +
-        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") +
-        facet_wrap(~ Sample)
-#})
 
 dev.off()
 
