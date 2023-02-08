@@ -20,7 +20,6 @@ library("scater")
 library("scran")
 library("here")
 library("sessioninfo")
-library("mbkmeans") # potentially not needed?
 
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
@@ -92,74 +91,18 @@ table(colData(sce)$k_5_Erik)
     # 94       142       127       133        47       112       120        33 
     # 5wTrap23  5wTrap24  5wTrap25  5wTrap26  5wTrap27  5wTrap28  5wTrap29   5wTrap3 
     # 120      1691       659        25       949        43        91        76 
-    # 5wTrap30  5wTrap31  5wTrap32  5wTrap33  5wTrap34  5wTrap35  5wTrap36  5wTrap37 
-    # 39        58      1165        88       259        49        54        56 
-    # 5wTrap38  5wTrap39   5wTrap4  5wTrap40  5wTrap41  5wTrap42  5wTrap43  5wTrap44 
-    # 35       194       306        53        60      2776       157        72 
-    # 5wTrap45  5wTrap46  5wTrap47  5wTrap48  5wTrap49   5wTrap5  5wTrap50  5wTrap51 
-    # 137        29        98        48       205      1009        33       123 
-    # 5wTrap52  5wTrap53  5wTrap54  5wTrap55  5wTrap56  5wTrap57  5wTrap58  5wTrap59 
-    # 313        14       119        38        43        63       156        53 
-    # 5wTrap6  5wTrap60  5wTrap61  5wTrap62  5wTrap63  5wTrap64  5wTrap65  5wTrap66 
-    # 164        34        61        26        32        45        22        38 
-    # 5wTrap67  5wTrap68  5wTrap69   5wTrap7  5wTrap70  5wTrap71  5wTrap72  5wTrap73 
-    # 48        40        24        96        11        29        51        37 
-    # 5wTrap74  5wTrap75  5wTrap76  5wTrap77  5wTrap78  5wTrap79   5wTrap8  5wTrap80 
-    # 24        38        22        10        15        15       206        34 
-    # 5wTrap81  5wTrap82  5wTrap83  5wTrap84  5wTrap85  5wTrap86  5wTrap87  5wTrap88 
-    # 35        30        12        24        21        21        27        28 
-    # 5wTrap89   5wTrap9  5wTrap90  5wTrap91  5wTrap92  5wTrap93  5wTrap94  5wTrap95 
-    # 11      1821        23        17        17        20        19         5 
-    # 5wTrap96  5wTrap97  5wTrap98  5wTrap99 
-    # 6        16        17        11 
+    # 5wTrap30  ...
 
-##### Approach 3: Mini-batch k Means (Steph Hicks Example) #####################
-set.seed(789)
-
-k_list <- seq(5, 20)
-
-km_res <- lapply(k_list, function(k) {
-  mbkmeans(sce, clusters = k, 
-           batch_size = 500,
-           reduceMethod = "HARMONY",
-           calc_wcss = TRUE)
-})
-
-wcss <- sapply(km_res, function(x) sum(x$WCSS_per_cluster))
-
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "mini_batch_klist_vs_wcss.pdf"),
-    width = 5, height = 4)
-plot(k_list, wcss, type = "b")
-dev.off()
-# interesting plot, going to save all k-means tho
-
-# saving 
-sce$kmeans5 <- paste0("mbk", km_res[[which(k_list==5)]]$Clusters)
-sce$kmeans6 <- paste0("mbk", km_res[[which(k_list==6)]]$Clusters)
-sce$kmeans7 <- paste0("mbk", km_res[[which(k_list==7)]]$Clusters)
-sce$kmeans8 <- paste0("mbk", km_res[[which(k_list==8)]]$Clusters)
-sce$kmeans9 <- paste0("mbk", km_res[[which(k_list==9)]]$Clusters)
-sce$kmeans10 <- paste0("mbk", km_res[[which(k_list==10)]]$Clusters)
-sce$kmeans11 <- paste0("mbk", km_res[[which(k_list==11)]]$Clusters)
-sce$kmeans12 <- paste0("mbk", km_res[[which(k_list==12)]]$Clusters)
-sce$kmeans13 <- paste0("mbk", km_res[[which(k_list==13)]]$Clusters)
-sce$kmeans14 <- paste0("mbk", km_res[[which(k_list==14)]]$Clusters)
-sce$kmeans15 <- paste0("mbk", km_res[[which(k_list==15)]]$Clusters)
-sce$kmeans16 <- paste0("mbk", km_res[[which(k_list==16)]]$Clusters)
-sce$kmeans17 <- paste0("mbk", km_res[[which(k_list==17)]]$Clusters)
-sce$kmeans18 <- paste0("mbk", km_res[[which(k_list==18)]]$Clusters)
-sce$kmeans19 <- paste0("mbk", km_res[[which(k_list==19)]]$Clusters)
-sce$kmeans20 <- paste0("mbk", km_res[[which(k_list==20)]]$Clusters)
 
 ############# PLOTTING #########################################################
 ### Creating list to color by 
 colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik", 
-                  colnames(colData(sce)[grepl("kmeans", colnames(colData(sce)))]))
+                  "ct_Erik")
 ## Getting rid of walkTrap 5 because we do not need 100+ grups 
-# [1] "louvain"   "k_20_Erik" "k_50_Erik" "k_10_Erik"  "kmeans5"  
-# [7] "kmeans6"   "kmeans7"   "kmeans8"   "kmeans9"   "kmeans10"  "kmeans11" 
-# [13] "kmeans12"  "kmeans13"  "kmeans14"  "kmeans15"  "kmeans16"  "kmeans17" 
-# [19] "kmeans18"  "kmeans19"  "kmeans20"
+# [1] "louvain"   "k_20_Erik" "k_50_Erik" "k_10_Erik"  
+
+#### Previously included minibatch k means. No longer.
+
 
 # Plotting harmonized UMAPS with colorbyGroup 
 pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clustering_trails.pdf"),
