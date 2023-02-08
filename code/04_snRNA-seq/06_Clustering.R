@@ -117,6 +117,14 @@ colData(sce)[sce$ct_Erik == "Bukola", "groupErik"] <- "Bukola_New"
 any(is.na(sce$groupErik))
 # FALSE
 
+## Fixing factors for sce$ct_Erik
+sce$ct_Erik <- as.factor(sce$ct_Erik)
+levels(sce$ct_Erik)<- c("Astro", "Endo", "Micro", "Oligo.1", "Oligo.2", "OPC.1", 
+                        "OPC.2", "LHb.1", "LHb.2", "LHb.3", "LHb.4", "LHb.5", "LHb.6", 
+                        "MHb.1", "MHb.2", "Neuron.Ambig", "Thal.GABA.1", 
+                        "Thal.GABA.2", "Thal.GABA.3", "Thal.MD", "Thal.PF", "Thal.PVT", 
+                        "Bukola")
+
 # Creating list to color by 
 colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik", 
                   "groupErik")
@@ -133,7 +141,7 @@ lapply(colorbyGroup, function(n) {
    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n]))))
   
   # creating split by original cell type Erik for right hand side
-  faceted <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = n)) +
+  faceted <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .isdata(n))) +
       geom_point(size = 0.2, alpha = 0.3)  +
       coord_equal() +
       labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") +
