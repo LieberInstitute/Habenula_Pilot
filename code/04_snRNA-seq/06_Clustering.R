@@ -286,7 +286,6 @@ pdf(here("plots", "04_snRNA-seq", "06_Clustering",
          "heatmap_test.pdf"), height = 7, width = 7)
 
 lapply(colorbyGroup, function(n) {
-  
   # adding Rand index (index of similary on scale over 1)
   Rand <- signif(pairwiseRand(sce$ct_Erik, colData(sce)[, n], mode = "index"), 3)
   plot_cap <- paste("Rand Index:", Rand)
@@ -296,11 +295,8 @@ lapply(colorbyGroup, function(n) {
   pheatmap(linker,
          main = plot_cap,
   )
-  
 }) 
 dev.off()
-
-
 
 
 ### Saving sce object with clusters
