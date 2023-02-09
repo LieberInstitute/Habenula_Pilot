@@ -25,6 +25,7 @@ library("cowplot")
 library("tidyverse")
 library("RColorBrewer")
 library("scales")
+library("Polychrome")
 
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
@@ -135,57 +136,47 @@ colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik",
                   "groupErik")
 
 # Copying color pallete that I like from ArchR palletes 
-kelly = c("#FFB300", "#803E75", "#FF6800", "#A6BDD7", "#C10020", "#CEA262", "#817066", 
-          "#007D34", "#F6768E", "#00538A", "#FF7A5C", "#53377A", "#FF8E00", 
-          "#B32851", "#F4C800", "#7F180D", "#93AA00", "#593315", 
-          "#F13A13", "#232C16", "#FAF39B", '#FF0080')
+# kelly = c("#FFB300", "#803E75", "#FF6800", "#A6BDD7", "#C10020", "#CEA262", "#817066", 
+#           "#007D34", "#F6768E", "#00538A", "#FF7A5C", "#53377A", "#FF8E00", 
+#           "#B32851", "#F4C800", "#7F180D", "#93AA00", "#593315", 
+#           "#F13A13", "#232C16", "#FAF39B", '#FF0080')
 dark2 = c("#A6BDD7", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", 
           "#A6761D", "#666666")
+
 
 ############# PLOTTING #########################################################
 # Plotting harmonized TSNE with colorbyGroup
 pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails2.pdf"),
-   height = 12,  width = 12)
+   height = 7,  width = 12)
 
 lapply(colorbyGroup, function(n) {
   # figuring our color scale
-  if (length(table(colData(sce)[,n])) >= 8){
-    colorer <- kelly
-  } else if (length(table(colData(sce)[,n])) > 8 && 20 >= length(table(colData(sce)[,n]))){
+  if (length(table(colData(sce)[,n])) <= 8){
+    
     colorer <- dark2
-  } else {
-    colorer <- hue_pal()(length(table(colData(sce)[,n])))
-  }
   
-  # creating regular unsplit plot on left side of page 
+    } else if (length(table(colData(sce)[,n])) > 8){
+    colourCount = length(table(colData(sce)[,n]))
+    getPalette = colorRampPalette(brewer.pal(9, "Set1"))
+    
+    colorer <-  getPalette(colourCount)
+   }
   regplot <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
-    geom_point(size = 0.9, alpha = 0.6)  +
+    geom_point(size = 0.9, alpha = 0.5)  +
     coord_equal() +
     labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + 
    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n])))) +
-    theme(legend.position = "None") + scale_colour_manual(values = colorer) +
-    theme_classic()
+    scale_colour_manual(values = colorer) + theme(legend.position = "None") 
   
   # creating split by original cell type Erik for right hand side
-  facetedbySmallGroups <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
-      geom_point(size = 0.2, alpha = 0.4)  +
+  faceted <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
+      geom_point(size = 0.4, alpha = 0.5)  +
       coord_equal() +
       labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + facet_wrap(~ ct_Erik) +
-      guides(colour = guide_legend(override.aes = list(size = 3))) +
-      scale_colour_manual(values = colorer) +
-    theme_classic()
-  
-  facetedbyBigGroups <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
-    geom_point(size = 0.2, alpha = 0.4)  +
-    coord_equal() +
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + facet_wrap(~ groupErik) +
-    guides(colour = guide_legend(override.aes = list(size = 3))) +
-    scale_colour_manual(values = colorer) +
-    theme_classic()
+      guides(colour = guide_legend(override.aes = list(size = 3))) + 
+      scale_colour_manual(values = colorer)
 
- 
-  top_row <- plot_grid(regplot, facetedbyBigGroups, nrow = 1)
-  plot_grid(top_row, facetedbySmallGroups, ncol = 1)
+   plot_grid(regplot, faceted, nrow = 1)
   
 })
 
