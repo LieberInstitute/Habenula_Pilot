@@ -50,29 +50,48 @@ markers.custom = list(
   'astrocyte' = c('GFAP')#,# 'AQP4'),
 )
 
-# Prepping sce object to plot by gene expression ###############################
-rownames(sce) <- rowData(sce)$Symbol
+#### PREPPING sce object to plot by gene expression ############################
+
 # adding logcounts 
 sce <- logNormCounts(sce)
 
+message("Start - saving data")
+Sys.time()
+
+# saving before messing with row names for annotation purposes 
+save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                        "sce_clustered_predrop.Rdata"))
+message("Done - saving data")
+Sys.time()
+
+# changing rownames for gene annotation purposes 
+rownames(sce) <- rowData(sce)$Symbol
+
 ###### Plotting gene expression for walktrap method 20 (22 groups) #############
-pdf20 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt20_annotations.pdf")
+message("Start - Annotating wt20")
+  Sys.time()
 
-my_plotMarkers(sce, marker_list = markers.custom, assay = "logcounts", 
-               cat = "k_20_Erik", fill_colors = NULL, pdf_fn = pdf20)
+    pdf20 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt20_annotations.pdf")
+    
+    my_plotMarkers(sce, marker_list = markers.custom, assay = "logcounts", 
+                   cat = "k_20_Erik", fill_colors = NULL, pdf_fn = pdf20)
 
+message("End - Annotating wt20")
+  Sys.time()
 
 ###### Plotting gene expression for walktrap method 10 (36 groups) #############
+message("Start - Annotating wt10")
+  Sys.time()
+  
 pdf10 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt10_annotations.pdf")
 
 my_plotMarkers(sce, marker_list = markers.custom, assay = "logcounts", 
                cat = "k_10_Erik", fill_colors = NULL, pdf_fn = pdf10)
 
-### Saving #####################################################################
-save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
-                      "sce_clustered_predrop.Rdata"))
+message("End - Annotating wt10")
+Sys.time()
 
-# sgejobs::job_single('07_Gene_Marking.R', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript get_droplet_scores.R")
+# sgejobs::job_single('07_Gene_Marking', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "07_Gene_Marking.R")
 
 ## Reproducibility information
 print("Reproducibility information:")
