@@ -28,6 +28,9 @@ library("scales")
 library("Polychrome")
 library("testthat") # for Rand?
 library("bluster") # for Rand
+library("mbkmeans")
+library("pheatmap")
+library("ComplexHeatmap")
 
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
@@ -184,6 +187,7 @@ dark2 = c("#A6BDD7", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02",
 
 
 ############# PLOTTING #########################################################
+############# REGULAR TSNE & UMAPS #############################################
 # Plotting harmonized TSNE with colorbyGroup
 pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails2.pdf"),
    height = 6,  width = 13)
@@ -274,6 +278,30 @@ lapply(colorbyGroup, function(n) {
 })
 
 dev.off()
+
+############# HEATMAPS #########################################################
+
+
+pdf(here("plots", "04_snRNA-seq", "06_Clustering",
+         "heatmap_test.pdf"), height = 7, width = 7)
+
+lapply(colorbyGroup, function(n) {
+  
+  # adding Rand index (index of similary on scale over 1)
+  Rand <- signif(pairwiseRand(sce$ct_Erik, colData(sce)[, n], mode = "index"), 3)
+  plot_cap <- paste("Rand Index:", Rand)
+  
+  linker <- linkClustersMatrix(sce$ct_Erik, colData(sce)[, n])
+    
+  pheatmap(linker,
+         main = plot_cap,
+  )
+  
+}) 
+dev.off()
+
+
+
 
 ### Saving sce object with clusters
 save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
