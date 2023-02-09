@@ -147,7 +147,7 @@ dark2 = c("#A6BDD7", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02",
 ############# PLOTTING #########################################################
 # Plotting harmonized TSNE with colorbyGroup
 pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails2.pdf"),
-   height = 7,  width = 12)
+   height = 6,  width = 13)
 
 lapply(colorbyGroup, function(n) {
   # figuring our color scale
@@ -160,7 +160,9 @@ lapply(colorbyGroup, function(n) {
     getPalette = colorRampPalette(brewer.pal(9, "Set1"))
     
     colorer <-  getPalette(colourCount)
-   }
+    }
+  
+  # plotting full plot
   regplot <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
     geom_point(size = 0.9, alpha = 0.5)  +
     coord_equal() +
@@ -170,7 +172,7 @@ lapply(colorbyGroup, function(n) {
   
   # creating split by original cell type Erik for right hand side
   faceted <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[[n]])) +
-      geom_point(size = 0.4, alpha = 0.5)  +
+      geom_point(size = 0.5, alpha = 0.5)  +
       coord_equal() +
       labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + facet_wrap(~ ct_Erik) +
       guides(colour = guide_legend(override.aes = list(size = 3))) + 
@@ -184,13 +186,38 @@ dev.off()
 
 
 # Plotting harmonized UMAPS with colorbyGroup 
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clustering_trails.pdf"),
-    width = 7, height = 8)
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clustering_trails2.pdf"),
+    height = 7, width = 12)
 
-lapply(colorbyGroup, function(m) {
-  #  plotUMAP(sce, colour_by = m) + theme(legend.position="bottom") + 
-  #    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,m])))) 
+lapply(colorbyGroup, function(n) {
+  if (length(table(colData(sce)[,n])) <= 8){
+    
+    colorer <- dark2
+    
+  } else if (length(table(colData(sce)[,n])) > 8){
+    colourCount = length(table(colData(sce)[,n]))
+    getPalette = colorRampPalette(brewer.pal(9, "Set1"))
+    
+    colorer <-  getPalette(colourCount)
+  }
   
+  # plotting full plot
+  regplot <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour = .data[[n]])) +
+    geom_point(size = 0.9, alpha = 0.5)  +
+    coord_equal() +
+    labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2") + 
+    ggtitle(paste("Total Number of Groups =", length(table(colData(sce)[,n])))) +
+    scale_colour_manual(values = colorer) + theme(legend.position = "None") 
+  
+  # creating split by original cell type Erik for right hand side
+  faceted <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour = .data[[n]])) +
+    geom_point(size = 0.4, alpha = 0.5)  +
+    coord_equal() +
+    labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2") + facet_wrap(~ ct_Erik) +
+    guides(colour = guide_legend(override.aes = list(size = 3))) + 
+    scale_colour_manual(values = colorer)
+  
+  plot_grid(regplot, faceted, nrow = 1)
 })
 
 dev.off()
