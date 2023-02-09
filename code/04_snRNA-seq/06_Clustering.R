@@ -310,35 +310,35 @@ lapply(additiongColorGroup, function(n) {
 dev.off()
 
 ############# COLORING BY DOUBLETS #############################################
-sce$log10doubletScore <- log10(sce$doubletScore)
-
 pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clust_doubletscore_predrops.pdf"))
 
 
   # plotting full plot
-  regplot <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[["log10doubletScore"]])) +
+  regplot <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[["doubletScore"]])) +
     geom_point(size = 0.9, alpha = 0.5)  +
     coord_equal() +
     labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + 
     ggtitle("TSNE by Doublet Score") +
     theme(legend.position = "Right") + 
-    theme_classic()
+    theme_classic() 
   
   # creating split by original cell type Erik for right hand side
-  faceted <-ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[["log10doubletScore"]])) +
+  faceted <-ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[["doubletScore"]])) +
     geom_point(size = 0.9, alpha = 0.5)  +
     coord_equal() +
     labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + 
     ggtitle("TSNE by Doublet Score") +
     theme(legend.position = "Right") + 
-    theme_classic() + facet_wrap(~ ct_Erik) 
-  
+    theme_classic() +  
+    facet_wrap(~ ct_Erik) 
+   
   regplot
   faceted 
  
 dev.off()
 
-
+## facet wrap by high Rand clusters and color with doublet score
+## also change coloring scheme for clusters to show differences better
 
 
 
