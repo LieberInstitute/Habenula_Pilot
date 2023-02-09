@@ -9,10 +9,6 @@
 # 5) OSCA workflows and multi-sample example sections: https://bioconductor.org/books/release/OSCA/book-contents.html
 # qrsh -l mem_free=20G,h_vmem=20G
 
-### TO DO:
-# 2) Make plot by Sample and per Erik's cell type annotation
-# 3) Create heatmap of comparing clusters
-
 # Loading relevant libraries:
 library("SingleCellExperiment")
 library("jaffelab")
@@ -30,7 +26,7 @@ library("testthat") # for Rand?
 library("bluster") # for Rand
 library("mbkmeans")
 library("pheatmap")
-library("ComplexHeatmap")
+# library("ComplexHeatmap")
 
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
@@ -313,15 +309,46 @@ lapply(additiongColorGroup, function(n) {
 
 dev.off()
 
+############# COLORING BY DOUBLETS #############################################
+sce$log10doubletScore <- log10(sce$doubletScore)
 
-### Saving sce object with clusters
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clust_doubletscore_predrops.pdf"))
+
+
+  # plotting full plot
+  regplot <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[["log10doubletScore"]])) +
+    geom_point(size = 0.9, alpha = 0.5)  +
+    coord_equal() +
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + 
+    ggtitle("TSNE by Doublet Score") +
+    theme(legend.position = "Right") + 
+    theme_classic()
+  
+  # creating split by original cell type Erik for right hand side
+  faceted <-ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[["log10doubletScore"]])) +
+    geom_point(size = 0.9, alpha = 0.5)  +
+    coord_equal() +
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2") + 
+    ggtitle("TSNE by Doublet Score") +
+    theme(legend.position = "Right") + 
+    theme_classic() + facet_wrap(~ ct_Erik) 
+  
+  regplot
+  faceted 
+ 
+dev.off()
+
+
+
+
+
+### SAVING OBJECT(S) ###########################################################
 save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                       "sce_mid_clustering.Rdata"))
 
 
-## Issue with ^ sce save:
-# table(duplicated(colnames(sce)))
-# 
-# FALSE  TRUE 
-# 17048    34 
 
+
+
+
+# 
