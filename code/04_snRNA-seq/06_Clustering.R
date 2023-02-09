@@ -182,6 +182,7 @@ colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik",
 # [13] "kmeans12"  "kmeans13"  "kmeans14"  "kmeans15"  "kmeans16"  "kmeans17" 
 # [19] "kmeans18"  "kmeans19"  "kmeans20"
 
+# creating a color palette
 dark2 = c("#A6BDD7", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", 
           "#A6761D", "#666666")
 
@@ -189,7 +190,7 @@ dark2 = c("#A6BDD7", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02",
 ############# PLOTTING #########################################################
 ############# REGULAR TSNE & UMAPS #############################################
 # Plotting harmonized TSNE with colorbyGroup
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clustering_trails2.pdf"),
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clusters_unfinalized.pdf"),
    height = 6,  width = 13)
 
 lapply(colorbyGroup, function(n) {
@@ -235,7 +236,7 @@ dev.off()
 
 
 # Plotting harmonized UMAPS with colorbyGroup 
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clustering_trails2.pdf"),
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clusters_unfinalized.pdf"),
     height = 7, width = 12)
 
 lapply(colorbyGroup, function(n) {
@@ -280,15 +281,15 @@ lapply(colorbyGroup, function(n) {
 dev.off()
 
 ############# HEATMAPS #########################################################
-
-
 pdf(here("plots", "04_snRNA-seq", "06_Clustering",
-         "heatmap_test.pdf"), height = 7, width = 7)
+         "Heatmap_Clusters_unfinalized.pdf"), height = 7, width = 7)
+
+additiongColorGroup <- c("k_20_Erik", "k_50_Erik", "k_10_Erik")
 
 lapply(colorbyGroup, function(n) {
   # adding Rand index (index of similary on scale over 1)
   Rand <- signif(pairwiseRand(sce$ct_Erik, colData(sce)[, n], mode = "index"), 3)
-  plot_cap <- paste("Rand Index:", Rand)
+  plot_cap <- paste("Rand Index Against Erik Cell Types:", Rand)
   
   linker <- linkClustersMatrix(sce$ct_Erik, colData(sce)[, n])
     
@@ -296,6 +297,20 @@ lapply(colorbyGroup, function(n) {
          main = plot_cap,
   )
 }) 
+
+lapply(additiongColorGroup, function(n) {
+  # adding Rand index (index of similary on scale over 1)
+  Rand <- signif(pairwiseRand(sce$louvain, colData(sce)[, n], mode = "index"), 3)
+  plot_cap <- paste("Rand Index Against Louvain Clusters:", Rand)
+  
+  linker <- linkClustersMatrix(sce$louvain, colData(sce)[, n])
+  
+  pheatmap(linker,
+           main = plot_cap,
+           col = colorRampPalette(brewer.pal(8, "PiYG"))(25)
+  )
+}) 
+
 dev.off()
 
 
