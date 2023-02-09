@@ -72,7 +72,15 @@ markers.custom = list(
 rownames(sce) <- rowData(sce)$Symbol
 
 ###### Plotting gene expression for walktrap method 20 (22 groups) #############
+pdf20 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt20_annotations.pdf")
 
+  # setting arrguments 
+marker_list <- markers.custom
+cat = "k_20_Erik"
+pdf_fn <- pdf20
+
+
+my_plotMarkers(sce, marker_list, assay = "logcounts", cat, fill_colors = NULL, pdf_fn)
 
 
 
