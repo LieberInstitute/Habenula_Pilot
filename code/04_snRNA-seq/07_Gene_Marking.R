@@ -53,20 +53,34 @@ markers.eric.hab = list(Inhib = unlist(Inhib),Excit = unlist(Excit),Astro = unli
 
 ##### Marker genes from Erik code [Using for Now]
 markers.custom = list(
-  'neuron' = c('SYT1'),# 'SNAP25', 'GRIN1','MAP2'),
-  'excitatory_neuron' = c('SLC17A6'),# 'SLC17A7', 'SLC17A8'),
-  'inhibitory_neuron' = c('GAD1', 'GAD2'), #'SLC32A1'),
+  'neuron' = c('SYT1', 'SNAP25', 'GRIN1','MAP2'),
+  'excitatory_neuron' = c('SLC17A6', 'SLC17A7', 'SLC17A8'),
+  'inhibitory_neuron' = c('GAD1', 'GAD2', 'SLC32A1'),
   'mediodorsal thalamus'= c('EPHA4','PDYN', 'LYPD6B', 'LYPD6', 'S1PR1', 'GBX2', 'RAMP3', 'COX6A2', 'SLITRK6', 'DGAT2'),
-  'Hb neuron specific'= c('POU2F2','POU4F1','GPR151','CALB2'),#,'GPR151','POU4F1','STMN2','CALB2','NR4A2','VAV2','LPAR1'),
-  'MHB neuron specific' = c('TAC1','CHAT','CHRNB4'),#'TAC3','SLC17A7'
-  'LHB neuron specific' = c('HTR2C','MMRN1'),#'RFTN1'
-  'oligodendrocyte' = c('MOBP'),# 'MBP', 'PLP1'),
-  'oligodendrocyte_precursor' = c('PDGFRA'),# 'VCAN', 'CSPG4', 'GPR17'),
-  'microglia' = c('C3'),# 'CSF1R', 'C3'),
-  'astrocyte' = c('GFAP')#,# 'AQP4'),
-  #  'Hb microglia' = c('CD68'),
-  #  'Hb astrocytes' = c('KCNJ10')
+  'Hb neuron specific'= c('POU2F2','POU4F1','GPR151','CALB2', 'GPR151','POU4F1','STMN2','CALB2','NR4A2','VAV2','LPAR1'),
+  'MHB neuron specific' = c('TAC1','CHAT','CHRNB4', 'TAC3','SLC17A7'),
+  'LHB neuron specific' = c('HTR2C','MMRN1', 'RFTN1'),
+  'oligodendrocyte' = c('MOBP', 'MBP', 'PLP1'),
+  'oligodendrocyte_precursor' = c('PDGFRA', 'VCAN', 'CSPG4', 'GPR17'),
+  'microglia' = c('C3', 'CSF1R', 'C3'),
+  'astrocyte' = c('GFAP', 'AQP4'),
+  'Hb microglia' = c('CD68'),
+  'Hb astrocytes' = c('KCNJ10')
 )
+
+# Prepping sce object to plot by gene expression
+rownames(sce) <- rowData(sce)$Symbol
+
+###### Plotting gene expression for walktrap method 20 (22 groups) #############
+
+
+
+
+###### Plotting gene expression for walktrap method 10 (36 groups) #############
+
+
+
+
 
 
 
