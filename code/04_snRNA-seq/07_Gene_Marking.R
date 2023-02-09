@@ -34,7 +34,7 @@ source(here("code", "04_snRNA-seq", "sourcing", "custom_plotExpression.R"))
 source(here("code", "04_snRNA-seq", "sourcing", "my_plotMarkers.R"))
 
 ####### Marker gene list #######################################################
-# Markers from Josh were either redudant or not specific enough. Using Erik's 
+# Markers from Josh were either redundant or not specific enough. Using Erik's 
 # for now.
 markers.custom = list(
   'neuron' = c('SYT1'),# 'SNAP25', 'GRIN1','MAP2'),
