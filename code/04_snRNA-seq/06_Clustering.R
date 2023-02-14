@@ -297,9 +297,6 @@ lapply(colorbyGroup, function(n) {
   
   linker <- linkClustersMatrix(sce$ct_Erik, colData(sce)[, n])
   
-  # Not mark 0s as NAs because it messes with clustering.
-  # linker[linker == 0] <- NA
-  
   # heatmap 3  
   # Heatmap(linker,
   #         column_title = plot_cap,
@@ -321,16 +318,7 @@ lapply(additiongColorGroup, function(n) {
   plot_cap <- paste("Rand Index Against Louvain Clusters:", Rand)
   
   linker <- linkClustersMatrix(sce$louvain, colData(sce)[, n])
-  
-  # Mark 0s as NAs
-  linker[linker == 0] <- NA
 
-  Heatmap(linker,
-          column_title = plot_cap,
-          col = viridisLite::plasma(101),
-          na_col = "black",
-          name = "Corr"
-  )
 }) 
 dev.off()
 
