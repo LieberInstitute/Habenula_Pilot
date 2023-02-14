@@ -71,7 +71,7 @@ rownames(sce) <- rowData(sce)$Symbol
 message("Start - Annotating wt20")
   Sys.time()
 
-    pdf20 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt20_annotations.pdf")
+    pdf20 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt20_annotations_test.pdf")
     
     my_plotMarkers(sce, marker_list = markers.custom, assay = "logcounts", 
                    cat = "k_20_Erik", fill_colors = NULL, pdf_fn = pdf20)
@@ -91,7 +91,19 @@ my_plotMarkers(sce, marker_list = markers.custom, assay = "logcounts",
 message("End - Annotating wt10")
 Sys.time()
 
-# sgejobs::job_single('07_Gene_Marking', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "07_Gene_Marking.R")
+###### Plotting gene expression for walktrap method 20 (22 groups) #############
+message("Start - Annotating wt50")
+  Sys.time()
+  
+  pdf50 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt50_annotations.pdf")
+  
+  my_plotMarkers(sce, marker_list = markers.custom, assay = "logcounts", 
+                 cat = "k_50_Erik", fill_colors = NULL, pdf_fn = pdf50)
+  
+  message("End - Annotating wt50")
+Sys.time()
+
+# sgejobs::job_single('07_Gene_Marking', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 07_Gene_Marking.R")
 
 ## Reproducibility information
 print("Reproducibility information:")

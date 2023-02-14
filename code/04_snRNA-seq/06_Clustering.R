@@ -25,8 +25,16 @@ library("Polychrome")
 library("testthat") # for Rand?
 library("bluster") # for Rand
 library("mbkmeans")
-library("pheatmap")
-# library("ComplexHeatmap")
+# library("pheatmap")
+library("viridisLite")
+library("ComplexHeatmap")
+
+
+# Meeting with Dr. Torres (2/13):
+# 1) change colors for heatmaps
+# 2) plot gene markers for group 50 as well
+# 3) get right dimensions for graphs,  replot all
+# 4) prep for meeting tomorrrow at 3
 
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
@@ -34,6 +42,7 @@ sce <- sce_corrbySamp
 rm(sce_corrbySamp)
 
 ##### Approach 1: Louvain Clustering (Steph Hicks) #############################
+
 set.seed(777)
 
 firstWay <- buildSNNGraph(sce, k = 10, use.dimred = "HARMONY")
@@ -278,7 +287,7 @@ dev.off()
 
 ############# HEATMAPS #########################################################
 pdf(here("plots", "04_snRNA-seq", "06_Clustering",
-         "Heatmap_Clusters_unfinalized.pdf"), height = 7, width = 7)
+         "Heatmap_Clusters_unfinalized2.pdf"), height = 7, width = 7)
 
 additiongColorGroup <- c("k_20_Erik", "k_50_Erik", "k_10_Erik")
 
@@ -288,10 +297,28 @@ lapply(colorbyGroup, function(n) {
   plot_cap <- paste("Rand Index Against Erik Cell Types:", Rand)
   
   linker <- linkClustersMatrix(sce$ct_Erik, colData(sce)[, n])
+  
+  # Mark 0s as NAs
+  linker[linker == 0] <- NA
     
-  pheatmap(linker,
-         main = plot_cap,
+  Heatmap(linker,
+          column_title = plot_cap,
+          col = viridisLite::plasma(101),
+          na_col = "black",
+          cluster_rows = FALSE,
+          cluster_columns = FALSE,
+          name = "Corr"
   )
+  
+  # pheatmap(linker,
+  #       color = viridisLite::plasma(101),
+  #       main = plot_cap,
+  #       na_col = "black",
+  #       cluster_rows = FALSE,
+  #       cluster_cols = FALSE
+  # )
+  
+  
 }) 
 
 lapply(additiongColorGroup, function(n) {
@@ -301,12 +328,18 @@ lapply(additiongColorGroup, function(n) {
   
   linker <- linkClustersMatrix(sce$louvain, colData(sce)[, n])
   
-  pheatmap(linker,
-           main = plot_cap,
-           col = colorRampPalette(brewer.pal(8, "PiYG"))(25)
+  # Mark 0s as NAs
+  linker[linker == 0] <- NA
+
+  Heatmap(linker,
+          column_title = plot_cap,
+          col = viridisLite::plasma(101),
+          na_col = "black",
+          cluster_rows = FALSE,
+          cluster_columns = FALSE,
+          name = "Corr"
   )
 }) 
-
 dev.off()
 
 ############# COLORING BY DOUBLETS #############################################
