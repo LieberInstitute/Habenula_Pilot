@@ -156,12 +156,11 @@ sce$ct_Erik <- as.character(sce$ct_Erik)
 sce$ct_Erik[is.na(sce$ct_Erik)] <- "Bukola"
 
 ## Fixing factors for sce$ct_Erik
-sce$ct_Erik <- as.factor(sce$ct_Erik)
-levels(sce$ct_Erik)<- c("Astro", "Endo", "Micro", "Oligo.1", "Oligo.2", "OPC.1", 
+sce$ct_Erik <- factor(sce$ct_Erik2, levels = c("Astro", "Endo", "Micro", "Oligo.1", "Oligo.2", "OPC.1", 
                         "OPC.2", "LHb.1", "LHb.2", "LHb.3", "LHb.4", "LHb.5", "LHb.6", 
                         "MHb.1", "MHb.2", "Neuron.Ambig", "Thal.GABA.1", 
                         "Thal.GABA.2", "Thal.GABA.3", "Thal.MD", "Thal.PF", "Thal.PVT", 
-                        "Bukola")
+                        "Bukola"))
 
 # Grouping Erik Cell Types into Particular Groups
 sce$groupErik <- NA
@@ -287,7 +286,7 @@ dev.off()
 
 ############# HEATMAPS #########################################################
 pdf(here("plots", "04_snRNA-seq", "06_Clustering",
-         "Heatmap_Clusters_unfinalized2.pdf"), height = 7, width = 7)
+         "Heatmap_Clusters_unfinalized4.pdf"), height = 7, width = 7)
 
 additiongColorGroup <- c("k_20_Erik", "k_50_Erik", "k_10_Erik")
 
@@ -298,25 +297,20 @@ lapply(colorbyGroup, function(n) {
   
   linker <- linkClustersMatrix(sce$ct_Erik, colData(sce)[, n])
   
-  # Mark 0s as NAs
-  linker[linker == 0] <- NA
-    
-  Heatmap(linker,
-          column_title = plot_cap,
-          col = viridisLite::plasma(101),
-          na_col = "black",
-          cluster_rows = FALSE,
-          cluster_columns = FALSE,
-          name = "Corr"
-  )
+  # Not mark 0s as NAs because it messes with clustering.
+  # linker[linker == 0] <- NA
   
-  # pheatmap(linker,
-  #       color = viridisLite::plasma(101),
-  #       main = plot_cap,
-  #       na_col = "black",
-  #       cluster_rows = FALSE,
-  #       cluster_cols = FALSE
+  # heatmap 3  
+  # Heatmap(linker,
+  #         column_title = plot_cap,
+  #         col = c("black", viridisLite::plasma(101)),
+  #         name = "Corr"
   # )
+  
+  # heatmap 4
+   pheatmap(linker,
+         main = plot_cap,
+   )
   
   
 }) 
@@ -335,8 +329,6 @@ lapply(additiongColorGroup, function(n) {
           column_title = plot_cap,
           col = viridisLite::plasma(101),
           na_col = "black",
-          cluster_rows = FALSE,
-          cluster_columns = FALSE,
           name = "Corr"
   )
 }) 
@@ -380,8 +372,54 @@ save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects",
                       "sce_mid_clustering.Rdata"))
 
 
+# bug check
+table(sce$ct_Erik)
+
+# Astro         Endo        Micro      Oligo.1      Oligo.2        OPC.1 
+# 495          542          887          302           72          487 
+# OPC.2        LHb.1        LHb.2        LHb.3        LHb.4        LHb.5 
+# 197          317            5         1680          426           78 
+# LHb.6        MHb.1        MHb.2 Neuron.Ambig  Thal.GABA.1  Thal.GABA.2 
+# 220         1344          744          614          494          745 
+# Thal.GABA.3      Thal.MD      Thal.PF     Thal.PVT       Bukola 
+# 2632         4269           80          232          220 
+
+# loading Erik's orignal cell types
+load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda"))
 
 
+# Grabbing BrainNumber and Cell Type by Erik for each droplet
+annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
+                         s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
+# Clearly identifying that each droplet is a nucleus
+annoData$Barcode <- rownames(annoData)
+
+# changing rownames
+rownames(annoData) <- paste0(annoData$SampleID, "_", annoData$Barcode)
+
+# dimensions for future reference [data from Erik]
+dim(annoData)
+# [1] 17529     3
+
+# Creating a cell-type indicator in sce object's colData 
+sce$ct_Erik2 <- NA
+sce$ct_Erik2 <- annoData[colnames(sce),]$ClusterID
+
+# checking
+table(sce$ct_Erik2)
+
+  # Astro         Endo        Micro      Oligo.1      Oligo.2        OPC.1 
+  # 492           78          315         1674          425          220 
+  # OPC.2 Neuron.Ambig        LHb.1        LHb.2        LHb.3        LHb.4 
+  # 743            5         1341          743          613          494 
+  # LHb.5        LHb.6        MHb.1        MHb.2  Thal.GABA.1  Thal.GABA.2 
+  # 302           72          486          197         2626         4261 
+  # Thal.GABA.3      Thal.MD      Thal.PF     Thal.PVT 
+  # 79          231          220          541
 
 
-# 
+## setting ct_Erik2 as ct_Erik (fixed in lines)
+
+# checker: table(sce$ct_Erik, sce$ct_Erik2)
+# getting rid of our secondary ct_Erik2 after using for fix in lines 158-163
+# sce$ct_Erik2 <- NULL
