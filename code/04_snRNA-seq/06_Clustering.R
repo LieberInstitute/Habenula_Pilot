@@ -130,9 +130,17 @@ table(colData(sce)$wT_50_Erik)
 # Fixing NAs in ct_Erik
 sce$ct_Erik <- as.character(sce$ct_Erik)
 sce$ct_Erik[is.na(sce$ct_Erik)] <- "Bukola"
+    # Astro       Bukola         Endo        LHb.1        LHb.2        LHb.3 
+    # 495          887           78         1344          744          614 
+    # LHb.4        LHb.5        LHb.6        MHb.1        MHb.2        Micro 
+    # 494          302           72          487          197          317 
+    # Neuron.Ambig      Oligo.1      Oligo.2      OPC.1        OPC.2  Thal.GABA.1 
+    # 5                  1680         426          220          745         2632 
+    # Thal.GABA.2  Thal.GABA.3      Thal.MD      Thal.PF     Thal.PVT 
+    # 4269               80          232          220          542 
 
 ## Fixing factors for sce$ct_Erik
-sce$ct_Erik <- factor(sce$ct_Erik2, levels = c("Astro", "Endo", "Micro", "Oligo.1", "Oligo.2", "OPC.1", 
+sce$ct_Erik <- factor(sce$ct_Erik, levels = c("Astro", "Endo", "Micro", "Oligo.1", "Oligo.2", "OPC.1", 
                         "OPC.2", "LHb.1", "LHb.2", "LHb.3", "LHb.4", "LHb.5", "LHb.6", 
                         "MHb.1", "MHb.2", "Neuron.Ambig", "Thal.GABA.1", 
                         "Thal.GABA.2", "Thal.GABA.3", "Thal.MD", "Thal.PF", "Thal.PVT", 
@@ -154,18 +162,14 @@ any(is.na(sce$groupErik))
 # FALSE
 
 # Creating list to color by 
-colorbyGroup <- c("louvain", "k_20_Erik", "k_50_Erik", "k_10_Erik", 
-                  colnames(colData(sce)[grepl("kmeans", colnames(colData(sce)))]))
-## Getting rid of walkTrap 5 because we do not need 100+ grups 
-# [1] "louvain"   "k_20_Erik" "k_50_Erik" "k_10_Erik"  "kmeans5"  
-# [7] "kmeans6"   "kmeans7"   "kmeans8"   "kmeans9"   "kmeans10"  "kmeans11" 
-# [13] "kmeans12"  "kmeans13"  "kmeans14"  "kmeans15"  "kmeans16"  "kmeans17" 
-# [19] "kmeans18"  "kmeans19"  "kmeans20"
+colorbyGroup <- c(colnames(colData(sce)[grepl("wT_", colnames(colData(sce)))]), 
+                  colnames(colData(sce)[grepl("louvain", colnames(colData(sce)))]))
+  # [1] "wT_10_Erik" "wT_20_Erik" "wT_50_Erik" "louvain10"  "louvain20" 
+  # [6] "louvain50"
 
 # creating a color palette
 dark2 = c("#A6BDD7", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", 
           "#A6761D", "#666666")
-
 
 ############# PLOTTING #########################################################
 ############# REGULAR TSNE & UMAPS #############################################
@@ -262,40 +266,22 @@ dev.off()
 
 ############# HEATMAPS #########################################################
 pdf(here("plots", "04_snRNA-seq", "06_Clustering",
-         "Heatmap_Clusters_unfinalized4.pdf"), height = 7, width = 7)
+         "Heatmap_Clusters_unfinalized_officialclusters.pdf"), height = 7, width = 7)
+   
+    lapply(colorbyGroup, function(n) {
+      # adding Rand index (index of similary to ct_Erik)
+      Rand <- signif(pairwiseRand(sce$ct_Erik, colData(sce)[, n], mode = "index"), 3)
+      plot_cap <- paste("Rand Index Against Erik Cell Types:", Rand)
+      
+      linker <- linkClustersMatrix(sce$ct_Erik, colData(sce)[, n])
+      
+      Heatmap(linker,
+              column_title = plot_cap,
+              col = c("black", viridisLite::plasma(101)),
+              name = "Corr"
+      )
+    }) 
 
-additiongColorGroup <- c("k_20_Erik", "k_50_Erik", "k_10_Erik")
-
-lapply(colorbyGroup, function(n) {
-  # adding Rand index (index of similary on scale over 1)
-  Rand <- signif(pairwiseRand(sce$ct_Erik, colData(sce)[, n], mode = "index"), 3)
-  plot_cap <- paste("Rand Index Against Erik Cell Types:", Rand)
-  
-  linker <- linkClustersMatrix(sce$ct_Erik, colData(sce)[, n])
-  
-  # heatmap 3  
-  # Heatmap(linker,
-  #         column_title = plot_cap,
-  #         col = c("black", viridisLite::plasma(101)),
-  #         name = "Corr"
-  # )
-  
-  # heatmap 4
-   pheatmap(linker,
-         main = plot_cap,
-   )
-  
-  
-}) 
-
-lapply(additiongColorGroup, function(n) {
-  # adding Rand index (index of similary on scale over 1)
-  Rand <- signif(pairwiseRand(sce$louvain, colData(sce)[, n], mode = "index"), 3)
-  plot_cap <- paste("Rand Index Against Louvain Clusters:", Rand)
-  
-  linker <- linkClustersMatrix(sce$louvain, colData(sce)[, n])
-
-}) 
 dev.off()
 
 ############# COLORING BY DOUBLETS #############################################
@@ -326,54 +312,7 @@ pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clust_doubletsco
  
 dev.off()
 
-## facet wrap by high Rand clusters and color with doublet score
-## also change coloring scheme for clusters to show differences better
-
-
-
 ### SAVING OBJECT(S) ###########################################################
 save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
-                      "sce_mid_clustering.Rdata"))
+                      "sce_post_clustering.Rdata"))
 
-
-# bug check
-table(sce$ct_Erik)
-
-# Astro         Endo        Micro      Oligo.1      Oligo.2        OPC.1 
-# 495          542          887          302           72          487 
-# OPC.2        LHb.1        LHb.2        LHb.3        LHb.4        LHb.5 
-# 197          317            5         1680          426           78 
-# LHb.6        MHb.1        MHb.2 Neuron.Ambig  Thal.GABA.1  Thal.GABA.2 
-# 220         1344          744          614          494          745 
-# Thal.GABA.3      Thal.MD      Thal.PF     Thal.PVT       Bukola 
-# 2632         4269           80          232          220 
-
-# loading Erik's orignal cell types
-load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda"))
-
-
-# Grabbing BrainNumber and Cell Type by Erik for each droplet
-annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
-                         s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
-# Clearly identifying that each droplet is a nucleus
-annoData$Barcode <- rownames(annoData)
-
-# changing rownames
-rownames(annoData) <- paste0(annoData$SampleID, "_", annoData$Barcode)
-
-# dimensions for future reference [data from Erik]
-dim(annoData)
-# [1] 17529     3
-
-# Creating a cell-type indicator in sce object's colData 
-sce$ct_Erik2 <- NA
-sce$ct_Erik2 <- annoData[colnames(sce),]$ClusterID
-
-# checking
-table(sce$ct_Erik, sce$ct_Erik2)
-
-## setting ct_Erik2 as ct_Erik (fixed in lines)
-
-# checker: table(sce$ct_Erik, sce$ct_Erik2)
-# getting rid of our secondary ct_Erik2 after using for fix in lines 158-163
-# sce$ct_Erik2 <- NULL
