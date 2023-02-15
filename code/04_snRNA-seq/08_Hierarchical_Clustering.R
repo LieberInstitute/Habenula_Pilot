@@ -89,6 +89,25 @@ table(clust.treeCut)
 unname(clust.treeCut[order.dendrogram(dend)])
 unname(clust.treeCut[order.dendrogram(dend)]) == 0
 
+## hmmm
+    # > table(clust.treeCut)
+    # clust.treeCut
+    # 0  1  2 
+    # 33  2  2 
+    # > unname(clust.treeCut[order.dendrogram(dend)])
+    # [1] 0 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    # > unname(clust.treeCut[order.dendrogram(dend)]) == 0
+    # [1]  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    # [13]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE
+    # [25]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    # [37]  TRUE
+    # > clust.treeCut
+    # 2             2               3                             3           
+    # 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 
+    # > clust.treeCut[order.dendrogram(dend)]
+    # 3 3                                   2 2                             
+    # 0 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+
 # Add new labels to those prelimClusters cut off
 ## just define as a max cluster for now
 if (any(clust.treeCut[order.dendrogram(dend)] == 0)) {
