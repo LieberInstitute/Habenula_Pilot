@@ -14,7 +14,7 @@
 #' @examples
 my_plotMarkers <- function(sce, marker_list, assay = "logcounts", cat = "cellType", fill_colors = NULL, pdf_fn) {
   message("plotting: ", pdf_fn)
-  pdf(pdf_fn, height = 7, width = 13)
+  pdf(pdf_fn, height = 9, width = 11)
   
   for (i in 1:length(marker_list)) {
     message(names(marker_list)[[i]])

@@ -394,17 +394,7 @@ sce$ct_Erik2 <- NA
 sce$ct_Erik2 <- annoData[colnames(sce),]$ClusterID
 
 # checking
-table(sce$ct_Erik2)
-
-  # Astro         Endo        Micro      Oligo.1      Oligo.2        OPC.1 
-  # 492           78          315         1674          425          220 
-  # OPC.2 Neuron.Ambig        LHb.1        LHb.2        LHb.3        LHb.4 
-  # 743            5         1341          743          613          494 
-  # LHb.5        LHb.6        MHb.1        MHb.2  Thal.GABA.1  Thal.GABA.2 
-  # 302           72          486          197         2626         4261 
-  # Thal.GABA.3      Thal.MD      Thal.PF     Thal.PVT 
-  # 79          231          220          541
-
+table(sce$ct_Erik, sce$ct_Erik2)
 
 ## setting ct_Erik2 as ct_Erik (fixed in lines)
 

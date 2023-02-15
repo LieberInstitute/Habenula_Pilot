@@ -20,6 +20,27 @@ library("ggplot2")
 # Loading sce_uncorrected
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
           "sce_uncorrected_PCA.Rdata"))
+sce_uncorrected
+
+# BUG FIX: Uniquifying colnames using barcode and sample #######################
+# BUG:
+table(duplicated(colnames(sce_uncorrected)))
+# FALSE  TRUE 
+# 17048    34 
+
+# test <- "TCGCTCACAAATAGCA-1"
+# colData(sce)[sce$Barcode == test,]
+# DataFrame with 2 rows and 16 columns
+# Sample            Barcode                   path
+# <character>        <character>            <character> 
+#   TCGCTCACAAATAGCA-1      Br1092 TCGCTCACAAATAGCA-1 /dcs04/lieber/lcolla..
+# TCGCTCACAAATAGCA-1      Br1204 TCGCTCACAAATAGCA-1 /dcs04/lieber/lcolla..
+
+colnames(sce_uncorrected) <- paste0(sce_uncorrected$Sample, "_", 
+                                    sce_uncorrected$Barcode)
+any(duplicated(colnames(sce_uncorrected)))
+# [1] FALSE 
+
 
 ####### RUNNING HARMONY ########################################################
 # Note: We used GLM PCA not normal PCA but harmony function searches for something
@@ -44,10 +65,6 @@ set.seed(777)
 ## sce corrected by Sample
 sce_corrbySamp <- runTSNE(sce_corrbySamp, dimred = "HARMONY")
 sce_corrbySamp <- runUMAP(sce_corrbySamp, dimred = "HARMONY")
-
-## sce corrected by Run (not possible because uneven)
-# sce_corrbyRun <- runTSNE(sce_corrbyRun, dimred = "HARMONY")
-# sce_corrbyRun <- runUMAP(sce_corrbyRun, dimred = "HARMONY")
 
 ####### PLOTTING ###############################################################
 # GLM by Sample
@@ -144,27 +161,8 @@ pdf(here("plots", "04_snRNA-seq", "05_GLM_Harmony_plots", "UMAP_harmony_plot_con
   plotReducedDim(sce_corrbySamp, dimred = "UMAP", colour_by = "subsets_Mito_percent") + facet_wrap(~ sce_corrbySamp$Sample)
 dev.off()
 
-##### Uniquifying colnames using barcode and sample 
-  # table(duplicated(colnames(sce)))
-  # 
-  # FALSE  TRUE 
-  # 17048    34 
-    # test <- "TCGCTCACAAATAGCA-1"
-    # colData(sce)[sce$Barcode == test,]
-    # DataFrame with 2 rows and 16 columns
-    # Sample            Barcode                   path
-    # <character>        <character>            <character> 
-    #   TCGCTCACAAATAGCA-1      Br1092 TCGCTCACAAATAGCA-1 /dcs04/lieber/lcolla..
-    # TCGCTCACAAATAGCA-1      Br1204 TCGCTCACAAATAGCA-1 /dcs04/lieber/lcolla..
-
-colnames(sce) <- paste0(sce$Sample, "_", sce$Barcode)
-any(duplicated(colnames(sce)))
-# [1] FALSE 
-
 ####### saving ###############################################################
 ## Saving harmonized (by Sample) sce object 
-sce_corrbySamp <- sce
-
 save(sce_corrbySamp, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                                   "sce_harmony_by_Samp.Rdata"))
 

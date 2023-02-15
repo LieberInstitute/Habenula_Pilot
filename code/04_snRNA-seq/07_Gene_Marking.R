@@ -35,20 +35,21 @@ source(here("code", "04_snRNA-seq", "sourcing", "my_plotMarkers.R"))
 
 ####### Marker gene list #######################################################
 # Markers from Josh were either redundant or not specific enough. Using Erik's 
-# for now.
+# for now. [MUST HAVE AT LEAST TWO GENES PER MARKER FOR FUNCTION TO WORK CORRECTLY]
 markers.custom = list(
-  'neuron' = c('SYT1'),# 'SNAP25', 'GRIN1','MAP2'),
-  'excitatory_neuron' = c('SLC17A6'),# 'SLC17A7', 'SLC17A8'),
+  'neuron' = c('SYT1', 'SNAP25'), # 'GRIN1','MAP2'),
+  'excitatory_neuron' = c('SLC17A6', 'SLC17A7'), # 'SLC17A8'),
   'inhibitory_neuron' = c('GAD1', 'GAD2'), #'SLC32A1'),
   'mediodorsal thalamus'= c('EPHA4','PDYN', 'LYPD6B', 'LYPD6', 'S1PR1', 'GBX2', 'RAMP3', 'COX6A2', 'SLITRK6', 'DGAT2'),
   'Hb neuron specific'= c('POU2F2','POU4F1','GPR151','CALB2'),#,'GPR151','POU4F1','STMN2','CALB2','NR4A2','VAV2','LPAR1'),
   'MHB neuron specific' = c('TAC1','CHAT','CHRNB4'),#'TAC3','SLC17A7'
   'LHB neuron specific' = c('HTR2C','MMRN1'),#'RFTN1'
-  'oligodendrocyte' = c('MOBP'),# 'MBP', 'PLP1'),
-  'oligodendrocyte_precursor' = c('PDGFRA'),# 'VCAN', 'CSPG4', 'GPR17'),
-  'microglia' = c('C3'),# 'CSF1R', 'C3'),
-  'astrocyte' = c('GFAP')#,# 'AQP4'),
+  'oligodendrocyte' = c('MOBP', 'MBP'), # 'PLP1'),
+  'oligodendrocyte_precursor' = c('PDGFRA', 'VCAN'), # 'CSPG4', 'GPR17'),
+  'microglia' = c('C3', 'CSF1R'), #'C3'),
+  'astrocyte' = c('GFAP', 'AQP4')
 )
+
 
 #### PREPPING sce object to plot by gene expression ############################
 
@@ -71,7 +72,7 @@ rownames(sce) <- rowData(sce)$Symbol
 message("Start - Annotating wt20")
   Sys.time()
 
-    pdf20 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt20_annotations_test.pdf")
+    pdf20 <- here("plots", "04_snRNA-seq", "07_Gene_Marking", "wt20_annotations_tester.pdf")
     
     my_plotMarkers(sce, marker_list = markers.custom, assay = "logcounts", 
                    cat = "k_20_Erik", fill_colors = NULL, pdf_fn = pdf20)
