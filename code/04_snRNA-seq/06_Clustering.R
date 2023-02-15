@@ -29,123 +29,99 @@ library("mbkmeans")
 library("viridisLite")
 library("ComplexHeatmap")
 
-
-# Meeting with Dr. Torres (2/13):
-# 1) change colors for heatmaps
-# 2) plot gene markers for group 50 as well
-# 3) get right dimensions for graphs,  replot all
-# 4) prep for meeting tomorrrow at 3
-
 # Loading post harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_harmony_by_Samp.Rdata"))
 sce <- sce_corrbySamp
 rm(sce_corrbySamp)
 
 ##### Approach 1: Louvain Clustering (Steph Hicks) #############################
-
 set.seed(777)
+  firstWay <- buildSNNGraph(sce, k = 10, use.dimred = "HARMONY")
+  lou <- igraph::cluster_louvain(firstWay)
+  sce$louvain10 <- paste0("Louv_10_", lou$membership)
+table(sce$louvain10)
+  # Louv_10_1 Louv_10_10 Louv_10_11 Louv_10_12 Louv_10_13 Louv_10_14  Louv_10_2 
+  # 1320        756        167       1754        542        350       1940 
+  # Louv_10_3  Louv_10_4  Louv_10_5  Louv_10_6  Louv_10_7  Louv_10_8  Louv_10_9 
+  # 1842       1607       2559       1315        745        514       1671 
 
-firstWay <- buildSNNGraph(sce, k = 10, use.dimred = "HARMONY")
-lou <- igraph::cluster_louvain(firstWay)
-sce$louvain <- paste0("Louvain", lou$membership)
-table(sce$louvain)
-# Louvain1 Louvain10 Louvain11 Louvain12 Louvain13 Louvain14  Louvain2  Louvain3 
-# 1328       756       178      1798       543       347      2254      1832 
-# Louvain4  Louvain5  Louvain6  Louvain7  Louvain8  Louvain9 
-# 1116      1855       620      1643      1089      1723
+set.seed(732)
+  secondWay <- buildSNNGraph(sce, k = 20, use.dimred = "HARMONY")
+  lou2 <- igraph::cluster_louvain(secondWay)
+  sce$louvain20 <- paste0("Louv_20_", lou2$membership)
+table(sce$louvain20)
 
+  # Louv_20_1 Louv_20_10 Louv_20_11 Louv_20_12  Louv_20_2  Louv_20_3  Louv_20_4 
+  # 1323        156       2167        544       2539       2022       1604 
+  # Louv_20_5  Louv_20_6  Louv_20_7  Louv_20_8  Louv_20_9 
+  # 1479       2039       1028       1431        750 
+
+set.seed(702)
+  thirdWay <- buildSNNGraph(sce, k = 50, use.dimred = "HARMONY")
+  lou3 <- igraph::cluster_louvain(thirdWay)
+  sce$louvain50 <- paste0("Louv_50_", lou3$membership)
+table(sce$louvain50)
+  # Louv_50_1 Louv_50_10  Louv_50_2  Louv_50_3  Louv_50_4  Louv_50_5  Louv_50_6 
+  # 1381       2182       2384       2102       1668       2039       3068 
+  # Louv_50_7  Louv_50_8  Louv_50_9 
+  # 967        549        742 
 
 ##### Approach 2: WalkTrap Clustering (Erik) ###################################
+set.seed(2565)
+  g10 <- buildSNNGraph(sce, k=10, use.dimred = 'HARMONY')
+  clust10 <- igraph::cluster_walktrap(g10)$membership
+  colData(sce)$wT_10_Erik <-  paste0("10wTrap_", factor(clust10))
+table(colData(sce)$wT_10_Erik)
+    # 10wTrap_1 10wTrap_10 10wTrap_11 10wTrap_12 10wTrap_13 10wTrap_14 10wTrap_15 
+    # 145       2231        188        152        201        325        164 
+    # 10wTrap_16 10wTrap_17 10wTrap_18 10wTrap_19  10wTrap_2 10wTrap_20 10wTrap_21 
+    # 145       5241        373         51       1796         86        217 
+    # 10wTrap_22 10wTrap_23 10wTrap_24 10wTrap_25 10wTrap_26 10wTrap_27 10wTrap_28 
+    # 276        280        266         62        134         65         65 
+    # 10wTrap_29  10wTrap_3 10wTrap_30 10wTrap_31 10wTrap_32 10wTrap_33 10wTrap_34 
+    # 85        477         51         83         38         39         25 
+    # 10wTrap_35 10wTrap_36 10wTrap_37  10wTrap_4  10wTrap_5  10wTrap_6  10wTrap_7 
+    # 17         18         17       1014        312         38       1833 
+    # 10wTrap_8  10wTrap_9 
+    # 177        395 
+
 set.seed(1234)
-g20 <- buildSNNGraph(sce, k = 20, use.dimred = 'HARMONY')
-clust20 <- igraph::cluster_walktrap(g20)$membership
-sce$k_20_Erik <- paste0("20wTrap", factor(clust20))
-table(sce$k_20_Erik)
-    # 20wTrap1 20wTrap10 20wTrap11 20wTrap12 20wTrap13 20wTrap14 20wTrap15 20wTrap16 
-    # 1299       127       214      4747       296       192       151       347 
-    # 20wTrap17 20wTrap18 20wTrap19  20wTrap2 20wTrap20 20wTrap21 20wTrap22  20wTrap3 
-    # 211        34        75      1909        86       175        29      1867 
-    # 20wTrap4  20wTrap5  20wTrap6  20wTrap7  20wTrap8  20wTrap9 
-    # 569       450       359      2742       344       859 
+  g20 <- buildSNNGraph(sce, k = 20, use.dimred = 'HARMONY')
+  clust20 <- igraph::cluster_walktrap(g20)$membership
+  sce$wT_20_Erik <- paste0("20wTrap_", factor(clust20))
+table(sce$wT_20_Erik)
+    # 20wTrap_1 20wTrap_10 20wTrap_11 20wTrap_12 20wTrap_13 20wTrap_14 20wTrap_15 
+    # 2319        281        201       1062        613        189        110 
+    # 20wTrap_16 20wTrap_17 20wTrap_18 20wTrap_19  20wTrap_2 20wTrap_20 20wTrap_21 
+    # 283        184        227        289        723         34         75 
+    # 20wTrap_22 20wTrap_23  20wTrap_3  20wTrap_4  20wTrap_5  20wTrap_6  20wTrap_7 
+    # 75         30       1120        970        353       2695        335 
+    # 20wTrap_8  20wTrap_9 
+    # 4793        121 
 
 set.seed(4321)
-g50 <- buildSNNGraph(sce, k=50, use.dimred = 'HARMONY')
-clust50 <- igraph::cluster_walktrap(g50)$membership
-colData(sce)$k_50_Erik <- paste0("50wTrap", factor(clust50))
-table(colData(sce)$k_50_Erik)
-    # 50wTrap1 50wTrap10 50wTrap11 50wTrap12 50wTrap13 50wTrap14  50wTrap2  50wTrap3 
-    # 110      4320       725       350       275       274       538       958 
-    # 50wTrap4  50wTrap5  50wTrap6  50wTrap7  50wTrap8  50wTrap9 
-    # 1826      2245       558       407      3174      1322 
+  g50 <- buildSNNGraph(sce, k=50, use.dimred = 'HARMONY')
+  clust50 <- igraph::cluster_walktrap(g50)$membership
+  colData(sce)$wT_50_Erik <- paste0("50wTrap_", factor(clust50))
+table(colData(sce)$wT_50_Erik)
+    # 50wTrap_1 50wTrap_10 50wTrap_11 50wTrap_12 50wTrap_13 50wTrap_14  50wTrap_2 
+    # 2563       4470        679        301        125        257        510 
+    # 50wTrap_3  50wTrap_4  50wTrap_5  50wTrap_6  50wTrap_7  50wTrap_8  50wTrap_9 
+    # 1808        428       1427       3020        377        744        373 
 
-set.seed(2565)
-g10 <- buildSNNGraph(sce, k=10, use.dimred = 'HARMONY')
-clust10 <- igraph::cluster_walktrap(g10)$membership
-colData(sce)$k_10_Erik <-  paste0("10wTrap", factor(clust10))
-table(colData(sce)$k_10_Erik)
-    # 10wTrap1 10wTrap10 10wTrap11 10wTrap12 10wTrap13 10wTrap14 10wTrap15 10wTrap16 
-    # 323        38      3218      1572      4254       216       149       499 
-    # 10wTrap17 10wTrap18 10wTrap19  10wTrap2 10wTrap20 10wTrap21 10wTrap22 10wTrap23 
-    # 202       169        97      1063       153       321        48       209 
-    # 10wTrap24 10wTrap25 10wTrap26 10wTrap27 10wTrap28 10wTrap29  10wTrap3 10wTrap30 
-    # 280        84       304        63        65        98      1326        65 
-    # 10wTrap31 10wTrap32 10wTrap33 10wTrap34 10wTrap35 10wTrap36  10wTrap4  10wTrap5 
-    # 22        37        39        17        38        17       138       179 
-    # 10wTrap6  10wTrap7  10wTrap8  10wTrap9 
-    # 686       337       371       385 
-
-set.seed(14)
-g5 <- buildSNNGraph(sce, k=5, use.dimred = 'HARMONY')
-clust5 <- igraph::cluster_walktrap(g5)$membership
-colData(sce)$k_5_Erik <- paste0("5wTrap", factor(clust5))
-table(colData(sce)$k_5_Erik)
-    # 5wTrap1  5wTrap10 5wTrap100 5wTrap101 5wTrap102 5wTrap103 5wTrap104 5wTrap105 
-    # 61       275        20        10        14        23        14        11 
-    # 5wTrap106 5wTrap107 5wTrap108  5wTrap11  5wTrap12  5wTrap13  5wTrap14  5wTrap15 
-    # 7         7         8       337       413        97        70        48 
-    # 5wTrap16  5wTrap17  5wTrap18  5wTrap19   5wTrap2  5wTrap20  5wTrap21  5wTrap22 
-    # 94       142       127       133        47       112       120        33 
-    # 5wTrap23  5wTrap24  5wTrap25  5wTrap26  5wTrap27  5wTrap28  5wTrap29   5wTrap3 
-    # 120      1691       659        25       949        43        91        76 
-    # 5wTrap30  ...
 
 ##### Approach 3: Mini-batch k Means (Steph Hicks Example) #####################
-set.seed(789)
+  # set.seed(789)
+  # k_list <- seq(5, 20)
+  # km_res <- lapply(k_list, function(k) {
+  #   mbkmeans(sce, clusters = k, 
+  #            batch_size = 500,
+  #            reduceMethod = "HARMONY",
+  #            calc_wcss = TRUE)
+  # })
+  # wcss <- sapply(km_res, function(x) sum(x$WCSS_per_cluster))
 
-k_list <- seq(5, 20)
-
-km_res <- lapply(k_list, function(k) {
-  mbkmeans(sce, clusters = k, 
-           batch_size = 500,
-           reduceMethod = "HARMONY",
-           calc_wcss = TRUE)
-})
-
-wcss <- sapply(km_res, function(x) sum(x$WCSS_per_cluster))
-
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "mini_batch_klist_vs_wcss.pdf"),
-    width = 5, height = 4)
-plot(k_list, wcss, type = "b")
-dev.off()
-# interesting plot, going to save all k-means tho
-
-# saving 
-sce$kmeans5 <- paste0("mbk", km_res[[which(k_list==5)]]$Clusters)
-sce$kmeans6 <- paste0("mbk", km_res[[which(k_list==6)]]$Clusters)
-sce$kmeans7 <- paste0("mbk", km_res[[which(k_list==7)]]$Clusters)
-sce$kmeans8 <- paste0("mbk", km_res[[which(k_list==8)]]$Clusters)
-sce$kmeans9 <- paste0("mbk", km_res[[which(k_list==9)]]$Clusters)
-sce$kmeans10 <- paste0("mbk", km_res[[which(k_list==10)]]$Clusters)
-sce$kmeans11 <- paste0("mbk", km_res[[which(k_list==11)]]$Clusters)
-sce$kmeans12 <- paste0("mbk", km_res[[which(k_list==12)]]$Clusters)
-sce$kmeans13 <- paste0("mbk", km_res[[which(k_list==13)]]$Clusters)
-sce$kmeans14 <- paste0("mbk", km_res[[which(k_list==14)]]$Clusters)
-sce$kmeans15 <- paste0("mbk", km_res[[which(k_list==15)]]$Clusters)
-sce$kmeans16 <- paste0("mbk", km_res[[which(k_list==16)]]$Clusters)
-sce$kmeans17 <- paste0("mbk", km_res[[which(k_list==17)]]$Clusters)
-sce$kmeans18 <- paste0("mbk", km_res[[which(k_list==18)]]$Clusters)
-sce$kmeans19 <- paste0("mbk", km_res[[which(k_list==19)]]$Clusters)
-sce$kmeans20 <- paste0("mbk", km_res[[which(k_list==20)]]$Clusters)
+# NOT PROCEEDING WITH MBK
 
 ############# Pre-PLOTTING #####################################################
 ## NOTE: 

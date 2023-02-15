@@ -153,6 +153,14 @@ dbl_df %>%
 ############### LOADING ERIK'S ANNOTATED CLUSTERS ##############################
 load(here("processed-data", "08_snRNA-seq_Erik", "s3e_hb.rda"))
 
+
+# CHECKING ERIKS FOR TEST
+test <- "TCGCTCACAAATAGCA-1"
+table(duplicated(colnames(s3e.hb))) #none 
+colData(sce)[sce$Barcode == test,] # Erik has test for 1204 and not 1092
+colData(sce)[sce$Barcode == test,]$path
+
+
 # Grabbing BrainNumber and Cell Type by Erik for each droplet
 annoData <- data.frame(row.names = colnames(s3e.hb), "SampleID" = 
                          s3e.hb$sample_name, "ClusterID" = s3e.hb$cellType)
