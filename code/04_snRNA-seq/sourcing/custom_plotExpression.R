@@ -28,7 +28,7 @@ custom_plotExpression <- function(sce, genes, assay = "logcounts", cat, fill_col
   
   expression_violin <- ggplot(data = expression_long, aes(x = cat, y = value, fill = cat)) +
     geom_violin(scale = "width") +
-    geom_jitter() +
+#    geom_jitter() +
     facet_wrap(~Var1, ncol = 1) +
     labs(
       y = paste0("Expression (", assay, ")"),
