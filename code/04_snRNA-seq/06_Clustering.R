@@ -174,7 +174,7 @@ dark2 = c("#A6BDD7", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02",
 ############# PLOTTING #########################################################
 ############# REGULAR TSNE & UMAPS #############################################
 # Plotting harmonized TSNE with colorbyGroup
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clusters_unfinalized.pdf"),
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clusters_unfinalized_officialclusters.pdf"),
    height = 6,  width = 13)
 
 lapply(colorbyGroup, function(n) {
@@ -220,7 +220,7 @@ dev.off()
 
 
 # Plotting harmonized UMAPS with colorbyGroup 
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clusters_unfinalized.pdf"),
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "UMAP_clusters_unfinalized_officialclusters.pdf"),
     height = 7, width = 12)
 
 lapply(colorbyGroup, function(n) {
@@ -265,6 +265,7 @@ lapply(colorbyGroup, function(n) {
 dev.off()
 
 ############# HEATMAPS #########################################################
+# With Dr. Torres' coloring scheme
 pdf(here("plots", "04_snRNA-seq", "06_Clustering",
          "Heatmap_Clusters_unfinalized_officialclusters.pdf"), height = 7, width = 7)
    
@@ -272,21 +273,22 @@ pdf(here("plots", "04_snRNA-seq", "06_Clustering",
       # adding Rand index (index of similary to ct_Erik)
       Rand <- signif(pairwiseRand(sce$ct_Erik, colData(sce)[, n], mode = "index"), 3)
       plot_cap <- paste("Rand Index Against Erik Cell Types:", Rand)
+      numClusts <- paste("Number of Clusters =", length(table(colData(sce)[,n])))
       
       linker <- linkClustersMatrix(sce$ct_Erik, colData(sce)[, n])
       
       Heatmap(linker,
               column_title = plot_cap,
               col = c("black", viridisLite::plasma(101)),
-              name = "Corr"
+              name = "Corr",
+              row_title = numClusts
       )
     }) 
 
 dev.off()
 
 ############# COLORING BY DOUBLETS #############################################
-pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clust_doubletscore_predrops.pdf"))
-
+pdf(file = here("plots", "04_snRNA-seq", "06_Clustering", "TSNE_clust_doubletscore_predrops_officialclusters.pdf"))
 
   # plotting full plot
   regplot <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = .data[["doubletScore"]])) +
