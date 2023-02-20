@@ -37,7 +37,7 @@ custom_plotExpression <- function(sce, genes, assay = "logcounts", cat, fill_col
     theme_bw() +
     theme(
       legend.position = "None", axis.title.x = element_blank(),
-      axis.text.x = element_text(angle = 90, hjust = 1),
+      axis.text.x = element_text(angle = 90, hjust = 1, size = 12, face = "bold"),
       strip.text.x = element_text(face = "italic")
     ) +
     stat_summary(
