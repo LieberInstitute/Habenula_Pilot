@@ -71,9 +71,6 @@ markers.custom = list(
   "Endo/CP" = c("TTR", "FOLR1", "FLT1", "CLDN5")
 )
 
-# Throw away CALB2 and POU2F2 for Hb Specific
-
-
 #### PREPPING sce object to plot by gene expression ############################
 # adding logcounts 
 # sce <- logNormCounts(sce)
@@ -126,6 +123,16 @@ message("Start - Annotating wt50")
   
   message("End - Annotating wt50")
 Sys.time()
+
+
+# Heatmapping clusters against gene markers 
+
+
+
+
+
+
+
 
 # sgejobs::job_single('07_Gene_Marking', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 07_Gene_Marking.R")
 
