@@ -30,54 +30,63 @@ markers.custom = list(
   'astrocyte' = c('GFAP', 'AQP4'),
   "Endo/CP" = c("TTR", "FOLR1", "FLT1", "CLDN5")
 )
-# "FOLR1" does not have high enough expression
 
-# Making data frame
-markTable <- as.data.frame(unlist(markers.custom)) |> 
-  rownames_to_column("cellType") |>
-  rename(gene = `unlist(markers.custom)`) |>
-  mutate(cellType = gsub("\\d+", "", cellType)) |>
-  filter(gene %in% rowData(sce_psuedo_wT10)$Symbol)
-# "FOLR1" does not have high enough expression in sce10
-
-# Replacing genes with symbols for heatmap
-rownames(sce_psuedo_wT10) <- rowData(sce_psuedo_wT10)$Symbol
-
-# extracting logcounts from sce and subset just genes in markTable
-markerlogcounts_wT10 <- logcounts(sce_psuedo_wT10[markTable$gene, ])
-
-# getting z scores
-marker_z_score <- scale(t(markerlogcounts_wT10))
-# corner(marker_z_score)
-
-# heatmap
+# creating dir for plots
 plot_dir <- here("plots", "04_snRNA-seq", "07d_Pseudo_Heatmaps")
-  if(!dir.exists(plot_dir)){
-    dir.create(plot_dir)
-  }
+if(!dir.exists(plot_dir)){
+  dir.create(plot_dir)
+}
 
-column_ha <- HeatmapAnnotation(
-  cell_type = markTable$cellType
-)
+### Creating function for heatmap with annotations
+pseudoHeater <- function(sce, namer, clusterMethod){
+  # sce = pseudobulked sce object
+  # pdf.name = character string of heatmap name with .pdf end
+  # clusterMethod = whichever nearest neighbors method you use as character string
+    
+  # Making data frame
+  markTable <- as.data.frame(unlist(markers.custom)) |> 
+    rownames_to_column("cellType") |>
+    rename(gene = `unlist(markers.custom)`) |>
+    mutate(cellType = gsub("\\d+", "", cellType)) |>
+    filter(gene %in% rowData(sce)$Symbol)
+  
+  # Replacing genes with symbols for heatmap
+  rownames(sce) <- rowData(sce)$Symbol
+  
+  # extracting logcounts from sce and subset just genes in markTable
+  markerlogcounts <- logcounts(sce[markTable$gene, ])
+  
+  # getting z scores
+  marker_z_score <- scale(t(markerlogcounts))
+  # corner(marker_z_score)
+  
+  # heatmap
+  column_ha <- HeatmapAnnotation(
+    cell_type = markTable$cellType
+  )
+  
+  row_ha <- rowAnnotation(
+    cluster = colData(sce)[, clusterMethod]
+  )
+  
+  pdf(here(plot_dir, namer), width = 17, height = 14)
+    Heatmap(marker_z_score,
+            cluster_rows = TRUE,
+            cluster_columns = FALSE,
+            right_annotation = row_ha,
+            top_annotation = column_ha,
+            column_split = markTable$cellType,
+            column_title_rot = 30)
+  dev.off()
 
-row_ha <- rowAnnotation(
-  cluster = sce_psuedo_wT10$wT_10_Erik
-)
-
-pdf(here(plot_dir, "markers_heatmap_layer_wT10.pdf"), width = 17, height = 11)
-  Heatmap(marker_z_score,
-          cluster_rows = TRUE,
-          cluster_columns = FALSE,
-          right_annotation = row_ha,
-          top_annotation = column_ha,
-          column_split = markTable$cellType)
-dev.off()
+}
 
 
+# Running function
+pseudoHeater(sce_psuedo_wT10, "markers_heatmap_layer_wT10.pdf", "wT_10_Erik")
+pseudoHeater(sce_psuedo_wT20, "markers_heatmap_layer_wT20.pdf", "wT_20_Erik")
+pseudoHeater(sce_psuedo_wT50, "markers_heatmap_layer_wT50.pdf", "wT_50_Erik")
 
-
-
-# 
 
 
 
