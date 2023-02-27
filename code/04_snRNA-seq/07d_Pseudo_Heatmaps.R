@@ -7,11 +7,36 @@ library("here")
 library("sessioninfo")
 library("ComplexHeatmap")
 library("tidyverse")
+library("xlsx")
+
 
 # must be pseudo_bulked data: 
 ## sce_psuedo_wT10, sce_psuedo_wT20, sce_psuedo_wT50
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
           "sce_pseduobulked_wT.Rdata"), verbose = TRUE)
+
+# loading color scheme 
+## cellTypecolors_9
+load(here("processed-data", "cell_type_colors.Rdata"))
+
+# pulling excel sheet with annotations
+annoWT10 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
+                                  "GeneAnnotation_Bukola.xlsx"), sheetName = c("Walktrap10"))
+annoWT20 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
+                                  "GeneAnnotation_Bukola.xlsx"), sheetName = c("WalkTrap20"))
+annoWT50 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
+                                  "GeneAnnotation_Bukola.xlsx"), sheetName = c("WalkTrap 50"))
+# cleaning up annoWT50 for standardization
+annoWT50_clean <- annoWT50 |> 
+  filter(!is.na(Cluster)) |>
+  mutate(Type_clean = gsub("[^a-zA-Z0-9]", "", Type), 
+         Cluster = paste0("50wTrap_", Cluster))
+
+# sanity check 
+annoWT50_clean |> count(Type_clean)
+
+# using match to add annotated name columns for wt50
+sce_psuedo_wT50$cellType_wT50 <- annoWT50_clean$Type_clean[match(sce_psuedo_wT50$wT_50_Erik, annoWT50_clean$Cluster)]
 
 # list of marker genes 
 markers.custom = list(
@@ -38,10 +63,11 @@ if(!dir.exists(plot_dir)){
 }
 
 ### Creating function for heatmap with annotations
-pseudoHeater <- function(sce, namer, clusterMethod){
+pseudoHeater <- function(sce, namer, clusterMethod, cellType_col = NULL){
   # sce = pseudobulked sce object
-  # pdf.name = character string of heatmap name with .pdf end
+  # namer = character string of heatmap name with .pdf end
   # clusterMethod = whichever nearest neighbors method you use as character string
+  # cellType_col = string name of column ex "cellType_wT50"
     
   # Making data frame
   markTable <- as.data.frame(unlist(markers.custom)) |> 
@@ -65,8 +91,12 @@ pseudoHeater <- function(sce, namer, clusterMethod){
     cell_type = markTable$cellType
   )
   
+  clusterData <- as.data.frame(colData(sce)[,c("Sample", clusterMethod, cellType_col)]) |>
+      rename(any_of(c("cellType" = cellType_col)))
+  
   row_ha <- rowAnnotation(
-    cluster = colData(sce)[, clusterMethod]
+    df = clusterData,
+    col = list("cellType" = cellTypecolors_9)
   )
   
   pdf(here(plot_dir, namer), width = 17, height = 14)
