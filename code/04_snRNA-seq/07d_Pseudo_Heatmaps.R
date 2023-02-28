@@ -1,6 +1,7 @@
 ## 2/21/23 - Bukola Ajanaku
 # Heatmapping pseudobulked data against marker gene list.
 # qrsh -l mem_free=20G,h_vmem=20G
+# Terminal 2
 
 library("SingleCellExperiment")
 library("here")
@@ -21,22 +22,43 @@ load(here("processed-data", "cell_type_colors.Rdata"))
 
 # pulling excel sheet with annotations
 annoWT10 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
-                                  "GeneAnnotation_Bukola.xlsx"), sheetName = c("Walktrap10"))
+                                  "GeneAnnotations_Bukola.xlsx"), sheetName = c("WalkTrap10"))
 annoWT20 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
-                                  "GeneAnnotation_Bukola.xlsx"), sheetName = c("WalkTrap20"))
+                                  "GeneAnnotations_Bukola.xlsx"), sheetName = c("WalkTrap20"))
 annoWT50 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
-                                  "GeneAnnotation_Bukola.xlsx"), sheetName = c("WalkTrap 50"))
-# cleaning up annoWT50 for standardization
+                                  "GeneAnnotations_Bukola.xlsx"), sheetName = c("WalkTrap 50"))
+
+# cleaning up for standardization
+# 10
+annoWT10_clean <- annoWT10 |> 
+  filter(!is.na(Cluster)) |>
+  mutate(Type_clean = gsub("[^a-zA-Z0-9]", "", Type), 
+         Cluster = paste0("10wTrap_", Cluster))
+
+#20
+annoWT20_clean <- annoWT20 |> 
+  filter(!is.na(Cluster)) |>
+  mutate(Type_clean = gsub("[^a-zA-Z0-9]", "", Type), 
+         Cluster = paste0("20wTrap_", Cluster))
+
+#30
 annoWT50_clean <- annoWT50 |> 
   filter(!is.na(Cluster)) |>
   mutate(Type_clean = gsub("[^a-zA-Z0-9]", "", Type), 
          Cluster = paste0("50wTrap_", Cluster))
 
-# sanity check 
+# sanity check (looking for no repeat names in summarized list)
+annoWT10_clean |> count(Type_clean)
+annoWT20_clean |> count(Type_clean)
 annoWT50_clean |> count(Type_clean)
 
 # using match to add annotated name columns for wt50
-sce_psuedo_wT50$cellType_wT50 <- annoWT50_clean$Type_clean[match(sce_psuedo_wT50$wT_50_Erik, annoWT50_clean$Cluster)]
+sce_psuedo_wT10$cellType_wT10 <- 
+  annoWT10_clean$Type_clean[match(sce_psuedo_wT10$wT_10_Erik, annoWT10_clean$Cluster)]
+sce_psuedo_wT20$cellType_wT20 <- 
+  annoWT20_clean$Type_clean[match(sce_psuedo_wT20$wT_20_Erik, annoWT20_clean$Cluster)]
+sce_psuedo_wT50$cellType_wT50 <- 
+  annoWT50_clean$Type_clean[match(sce_psuedo_wT50$wT_50_Erik, annoWT50_clean$Cluster)]
 
 # list of marker genes 
 markers.custom = list(

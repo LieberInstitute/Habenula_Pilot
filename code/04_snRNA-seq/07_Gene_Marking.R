@@ -125,14 +125,6 @@ message("Start - Annotating wt50")
 Sys.time()
 
 
-# Heatmapping clusters against gene markers 
-
-
-
-
-
-
-
 
 # sgejobs::job_single('07_Gene_Marking', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 07_Gene_Marking.R")
 
