@@ -40,7 +40,7 @@ grabColors <- function(num, start = 1){
 
 ## How Louise wanted me to do this:
 
-# cellTypecolors_9 <-
+# cellTypecolors_9 <- 
 #   c(ExcNeuron = "#274ea6",
 #     InhibThalMed = "#6ed94f",
 #     OPC = "#ff67e3",
@@ -51,21 +51,20 @@ grabColors <- function(num, start = 1){
 #     ExcThalMed = "#d794b4",
 #     LHbN = "#ffb848")
 
-preview_colors <- function(cell_colors) {
-  par(las = 2) # make label text perpendicular to axis
-  par(mar = c(5, 8, 4, 2)) # increase y-axis margin.
-  barplot(rep(1, length(cell_colors)),
-          col = cell_colors,
-          horiz = TRUE,
-          axes = FALSE,
-          names.arg = names(cell_colors)
-  )
-}
-
- png(here("plots", "cell_colors", "cellTypecolors_9.png"), height = 800)
-   preview_colors(cellTypecolors_9)
-# preview_colors(grabColors(9))
- dev.off()
+# preview_colors <- function(cell_colors) {
+#   par(las = 2) # make label text perpendicular to axis
+#   par(mar = c(5, 8, 4, 2)) # increase y-axis margin.
+#   barplot(rep(1, length(cell_colors)),
+#           col = cell_colors,
+#           horiz = TRUE,
+#           axes = FALSE,
+#           names.arg = names(cell_colors)
+#   )
+# }
+# 
+# png(here("plots", "cell_colors", "cellTypecolors_9.png"), height = 800)
+#   preview_colors(cellTypecolors_9)
+# dev.off()
 
 # # saving colors
 # save(cellTypecolors_9, file = here("processed-data", "cell_type_colors.Rdata"))

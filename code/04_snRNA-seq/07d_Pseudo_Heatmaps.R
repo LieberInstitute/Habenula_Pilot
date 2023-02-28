@@ -16,9 +16,9 @@ library("xlsx")
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
           "sce_pseduobulked_wT.Rdata"), verbose = TRUE)
 
-# loading color scheme 
-## cellTypecolors_9
-load(here("processed-data", "cell_type_colors.Rdata"))
+# grabbing color schemes
+## to get grabColors() function, max colors 20
+source(here("code", "04_snRNA-seq", "sourcing", "color_Scheme_CT.R"))
 
 # pulling excel sheet with annotations
 annoWT10 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
