@@ -89,6 +89,13 @@ pseudoHeater <- function(sce, clusterMethod){
   # sce = pseudobulked sce object
   # clusterMethod = whichever nearest neighbors method you use (as character string)
 
+  # grabbing name of column withinn the sce object for the relevant method 
+  method_neighbors <- ss(clusterMethod, "_", 2)
+  cellType_col <- paste0("cellType_wT", method_neighbors)
+  
+  # renaming rownnames of colData(sce) based on annotations
+  rownames(colData(sce)) <- paste(colData(sce)[, cellType_col], 
+                                 ss(rownames(colData(sce)), "_", 3), sep = "_")
     
   # Making data frame of genes we are interested in annd their general classification
   markTable <- as.data.frame(unlist(markers.custom)) |> 
@@ -105,16 +112,12 @@ pseudoHeater <- function(sce, clusterMethod){
   
   # getting z scores
   marker_z_score <- scale(t(markerlogcounts))
-  # corner(marker_z_score)
+    # corner(marker_z_score)
   
   # heatmap columns annotation
   column_ha <- HeatmapAnnotation(
     cell_type = markTable$cellType
   )
-  
-  # grabbing name of column withinn the sce object for the relevant method 
-  method_neighbors <- ss(clusterMethod, "_", 2)
-  cellType_col <- paste0("cellType_wT", method_neighbors)
   
   # grabbing the annotations per cluster from the sce object
   clusterData <- as.data.frame(colData(sce)[,c("Sample", clusterMethod, cellType_col)]) |>
@@ -123,7 +126,7 @@ pseudoHeater <- function(sce, clusterMethod){
   # prepping the colors we want
     # for cell type
   num_pal <- length(unique(clusterData$cellType))
-  col_pal_ct <- grabColors(num_pal)
+  col_pal_ct <- grabColors(num_pal, start = 4)
   names(col_pal_ct) = unique(clusterData$cellType)
     # copying ct color pallete for Sample
   sample_pal <- length(unique(clusterData$Sample))
@@ -143,23 +146,24 @@ pseudoHeater <- function(sce, clusterMethod){
                      right_annotation = row_ha,
                      top_annotation = column_ha,
                      column_split = markTable$cellType,
-                     column_title_rot = 30)
+                     column_title_rot = 30,
+                     heatmap_legend_param = list(legend_gp = gpar(fontsize = 13)))
   
   print(heatmapped)
 
 }
-
+# no way to add title to heatmaps: paste("WalkTrap", method_neighbors, sep = " ")
 
 # Running function
-pdf(here(plot_dir, "markers_heatmap_layer_wT10.pdf"), width = 18, height = 18)
+pdf(here(plot_dir, "markers_heatmap_layer_wT10.pdf"), width = 18, height = 22)
   pseudoHeater(sce_psuedo_wT10, "wT_10_Erik")
 dev.off()
 
-pdf(here(plot_dir, "markers_heatmap_layer_wT20.pdf"), width = 18, height = 18)
+pdf(here(plot_dir, "markers_heatmap_layer_wT20.pdf"), width = 18, height = 21)
   pseudoHeater(sce_psuedo_wT20, "wT_20_Erik")
 dev.off()
 
-pdf(here(plot_dir, "markers_heatmap_layer_wT50.pdf"), width = 18, height = 18)
+pdf(here(plot_dir, "markers_heatmap_layer_wT50.pdf"), width = 18, height = 21)
   pseudoHeater(sce_psuedo_wT50, "wT_50_Erik")
 dev.off()
 
