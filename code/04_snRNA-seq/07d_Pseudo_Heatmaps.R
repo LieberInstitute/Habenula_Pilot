@@ -91,14 +91,14 @@ pseudoHeater <- function(sce, namer, clusterMethod, cellType_col = NULL){
   # clusterMethod = whichever nearest neighbors method you use as character string
   # cellType_col = string name of column ex "cellType_wT50"
     
-  # Making data frame
+  # Making data frame of genes we are interested in annd their general classification
   markTable <- as.data.frame(unlist(markers.custom)) |> 
     rownames_to_column("cellType") |>
     rename(gene = `unlist(markers.custom)`) |>
     mutate(cellType = gsub("\\d+", "", cellType)) |>
     filter(gene %in% rowData(sce)$Symbol)
   
-  # Replacing genes with symbols for heatmap
+  # Replacing genes with symbols for heatmap (rremember, this is pseudobulked data)
   rownames(sce) <- rowData(sce)$Symbol
   
   # extracting logcounts from sce and subset just genes in markTable
@@ -108,20 +108,33 @@ pseudoHeater <- function(sce, namer, clusterMethod, cellType_col = NULL){
   marker_z_score <- scale(t(markerlogcounts))
   # corner(marker_z_score)
   
-  # heatmap
+  # heatmap columns annotation
   column_ha <- HeatmapAnnotation(
     cell_type = markTable$cellType
   )
   
+  # grabbing the annotations per cluster from the sce object
   clusterData <- as.data.frame(colData(sce)[,c("Sample", clusterMethod, cellType_col)]) |>
       rename(any_of(c("cellType" = cellType_col)))
   
+  # prepping the colors we want
+    # for cell type
+  num_pal <- length(unique(clusterData$cellType))
+  col_pal_ct <- grabColors(num_pal)
+  names(col_pal_ct) = unique(clusterData$cellType)
+    # copying ct color pallete for Sample
+  sample_pal <- length(unique(clusterData$Sample))
+  col_pal_sample <- grabColors(sample_pal, start = 10)
+  names(col_pal_sample) = unique(clusterData$Sample)
+  
+  # heatmap row annotationn
   row_ha <- rowAnnotation(
     df = clusterData,
-    col = list("cellType" = cellTypecolors_9)
+    col = list(cell_type = col_pal_ct,
+               Sample = col_pal_sample)
   )
   
-  pdf(here(plot_dir, namer), width = 17, height = 14)
+  pdf(here(plot_dir, namer), width = 18, height = 18)
     Heatmap(marker_z_score,
             cluster_rows = TRUE,
             cluster_columns = FALSE,
