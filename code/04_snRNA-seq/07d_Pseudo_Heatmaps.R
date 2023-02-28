@@ -85,11 +85,10 @@ if(!dir.exists(plot_dir)){
 }
 
 ### Creating function for heatmap with annotations
-pseudoHeater <- function(sce, namer, clusterMethod, cellType_col = NULL){
+pseudoHeater <- function(sce, clusterMethod){
   # sce = pseudobulked sce object
-  # namer = character string of heatmap name with .pdf end
-  # clusterMethod = whichever nearest neighbors method you use as character string
-  # cellType_col = string name of column ex "cellType_wT50"
+  # clusterMethod = whichever nearest neighbors method you use (as character string)
+
     
   # Making data frame of genes we are interested in annd their general classification
   markTable <- as.data.frame(unlist(markers.custom)) |> 
@@ -98,7 +97,7 @@ pseudoHeater <- function(sce, namer, clusterMethod, cellType_col = NULL){
     mutate(cellType = gsub("\\d+", "", cellType)) |>
     filter(gene %in% rowData(sce)$Symbol)
   
-  # Replacing genes with symbols for heatmap (rremember, this is pseudobulked data)
+  # Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
   rownames(sce) <- rowData(sce)$Symbol
   
   # extracting logcounts from sce and subset just genes in markTable
@@ -113,6 +112,10 @@ pseudoHeater <- function(sce, namer, clusterMethod, cellType_col = NULL){
     cell_type = markTable$cellType
   )
   
+  # grabbing name of column withinn the sce object for the relevant method 
+  method_neighbors <- ss(clusterMethod, "_", 2)
+  cellType_col <- paste0("cellType_wT", method_neighbors)
+  
   # grabbing the annotations per cluster from the sce object
   clusterData <- as.data.frame(colData(sce)[,c("Sample", clusterMethod, cellType_col)]) |>
       rename(any_of(c("cellType" = cellType_col)))
@@ -124,7 +127,7 @@ pseudoHeater <- function(sce, namer, clusterMethod, cellType_col = NULL){
   names(col_pal_ct) = unique(clusterData$cellType)
     # copying ct color pallete for Sample
   sample_pal <- length(unique(clusterData$Sample))
-  col_pal_sample <- grabColors(sample_pal, start = 10)
+  col_pal_sample <- grabColors(sample_pal, start = 9)
   names(col_pal_sample) = unique(clusterData$Sample)
   
   # heatmap row annotationn
@@ -134,24 +137,31 @@ pseudoHeater <- function(sce, namer, clusterMethod, cellType_col = NULL){
                Sample = col_pal_sample)
   )
   
-  pdf(here(plot_dir, namer), width = 18, height = 18)
-    Heatmap(marker_z_score,
-            cluster_rows = TRUE,
-            cluster_columns = FALSE,
-            right_annotation = row_ha,
-            top_annotation = column_ha,
-            column_split = markTable$cellType,
-            column_title_rot = 30)
-  dev.off()
+  heatmapped <- Heatmap(marker_z_score,
+                     cluster_rows = TRUE,
+                     cluster_columns = FALSE,
+                     right_annotation = row_ha,
+                     top_annotation = column_ha,
+                     column_split = markTable$cellType,
+                     column_title_rot = 30)
+  
+  print(heatmapped)
 
 }
 
 
 # Running function
-pseudoHeater(sce_psuedo_wT10, "markers_heatmap_layer_wT10.pdf", "wT_10_Erik")
-pseudoHeater(sce_psuedo_wT20, "markers_heatmap_layer_wT20.pdf", "wT_20_Erik")
-pseudoHeater(sce_psuedo_wT50, "markers_heatmap_layer_wT50.pdf", "wT_50_Erik")
+pdf(here(plot_dir, "markers_heatmap_layer_wT10.pdf"), width = 18, height = 18)
+  pseudoHeater(sce_psuedo_wT10, "wT_10_Erik")
+dev.off()
 
+pdf(here(plot_dir, "markers_heatmap_layer_wT20.pdf"), width = 18, height = 18)
+  pseudoHeater(sce_psuedo_wT20, "wT_20_Erik")
+dev.off()
+
+pdf(here(plot_dir, "markers_heatmap_layer_wT50.pdf"), width = 18, height = 18)
+  pseudoHeater(sce_psuedo_wT50, "wT_50_Erik")
+dev.off()
 
 
 
