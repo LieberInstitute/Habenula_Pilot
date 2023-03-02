@@ -66,7 +66,7 @@ find_t <- function(L, proportion = 0.05) {
 }
 
 # Running per cluster  
-message("Find fasthplus for clusters wT10 - ", Sys.time())
+message("Find fasthplus for clusters - ", Sys.time())
 
 fasthplus <- lapply(c(sce$wT_10_Erik, sce$wT_20_Erik, sce$wT_50_Erik), function(li) {
   message(Sys.time())
@@ -80,8 +80,6 @@ fasthplus <- lapply(c(sce$wT_10_Erik, sce$wT_20_Erik, sce$wT_50_Erik), function(
 })
 
 fasthplus <- unlist(fasthplus)
-
-
 
 # # saving
 # save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
