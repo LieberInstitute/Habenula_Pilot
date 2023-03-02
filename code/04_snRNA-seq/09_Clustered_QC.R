@@ -11,6 +11,7 @@ library("here")
 library("sessioninfo")
 library("xlsx")
 library("tidyverse")
+library("scater")
 
 
 # most updaated sce object with first round of annotations (where we selected to move forward with wT10)
@@ -36,16 +37,49 @@ snAnno_clean |> count(snType)
 # using match to add annotated name columns for wt10
 sce$snAnno <- snAnno_clean$snType[match(sce$wT_10_Erik, snAnno_clean$Cluster)]
 
+# sourcing for custom  color palette 
+source(here("code", "04_snRNA-seq", "sourcing", "color_Scheme_CT.R"))
+
 # Now that sce has been established with new annotations from Excel sheet, we can
 # plot against qc metrics (also in colData of sce with annotation identities):
-
 ####### Exploring Barcodes  #####################################################
-UMI_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = sum, fill = cellType_k)) +
-  geom_boxplot() +
-  scale_fill_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
-  my_theme +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 90, hjust = 1)
+# always create plot dir before plotting 
+  plot_dir <- here("plots", "04_snRNA-seq", "09_Clustered_QC")
+  if(!dir.exists(plot_dir)){
+    dir.create(plot_dir)
+  } 
+
+
+# Checking library size ("sum": the higher the better, dropping lows)
+pdf(file = here(plot_dir, "wt10_LIBSIZE_QC.pdf") )
+  # coloring by walktrap cluster number
+  ggcells(sce, mapping = aes(x = wT_10_Erik, y = sum, fill = wT_10_Erik)) +
+    geom_boxplot() +
+    scale_fill_manual(values = grabColors(length(unique(sce$wT_10_Erik)))) +
+    theme_linedraw() +
+    theme(
+      legend.position = "Right" , axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 90, hjust = 1)
   )
+   
+  # coloring by snAnnotation clusters  
+  ggcells(sce, mapping = aes(x = snAnno, y = sum, fill = snAnno)) +
+      geom_boxplot() +
+      scale_fill_manual(values = grabColors(length(unique(sce$snAnno)))) +
+      theme_linedraw() +
+      theme(
+        legend.position = "Right", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+  )
+dev.off()
+
+
+# Checking detected features ("detected": the higher the better, dropping lows)
+
+# Checking mitochondrial rate ("subsets_Mito_percent": the lower the better, dropping highs)
+
+# Checking doublelt scores ("doubletScore": the lower the better, typically dropping anything over 5)
+
+
+
 
