@@ -45,7 +45,6 @@ snAnno_clean |> count(problemClusts)
 ## annotations with problematic cluster highlights all split by clusters)
   sce$splitProbClusts <- snAnno_clean$splitProbClusts[match(sce$wT_10_Erik, snAnno_clean$Cluster)]
   sce$splitSNType <- snAnno_clean$splitSNType[match(sce$wT_10_Erik, snAnno_clean$Cluster)]
-    #splitSNType no longer needed! 
   
 # sourcing for custom  color palette 
 source(here("code", "04_snRNA-seq", "sourcing", "color_Scheme_CT.R"))
@@ -73,7 +72,7 @@ pdf(file = here(plot_dir, "wt10_LIBSIZE_QC.pdf"), height = 7, width = 11)
         ) +
       ggtitle("Library Size with Problematic Cluster Highlights")
   
-  # coloring by annotations only
+  # coloring by annotations only (not split)
   ggcells(sce, mapping = aes(x = snAnno, y = sum, fill = snAnno)) +
     geom_boxplot() +
     scale_fill_manual(values = grabColors(length(unique(sce$snAnno)))) +
@@ -84,6 +83,16 @@ pdf(file = here(plot_dir, "wt10_LIBSIZE_QC.pdf"), height = 7, width = 11)
       ) +
     ggtitle("Library Size for all Annotated Clusters")
   
+  # regular annotations split by cluster 
+  ggcells(sce, mapping = aes(x = splitSNType, y = sum, fill = splitSNType)) +
+    geom_boxplot() +
+    scale_fill_manual(values = grabColors(length(unique(sce$splitSNType)))) +
+    theme_linedraw() +
+    theme(
+      legend.position = "none", axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    ggtitle("Library Size for Regular Annotations Split by Cluster")
 dev.off()
 
 # Checking detected features ("detected": the higher the better, dropping lows)
@@ -99,7 +108,7 @@ pdf(file = here(plot_dir, "wt10_DETECTED_QC.pdf"), height = 7, width = 11)
     ) +
     ggtitle("Detected Features with Problematic Cluster Highlights")
   
-  # coloring by annotations only
+  # coloring by annotations only (not split)
   ggcells(sce, mapping = aes(x = snAnno, y = detected, fill = snAnno)) +
     geom_boxplot() +
     scale_fill_manual(values = grabColors(length(unique(sce$snAnno)))) +
@@ -109,14 +118,93 @@ pdf(file = here(plot_dir, "wt10_DETECTED_QC.pdf"), height = 7, width = 11)
       axis.text.x = element_text(angle = 45, hjust = 1)
     ) +
     ggtitle("Detected Features for all Annotated Clusters")
+  
+  # regular annotations split by cluster 
+  ggcells(sce, mapping = aes(x = splitSNType, y = detected, fill = splitSNType)) +
+    geom_boxplot() +
+    scale_fill_manual(values = grabColors(length(unique(sce$splitSNType)))) +
+    theme_linedraw() +
+    theme(
+      legend.position = "none", axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    ggtitle("Detected Features for Regular Annotations Split by Cluster")
+  
 dev.off()
 
 # Checking mitochondrial rate ("subsets_Mito_percent": the lower the better, dropping highs)
-
-
+pdf(file = here(plot_dir, "wt10_MITO_PERCENT_QC.pdf"), height = 7, width = 11)
+# coloring by annotations with problems highlighted
+    ggcells(sce, mapping = aes(x = splitProbClusts, y = subsets_Mito_percent, fill = splitProbClusts)) +
+      geom_boxplot() +
+      scale_fill_manual(values = grabColors(length(unique(sce$splitProbClusts)))) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) +
+      ggtitle("Mito Percent with Problematic Cluster Highlights")
+    
+    # coloring by annotations only (not split)
+    ggcells(sce, mapping = aes(x = snAnno, y = subsets_Mito_percent, fill = snAnno)) +
+      geom_boxplot() +
+      scale_fill_manual(values = grabColors(length(unique(sce$snAnno)))) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) +
+      ggtitle("Mito Percent for all Annotated Clusters")
+    
+    # regular annotations split by cluster 
+    ggcells(sce, mapping = aes(x = splitSNType, y = subsets_Mito_percent, fill = splitSNType)) +
+      geom_boxplot() +
+      scale_fill_manual(values = grabColors(length(unique(sce$splitSNType)))) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) +
+      ggtitle("Mito Percent for Regular Annotations Split by Cluster")
+dev.off()
 
 # Checking doublelt scores ("doubletScore": the lower the better, typically dropping anything over 5)
+pdf(file = here(plot_dir, "wt10_DOUBLET_SCORE_QC.pdf"), height = 7, width = 11)
+# coloring by annotations with problems highlighted
+    ggcells(sce, mapping = aes(x = splitProbClusts, y = doubletScore, fill = splitProbClusts)) +
+      geom_boxplot() +
+      scale_fill_manual(values = grabColors(length(unique(sce$splitProbClusts)))) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) +
+      ggtitle("Doublet Score with Problematic Cluster Highlights")
+    
+    # coloring by annotations only (not split)
+    ggcells(sce, mapping = aes(x = snAnno, y = doubletScore, fill = snAnno)) +
+      geom_boxplot() +
+      scale_fill_manual(values = grabColors(length(unique(sce$snAnno)))) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) +
+      ggtitle("Doublet Score for all Annotated Clusters")
+    
+    # regular annotations split by cluster 
+    ggcells(sce, mapping = aes(x = splitSNType, y = doubletScore, fill = splitSNType)) +
+      geom_boxplot() +
+      scale_fill_manual(values = grabColors(length(unique(sce$splitSNType)))) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) +
+      ggtitle("Doublet Score for Regular Annotations Split by Cluster")
+dev.off()
 
 
-
-
+# saving sce object
+save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+                                "sce_post_09_clustered_qc.Rdata"))
