@@ -12,7 +12,7 @@ library("sessioninfo")
 library("xlsx")
 library("tidyverse")
 library("scater")
-
+library("jaffelab")
 
 # most updaated sce object with first round of annotations (where we selected to move forward with wT10)
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
@@ -26,17 +26,27 @@ snAnno <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "09_Clustered_
 snAnno_clean <- snAnno |> 
   filter(!is.na(Cluster)) |>
   mutate(Type_clean = gsub("[^a-zA-Z0-9]", "", Type), 
-         Cluster = paste0("10wTrap_", Cluster)) 
+         Cluster = paste0("10wTrap_", Cluster)) |>
+  mutate(splitProbClusts = paste(problemClusts, ss(Cluster, "_", 2), sep = "_")) |>
+  mutate(splitSNType = paste(snType, ss(Cluster, "_", 2), sep = "_"))
 
 # dropping three extra columns 
 snAnno_clean <- select(snAnno_clean, -c(starts_with("Na"), "MoreInfo"))
 
-# sanity check (checking for repeats in annotations)
+# sanity check (checking for repeats in annotations to check that split by cluster makes sense)
 snAnno_clean |> count(snType)
+snAnno_clean |> count(problemClusts)
 
 # using match to add annotated name columns for wt10
-sce$snAnno <- snAnno_clean$snType[match(sce$wT_10_Erik, snAnno_clean$Cluster)]
+## actual annotatios for now  
+  sce$snAnno <- snAnno_clean$snType[match(sce$wT_10_Erik, snAnno_clean$Cluster)]
 
+## adding columns that we want to plot (annotations but separated by clusters and 
+## annotations with problematic cluster highlights all split by clusters)
+  sce$splitProbClusts <- snAnno_clean$splitProbClusts[match(sce$wT_10_Erik, snAnno_clean$Cluster)]
+  sce$splitSNType <- snAnno_clean$splitSNType[match(sce$wT_10_Erik, snAnno_clean$Cluster)]
+    #splitSNType no longer needed! 
+  
 # sourcing for custom  color palette 
 source(here("code", "04_snRNA-seq", "sourcing", "color_Scheme_CT.R"))
 
@@ -51,32 +61,59 @@ source(here("code", "04_snRNA-seq", "sourcing", "color_Scheme_CT.R"))
 
 
 # Checking library size ("sum": the higher the better, dropping lows)
-pdf(file = here(plot_dir, "wt10_LIBSIZE_QC.pdf") )
-  # coloring by walktrap cluster number
-  ggcells(sce, mapping = aes(x = wT_10_Erik, y = sum, fill = wT_10_Erik)) +
-    geom_boxplot() +
-    scale_fill_manual(values = grabColors(length(unique(sce$wT_10_Erik)))) +
-    theme_linedraw() +
-    theme(
-      legend.position = "Right" , axis.title.x = element_blank(),
-      axis.text.x = element_text(angle = 90, hjust = 1)
-  )
-   
-  # coloring by snAnnotation clusters  
-  ggcells(sce, mapping = aes(x = snAnno, y = sum, fill = snAnno)) +
+pdf(file = here(plot_dir, "wt10_LIBSIZE_QC.pdf"), height = 7, width = 11)
+  # coloring by annotations with problems highlighted
+  ggcells(sce, mapping = aes(x = splitProbClusts, y = sum, fill = splitProbClusts)) +
       geom_boxplot() +
-      scale_fill_manual(values = grabColors(length(unique(sce$snAnno)))) +
+      scale_fill_manual(values = grabColors(length(unique(sce$splitProbClusts)))) +
       theme_linedraw() +
       theme(
-        legend.position = "Right", axis.title.x = element_blank(),
-        axis.text.x = element_text(angle = 90, hjust = 1)
-  )
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+        ) +
+      ggtitle("Library Size with Problematic Cluster Highlights")
+  
+  # coloring by annotations only
+  ggcells(sce, mapping = aes(x = snAnno, y = sum, fill = snAnno)) +
+    geom_boxplot() +
+    scale_fill_manual(values = grabColors(length(unique(sce$snAnno)))) +
+    theme_linedraw() +
+    theme(
+      legend.position = "none", axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 45, hjust = 1)
+      ) +
+    ggtitle("Library Size for all Annotated Clusters")
+  
 dev.off()
 
-
 # Checking detected features ("detected": the higher the better, dropping lows)
+pdf(file = here(plot_dir, "wt10_DETECTED_QC.pdf"), height = 7, width = 11)
+  # coloring by annotations with problems highlighted
+  ggcells(sce, mapping = aes(x = splitProbClusts, y = detected, fill = splitProbClusts)) +
+    geom_boxplot() +
+    scale_fill_manual(values = grabColors(length(unique(sce$splitProbClusts)))) +
+    theme_linedraw() +
+    theme(
+      legend.position = "none", axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    ggtitle("Detected Features with Problematic Cluster Highlights")
+  
+  # coloring by annotations only
+  ggcells(sce, mapping = aes(x = snAnno, y = detected, fill = snAnno)) +
+    geom_boxplot() +
+    scale_fill_manual(values = grabColors(length(unique(sce$snAnno)))) +
+    theme_linedraw() +
+    theme(
+      legend.position = "none", axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    ggtitle("Detected Features for all Annotated Clusters")
+dev.off()
 
 # Checking mitochondrial rate ("subsets_Mito_percent": the lower the better, dropping highs)
+
+
 
 # Checking doublelt scores ("doubletScore": the lower the better, typically dropping anything over 5)
 
