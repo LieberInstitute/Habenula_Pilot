@@ -1,6 +1,6 @@
-## March 3, 2023 - Bukola Ajanaku
-# Running mean ratio expression analysis to help confirm annotated identity of 
-# kept clusters (all 37).
+## March 3 2023 - Bukola Ajanaku
+# Just registering information on the sce object that we have thus far. Contains 
+# relevant information on all 37 of the clusters (all kept) from WalkTrap 10!
 # qrsh -l mem_free=20G,h_vmem=20G
 
 library("SingleCellExperiment")
