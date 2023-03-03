@@ -15,6 +15,12 @@ library("tidyverse")
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
           "sce_post_09_clustered_qc.Rdata"))
 
+# for saving plots
+plot_dir <- here("plots", "05_explore_sce", "02_Mean_Ratio_Explore")
+if(!dir.exists(plot_dir)){
+  dir.create(plot_dir)
+}
+
 #### Mean Ratios ###############################################################
 meanRat_wT <- get_mean_ratio2(
   sce,
@@ -31,6 +37,7 @@ meanRat_snAnno <- get_mean_ratio2(
 )
 
 #### Find Markers ##############################################################
+# in order to run find markers function, Sample must be named donor
 sce$donor <- sce$Sample 
 
 findMark_wT <- findMarkers_1vAll(
@@ -57,10 +64,47 @@ findMark_manAnnno <- findMarkers_1vAll(
 
 
 #### Cell-Type Colors ##########################################################
-  
+  ## For uncombined manually annotated clusters
+#   cell_types <- levels(as.factor(sce$splitSNType))
+#   
+# pdf(file = here(plot_dir, "cell_type_colors.pdf"))
+#   cell_colors <- create_cell_colors(cell_types = cell_types, pallet = "classic", split = NA, preview = TRUE)
+# dev.off()
+  ## For combined manually annotated clusters 
+# cell_types <- levels(as.factor(sce$snAnno))
+# 
+# pdf(file = here(plot_dir, "cell_type_colors_snAnno.pdf"))
+#   cell_colors <- create_cell_colors(cell_types = cell_types, pallet = "classic", split = NA, preview = TRUE)
+# dev.off()
 
-
+#### Plotting Expression #######################################################
+# for all 37 clusters
+pdf(file = here(plot.dir, "Mean_Ratio_Expression_for_Each_37_Clusters.pdf"))
+  sce_symbol_wt <- sce
+  rownames(sce_symbol_wt) <- rowData(sce)$Symbol
   
+  for (j in levels(as.factor(sce$splitSNType))) 
+  plot_marker_express(sce, 
+                    wT_marker_stats, 
+                    n_genes = 5,
+                    rank_col = "rank_ratio", 
+                    anno_col = "anno_ratio",
+                    cell_type = j)
+dev.off()
+
+# for my grouped clusters
+pdf(file = here(plot.dir, "Mean_Ratio_Expression_for_sn_Anno.pdf"))
+sce_symbol_snAnno<- sce
+rownames(sce_symbol_snAnno) <- rowData(sce)$Symbol
+
+for (j in levels(as.factor(sce$snAnno))) 
+  plot_marker_express(sce, 
+                      snAnno_marker_stats, 
+                      n_genes = 5,
+                      rank_col = "rank_ratio", 
+                      anno_col = "anno_ratio",
+                      cell_type = j)
+dev.off()
   
 #### Saving ####################################################################
 save(wT_marker_stats, snAnno_marker_stats, findMark_manAnnno, findMark_wT, file =
