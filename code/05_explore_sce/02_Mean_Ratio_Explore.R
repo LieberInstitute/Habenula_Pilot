@@ -38,13 +38,14 @@ meanRat_snAnno <- get_mean_ratio2(
 
 #### Find Markers ##############################################################
 # in order to run find markers function, Sample must be named donor
-sce$donor <- sce$Sample 
+sce$donor <- NULL
 
 findMark_wT <- findMarkers_1vAll(
   sce,
   assay_name = "counts",
   cellType_col = "splitSNType",
-  add_symbol = FALSE
+  add_symbol = FALSE,
+  mod = "~Sample"
 )
 
 
@@ -52,7 +53,8 @@ findMark_manAnnno <- findMarkers_1vAll(
   sce,
   assay_name = "counts",
   cellType_col = "snAnno",
-  add_symbol = FALSE
+  add_symbol = FALSE,
+  mod = "~Sample"
 )
 
 #### Combining mean ratio with markers #########################################
@@ -64,7 +66,9 @@ findMark_manAnnno <- findMarkers_1vAll(
 
 
 #### Cell-Type Colors ##########################################################
-  ## For uncombined manually annotated clusters
+# gene markers
+  
+    ## For uncombined manually annotated clusters
 #   cell_types <- levels(as.factor(sce$splitSNType))
 #   
 # pdf(file = here(plot_dir, "cell_type_colors.pdf"))
@@ -79,31 +83,35 @@ findMark_manAnnno <- findMarkers_1vAll(
 
 #### Plotting Expression #######################################################
 # for all 37 clusters
-pdf(file = here(plot.dir, "Mean_Ratio_Expression_for_Each_37_Clusters.pdf"))
-  sce_symbol_wt <- sce
-  rownames(sce_symbol_wt) <- rowData(sce)$Symbol
+pdf(file = here(plot_dir, "Mean_Ratio_Expression_for_Each_37_Clusters.pdf"))
+for (j in levels(as.factor(sce$splitSNType))) {
+  message(j)
   
-  for (j in levels(as.factor(sce$splitSNType))) 
-  plot_marker_express(sce, 
+  print(plot_marker_express(sce, 
                     wT_marker_stats, 
                     n_genes = 5,
                     rank_col = "rank_ratio", 
                     anno_col = "anno_ratio",
+                    cellType_col = "splitSNType",
                     cell_type = j)
+  )
+}
 dev.off()
 
 # for my grouped clusters
-pdf(file = here(plot.dir, "Mean_Ratio_Expression_for_sn_Anno.pdf"))
-sce_symbol_snAnno<- sce
-rownames(sce_symbol_snAnno) <- rowData(sce)$Symbol
-
-for (j in levels(as.factor(sce$snAnno))) 
-  plot_marker_express(sce, 
+pdf(file = here(plot_dir, "Mean_Ratio_Expression_for_sn_Anno.pdf"))
+for (j in levels(as.factor(sce$snAnno))) {
+  message(j)
+  
+  print( plot_marker_express(sce, 
                       snAnno_marker_stats, 
                       n_genes = 5,
                       rank_col = "rank_ratio", 
                       anno_col = "anno_ratio",
+                      cellType_col = "snAnno",
                       cell_type = j)
+  )
+}
 dev.off()
   
 #### Saving ####################################################################
