@@ -13,10 +13,11 @@ load(here("processed-data", "04_snRNA-seq", "sce_objects",
 message("Start - snAnno")
 Sys.time()
 
-  sce_psuedo_wT10 <- registration_pseudobulk(sce, "snAnno", "Sample")
+  sce_new_pb_snAnno <- registration_pseudobulk(sce, "snAnno", "Sample")
 
 message("End - Pseudobulk Complete")
 Sys.time()
+
 
 save(sce_new_pb_snAnno, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                                             "sce_new_pseudobulk_with_snAnno.Rdata"))

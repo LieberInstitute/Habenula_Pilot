@@ -21,7 +21,7 @@
       # #      
       # # * Probe the Hb cluster with Habenula and Thalamus markers 
       # 
-      # ## 1) Make violin plots for combined clusters 
+      # ## 1) Make violin plots for combined clusters [DONE]
       # ## 2) Create heatmap that doesn't split by Sample. 
       # ## 3) Hockey Stick plots (from Zoom meeting with Louise slacked in Habenula chat.)
       # ## 4) VP1: Grab list of genes from Dr. Maynard for violin plots in Hb cells (violin plots)
