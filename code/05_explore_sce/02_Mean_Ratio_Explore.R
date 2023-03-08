@@ -38,7 +38,6 @@ meanRat_snAnno <- get_mean_ratio2(
 
 #### Find Markers ##############################################################
 # in order to run find markers function, Sample must be named donor
-sce$donor <- NULL
 
 findMark_wT <- findMarkers_1vAll(
   sce,
@@ -83,6 +82,7 @@ findMark_manAnnno <- findMarkers_1vAll(
 
 #### Plotting Expression #######################################################
 # for all 37 clusters
+  # mean ratio
 pdf(file = here(plot_dir, "Mean_Ratio_Expression_for_Each_37_Clusters.pdf"))
 for (j in levels(as.factor(sce$splitSNType))) {
   message(j)
@@ -97,6 +97,8 @@ for (j in levels(as.factor(sce$splitSNType))) {
   )
 }
 dev.off()
+  # mean ratio expression doesn't really say much for these tiny clusters
+
 
 # for my grouped clusters
 pdf(file = here(plot_dir, "Mean_Ratio_Expression_for_sn_Anno.pdf"))

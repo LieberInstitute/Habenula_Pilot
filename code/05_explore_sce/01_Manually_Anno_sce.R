@@ -54,7 +54,7 @@ table(sce$splitSNType)
 # In summary:
 table(sce$snAnno)
 
-  # Astrocyte Excit.Thal         Hb Inhib.Thal      LHb.1      LHb.2      LHb.3 
+  # Astrocyte Excit.Thal   Hb     Inhib.Thal      LHb.1      LHb.2      LHb.3 
   # 538       1800         51       7612        201        266        134 
   # LHb.4      LHb.5      LHb.6      LHb.7      LHb.8      MHb.1      MHb.2 
   # 477         83         38         39       1014        152        145 
