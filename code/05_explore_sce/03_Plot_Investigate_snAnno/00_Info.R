@@ -1,5 +1,5 @@
 ## March 8 2023 - Bukola Ajanaku
-# This folder is solely used to investigate the (18) single nucleus annotation clusters
+# This folder is solely used to investigate the (19) single nucleus annotation clusters
 # to validate probe their identities and investigate if any further collapses are necessary.
 
 
