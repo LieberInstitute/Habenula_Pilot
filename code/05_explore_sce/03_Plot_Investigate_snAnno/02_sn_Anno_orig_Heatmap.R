@@ -86,7 +86,7 @@ markers.custom = list(
 
 ####### PLOTTING ###############################################################
 # creating dir for plots
-plot_dir <- here("plots", "05_explore_sce", "03_Plot_Investigate_snAnno", "01_snAnno_orig_Violin",
+plot_dir <- here("plots", "05_explore_sce", "03_Plot_Investigate_snAnno", 
                  "02_snAnno_orig_Heatmap")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
@@ -126,7 +126,6 @@ pseudoHeater <- function(sce, clusterMethod){
   # grabbing the annotations per cluster from the sce object
   clusterData <- as.data.frame(colData(sce)[,c("Sample", clusterMethod)]) 
   
-  
   # prepping the colors we want
     # for cell type
   num_pal <- length(unique(clusterData[,clusterMethod]))
@@ -140,8 +139,7 @@ pseudoHeater <- function(sce, clusterMethod){
   # heatmap row annotationn
   row_ha <- rowAnnotation(
     df = clusterData[,c("Sample", "snAnno")],
-    col = list(cell_type = col_pal_ct,
-               Sample = col_pal_sample)
+    col = list(cell_type = col_pal_ct)
   )
   
   heatmapped <- Heatmap(marker_z_score,
@@ -158,9 +156,26 @@ pseudoHeater <- function(sce, clusterMethod){
 }
 
 # Running function
-pdf(here(plot_dir, "markers_heatmap_snAnno_complicated_splitSample.pdf"), width = 18, height = 22)
+pdf(here(plot_dir, "markers_heatmap_snAnno_original_pseudobulk_sce_obj.pdf"), width = 18, height = 22)
 #  pseudoHeater(sce_pb, "snAnno")
   print(heatmapped)
 dev.off()
 
+
+##### Using new pseudobulked sce object  
+load(here("processed-data", "04_snRNA-seq", "sce_objects", 
+          "sce_new_pseudobulk_with_snAnno.Rdata"))
+new_sce_pb <- sce_new_pb_snAnno
+sce_new_pb_snAnno <- NULL
+
+pdf(here(plot_dir, "markers_heatmap_snAnno_new_pseudobulk_sce_obj.pdf"), width = 18, height = 22)
+#  pseudoHeater(sce_pb, "snAnno")
+  print(heatmapped)
+dev.off()
+
+
+
+
+
+# 
 
