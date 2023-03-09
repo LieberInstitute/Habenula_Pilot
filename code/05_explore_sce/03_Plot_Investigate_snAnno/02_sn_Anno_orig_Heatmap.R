@@ -157,25 +157,89 @@ pseudoHeater <- function(sce, clusterMethod){
 
 # Running function
 pdf(here(plot_dir, "markers_heatmap_snAnno_original_pseudobulk_sce_obj.pdf"), width = 18, height = 22)
-#  pseudoHeater(sce_pb, "snAnno")
-  print(heatmapped)
+  pseudoHeater(sce_pb, "snAnno")
 dev.off()
 
 
-##### Using new pseudobulked sce object  
+##### Using new pseudobulked sce object ########################################
+## this is new because it pseudobulks our sce object based on my original snAnno 
+# classificiation (before combining MHb 2&3). I will then heatmap to see the expression
+# against my new custom markers list. 
+
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
           "sce_new_pseudobulk_with_snAnno.Rdata"))
 new_sce_pb <- sce_new_pb_snAnno
 sce_new_pb_snAnno <- NULL
 
-pdf(here(plot_dir, "markers_heatmap_snAnno_new_pseudobulk_sce_obj.pdf"), width = 18, height = 22)
-#  pseudoHeater(sce_pb, "snAnno")
+# modified pseudoHeater for simplified pseudobulk
+pseudoHeater <- function(sce, clusterMethod){
+  # sce = pseudobulked sce object
+  # clusterMethod = whichever nearest neighbors method you use (as character string)
+  
+  # Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
+  rownames(sce) <- rowData(sce)$Symbol
+  
+  # renaming rownnames of colData(sce) based on row annotations
+  rownames(colData(sce)) <- paste(colData(sce)[, "snAnno"])
+  
+  # Making data frame of genes we are interested in annd their general classification
+  markTable <- as.data.frame(unlist(markers.custom)) |> 
+    rownames_to_column("cellType") |>
+    rename(gene = `unlist(markers.custom)`) |>
+    mutate(cellType = gsub("\\d+", "", cellType)) |>
+    filter(gene %in% rowData(sce)$Symbol)
+  
+  # extracting logcounts from sce and subset just genes in markTable
+  markerlogcounts <- logcounts(sce[markTable$gene, ])
+  
+  # getting z scores
+  marker_z_score <- scale(t(markerlogcounts))
+  # corner(marker_z_score)
+  
+  # heatmap columns annotation
+  column_ha <- HeatmapAnnotation(
+    cell_type = markTable$cellType
+  )
+  
+  # grabbing the annotations per cluster from the sce object
+  clusterData <- as.data.frame(colData(sce)[,c("Sample", clusterMethod)]) 
+  
+  # prepping the colors we want
+  # for cell type
+  num_pal <- length(unique(clusterData[,clusterMethod]))
+  col_pal_ct <- grabColors(num_pal, start = 4)
+  names(col_pal_ct) = unique(clusterData[,clusterMethod])
+  # copying ct color pallete for Sample
+  sample_pal <- length(unique(clusterData$Sample))
+  col_pal_sample <- grabColors(sample_pal, start = 9)
+  names(col_pal_sample) = unique(clusterData$Sample)
+  
+  # heatmap row annotationn
+  row_ha <- rowAnnotation(
+    df = clusterData[,c("Sample", "snAnno")],
+    col = list(cell_type = col_pal_ct)
+  )
+  
+  heatmapped <- Heatmap(marker_z_score,
+                        cluster_rows = TRUE,
+                        cluster_columns = FALSE,
+                        right_annotation = row_ha,
+                        top_annotation = column_ha,
+                        column_split = markTable$cellType,
+                        column_title_rot = 30,
+                        heatmap_legend_param = list(legend_gp = gpar(fontsize = 13)))
+  
   print(heatmapped)
+  
+}
+
+pdf(here(plot_dir, "markers_heatmap_snAnno_new_pseudobulk_sce_obj.pdf"), width = 18, height = 22)
+  pseudoHeater(sce_pb, "snAnno")
 dev.off()
 
 
 
 
 
-# 
+# Done.
 
