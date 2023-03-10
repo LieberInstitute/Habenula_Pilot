@@ -165,7 +165,7 @@ dev.off()
 ## this is new because it pseudobulks our sce object based on my original snAnno 
 # classificiation (before combining MHb 2&3). I will then heatmap to see the expression
 # against my new custom markers list. 
-
+# Terminal 7
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
           "sce_new_pseudobulk_with_snAnno.Rdata"))
 new_sce_pb <- sce_new_pb_snAnno
