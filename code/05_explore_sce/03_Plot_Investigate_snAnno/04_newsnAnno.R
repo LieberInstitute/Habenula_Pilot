@@ -5,6 +5,8 @@
 library("SingleCellExperiment")
 library("here")
 library("tidyverse")
+library("DeconvoBuddies")
+library("sessioninfo")
 
 # loading original sce object with just snAnno and other minor annotations
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
@@ -14,14 +16,15 @@ load(here("processed-data", "04_snRNA-seq", "sce_objects",
 sce$snAnno2 <- sce$snAnno
 
   ## LHb.6 is actually Endothelial. Total LHb is now 7 from 8.
-sce$snAnno2[sce$snAnno2 == "LHB.6"] <- "Endo"
+sce$snAnno2[sce$snAnno2 == "LHb.6"] <- "Endo"
 
-# sourcing code from DLPFC Project (by Louise Huuki) 
-  source(here("code", "04_snRNA-seq", "sourcing", "custom_plotExpression.R"))
-# actually runs and plots markers 
-  source(here("code", "04_snRNA-seq", "sourcing", "my_plotMarkers.R"))
+# # sourcing code from DLPFC Project (by Louise Huuki) 
+   source(here("code", "04_snRNA-seq", "sourcing", "custom_plotExpression.R"))
+# # actually runs and plots markers 
+   source(here("code", "04_snRNA-seq", "sourcing", "my_plotMarkers.R"))
 
 ## new list of gene markers :)
+# Terminal 1
 new_markers.custom <- list(
   'Neuron' = c('SYT1', 'SNAP25', "SYT4", "SYP"), 
   "Non-Neuronal Subtype" = c("TNF", "KIR4.1", "KCNJ10"),
@@ -44,6 +47,7 @@ new_markers.custom <- list(
   'astrocyte' = c('GFAP', 'AQP4')
 )
 
+# Terminal 6
 extra_markers.custom <- list(
   "Macrophages" = c("MFC1", "MFC1"),
   "Fibroblasts" = c("PDGFRA", "COL3A1"),
@@ -53,8 +57,9 @@ extra_markers.custom <- list(
 )
 
 
+# Terminal 5
 eLife_markers.custom <- list(
-  "MHb_Ventral_2thirds" = c("Fgf1", "Satb1", "Igfbp7", "Lmo3", "Slc18a3", "Tcf4", "Esam", "Chrna3", "Chrnb3"),
+  "MHb_Ventral_2thirds" = toupper(c("Fgf1", "Satb1", "Igfbp7", "Lmo3", "Slc18a3", "Tcf4", "Esam", "Chrna3", "Chrnb3")),
   "MHb_Ventrolateral" = c("Igfbp7", "Lmo3", "Slc18a3", "Tcf4", "Esam", "Syt15"),
   "MHb_Lateral" = c("Syt15", "Spon1", "Sema3d", "Calb1", "Rprm"),
   "MHb_Dorsal" = c("Tac2", "Calb1", "Rprm", "Col15a1", "Rasd2", "Adcyap1", "Wif1", "Cck", "Avail", "Fabp5"),
@@ -68,9 +73,13 @@ eLife_markers.custom <- list(
   "LHB_HbX" = c("Gpd2", "Gpr151", "Sst", "Cartpt", "Chrnb3", 'Bcl11b', "Th")
 )
 
+# Making all marker lists into all capital for plotexpression function below
+new_markers.custom <- lapply(new_markers.custom, FUN = toupper)
+extra_markers.custom <- lapply(extra_markers.custom, FUN = toupper)
+eLife_markers.custom <- lapply(eLife_markers.custom, FUN = toupper)
+
 # changing rownames for gene annotation purposes 
 rownames(sce) <- rowData(sce)$Symbol
-
 
 ####### PLOTTING ###############################################################
 # creating plot dir
@@ -81,24 +90,30 @@ if(!dir.exists(plot_dir)){
 }
 
 # 1) overall new_markers.custom creating name of pdf
+# plotting by snAnno in sce because snAnno is my original combined cluster resolution for sn annotations
   snAnnoCustom_new <- here(plot_dir, "snAnno_new_custom_markers_violin_plots.pdf")
-  # plotting by snAnno in sce because snAnno is my original combined cluster resolution for sn annotations
-    my_plotMarkers(sce, marker_list = new_markers.custom, assay = "logcounts", 
-                   cat = "snAnno2", fill_colors = NULL, pdf_fn = snAnnoCustom_new)
+  my_plotMarkers(sce, marker_list = new_markers.custom, assay = "logcounts", 
+                 cat = "snAnno2", fill_colors = NULL, pdf_fn = snAnnoCustom_new)
+    
+   # test <-  plot_marker_express_List(sce, 
+   #                           pdf_fn =  snAnnoCustom_new, 
+   #                           gene_list = new_markers.custom,
+   #                           cat = "snAnno2") 
+    
     
 # 2) throwing in some extra marker categories 
   extraMark <- here(plot_dir, "snAnno_extra_marker_categories_violin_plots.pdf")
   # plotting by snAnno in sce because snAnno is my original combined cluster resolution for sn annotations
-      my_plotMarkers(sce, marker_list = new_markers.custom, assay = "logcounts", 
+      my_plotMarkers(sce, marker_list = extra_markers.custom, assay = "logcounts", 
                      cat = "snAnno2", fill_colors = NULL, pdf_fn = extraMark)
       
 # 3) eLife marker categories 
   eLife_mark <- here(plot_dir, "snAnno_eLife_categories_violin_plots.pdf")
 # plotting by snAnno in sce because snAnno is my original combined cluster resolution for sn annotations
-    my_plotMarkers(sce, marker_list = new_markers.custom, assay = "logcounts", 
+    my_plotMarkers(sce, marker_list = eLife_markers.custom, assay = "logcounts", 
                    cat = "snAnno2", fill_colors = NULL, pdf_fn = eLife_mark)
 
 
-# tell Louise that sometimes code can get hooked when missing markers. Fix is to cancel function and then dev.off()
-
+# Saving 
+save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", "sce_with_snAnno2.RDATA"))
 
