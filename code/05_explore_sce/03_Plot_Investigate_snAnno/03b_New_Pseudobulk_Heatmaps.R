@@ -116,7 +116,7 @@ pdf(here(plot_dir, "Markers_Heatmap_snAnno2_Pseudobulked.pdf"), width = 18, heig
   pseudoHeater(sce_new_pb_snAnno2, "snAnno2")
 dev.off()
 
-## for snAnno2 which has MHb.3 and MHb.2 combines
+## for snAnno3 which has MHb.3 and MHb.2 combines
 pdf(here(plot_dir, "Markers_Heatmap_snAnno3_New_Pseudobulk.pdf"), width = 18, height = 22)
   pseudoHeater(sce_new_pb_snAnno3, "snAnno3")
 dev.off()
