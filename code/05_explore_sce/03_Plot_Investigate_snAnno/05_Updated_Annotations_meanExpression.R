@@ -58,7 +58,7 @@ findMark_manAnnno2 <- findMarkers_1vAll(
 )
 
 ## For combined manually annotated clusters 
-snAnno_marker_stats_new_2 <- left_join(meanRat_snAnno2, findMark_manAnnno2, by = c("gene", "cellType.target"))
+snAnno_marker_stats_new_2 <- left_join(mean_ratio_snAnno2, findMark_manAnnno2, by = c("gene", "cellType.target"))
 
 pdf(file = here(plot_dir, "Mean_Ratio_Expression_for_new_snAnno2.pdf"))
 for (j in levels(as.factor(sce$snAnno2))) {
@@ -123,7 +123,10 @@ dev.off()
 # saving
 save(sce, here("processed-data", "04_snRNA-seq", "sce_objects", "sce_with_snAnno2_and_snAnno3.RDATA"))
 
-save(mean_ratio_snAnno2, findMark_manAnnno2, mean_ratio_snAnno3_combined, findMark_manAnnno3_combined, file =
-       here("processed-data", "05_explore_sce", "mean_ratio_data_from_05_Updated_Annotations_meanExpression.Rdata"))
+save(mean_ratio_snAnno2, findMark_manAnnno2, snAnno_marker_stats_new_2, file =
+       here("processed-data", "05_explore_sce", "mean_ratio_for_snAnno2_from_05_Updated_Annotations_meanExpression.Rdata"))
+     
+save(mean_ratio_snAnno3_combined, findMark_manAnnno3_combined, snAnno_marker_stats_new_3_combined, file =
+       here("processed-data", "05_explore_sce", "mean_ratio_for_snAnno3_from_05_Updated_Annotations_meanExpression.Rdata"))
 
 # Not done.
