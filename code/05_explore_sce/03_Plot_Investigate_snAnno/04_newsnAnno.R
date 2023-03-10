@@ -17,6 +17,34 @@ sce$snAnno2 <- sce$snAnno
 
   ## LHb.6 is actually Endothelial. Total LHb is now 7 from 8.
 sce$snAnno2[sce$snAnno2 == "LHb.6"] <- "Endo"
+table(sce$snAnno2)
+    # Astrocyte       Endo Excit.Thal         Hb Inhib.Thal      LHb.1      LHb.2 
+    # 538         38       1800         51       7612        201        266 
+    # LHb.3      LHb.4      LHb.5      LHb.7      LHb.8      MHb.1      MHb.2 
+    # 134        477         83         39       1014        152        145 
+    # MHb.3      MHb.4  Microglia      Oligo        OPC 
+    # 395         18        145       2178       1796 
+
+# doing the same for the  splitSNType. Has same info as snAnno but split by cluster (so annotation + cluster number)
+sce$splitSNType2 <- sce$splitSNType
+sce$splitSNType2[sce$splitSNType2 == "LHb.6_32"] <- "Endo"
+table(sce$splitSNType2)
+    # Astrocyte_11  Astrocyte_14  Astrocyte_34          Endo Excit.Thal_15 
+    # 188           325            25            38           164 
+    # Excit.Thal_18 Excit.Thal_19 Excit.Thal_20 Excit.Thal_21 Excit.Thal_22 
+    # 373            51            86           217           276 
+    # Excit.Thal_25 Excit.Thal_28 Excit.Thal_37  Excit.Thal_5  Excit.Thal_8 
+    # 62            65            17           312           177 
+    # Hb_30 Inhib.Thal_10 Inhib.Thal_17 Inhib.Thal_29 Inhib.Thal_35 
+    # 51          2231          5241            85            17 
+    # Inhib.Thal_6      LHb.1_13      LHb.2_24      LHb.3_26       LHb.4_3 
+    # 38           201           266           134           477 
+    # LHb.5_31      LHb.7_33       LHb.8_4      MHb.1_12      MHb.2_16 
+    # 83            39          1014           152           145 
+    # MHb.3_9      MHb.4_36   Microglia_1      Oligo_23      Oligo_27 
+    # 395            18           145           280            65 
+    # Oligo_7         OPC_2 
+    # 1833          1796 
 
 # # sourcing code from DLPFC Project (by Louise Huuki) 
    source(here("code", "04_snRNA-seq", "sourcing", "custom_plotExpression.R"))
@@ -40,22 +68,21 @@ new_markers.custom <- list(
                             'RAMP3', 'COX6A2', 'SLITRK6', 'DGAT2', "ADARB2"),
   "Endo/Mural" = c("CLDN5", "CARMN", "ITIH5", "NOTCH3", "ATP10A", "MECOM", "EBF1", 
                    "AC092957.1", "ITGA1", "VWF"),
-  "Choroid Plexus" = c("klotho", "CLIC6", "OATP14", "EZRIN"),
   'oligodendrocyte' = c('MOBP', 'MBP', "CX3CR1"),
   'oligodendrocyte_precursor' = c('PDGFRA', 'VCAN'), 
   'microglia' = c('C3', 'CSF1R'), 
   'astrocyte' = c('GFAP', 'AQP4')
 )
+#  "Choroid Plexus" = c("klotho", "CLIC6", "OATP14", "EZRIN"),
 
 # Terminal 6
 extra_markers.custom <- list(
-  "Macrophages" = c("MFC1", "MFC1"),
-  "Fibroblasts" = c("PDGFRA", "COL3A1"),
-  "Ependymal" = c("SLC6A11", "HDC"),
-  "Pericytes" = c("ABCC9", "PDGFRB"),
-  "Polydendro" =  c("GPR17", "OLIGO1", 'GAP43', 'PDGFRA')
+  "Macrophages" = c("CD14", "CD16", "CD64", "CD68", "CD71", "CCR5"),
+  "Fibroblasts" = c("PDGFRA", "COL3A1", "Col1a1", "Col1a2", "Col5a1", "Loxl1", "Lum", "Fbln1", "Fbln2"),
+  "Ependymal" = c("SLC6A11", "HDC", "Foxj1", "Pifo", "Dynlrb2"),
+  "Pericytes" = c("ABCC9", "PDGFRB", "Cspg4"),
+  "Polydendro" =  c("GPR17", "OLIG1", 'GAP43', 'PDGFRA')
 )
-
 
 # Terminal 5
 eLife_markers.custom <- list(
@@ -89,30 +116,42 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# 1) overall new_markers.custom creating name of pdf
-# plotting by snAnno in sce because snAnno is my original combined cluster resolution for sn annotations
+#### For snAnno2 (updated snAnno) ####
+# 1) New_markers.custom 
   snAnnoCustom_new <- here(plot_dir, "snAnno_new_custom_markers_violin_plots.pdf")
   my_plotMarkers(sce, marker_list = new_markers.custom, assay = "logcounts", 
                  cat = "snAnno2", fill_colors = NULL, pdf_fn = snAnnoCustom_new)
-    
    # test <-  plot_marker_express_List(sce, 
    #                           pdf_fn =  snAnnoCustom_new, 
    #                           gene_list = new_markers.custom,
    #                           cat = "snAnno2") 
-    
-    
-# 2) throwing in some extra marker categories 
-  extraMark <- here(plot_dir, "snAnno_extra_marker_categories_violin_plots.pdf")
-  # plotting by snAnno in sce because snAnno is my original combined cluster resolution for sn annotations
-      my_plotMarkers(sce, marker_list = extra_markers.custom, assay = "logcounts", 
-                     cat = "snAnno2", fill_colors = NULL, pdf_fn = extraMark)
+ 
+# 2) Extra Markers doesn't work for snAnno combination   
       
-# 3) eLife marker categories 
+# 3) eLife marker categories  
   eLife_mark <- here(plot_dir, "snAnno_eLife_categories_violin_plots.pdf")
-# plotting by snAnno in sce because snAnno is my original combined cluster resolution for sn annotations
     my_plotMarkers(sce, marker_list = eLife_markers.custom, assay = "logcounts", 
                    cat = "snAnno2", fill_colors = NULL, pdf_fn = eLife_mark)
 
+#### For splitSNType2 (updated splitSNType) ####
+# 1) new marker list on all 37 clusters to double check higher order combos
+snAnnoCustom_newer1 <- here(plot_dir, "SPLIT_snAnno_new_custom_markers_violin_plots.pdf")
+my_plotMarkers(sce, marker_list = new_markers.custom, assay = "logcounts", 
+                   cat = "splitSNType2", fill_colors = NULL, pdf_fn = snAnnoCustom_newer1)
+
+# 2) extra marker list to make sure we aren't missing any smalller classes for higher 
+# order combination
+extraMarkers1 <- here(plot_dir, "SPLIT_snAnno_extra_marker_categories_violin_plots.pdf")
+my_plotMarkers(sce, marker_list = extra_markers.custom, assay = "logcounts", 
+               cat = "splitSNType2", fill_colors = NULL, pdf_fn = extraMarkers1)
+
+# 3) eLife marker categorieS just for fun  
+eLife_mark_newer1 <- here(plot_dir, "SPLIT_snAnno_eLife_categories_violin_plots.pdf")
+my_plotMarkers(sce, marker_list = eLife_markers.custom, assay = "logcounts", 
+               cat = "splitSNType2", fill_colors = NULL, pdf_fn = eLife_mark_newer1)
+
+    
+    
 
 # Saving 
 save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", "sce_with_snAnno2.RDATA"))
