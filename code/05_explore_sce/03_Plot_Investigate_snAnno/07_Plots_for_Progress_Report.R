@@ -139,6 +139,32 @@ single.markers_split_simplified = list(
   "MHb Clus" = c("CHAT"),
   "MHb Cluste" = c("BHLHE22")
 )
+
+official_markers = list(
+  'Neuron' = c('SYT1'),
+  'Ihib Neuron' = c('GAD1'), 
+  'Excit Neuron' = c('SLC17A6'), 
+  "Thal.Med" = c("ADARB2"),
+  'Habenula' = c("POU4F1"), 
+  "LHb" = c("HTR2C"),
+  "MHb" = c("NEUROD1"),
+  "LHb A " = c("LINC02653"),
+  "LHb B" = c("AC073071.1"),
+  "LHb C" = c ("ENTHD1"),
+  "LHb D" = c("TLE2"),
+  "LHb E" = c("LINC01619"),
+  "LHb F" = c("TACR3"),
+  "LHb G" = c("AC008619.1"),
+  "MHb A" = c("EXOC1L"), 
+  "MHb B" = c("CHAT"),
+  "MHb C" = c("BHLHE22"),
+  "Astrocyte" = c("GFAP"),
+  "Microglia" = c("C3"),
+  "Oligo" = c("MOBP"),
+  "OPC" = c("PDGFRA"),
+)
+
+
 ####### PLOTTING ###############################################################
 # creating dir for plots
 plot_dir <- here("plots", "05_explore_sce", "03_Plot_Investigate_snAnno", 
