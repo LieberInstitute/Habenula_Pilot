@@ -75,7 +75,6 @@ new_markers.custom <- list(
 )
 #  "Choroid Plexus" = c("klotho", "CLIC6", "OATP14", "EZRIN"),
 
-# Terminal 6
 extra_markers.custom <- list(
   "Macrophages" = c("CD14", "CD16", "CD64", "CD68", "CD71", "CCR5"),
   "Fibroblasts" = c("PDGFRA", "COL3A1", "Col1a1", "Col1a2", "Col5a1", "Loxl1", "Lum", "Fbln1", "Fbln2"),
@@ -84,7 +83,6 @@ extra_markers.custom <- list(
   "Polydendro" =  c("GPR17", "OLIG1", 'GAP43', 'PDGFRA')
 )
 
-# Terminal 5
 eLife_markers.custom <- list(
   "MHb_Ventral_2thirds" = toupper(c("Fgf1", "Satb1", "Igfbp7", "Lmo3", "Slc18a3", "Tcf4", "Esam", "Chrna3", "Chrnb3")),
   "MHb_Ventrolateral" = c("Igfbp7", "Lmo3", "Slc18a3", "Tcf4", "Esam", "Syt15"),
@@ -149,10 +147,17 @@ my_plotMarkers(sce, marker_list = extra_markers.custom, assay = "logcounts",
 eLife_mark_newer1 <- here(plot_dir, "SPLIT_snAnno_eLife_categories_violin_plots.pdf")
 my_plotMarkers(sce, marker_list = eLife_markers.custom, assay = "logcounts", 
                cat = "splitSNType2", fill_colors = NULL, pdf_fn = eLife_mark_newer1)
-
-    
-    
-
 # Saving 
 save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", "sce_with_snAnno2.RDATA"))
+
+
+# # updating for combined MHb.3 and MHb.2 for snAnno3 
+# sce$snAnno3 <- sce$snAnno2
+# # combining MHb.3 with MHb.2
+# sce$snAnno3[sce$snAnno3 == "MHb.3"] <- "MHb.2"
+# 
+# sce$splitSNType3 <- sce$splitSNType2
+# sce$splitSNType3[sce$splitSNType3 == "MHb.3_9"] <- "MHb.2_16"
+# save(sce, file = here("processed-data", "04_snRNA-seq", "sce_objects", "sce_with_snAnno2_and_snAnno3.RDATA"))
+
 
