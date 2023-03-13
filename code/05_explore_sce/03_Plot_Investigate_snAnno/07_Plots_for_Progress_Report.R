@@ -62,7 +62,7 @@ official_markers = list(
   "Thal" = c("LYPD6B"),
   'Hb' = c("POU4F1"), 
   "LHb" = c("HTR2C"),
-  "MHb" = c("CHAT"),
+  "MHb" = c("CHRNB4"), # CHRNA3, 
   "LHb.A " = c("ATP8B1"),
   "LHb.B" = c("CRH"),
   "LHb.C" = c ("ENTHD1"),
@@ -137,18 +137,18 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
   # renaming rownnames of colData(sce) based on row annotations
   rownames(colData(sce)) <- paste(colData(sce)[, clusterMethod])
   
+  # reordering sce object for plottability
+  sce_reorder <- sce[unlist(markerList) , row_namers]
+  
   # Making data frame of genes we are interested in annd their general classification
   markTable <- as.data.frame(unlist(markerList)) |> 
     rownames_to_column("cellType") |>
     rename(gene = `unlist(markerList)`) |>
     mutate(cellType = gsub("\\d+", "", cellType)) |>
-    filter(gene %in% rowData(sce)$Symbol)
-  
-  # extracting logcounts from sce and subset just genes in markTable
-  markerlogcounts <- logcounts(sce[markTable$gene, ])
+    filter(gene %in% rowData(sce_reorder)$Symbol)
   
   # getting z scores
-  marker_z_score <- scale(t(markerlogcounts))
+  marker_z_score <- scale(t(logcounts(sce_reorder)))
   # corner(marker_z_score)
   
   # heatmap columns annotation
@@ -156,8 +156,8 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
     cell_type = markTable$cellType
   )
   
-  # grabbing the annotations per cluster from the sce object
-  clusterData <- as.data.frame(colData(sce)[,clusterMethod]) 
+  # grabbing the annotations per cluster from the sce_reorder object
+  clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
   names(clusterData) <- "cellType"
   
   # prepping the colors we want
@@ -178,8 +178,7 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
                         right_annotation = row_ha,
                         top_annotation = column_ha,
                         column_split = factor(markTable$cellType, levels = markTable$cellType) ,
-                        column_title_rot = 30,
-                        row_order = order(clusterData$cellType, levels = row_namers)
+                        column_title_rot = 30
                         )
   
   print(heatmapped)
@@ -187,7 +186,7 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
 }
 
 # printing 
-pdf(here(plot_dir, "Official_Markers_Heatmap_snAnno3_Simple_Pseudobulk.pdf"), width = 12, height = 8)
+pdf(here(plot_dir, "Official_Markers_Heatmap_snAnno3_Simple_Pseudobulk_3.pdf"), width = 12, height = 8)
 #  pseudoHeater(sce_simple_pb_snAnno3, "snAnno3", markerList = official_markers)
   print(heatmapped)
 dev.off()
