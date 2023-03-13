@@ -57,7 +57,7 @@ official_markers = list(
   "Astro" = c("AQP4"),
   "Endo" = c("ITIH5"),
   "Thal" = c("LYPD6B"),
-  "LHb.A " = c("LINC02653"), #  , ATP8B1
+  "LHb.A" = c("LINC02653"), #  , ATP8B1
   "LHb.B" = c("AC073071.1"),
   "LHb.C" = c ("ENTHD1"),
   "LHb.D" = c("TLE2"),
@@ -101,11 +101,11 @@ row_namers <- c("Oligo",
 # neurons: purple (inhib (red) vs excit (blue))
 
 color_official_markers = c(
-  "Oligo" = c("#355E3B"), #hunter green
-  "OPC" = c("#454B1B"), #army green
+  "Oligo" = c("#5C4033"), # dark grown
+  "OPC"= c("#899499"), # pewter (grey)
   "Micro" = c("#4CBB17"), # kelly green
-  "Astro" = c("#50C878"), # emerald green
-  "Endo" = c("#00A36C"), #jade
+  "Astro" = c("#CC5500"), # burnt orange
+  "Endo" = c("#702963"), # byzantium
   "Thal" = c("#FF69B4"), # hot pink
   "LHb.A" = c("#5F9EA0"), # cadet Blue
   "LHb.B" = c("#5D3FD3"), # iris
@@ -122,7 +122,7 @@ color_official_markers = c(
   "LHb" = c("#3F00FF"), # indigo (deeper blue)
   'Neuron' = c('#800080'), # purple
   'Exc_Neuron' = c('#0818A8'), # zaffre (dark blue)
-  "Inh_Neuron" = c('#800000') # maroon
+  "Inh_Neuron" = c('#FF0000') #  red
 )
 #833866
 
@@ -144,12 +144,12 @@ dev.off()
 
 
 ## glia cells: glia (5 colors), thalamus (2 reds), 
-color_row_namers <- c( "Oligo" = c("#355E3B"), #hunter green
-                       "OPC "= c("#454B1B"), #army green
+color_row_namers <- c( "Oligo" = c("#5C4033"), # dark grown
+                       "OPC"= c("#899499"), # pewter (grey)
                        "Microglia" = c("#4CBB17"), # kelly green
-                       "Astrocyte" = c("#50C878"),
-                       "Endo" = c("#00A36C"), #jade
-                       "Inhib.Thal" = c('#800000'),
+                       "Astrocyte" = c("#CC5500"), # burnt orange
+                       "Endo" = c("#702963"), # byzantium
+                       "Inhib.Thal" = c('#FF0000'), #red
                        "Excit.Thal" = c('#0818A8'), # zaffre (dark blue)
                        "LHb.1" = c("#5F9EA0"), # cadet Blue
                        "LHb.2" = c("#5D3FD3"), # iris
@@ -160,7 +160,7 @@ color_row_namers <- c( "Oligo" = c("#355E3B"), #hunter green
                        "LHb.7" = c("#4169E1"), # royal bluee
                        "MHb.1" = c("#40E0D0"), # Turquoise
                        "MHb.2" = c("#96DED1"), #Robin Egg Blue
-                       "MHb.3" = c("#7DF9FF")
+                       "MHb.3" = c("#7DF9FF") # light blue
 )
 
 png(here(plot_dir, "clusters_color_pal.png"))
@@ -204,12 +204,11 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
   
   # heatmap columns annotation
   column_ha <- HeatmapAnnotation(
-    cell_type = markTable$cellType,
-    col = list(cell_type = color_official_markers),
+    Gene_Marker = markTable$cellType,
+    col = list(Gene_Marker = color_official_markers),
     annotation_legend_param = list(
-      cell_type = list(
-        title = "Gene_Marker",
-        border = "black"
+      Gene_Marker = list(
+        title = "Gene_Marker"
       )
     ))
   
@@ -219,14 +218,14 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
   
   # prepping the colors we want
   # for cell type
-  num_pal <- length(unique(clusterData$cellType))
-  col_pal_ct <- grabColors(num_pal, start = 4)
-  names(col_pal_ct) = unique(clusterData$cellType)
+  # num_pal <- length(unique(clusterData$cellType))
+  # col_pal_ct <- grabColors(num_pal, start = 4)
+  # names(col_pal_ct) = unique(clusterData$cellType)
   
   # heatmap row annotationn
   row_ha <- rowAnnotation(
     Clusters = clusterData$cellType,
-    col = list(cell_type = color_row_namers)
+    col = list(Clusters = color_row_namers)
   )
   
   heatmapped <- Heatmap(marker_z_score,
@@ -247,7 +246,7 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
 }
 
 # printing 
-pdf(here(plot_dir, "Official_Markers_Heatmap_snAnno3_Simple_Pseudobulk_5.pdf"), width = 12, height = 8)
+pdf(here(plot_dir, "Completed_Markers_Heatmap_snAnno3_Simple_Pseudobulk.pdf"), width = 12, height = 8)
 #  pseudoHeater(sce_simple_pb_snAnno3, "snAnno3", markerList = official_markers)
 print(heatmapped)
 dev.off()
