@@ -30,12 +30,12 @@ sce$snAnno3[sce$snAnno3 == "MHb.4"] <- "MHb.3"
 sce <- sce[ , which(sce$snAnno3 != "Hb")]
 
 table(sce$snAnno3)
-    # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
-    # 538         38       1800       7612        201        266        134 
-    # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
-    # 477         83         39       1014        152        540         18 
-    # Microglia      Oligo        OPC 
-    # 145       2178       1796 
+# Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
+# 538         38       1800       7612        201        266        134 
+# LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
+# 477         83         39       1014        152        540         18 
+# Microglia      Oligo        OPC 
+# 145       2178       1796 
 
 # Pseudobulking to create compressed sce object
 ## faking the pseudobulking function out by setting sample as all same sample
@@ -56,15 +56,9 @@ official_markers = list(
   "Micro" = c("CSF1R"),
   "Astro" = c("AQP4"),
   "Endo" = c("ITIH5"),
-  'Neuron' = c('SYT1'),
-  'Inh_Neuron' = c('GAD1'), 
-  'Exc_Neuron' = c('SLC17A6'), 
   "Thal" = c("LYPD6B"),
-  'Hb' = c("POU4F1"), 
-  "LHb" = c("HTR2C"),
-  "MHb" = c("CHRNB4"), # CHRNA3, 
-  "LHb.A " = c("ATP8B1"),
-  "LHb.B" = c("CRH"),
+  "LHb.A " = c("LINC02653"), #  , ATP8B1
+  "LHb.B" = c("AC073071.1"),
   "LHb.C" = c ("ENTHD1"),
   "LHb.D" = c("TLE2"),
   "LHb.E" = c("LINC01619"),
@@ -72,31 +66,15 @@ official_markers = list(
   "LHb.G" = c("AC008619.1"),
   "MHb.A" = c("EXOC1L"), 
   "MHb.B" = c("CHAT"),
-  "MHb.C" = c("BHLHE22")
+  "MHb.C" = c("BHLHE22"),
+  'Hb' = c("POU4F1"), # BARHL1
+  "MHb" = c("CHRNB4"),
+  "LHb" = c("HTR2C"),
+  'Neuron' = c('SYT1'),
+  'Exc_Neuron' = c('SLC17A6'), 
+  'Inh_Neuron' = c('GAD1')
 )
 
-namers <- c("Oligo",
-"OPC",
-"Micro",
-"Astro",
-"Endo",
-'Neuron',
-'Inh_Neuron', 
-'Exc_Neuron', 
-"Thal",
-'Hb', 
-"LHb",
-"MHb",
-"LHb.A",
-"LHb.B",
-"LHb.C",
-"LHb.D",
-"LHb.E",
-"LHb.F",
-"LHb.G",
-"MHb.A", 
-"MHb.B",
-"MHb.C")
 
 row_namers <- c("Oligo",
                 "OPC",
@@ -116,6 +94,79 @@ row_namers <- c("Oligo",
                 "MHb.2",
                 "MHb.3"
 )
+
+
+# explicit color scheme 
+## # glia cells: greens (5), thalamus (yellow #d6c68c), habenula (lateral  vs medial), 
+# neurons: purple (inhib (red) vs excit (blue))
+
+color_official_markers = c(
+  "Oligo" = c("#355E3B"), #hunter green
+  "OPC" = c("#454B1B"), #army green
+  "Micro" = c("#4CBB17"), # kelly green
+  "Astro" = c("#50C878"), # emerald green
+  "Endo" = c("#00A36C"), #jade
+  "Thal" = c("#FF69B4"), # hot pink
+  "LHb.A" = c("#5F9EA0"), # cadet Blue
+  "LHb.B" = c("#5D3FD3"), # iris
+  "LHb.C" = c ("#4682B4"), #Steel Blue
+  "LHb.D" = c("#1F51FF"), # neon blue
+  "LHb.E" = c("#6495ED"), # Cornflower Blue
+  "LHb.F" = c("#088F8F"), # Blue Green 
+  "LHb.G" = c("#4169E1"), # royal bluee
+  "MHb.A" = c("#40E0D0"), # Turquoise
+  "MHb.B" = c("#96DED1"), #Robin Egg Blue
+  "MHb.C" = c("#7DF9FF"), # Electric Blue
+  "Hb" = c("#6082B6"), # glaucous (ashy blue like denim)
+  "MHb" = c("#00FFFF"), # aqua (bright blue)
+  "LHb" = c("#3F00FF"), # indigo (deeper blue)
+  'Neuron' = c('#800080'), # purple
+  'Exc_Neuron' = c('#0818A8'), # zaffre (dark blue)
+  "Inh_Neuron" = c('#800000') # maroon
+)
+#833866
+
+# check colors 
+preview_colors <- function(cell_colors) {
+  par(las = 2) # make label text perpendicular to axis
+  par(mar = c(5, 8, 4, 2)) # increase y-axis margin.
+  barplot(rep(1, length(cell_colors)),
+          col = cell_colors,
+          horiz = TRUE,
+          axes = FALSE,
+          names.arg = names(cell_colors)
+  )
+}
+
+png(here(plot_dir, "gene_markers_color_pal.png"))
+preview_colors(color_official_markers)
+dev.off()
+
+
+## glia cells: glia (5 colors), thalamus (2 reds), 
+color_row_namers <- c( "Oligo" = c("#355E3B"), #hunter green
+                       "OPC "= c("#454B1B"), #army green
+                       "Microglia" = c("#4CBB17"), # kelly green
+                       "Astrocyte" = c("#50C878"),
+                       "Endo" = c("#00A36C"), #jade
+                       "Inhib.Thal" = c('#800000'),
+                       "Excit.Thal" = c('#0818A8'), # zaffre (dark blue)
+                       "LHb.1" = c("#5F9EA0"), # cadet Blue
+                       "LHb.2" = c("#5D3FD3"), # iris
+                       "LHb.3" = c ("#4682B4"), #Steel Blue
+                       "LHb.4" = c("#1F51FF"), # neon blue
+                       "LHb.5" = c("#6495ED"), # Cornflower Blue
+                       "LHb.6" = c("#088F8F"), # Blue Green 
+                       "LHb.7" = c("#4169E1"), # royal bluee
+                       "MHb.1" = c("#40E0D0"), # Turquoise
+                       "MHb.2" = c("#96DED1"), #Robin Egg Blue
+                       "MHb.3" = c("#7DF9FF")
+)
+
+png(here(plot_dir, "clusters_color_pal.png"))
+preview_colors(color_row_namers)
+dev.off()
+
 ####### PLOTTING ###############################################################
 # creating dir for plots
 plot_dir <- here("plots", "05_explore_sce", "03_Plot_Investigate_snAnno", 
@@ -154,9 +205,13 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
   # heatmap columns annotation
   column_ha <- HeatmapAnnotation(
     cell_type = markTable$cellType,
+    col = list(cell_type = color_official_markers),
     annotation_legend_param = list(
-      title = c("Clusters", "Gene_Markers"))
-    )
+      cell_type = list(
+        title = "Gene_Marker",
+        border = "black"
+      )
+    ))
   
   # grabbing the annotations per cluster from the sce_reorder object
   clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
@@ -170,8 +225,8 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
   
   # heatmap row annotationn
   row_ha <- rowAnnotation(
-    df = clusterData$cellType,
-    col = list(cell_type = col_pal_ct)
+    Clusters = clusterData$cellType,
+    col = list(cell_type = color_row_namers)
   )
   
   heatmapped <- Heatmap(marker_z_score,
@@ -179,21 +234,22 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
                         cluster_columns = FALSE,
                         right_annotation = row_ha,
                         top_annotation = column_ha,
-                        column_split = factor(markTable$cellType, levels = markTable$cellType) ,
+                        column_split = factor(markTable$cellType, levels = markTable$cellType), 
                         column_title_rot = 30,
                         heatmap_legend_param = list(
-                          title = "Z_Score"
+                          title = c("Z_Score"),
+                          border = "black"
                         )
-                )
+  )
   
   print(heatmapped)
   
 }
 
 # printing 
-pdf(here(plot_dir, "Official_Markers_Heatmap_snAnno3_Simple_Pseudobulk_4.pdf"), width = 12, height = 8)
+pdf(here(plot_dir, "Official_Markers_Heatmap_snAnno3_Simple_Pseudobulk_5.pdf"), width = 12, height = 8)
 #  pseudoHeater(sce_simple_pb_snAnno3, "snAnno3", markerList = official_markers)
-  print(heatmapped)
+print(heatmapped)
 dev.off()
 
 
