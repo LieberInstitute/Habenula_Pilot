@@ -153,8 +153,10 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
   
   # heatmap columns annotation
   column_ha <- HeatmapAnnotation(
-    cell_type = markTable$cellType
-  )
+    cell_type = markTable$cellType,
+    annotation_legend_param = list(
+      title = c("Clusters", "Gene_Markers"))
+    )
   
   # grabbing the annotations per cluster from the sce_reorder object
   clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
@@ -178,15 +180,18 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
                         right_annotation = row_ha,
                         top_annotation = column_ha,
                         column_split = factor(markTable$cellType, levels = markTable$cellType) ,
-                        column_title_rot = 30
+                        column_title_rot = 30,
+                        heatmap_legend_param = list(
+                          title = "Z_Score"
                         )
+                )
   
   print(heatmapped)
   
 }
 
 # printing 
-pdf(here(plot_dir, "Official_Markers_Heatmap_snAnno3_Simple_Pseudobulk_3.pdf"), width = 12, height = 8)
+pdf(here(plot_dir, "Official_Markers_Heatmap_snAnno3_Simple_Pseudobulk_4.pdf"), width = 12, height = 8)
 #  pseudoHeater(sce_simple_pb_snAnno3, "snAnno3", markerList = official_markers)
   print(heatmapped)
 dev.off()
