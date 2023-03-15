@@ -175,13 +175,11 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# 
+# Plotting ComplexHeatmap
+sce = sce_simple_pb_snAnno3
+clusterMethod = "snAnno3"
+markerList = official_markers
 
-# function to plot heatmap
-pseudoHeater <- function(sce, clusterMethod, markerList){
-  # sce = pseudobulked sce object
-  # clusterMethod = whichever nearest neighbors method you use (as character string)
-  
   # Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
   rownames(sce) <- rowData(sce)$Symbol
   
@@ -208,7 +206,7 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
     col = list(Gene_Marker = color_official_markers),
     annotation_legend_param = list(
       Gene_Marker = list(
-        title = "Gene_Marker"
+        title = "Gene_Marker" 
       )
     ))
   
@@ -238,17 +236,13 @@ pseudoHeater <- function(sce, clusterMethod, markerList){
                         heatmap_legend_param = list(
                           title = c("Z_Score"),
                           border = "black"
-                        )
-  )
+                        ))
+
   
-  print(heatmapped)
-  
-}
 
 # printing 
 pdf(here(plot_dir, "Completed_Markers_Heatmap_snAnno3_Simple_Pseudobulk.pdf"), width = 12, height = 8)
-#  pseudoHeater(sce_simple_pb_snAnno3, "snAnno3", markerList = official_markers)
-print(heatmapped)
+  print(heatmapped)
 dev.off()
 
 

@@ -18,11 +18,11 @@ load(here("processed-data", "04_snRNA-seq", "sce_objects",
 
 # pulling excel sheet with annotations
 annoWT10 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
-                      "GeneAnnotations_Bukola.xlsx"), sheetName = c("WalkTrap10"))
+                      "GeneAnnotations_BukolaOLD.xlsx"), sheetName = c("WalkTrap10"))
 annoWT20 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
-                                  "GeneAnnotations_Bukola.xlsx"), sheetName = c("WalkTrap20"))
+                                  "GeneAnnotations_BukolaOLD.xlsx"), sheetName = c("WalkTrap20"))
 annoWT50 <- read.xlsx(file = here("processed-data", "04_snRNA-seq", "07b_Marking_Clusters",
-                                  "GeneAnnotations_Bukola.xlsx"), sheetName = c("WalkTrap 50"))
+                                  "GeneAnnotations_BukolaOLD.xlsx"), sheetName = c("WalkTrap 50"))
 
 # cleaning up for standardization
 # 10
@@ -37,7 +37,7 @@ annoWT20_clean <- annoWT20 |>
   mutate(Type_clean = gsub("[^a-zA-Z0-9]", "", Type), 
          Cluster = paste0("20wTrap_", Cluster))
 
-#30
+# 50
 annoWT50_clean <- annoWT50 |> 
   filter(!is.na(Cluster)) |>
   mutate(Type_clean = gsub("[^a-zA-Z0-9]", "", Type), 
