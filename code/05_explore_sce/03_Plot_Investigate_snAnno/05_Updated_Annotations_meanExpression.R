@@ -77,11 +77,13 @@ dev.off()
 
 
 #### AFTER COMBINING MHB.2 AND MHB.3 ###########################################
-# Terminal 8
 sce$snAnno3 <- sce$snAnno2
 
 # combining MHb.3 with MHb.2
 sce$snAnno3[sce$snAnno3 == "MHb.3"] <- "MHb.2"
+
+# dropping Hb cluster
+sce <- sce[ , which(sce$snAnno3 != "Hb")]
 
 # sanity check
 table(sce$snAnno3)
