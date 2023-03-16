@@ -7,12 +7,11 @@ library("here")
 library("tidyverse")
 library("sessioninfo")
 library("DeconvoBuddies")
+library("ggplot2")
 
 # loading regular sce object
-load(here("processed-data", "05_explore_sce", 
-          "mean_ratio_for_snAnno3_from_05_Updated_Annotations_meanExpression.Rdata",
-          verbose = TRUE))
-
+load(here("processed-data", "05_explore_sce", "mean_ratio_for_snAnno3_from_05_Updated_Annotations_meanExpression.Rdata"),
+          verbose = TRUE)
 
 # setting up plot_dir
 plot_dir <- here("plots", "05_explore_sce", "03_Plot_Investigate_snAnno",
@@ -30,5 +29,18 @@ source(here("code", "04_snRNA-seq", "sourcing", "my_plotMarkers.R"))
 # sourcing my grabColors(), max colors 20 (by Bukola Ajanaku) 
 source(here("code", "04_snRNA-seq", "sourcing", "color_Scheme_CT.R"))
 
-# 
+# plotting
+pdf(here("plots", "05_explore_sce", "03_Plot_Investigate_snAnno",
+         "06_Hockey_Stick_Plotter", "ratio_vs_stdFC-snAnno3_B.pdf"))
+   ggplot(snAnno_marker_stats_new_3_combined, aes(ratio, std.logFC)) +
+     geom_point(size = 0.5) 
+  facet_wrap(~cellType.target) 
+  # labs(x = "mean(target logcount)/mean(highest non-target logcount)") +
+  
+dev.off()
 
+
+
+
+
+# 
