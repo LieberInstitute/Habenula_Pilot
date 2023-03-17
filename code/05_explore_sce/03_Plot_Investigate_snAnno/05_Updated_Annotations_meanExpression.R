@@ -82,6 +82,11 @@ sce$snAnno3 <- sce$snAnno2
 # combining MHb.3 with MHb.2
 sce$snAnno3[sce$snAnno3 == "MHb.3"] <- "MHb.2"
 
+# RENAMING!
+sce$snAnno3[sce$snAnno3 == "LHb.7"] <- "LHb.6"
+sce$snAnno3[sce$snAnno3 == "LHb.8"] <- "LHb.7"
+sce$snAnno3[sce$snAnno3 == "MHb.4"] <- "MHb.3"
+
 # dropping Hb cluster
 sce <- sce[ , which(sce$snAnno3 != "Hb")]
 

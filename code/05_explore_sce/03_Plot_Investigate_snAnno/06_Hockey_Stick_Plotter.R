@@ -30,17 +30,15 @@ source(here("code", "04_snRNA-seq", "sourcing", "my_plotMarkers.R"))
 source(here("code", "04_snRNA-seq", "sourcing", "color_Scheme_CT.R"))
 
 # plotting
+# this is the hockey stick plot for the split up snAnno
 pdf(here("plots", "05_explore_sce", "03_Plot_Investigate_snAnno",
-         "06_Hockey_Stick_Plotter", "ratio_vs_stdFC-snAnno3_B.pdf"))
+         "06_Hockey_Stick_Plotter", "ratio_vs_stdFC-snAnno3.pdf"))
    ggplot(snAnno_marker_stats_new_3_combined, aes(ratio, std.logFC)) +
-     geom_point(size = 0.5) 
-  facet_wrap(~cellType.target) 
+     geom_point(size = 0.5) +  
+  facet_wrap(~cellType.target)  
   # labs(x = "mean(target logcount)/mean(highest non-target logcount)") +
   
 dev.off()
 
-
-
-
-
-# 
+# ahhh, I get it now. We cannot do hockey stick plots on snAnno. Time to move on
+# to next folder because this is now getting into the bulk deconvo terrain.
