@@ -102,9 +102,4 @@ if(!dir.exists(new_dir)){
 
 # saving sce object
 save(sce, file = here(new_dir, "sce_first_bulkTypes.RDATA"))
-  
-
-
-
-
 
