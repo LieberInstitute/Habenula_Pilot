@@ -27,8 +27,6 @@ library(ggpubr)
 # gene
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
           "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"))
-rse_gene = rse_gene_filt
-
 
 
 # # exon
