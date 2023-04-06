@@ -1,5 +1,6 @@
-## March 8, 2023 - Bukola Ajanaku
-# Creating summarized Heatmap for Habenual progress report!
+## April 6, 2023 - Bukola Ajanaku
+# This is the exact code I used for the original progress report. Copy and pasted!
+# Simply changed plotting directory!!!
 # qrsh -l mem_free=30G,h_vmem=30G
 
 library("SingleCellExperiment")
@@ -11,17 +12,15 @@ library("tidyverse")
 library("ComplexHeatmap")
 library("spatialLIBD")
 
-# getting sce object
+# loading sce object
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
           "sce_post_09_clustered_qc.Rdata"))
 
-# creating plot_dir
-plot_dir <- here("plots", "05_explore_sce", "03_Plot_Investigate_snAnno", 
-                 "07_Plots_for_Progress_Report")
+# creating dir for plots
+plot_dir <- here("plots", "99_paper_figs", "03_Heatmap_Markers_Summary")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
-
 
 # creating snAnno3
 sce$snAnno3 <- sce$snAnno
@@ -39,12 +38,12 @@ sce$snAnno3[sce$snAnno3 == "MHb.4"] <- "MHb.3"
 sce <- sce[ , which(sce$snAnno3 != "Hb")]
 
 table(sce$snAnno3)
-# Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
+# Astrocyte       Endo Excit.Thal Inhib.Thal  LHb.1      LHb.2      LHb.3 
 # 538         38       1800       7612        201        266        134 
 # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
 # 477         83         39       1014        152        540         18 
-# Microglia      Oligo        OPC 
-# 145       2178       1796 
+# Microglia   Oligo      OPC 
+# 145         2178       1796 
 
 # Pseudobulking to create compressed sce object
 ## faking the pseudobulking function out by setting sample as all same sample
@@ -55,8 +54,6 @@ sce$Sample <- sce$FakeSample
 set.seed(20220907) 
 sce_simple_pb_snAnno3 <- registration_pseudobulk(sce,  "snAnno3", "Sample")
 
-# grabbing color schemes: grabColors(), max colors 20
-source(here("code", "04_snRNA-seq", "sourcing", "color_Scheme_CT.R"))
 
 # list of marker genes 
 official_markers = list(
@@ -148,7 +145,7 @@ preview_colors <- function(cell_colors) {
 }
 
 png(here(plot_dir, "gene_markers_color_pal.png"))
-preview_colors(color_official_markers)
+  preview_colors(color_official_markers)
 dev.off()
 
 
@@ -173,7 +170,7 @@ color_row_namers <- c( "Oligo" = c("#5C4033"), # dark grown
 )
 
 png(here(plot_dir, "clusters_color_pal.png"))
-preview_colors(color_row_namers)
+  preview_colors(color_row_namers)
 dev.off()
 
 ####### PLOTTING ###############################################################
@@ -182,69 +179,69 @@ sce = sce_simple_pb_snAnno3
 clusterMethod = "snAnno3"
 markerList = official_markers
 
-  # Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
-  rownames(sce) <- rowData(sce)$Symbol
-  
-  # renaming rownnames of colData(sce) based on row annotations
-  rownames(colData(sce)) <- paste(colData(sce)[, clusterMethod])
-  
-  # reordering sce object for plottability
-  sce_reorder <- sce[unlist(markerList) , row_namers]
-  
-  # Making data frame of genes we are interested in annd their general classification
-  markTable <- as.data.frame(unlist(markerList)) |> 
-    rownames_to_column("cellType") |>
-    rename(gene = `unlist(markerList)`) |>
-    mutate(cellType = gsub("\\d+", "", cellType)) |>
-    filter(gene %in% rowData(sce_reorder)$Symbol)
-  
-  # getting z scores
-  marker_z_score <- scale(t(logcounts(sce_reorder)))
-  # corner(marker_z_score)
-  
-  # heatmap columns annotation
-  column_ha <- HeatmapAnnotation(
-    Gene_Marker = markTable$cellType,
-    col = list(Gene_Marker = color_official_markers),
-    annotation_legend_param = list(
-      Gene_Marker = list(
-        title = "Gene_Marker" 
-      )
-    ))
-  
-  # grabbing the annotations per cluster from the sce_reorder object
-  clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
-  names(clusterData) <- "cellType"
-  
-  # prepping the colors we want
-  # for cell type
-  # num_pal <- length(unique(clusterData$cellType))
-  # col_pal_ct <- grabColors(num_pal, start = 4)
-  # names(col_pal_ct) = unique(clusterData$cellType)
-  
-  # heatmap row annotationn
-  row_ha <- rowAnnotation(
-    Clusters = clusterData$cellType,
-    col = list(Clusters = color_row_namers)
-  )
-  
-  heatmapped <- Heatmap(marker_z_score,
-                        cluster_rows = FALSE,
-                        cluster_columns = FALSE,
-                        right_annotation = row_ha,
-                        top_annotation = column_ha,
-                        column_split = factor(markTable$cellType, levels = markTable$cellType), 
-                        column_title_rot = 30,
-                        heatmap_legend_param = list(
-                          title = c("Z_Score"),
-                          border = "black"
-                        ))
+# Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
+rownames(sce) <- rowData(sce)$Symbol
 
-  
+# renaming rownnames of colData(sce) based on row annotations
+rownames(colData(sce)) <- paste(colData(sce)[, clusterMethod])
+
+# reordering sce object for plottability
+sce_reorder <- sce[unlist(markerList) , row_namers]
+
+# Making data frame of genes we are interested in annd their general classification
+markTable <- as.data.frame(unlist(markerList)) |> 
+  rownames_to_column("cellType") |>
+  rename(gene = `unlist(markerList)`) |>
+  mutate(cellType = gsub("\\d+", "", cellType)) |>
+  filter(gene %in% rowData(sce_reorder)$Symbol)
+
+# getting z scores
+marker_z_score <- scale(t(logcounts(sce_reorder)))
+# corner(marker_z_score)
+
+# heatmap columns annotation
+column_ha <- HeatmapAnnotation(
+  Gene_Marker = markTable$cellType,
+  col = list(Gene_Marker = color_official_markers),
+  annotation_legend_param = list(
+    Gene_Marker = list(
+      title = "Gene_Marker" 
+    )
+  ))
+
+# grabbing the annotations per cluster from the sce_reorder object
+clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
+names(clusterData) <- "cellType"
+
+# prepping the colors we want
+# for cell type
+# num_pal <- length(unique(clusterData$cellType))
+# col_pal_ct <- grabColors(num_pal, start = 4)
+# names(col_pal_ct) = unique(clusterData$cellType)
+
+# heatmap row annotationn
+row_ha <- rowAnnotation(
+  Clusters = clusterData$cellType,
+  col = list(Clusters = color_row_namers)
+)
+
+heatmapped <- Heatmap(marker_z_score,
+                      cluster_rows = FALSE,
+                      cluster_columns = FALSE,
+                      right_annotation = row_ha,
+                      top_annotation = column_ha,
+                      column_split = factor(markTable$cellType, levels = markTable$cellType), 
+                      column_title_rot = 30,
+                      heatmap_legend_param = list(
+                        title = c("Z_Score"),
+                        border = "black"
+                      ))
+
+
 
 # printing 
 pdf(here(plot_dir, "Completed_Markers_Heatmap_snAnno3_Simple_Pseudobulk.pdf"), width = 12, height = 8)
-  print(heatmapped)
+  heatmapped
 dev.off()
 
 
