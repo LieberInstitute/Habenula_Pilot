@@ -7,6 +7,7 @@ library("here")
 library("tidyverse")
 library("scater")
 library("ggplot2")
+library("cowplot")
 
 
 # Loading sce object with snAnno2 (Has combined MHb clusters and adjusted LHb clusters. 
@@ -69,20 +70,39 @@ cluster_colors <- c( "Oligo" = c("#5C4033"), # dark grown
                        "MHb.3" = c("#7DF9FF") # light blue
 )
 
-# plotting TSNEs
+##### PLOTTING TSNEs ###########################################################
+pdf(here(plot_dir, "TSNE_harmony_by_snAnno2.pdf"))
+  plotReducedDim(sce, dimred = "TSNE", colour_by = "snAnno2") +
+    scale_colour_manual(values = cluster_colors)
+dev.off()
+
+pdf(here(plot_dir, "TSNE_harmony_by_snAnno2_splitbysnAnno2.pdf"))
+  plotReducedDim(sce, dimred = "TSNE", colour_by = "snAnno2") +
+    scale_colour_manual(values = cluster_colors) +
+    facet_wrap(~ sce$snAnno2)
+dev.off()
+
+# Separating sce by NeuN sorting
+sce_sorted <- sce[, sce$NeuN == "NeuN.Sorted"] 
+sce_unsorted <- sce[, sce$NeuN == "NeuN.Unsorted"] 
+
+# 
+plot_sorted <- plotReducedDim(sce_sorted, dimred = "TSNE", colour_by = "snAnno2") +
+  scale_colour_manual(values = cluster_colors) +
+  facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample)
+
+plot_unsorted <- plotReducedDim(sce_unsorted, dimred = "TSNE", colour_by = "snAnno2") +
+  scale_colour_manual(values = cluster_colors) +
+  facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample)
 
 
-
-
-
-
-
-
-
-
-
-
-
+pdf(here(plot_dir, "TSNE_harmony_by_snAnno2_splitbySampleAndSorting.pdf"), width = 10, height = 9)
+  plot_grid(
+    plot_sorted,
+    plot_unsorted,
+    ncol = 1
+  )
+dev.off()
 
 
 # 
