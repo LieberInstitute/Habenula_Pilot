@@ -13,4 +13,5 @@ processed-data/02_bulk_qc/count_data_bukola/
 processed-data/04_snRNA-seq/
 processed-data/05_explore_sce/
 processed-data/06_deconvolution/
+processed-data/99_paper_figs/
 >>>>>>> update .gitignore

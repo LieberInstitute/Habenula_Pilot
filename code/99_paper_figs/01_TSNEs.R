@@ -96,7 +96,7 @@ plot_unsorted <- plotReducedDim(sce_unsorted, dimred = "TSNE", colour_by = "snAn
   facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample)
 
 
-pdf(here(plot_dir, "TSNE_harmony_by_snAnno2_splitbySampleAndSorting.pdf"), width = 10, height = 9)
+pdf(here(plot_dir, "TSNE_harmony_by_snAnno2_splitbySampleAndSorting.pdf"), width = 13, height = 9)
   plot_grid(
     plot_sorted,
     plot_unsorted,
@@ -105,4 +105,6 @@ pdf(here(plot_dir, "TSNE_harmony_by_snAnno2_splitbySampleAndSorting.pdf"), width
 dev.off()
 
 
-# 
+# Saving sce object 
+save(sce, sce_sorted, sce_unsorted, file = here("processed-data", "99_paper_figs",  "sce_objects", "paper_worthy_sce.RDATA"))
+
