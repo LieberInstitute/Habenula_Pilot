@@ -11,9 +11,9 @@ library("cowplot")
 
 
 # Loading sce object with modified snAnno2 (just chaged Hb to Excit.Neuron)
-load(here("processed-data", "99_paper_figs",  "sce_objects", "paper_worthy_sce.RDATA"),
+load(here("processed-data", "99_paper_figs",  "sce_objects", "sce_final_preHbdrop.RDATA"),
      verbose = TRUE)
-# sce, sce_sorted, sce_unsorted
+# sce_final_preHbdrop, sce_sorted, sce_unsorted
 
 # creating plot directory
 plot_dir <- here("plots", "99_paper_figs", "02_UMAPs")

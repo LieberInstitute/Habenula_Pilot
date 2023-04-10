@@ -22,7 +22,7 @@ if(!dir.exists(plot_dir)){
 }
 
 # checking sce object
-table(colData(sce$snAnno2))
+table(colData(sce)$snAnno2)
   # Astrocyte       Endo Excit.Thal  Hb Inhib.Thal      LHb.1      LHb.2 
   # 538         38       1800         51       7612        201        266 
   # LHb.3      LHb.4      LHb.5      LHb.7      LHb.8      MHb.1      MHb.2 
@@ -41,6 +41,14 @@ sce$snAnno2[sce$snAnno2 == "Hb"] <- "Excit.Neuron"
   sce$snAnno2[sce$snAnno2 == "LHb.8"] <- "LHb.7"
   sce$snAnno2[sce$snAnno2 == "MHb.4"] <- "MHb.3"
 
+table(colData(sce)$snAnno2)
+# Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal        LHb.1 
+# 538           38           51         1800         7612          201 
+# LHb.2        LHb.3        LHb.4        LHb.5        LHb.6        LHb.7 
+# 266          134          477           83           39         1014 
+# MHb.1        MHb.2        MHb.3    Microglia        Oligo          OPC 
+# 152          540           18          145         2178         1796 
+  
 # adding the NeuN sorting/unsorting column to sce 
 sce$NeuN <- "NeuN.Unsorted"
 sce$NeuN[sce$Sample %in% c("Br1092", "Br1204", "Br5555", "Br5558")] <- "NeuN.Sorted"
@@ -112,7 +120,13 @@ pdf(here(plot_dir, "TSNE_harmony_by_snAnno2_splitbySampleAndSorting.pdf"), width
   )
 dev.off()
 
+# prepping for save
+sce$final_Annotations <- sce$snAnno2 
+sce_final_preHbdrop <- sce
 
 # Saving sce object 
-save(sce, sce_sorted, sce_unsorted, file = here("processed-data", "99_paper_figs",  "sce_objects", "paper_worthy_sce.RDATA"))
+save(sce_final_preHbdrop, sce_sorted, sce_unsorted, file = here("processed-data", "99_paper_figs",  "sce_objects", "sce_final_preHbdrop.RDATA"))
 
+
+
+# 
