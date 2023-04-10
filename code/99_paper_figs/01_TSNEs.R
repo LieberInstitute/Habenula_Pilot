@@ -33,6 +33,14 @@ table(colData(sce$snAnno2))
 # changing general "Hb" cluster to Excit.Neuron
 sce$snAnno2[sce$snAnno2 == "Hb"] <- "Excit.Neuron"
 
+# fixing up the MHB and LHB's as well 
+# combining MHb.3 with MHb.2
+  sce$snAnno2[sce$snAnno2 == "MHb.3"] <- "MHb.2"
+# changing names for specific clusters
+  sce$snAnno2[sce$snAnno2 == "LHb.7"] <- "LHb.6"
+  sce$snAnno2[sce$snAnno2 == "LHb.8"] <- "LHb.7"
+  sce$snAnno2[sce$snAnno2 == "MHb.4"] <- "MHb.3"
+
 # adding the NeuN sorting/unsorting column to sce 
 sce$NeuN <- "NeuN.Unsorted"
 sce$NeuN[sce$Sample %in% c("Br1092", "Br1204", "Br5555", "Br5558")] <- "NeuN.Sorted"

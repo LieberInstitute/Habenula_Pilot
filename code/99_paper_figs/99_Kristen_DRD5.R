@@ -24,6 +24,30 @@ rownames(sce_final) <- rowData(sce_final)$Symbol
 # checking rownames of sce for symbol
 head(rownames(sce_final))
 
+# adjusting splitSNType
+table(sce_final$splitSNType)
+  # Astrocyte_11  Astrocyte_14  Astrocyte_34 Excit.Thal_15 Excit.Thal_18 
+  # 188           325            25           164           373 
+  # Excit.Thal_19 Excit.Thal_20 Excit.Thal_21 Excit.Thal_22 Excit.Thal_25 
+  # 51            86           217           276            62 
+  # Excit.Thal_28 Excit.Thal_37  Excit.Thal_5  Excit.Thal_8 Inhib.Thal_10 
+  # 65            17           312           177          2231 
+  # Inhib.Thal_17 Inhib.Thal_29 Inhib.Thal_35  Inhib.Thal_6      LHb.1_13 
+  # 5241            85            17            38           201 
+  # LHb.2_24      LHb.3_26       LHb.4_3      LHb.5_31      LHb.6_32 
+  # 266           134           477            83            38 
+  # LHb.7_33       LHb.8_4      MHb.1_12      MHb.2_16       MHb.3_9 
+  # 39          1014           152           145           395 
+  # MHb.4_36   Microglia_1      Oligo_23      Oligo_27       Oligo_7 
+  # 18           145           280            65          1833 
+  # OPC_2 
+  # 1796 
+
+# changing LHb.6 to Endo and then shifting
+sce_final$splitSNType[sce_final$splitSNType == "LHb.6_32"] <- "Endo_32"
+sce_final$splitSNType[sce_final$splitSNType == "LHb.7_33"] <- "LHb.6_33"
+sce_final$splitSNType[sce_final$splitSNType == "LHb.8_4"] <- "LHb.7_4"
+
 # sourcing code for my_plotMarkers
 source(here("code", "04_snRNA-seq", "sourcing", "custom_plotExpression.R"))
 source(here("code", "04_snRNA-seq", "sourcing", "my_plotMarkers.R"))
@@ -33,11 +57,15 @@ markers.custom <- list(
   "DRD5_vs_CHAT" = c("DRD5", "CHAT")
 )
 
-# plotting
-pdf_print <- here(plot_dir, "DRD5vsCHAT.pdf")
+# plotting (remember this is the sce post Hb drop)
+pdf_fin_clusts <- here(plot_dir, "DRD5vsCHAT_combined_clusters.pdf")
+pdf_wT10 <- here(plot_dir, "DRD5vsCHAT_split_clusters.pdf")
 
 my_plotMarkers(sce_final, marker_list = markers.custom, assay = "logcounts", 
-               cat = "final_Annotations" , fill_colors = NULL, pdf_fn = pdf_print)
+               cat = "final_Annotations" , fill_colors = NULL, pdf_fn = pdf_fin_clusts)
+
+my_plotMarkers(sce_final, marker_list = markers.custom, assay = "logcounts", 
+               cat = "splitSNType" , fill_colors = NULL, pdf_fn = pdf_wT10)
 
 # # [OLD] plotting
 # pdf(here(plot_dir, "DRD5vsCHAT.pdf"))
