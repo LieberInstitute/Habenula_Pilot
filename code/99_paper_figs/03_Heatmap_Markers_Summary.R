@@ -13,37 +13,11 @@ library("ComplexHeatmap")
 library("spatialLIBD")
 
 # loading sce object
-load(here("processed-data", "04_snRNA-seq", "sce_objects", 
-          "sce_post_09_clustered_qc.Rdata"))
+load(here("processed-data", "99_paper_figs",  "sce_objects", "sce_final.RDATA"),
+     verbose = TRUE)
 
-# creating dir for plots
-plot_dir <- here("plots", "99_paper_figs", "03_Heatmap_Markers_Summary")
-if(!dir.exists(plot_dir)){
-  dir.create(plot_dir)
-}
+table(sce_final$final_Annotations)
 
-# creating snAnno3
-sce$snAnno3 <- sce$snAnno
-
-# renaming LHb.6 to Endo
-sce$snAnno3[sce$snAnno3 == "LHb.6"] <- "Endo"
-# combining MHb.3 with MHb.2
-sce$snAnno3[sce$snAnno3 == "MHb.3"] <- "MHb.2"
-# changing names for specific clusters
-sce$snAnno3[sce$snAnno3 == "LHb.7"] <- "LHb.6"
-sce$snAnno3[sce$snAnno3 == "LHb.8"] <- "LHb.7"
-sce$snAnno3[sce$snAnno3 == "MHb.4"] <- "MHb.3"
-
-# dropping confusing Hb cluster
-sce <- sce[ , which(sce$snAnno3 != "Hb")]
-
-table(sce$snAnno3)
-# Astrocyte       Endo Excit.Thal Inhib.Thal  LHb.1      LHb.2      LHb.3 
-# 538         38       1800       7612        201        266        134 
-# LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
-# 477         83         39       1014        152        540         18 
-# Microglia   Oligo      OPC 
-# 145         2178       1796 
 
 # Pseudobulking to create compressed sce object
 ## faking the pseudobulking function out by setting sample as all same sample
@@ -52,7 +26,7 @@ sce$RealSample <- sce$Sample
 sce$Sample <- sce$FakeSample
 
 set.seed(20220907) 
-sce_simple_pb_snAnno3 <- registration_pseudobulk(sce,  "snAnno3", "Sample")
+sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
 
 
 # list of marker genes 
@@ -176,7 +150,7 @@ dev.off()
 ####### PLOTTING ###############################################################
 # Plotting ComplexHeatmap
 sce = sce_simple_pb_snAnno3
-clusterMethod = "snAnno3"
+clusterMethod = "final_Annotations"
 markerList = official_markers
 
 # Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
@@ -240,7 +214,7 @@ heatmapped <- Heatmap(marker_z_score,
 
 
 # printing 
-pdf(here(plot_dir, "Completed_Markers_Heatmap_snAnno3_Simple_Pseudobulk.pdf"), width = 12, height = 8)
+pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Annotations_Simple_Pseudobulk.pdf"), width = 12, height = 8)
   heatmapped
 dev.off()
 

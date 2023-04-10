@@ -10,10 +10,18 @@ library("ggplot2")
 library("cowplot")
 
 
-# Loading sce object with modified snAnno2 (just chaged Hb to Excit.Neuron)
+# Loading sce object
 load(here("processed-data", "99_paper_figs",  "sce_objects", "sce_final_preHbdrop.RDATA"),
      verbose = TRUE)
-# sce_final_preHbdrop , sce_sorted, sce_unsorted
+  # sce_final_preHbdrop , sce_sorted, sce_unsorted
+
+table(sce_final_preHbdrop$final_Annotations)
+  # Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal        LHb.1 
+  # 538           38           51         1800         7612          201 
+  # LHb.2        LHb.3        LHb.4        LHb.5        LHb.6        LHb.7 
+  # 266          134          477           83           39         1014 
+  # MHb.1        MHb.2        MHb.3    Microglia        Oligo          OPC 
+  # 152          540           18          145         2178         1796 
 
 # creating plot directory
 plot_dir <- here("plots", "99_paper_figs", "02_UMAPs")
@@ -43,32 +51,32 @@ cluster_colors <- c( "Oligo" = c("#5C4033"), # dark grown
 )
 
 ##### PLOTTING UMAPs ###########################################################
-pdf(here(plot_dir, "UMAP_harmony_by_snAnno2.pdf"))
+pdf(here(plot_dir, "UMAP_harmony_by_finalAnno.pdf"))
   plotReducedDim(sce_final_preHbdrop, dimred = "UMAP") +
-    geom_point(aes(color = sce_final_preHbdrop$snAnno2), alpha = 0.4) + 
+    geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
     scale_colour_manual(values = cluster_colors)
 dev.off()
 
-pdf(here(plot_dir, "UMAP_harmony_by_snAnno2_splitbysnAnno2.pdf"))
+pdf(here(plot_dir, "UMAP_harmony_by_final_Annotations_splitbyfinalAnno.pdf"))
   plotReducedDim(sce_final_preHbdrop, dimred = "UMAP") +
-    geom_point(aes(color = sce_final_preHbdrop$snAnno2), alpha = 0.4) + 
+    geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
     scale_colour_manual(values = cluster_colors) +
-    facet_wrap(~ sce_final_preHbdrop$snAnno2)
+    facet_wrap(~ sce_final_preHbdrop$final_Annotations)
 dev.off()
 
 # 
 plot_sorted <-   plotReducedDim(sce_sorted, dimred = "UMAP") +
-  geom_point(aes(color = sce_sorted$snAnno2), alpha = 0.4) + 
+  geom_point(aes(color = sce_sorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
   facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample)
 
 plot_unsorted <-   plotReducedDim(sce_unsorted, dimred = "UMAP") +
-  geom_point(aes(color = sce_unsorted$snAnno2), alpha = 0.4) + 
+  geom_point(aes(color = sce_unsorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
   facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample)
 
 
-pdf(here(plot_dir, "UMAP_harmony_by_snAnno2_splitbySampleAndSorting.pdf"), width = 13, height = 9)
+pdf(here(plot_dir, "UMAP_harmony_by_finalAnno_splitbySampleAndSorting.pdf"), width = 13, height = 9)
 plot_grid(
   plot_sorted,
   plot_unsorted,

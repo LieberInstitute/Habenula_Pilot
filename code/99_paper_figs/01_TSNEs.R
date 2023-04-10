@@ -10,123 +10,79 @@ library("ggplot2")
 library("cowplot")
 
 
-# Loading sce object with snAnno2 (Has combined MHb clusters and adjusted LHb clusters. 
-# We probs wanna rename the general "Hb" cluster to something like Exc.Neuron!!)
-load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_with_snAnno2.RDATA"), 
+# Loading sce object
+load(here("processed-data", "99_paper_figs",  "sce_objects", "sce_final_preHbdrop.RDATA"),
      verbose = TRUE)
+# sce_final_preHbdrop , sce_sorted, sce_unsorted
 
-# creating plot directory
-plot_dir <- here("plots", "99_paper_figs", "01_TSNEs")
-if(!dir.exists(plot_dir)){
-  dir.create(plot_dir)
-}
-
-# checking sce object
-table(colData(sce)$snAnno2)
-  # Astrocyte       Endo Excit.Thal  Hb Inhib.Thal      LHb.1      LHb.2 
-  # 538         38       1800         51       7612        201        266 
-  # LHb.3      LHb.4      LHb.5      LHb.7      LHb.8      MHb.1      MHb.2 
-  # 134        477         83         39       1014        152        145 
-  # MHb.3      MHb.4  Microglia      Oligo        OPC 
-  # 395         18        145       2178       1796 
-
-# changing general "Hb" cluster to Excit.Neuron
-sce$snAnno2[sce$snAnno2 == "Hb"] <- "Excit.Neuron"
-
-# fixing up the MHB and LHB's as well 
-# combining MHb.3 with MHb.2
-  sce$snAnno2[sce$snAnno2 == "MHb.3"] <- "MHb.2"
-# changing names for specific clusters
-  sce$snAnno2[sce$snAnno2 == "LHb.7"] <- "LHb.6"
-  sce$snAnno2[sce$snAnno2 == "LHb.8"] <- "LHb.7"
-  sce$snAnno2[sce$snAnno2 == "MHb.4"] <- "MHb.3"
-
-table(colData(sce)$snAnno2)
+table(sce_final_preHbdrop$final_Annotations)
 # Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal        LHb.1 
 # 538           38           51         1800         7612          201 
 # LHb.2        LHb.3        LHb.4        LHb.5        LHb.6        LHb.7 
 # 266          134          477           83           39         1014 
 # MHb.1        MHb.2        MHb.3    Microglia        Oligo          OPC 
 # 152          540           18          145         2178         1796 
-  
-# adding the NeuN sorting/unsorting column to sce 
-sce$NeuN <- "NeuN.Unsorted"
-sce$NeuN[sce$Sample %in% c("Br1092", "Br1204", "Br5555", "Br5558")] <- "NeuN.Sorted"
 
-# checking
-table(sce$Sample, sce$NeuN)
-#         NeuN.Sorted NeuN.Unsorted
-# Br1092        3212             0
-# Br1204        1239             0
-# Br1469           0          2151
-# Br1735           0          3101
-# Br5555        3542             0
-# Br5558         778             0
-# Br5639           0          3059
-
+# creating plot directory
+plot_dir <- here("plots", "99_paper_figs", "02_TSNEs")
+if(!dir.exists(plot_dir)){
+  dir.create(plot_dir)
+}
 
 # adding color pallete (same color scheme used for progress report heatmap)
 cluster_colors <- c( "Oligo" = c("#5C4033"), # dark grown
-                       "OPC"= c("#899499"), # pewter (grey)
-                       "Microglia" = c("#4CBB17"), # kelly green
-                       "Astrocyte" = c("#CC5500"), # burnt orange
-                       "Endo" = c("#702963"), # byzantium
-                       "Excit.Neuron" = c("#FAFA33"), # lemon yellow
-                       "Inhib.Thal" = c('#FF0000'), #red
-                       "Excit.Thal" = c('#0818A8'), # zaffre (dark blue)
-                       "LHb.1" = c("#5F9EA0"), # cadet Blue
-                       "LHb.2" = c("#5D3FD3"), # iris
-                       "LHb.3" = c ("#4682B4"), #Steel Blue
-                       "LHb.4" = c("#1F51FF"), # neon blue
-                       "LHb.5" = c("#6495ED"), # Cornflower Blue
-                       "LHb.6" = c("#088F8F"), # Blue Green 
-                       "LHb.7" = c("#4169E1"), # royal bluee
-                       "MHb.1" = c("#40E0D0"), # Turquoise
-                       "MHb.2" = c("#96DED1"), #Robin Egg Blue
-                       "MHb.3" = c("#7DF9FF") # light blue
+                     "OPC"= c("#899499"), # pewter (grey)
+                     "Microglia" = c("#4CBB17"), # kelly green
+                     "Astrocyte" = c("#CC5500"), # burnt orange
+                     "Endo" = c("#702963"), # byzantium
+                     "Excit.Neuron" = c("#FAFA33"), # lemon yellow
+                     "Inhib.Thal" = c('#FF0000'), #red
+                     "Excit.Thal" = c('#0818A8'), # zaffre (dark blue)
+                     "LHb.1" = c("#5F9EA0"), # cadet Blue
+                     "LHb.2" = c("#5D3FD3"), # iris
+                     "LHb.3" = c ("#4682B4"), #Steel Blue
+                     "LHb.4" = c("#1F51FF"), # neon blue
+                     "LHb.5" = c("#6495ED"), # Cornflower Blue
+                     "LHb.6" = c("#088F8F"), # Blue Green 
+                     "LHb.7" = c("#4169E1"), # royal bluee
+                     "MHb.1" = c("#40E0D0"), # Turquoise
+                     "MHb.2" = c("#96DED1"), #Robin Egg Blue
+                     "MHb.3" = c("#7DF9FF") # light blue
 )
 
 ##### PLOTTING TSNEs ###########################################################
-pdf(here(plot_dir, "TSNE_harmony_by_snAnno2.pdf"))
-  plotReducedDim(sce, dimred = "TSNE", colour_by = "snAnno2") +
-    scale_colour_manual(values = cluster_colors)
+pdf(here(plot_dir, "TSNE_harmony_by_finalAnno.pdf"))
+plotReducedDim(sce_final_preHbdrop, dimred = "TSNE") +
+  geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
+  scale_colour_manual(values = cluster_colors)
 dev.off()
 
-pdf(here(plot_dir, "TSNE_harmony_by_snAnno2_splitbysnAnno2.pdf"))
-  plotReducedDim(sce, dimred = "TSNE", colour_by = "snAnno2") +
-    scale_colour_manual(values = cluster_colors) +
-    facet_wrap(~ sce$snAnno2)
+pdf(here(plot_dir, "TSNE_harmony_by_final_Annotations_splitbyfinalAnno.pdf"))
+plotReducedDim(sce_final_preHbdrop, dimred = "TSNE") +
+  geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
+  scale_colour_manual(values = cluster_colors) +
+  facet_wrap(~ sce_final_preHbdrop$final_Annotations)
 dev.off()
-
-# Separating sce by NeuN sorting
-sce_sorted <- sce[, sce$NeuN == "NeuN.Sorted"] 
-sce_unsorted <- sce[, sce$NeuN == "NeuN.Unsorted"] 
 
 # 
-plot_sorted <- plotReducedDim(sce_sorted, dimred = "TSNE", colour_by = "snAnno2") +
+plot_sorted <-   plotReducedDim(sce_sorted, dimred = "TSNE") +
+  geom_point(aes(color = sce_sorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
   facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample)
 
-plot_unsorted <- plotReducedDim(sce_unsorted, dimred = "TSNE", colour_by = "snAnno2") +
+plot_unsorted <-   plotReducedDim(sce_unsorted, dimred = "TSNE") +
+  geom_point(aes(color = sce_unsorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
   facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample)
 
 
-pdf(here(plot_dir, "TSNE_harmony_by_snAnno2_splitbySampleAndSorting.pdf"), width = 13, height = 9)
-  plot_grid(
-    plot_sorted,
-    plot_unsorted,
-    ncol = 1
-  )
+pdf(here(plot_dir, "TSNE_harmony_by_finalAnno_splitbySampleAndSorting.pdf"), width = 13, height = 9)
+plot_grid(
+  plot_sorted,
+  plot_unsorted,
+  ncol = 1
+)
 dev.off()
-
-# prepping for save
-sce$final_Annotations <- sce$snAnno2 
-sce_final_preHbdrop <- sce
-
-# Saving sce object 
-save(sce_final_preHbdrop, sce_sorted, sce_unsorted, file = here("processed-data", "99_paper_figs",  "sce_objects", "sce_final_preHbdrop.RDATA"))
-
 
 
 # 
