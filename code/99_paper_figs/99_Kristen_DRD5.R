@@ -39,6 +39,11 @@ pdf_print <- here(plot_dir, "DRD5vsCHAT.pdf")
 my_plotMarkers(sce_final, marker_list = markers.custom, assay = "logcounts", 
                cat = "final_Annotations" , fill_colors = NULL, pdf_fn = pdf_print)
 
+# # [OLD] plotting
+# pdf(here(plot_dir, "DRD5vsCHAT.pdf"))
+#   plot_gene_express(sce = sce_final, genes = c("DRD5", "CHAT"))
+# dev.off()
+
 sessioninfo::session_info()
 
 # ─ Session info ─────────────────────────────────────────────────────────────────────────────
