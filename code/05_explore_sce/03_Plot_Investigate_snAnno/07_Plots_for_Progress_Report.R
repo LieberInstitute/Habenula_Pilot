@@ -241,11 +241,17 @@ markerList = official_markers
                         ))
 
   
+# finalizing sce for ultimate save
+sce_final <- sce
+sce_final$final_Annotations <- sce$snAnno3
 
 # printing 
 pdf(here(plot_dir, "Completed_Markers_Heatmap_snAnno3_Simple_Pseudobulk.pdf"), width = 12, height = 8)
   print(heatmapped)
 dev.off()
 
+# saving official sce object
+save(sce_final, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
+          "sce_final.Rdata"))
 
 # Done.
