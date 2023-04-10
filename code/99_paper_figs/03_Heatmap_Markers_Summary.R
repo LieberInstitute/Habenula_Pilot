@@ -13,17 +13,31 @@ library("ComplexHeatmap")
 library("spatialLIBD")
 
 # loading sce object
-load(here("processed-data", "99_paper_figs",  "sce_objects", "sce_final.RDATA"),
+load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_final.Rdata"),
      verbose = TRUE)
+  # sce_final 
 
 table(sce_final$final_Annotations)
+  # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
+  # 538         38       1800       7612        201        266        134 
+  # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
+  # 477         83         39       1014        152        540         18 
+  # Microglia      Oligo        OPC 
+  # 145       2178       1796 
+    # has no Hb cluster 
+
+# creating plot directory
+plot_dir <- here("plots", "99_paper_figs", "03_Heatmap_Markers_Summary")
+if(!dir.exists(plot_dir)){
+  dir.create(plot_dir)
+}
 
 
 # Pseudobulking to create compressed sce object
 ## faking the pseudobulking function out by setting sample as all same sample
-sce$FakeSample <- "Br1011"
-sce$RealSample <- sce$Sample
-sce$Sample <- sce$FakeSample
+sce_final$FakeSample <- "Br1011"
+sce_final$RealSample <- sce_final$Sample
+sce_final$Sample <- sce_final$FakeSample
 
 set.seed(20220907) 
 sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
