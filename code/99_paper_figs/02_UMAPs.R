@@ -13,7 +13,7 @@ library("cowplot")
 # Loading sce object with modified snAnno2 (just chaged Hb to Excit.Neuron)
 load(here("processed-data", "99_paper_figs",  "sce_objects", "sce_final_preHbdrop.RDATA"),
      verbose = TRUE)
-# sce_final_preHbdrop, sce_sorted, sce_unsorted
+# sce_final_preHbdrop , sce_sorted, sce_unsorted
 
 # creating plot directory
 plot_dir <- here("plots", "99_paper_figs", "02_UMAPs")
@@ -44,16 +44,16 @@ cluster_colors <- c( "Oligo" = c("#5C4033"), # dark grown
 
 ##### PLOTTING UMAPs ###########################################################
 pdf(here(plot_dir, "UMAP_harmony_by_snAnno2.pdf"))
-  plotReducedDim(sce, dimred = "UMAP") +
-    geom_point(aes(color = sce$snAnno2), alpha = 0.4) + 
+  plotReducedDim(sce_final_preHbdrop, dimred = "UMAP") +
+    geom_point(aes(color = sce_final_preHbdrop$snAnno2), alpha = 0.4) + 
     scale_colour_manual(values = cluster_colors)
 dev.off()
 
 pdf(here(plot_dir, "UMAP_harmony_by_snAnno2_splitbysnAnno2.pdf"))
-  plotReducedDim(sce, dimred = "UMAP") +
-    geom_point(aes(color = sce$snAnno2), alpha = 0.4) + 
+  plotReducedDim(sce_final_preHbdrop, dimred = "UMAP") +
+    geom_point(aes(color = sce_final_preHbdrop$snAnno2), alpha = 0.4) + 
     scale_colour_manual(values = cluster_colors) +
-    facet_wrap(~ sce$snAnno2)
+    facet_wrap(~ sce_final_preHbdrop$snAnno2)
 dev.off()
 
 # 
