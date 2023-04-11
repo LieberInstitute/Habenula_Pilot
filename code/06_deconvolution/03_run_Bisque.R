@@ -8,6 +8,7 @@ library(DeconvoBuddies)
 library(SingleCellExperiment)
 library(jaffelab)
 library(dplyr)
+library(BisqueRNA)
 
 # loading sce object (sn data) post drop of Hb cluster! 
 load(here("processed-data", "06_deconvolution", "sce_objects", "sce_first_bulkTypes.RDATA"),
@@ -23,6 +24,12 @@ plot_dir <- here("plots", "06_deconvolution", "03_bulk_Composition")
   if(!dir.exists(plot_dir)){
     dir.create(plot_dir)
   }
+
+# creating directory for processed data
+save_dir <- here("processed-data", "06_deconvolution", "run_Bisque")
+if(!dir.exists(save_dir)){
+  dir.create(save_dir)
+}
 
 ###### CHECKING DATA ###########################################################
 table(sce$bulkTypeSepHb)
@@ -40,7 +47,10 @@ sce$RealSample <- NULL
 sce_symbol <- sce
 rownames(sce_symbol) <- rowData(sce)$Symbol
 
-######## Runnning DeconvoBuddies ###############################################
+# changing rownames of rse_gene to actual gene symbols
+rownames(rse_gene) <- rowData(rse_gene)$Symbol
+
+######## Pre-Bisque ############################################################
 ## remember, this is the broad analyses meaning that these annotations are solely
 # for bulk deconvo
 
@@ -77,13 +87,44 @@ plot_marker_express_ALL(sce_symbol,
                       pdf_fn = here(plot_dir, "Top_10_Broad_snRNA_Annotation_Markers.pdf")
 )
 
+# creating marker_list of top 25 genes
+marker_genes <- marker_stats |>
+  filter(rank_ratio <= 25, gene %in% rownames(rse_gene)) |>
+  pull(gene)
+
+length(marker_genes)
+# [1] 172
+
+##### Running BISQUE ###########################################################
+exp_set_bulk <- Biobase::ExpressionSet(assayData = assays(rse_gene[marker_genes,])$counts,
+                                       phenoData=AnnotatedDataFrame(
+                                         as.data.frame(colData(rse_gene))[c("BrNum")]))
+
+exp_set_sce <- Biobase::ExpressionSet(assayData = as.matrix(assays(sce_symbol[marker_genes,])$counts),
+                                      phenoData=AnnotatedDataFrame(
+                                        as.data.frame(colData(sce_symbol))[,c("bulkTypeSepHb","Sample")]))
+
+# checking for nuclei with 0 marker expression
+zero_cell_filter <- colSums(exprs(exp_set_sce)) != 0
+message("Exclude ", sum(!zero_cell_filter), " cells")
+# Exclude 0 cells [yayyyyy!!!!]
+
+est_prop <- ReferenceBasedDecomposition(bulk.eset = exp_set_bulk,
+                                        sc.eset = exp_set_sce,
+                                        cell.types = "bulkTypeSepHb",
+                                        subject.names = "Sample",
+                                        use.overlap = FALSE)
+
+#### Saving
+save(marker_stats, file = here(save_dir, "marker_stats_top_25_genes.csv"))
+
+save(est_prop, file = here(save_dir, "est_prop_split_Hb_annotations.RDATA"))
 
 
 
 
-# to do:
-# print top 25 expression and keep an eye out for garbage
-# 
+
+
 
 
 # 
