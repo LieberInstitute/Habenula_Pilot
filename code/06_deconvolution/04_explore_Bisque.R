@@ -53,10 +53,31 @@ prop_long <- est_prop$bulk.props |>
   rownames_to_column("cellType") |>
   tidyr::pivot_longer(!cellType, names_to = "Sample", values_to = "prop") |>
   left_join(pd) 
-  
+
+prop_long$HbSum <- NA
+
+# creating a column to organize plot by Hb sum.
+for(i in unique(prop_long$BrNum)) {
+  prop_sub <- prop_long[prop_long$BrNum == i,] 
+  HbSummer <- sum(prop_sub[prop_sub$cellType %in% c("MHb", "LHb"), ]$prop)
+  prop_long[prop_long$BrNum == i,]$HbSum <- HbSummer
+}
+
+prop_long$Hb_Order <- order(prop_long$HbSum)
+
+prop_long <- prop_long %>% arrange(desc(Hb_Order))
+
 ## create composition bar plots
 pdf(here(plot_dir, "composition_bar_plot_bulkTypeSepHb_2.pdf"), width = 20, height = 10)
-  plot_composition_bar(prop_long = prop_long, sample_col = "Sample",
+  plot_composition_bar(prop_long = prop_long, sample_col = "BrNum",
                         x_col = "BrNum", ct_col = "cellType") + 
-    scale_fill_manual(values = color_bulk_clusters)
+    scale_fill_manual(values = color_bulk_clusters) +
+    aes(x = reorder(prop_long$BrNum, prop_long$Hb_Order), y = prop_long$prop)
 dev.off()
+
+
+
+
+
+
+#
