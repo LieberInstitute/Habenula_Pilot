@@ -52,21 +52,23 @@ rownames(rse_gene) <- rowData(rse_gene)$Symbol
 
 # dropping OPC Cluster Samples in sce object (check note from below)
 dropSample <- c("Br5555", "Br1204", "Br1092")
-colData(sce)[sce$Sample[sce$bulkTypeSepHb == "OPC"] %in% dropSample, ]
+clean_sce <- sce[sce$Sample[sce$bulkTypeSepHb == "OPC"] %in% dropSample, ]
 
+clean_sce_symbol <- clean_sce
+rownames(clean_sce_symbol) <- rowData(clean_sce)$Symbol
 
 ######## Pre-Bisque ############################################################
 ## remember, this is the broad analyses meaning that these annotations are solely
 # for bulk deconvo
 
 # Creating mean_ratios based on our specified annotations
-ratios <- get_mean_ratio2(sce_symbol,
+ratios <- get_mean_ratio2(clean_sce_symbol,
                           cellType_col = "bulkTypeSepHb",
                           assay_name = "logcounts",
                           add_symbol = TRUE)
 
 # Using the 1 vs All standard fold change for each gene x cell type
-fc <- findMarkers_1vAll(sce_symbol,
+fc <- findMarkers_1vAll(clean_sce_symbol,
                         assay_name = "counts",
                         cellType_col = "bulkTypeSepHb",
                         add_symbol = FALSE,
@@ -95,13 +97,11 @@ plot_marker_express_ALL(sce_symbol,
 # OPC is pretty messy. Only taking top markers 1-6! 
 ## creating marker_list of top 25 genes
 marker_genes <- marker_stats |>
-  filter(rank_ratio <= 25, gene %in% rownames(rse_gene)) 
-
-
+  filter(rank_ratio <= 25, gene %in% rownames(rse_gene)) |>
   pull(gene)
 
 length(marker_genes)
-# [1] 172
+# [1] 188
 
 ##### Running BISQUE ###########################################################
 exp_set_bulk <- Biobase::ExpressionSet(assayData = assays(rse_gene[marker_genes,])$counts,
