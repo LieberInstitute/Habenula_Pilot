@@ -1,5 +1,5 @@
 ## April 11, 2023 - Bukola Ajanaku
-# Working on bulkRNA-seq deconvolution 
+# Working on bulkRNA-seq deconvolution using Bisque.
 # qrsh -l mem_free=20G,h_vmem=20G
 
 library(SummarizedExperiment)
@@ -50,6 +50,11 @@ rownames(sce_symbol) <- rowData(sce)$Symbol
 # changing rownames of rse_gene to actual gene symbols
 rownames(rse_gene) <- rowData(rse_gene)$Symbol
 
+# dropping OPC Cluster Samples in sce object (check note from below)
+dropSample <- c("Br5555", "Br1204", "Br1092")
+colData(sce)[sce$Sample[sce$bulkTypeSepHb == "OPC"] %in% dropSample, ]
+
+
 ######## Pre-Bisque ############################################################
 ## remember, this is the broad analyses meaning that these annotations are solely
 # for bulk deconvo
@@ -87,9 +92,12 @@ plot_marker_express_ALL(sce_symbol,
                       pdf_fn = here(plot_dir, "Top_10_Broad_snRNA_Annotation_Markers.pdf")
 )
 
-# creating marker_list of top 25 genes
+# OPC is pretty messy. Only taking top markers 1-6! 
+## creating marker_list of top 25 genes
 marker_genes <- marker_stats |>
-  filter(rank_ratio <= 25, gene %in% rownames(rse_gene)) |>
+  filter(rank_ratio <= 25, gene %in% rownames(rse_gene)) 
+
+
   pull(gene)
 
 length(marker_genes)
@@ -114,17 +122,22 @@ est_prop <- ReferenceBasedDecomposition(bulk.eset = exp_set_bulk,
                                         cell.types = "bulkTypeSepHb",
                                         subject.names = "Sample",
                                         use.overlap = FALSE)
+##### NOTE: DROPPING 0PC Samples ###############################################
+# OPC cluster is very dirty and upon inspection of previous heatmaps, three 
+# Samples are contributing to the noise in this cluster and will be dropped.
+# They are as follows: "Br5555", "Br1204", and "Br1092".
+
+# update sce 
+
+
+# I haven't edited the previous copies of this sce. Will need to go back and drop 
+# where I dropped the Hb cluster!
+
 
 #### Saving
 save(marker_stats, file = here(save_dir, "marker_stats_top_25_genes.csv"))
 
 save(est_prop, file = here(save_dir, "est_prop_split_Hb_annotations.RDATA"))
-
-
-
-
-
-
 
 
 # 
