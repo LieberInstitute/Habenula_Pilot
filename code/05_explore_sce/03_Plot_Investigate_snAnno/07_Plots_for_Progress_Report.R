@@ -153,7 +153,7 @@ dev.off()
 
 
 ## glia cells: glia (5 colors), thalamus (2 reds), 
-color_row_namers <- c( "Oligo" = c("#5C4033"), # dark grown
+color_row_namers <- c( "Oligo" = c("#5C4033"), # dark brown
                        "OPC"= c("#899499"), # pewter (grey)
                        "Microglia" = c("#4CBB17"), # kelly green
                        "Astrocyte" = c("#CC5500"), # burnt orange

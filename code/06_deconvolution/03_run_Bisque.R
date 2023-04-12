@@ -164,8 +164,6 @@ pdf(here(plot_dir, "hockystick_cleanedOPC.pdf"))
 dev.off()
 
 
-
-
 #### Saving
 save(marker_stats, file = here(save_dir, "marker_stats_top_25_genes.csv"))
 
