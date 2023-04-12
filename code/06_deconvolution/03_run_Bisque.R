@@ -1,6 +1,6 @@
 ## April 11, 2023 - Bukola Ajanaku
 # Working on bulkRNA-seq deconvolution using Bisque.
-# qrsh -l mem_free=20G,h_vmem=20G
+# qrsh -l mem_free=50G,h_vmem=50G
 
 library(SummarizedExperiment)
 library(here)
@@ -9,6 +9,7 @@ library(SingleCellExperiment)
 library(jaffelab)
 library(dplyr)
 library(BisqueRNA)
+library(ggplot2)
 
 # loading sce object (sn data) post drop of Hb cluster! 
 load(here("processed-data", "06_deconvolution", "sce_objects", "sce_first_bulkTypes.RDATA"),
@@ -43,19 +44,39 @@ sce$Sample <- sce$RealSample
 sce$FakeSample <- NULL
 sce$RealSample <- NULL
 
-# changing rownames of sce to actual gene symbols and saving as sce_symbol
-sce_symbol <- sce
-rownames(sce_symbol) <- rowData(sce)$Symbol
-
 # changing rownames of rse_gene to actual gene symbols
 rownames(rse_gene) <- rowData(rse_gene)$Symbol
 
 # dropping OPC Cluster Samples in sce object (check note from below)
 dropSample <- c("Br5555", "Br1204", "Br1092")
-clean_sce <- sce[sce$Sample[sce$bulkTypeSepHb == "OPC"] %in% dropSample, ]
+keepSample <- c("Br1469", "Br1735", "Br5558", "Br5639") 
 
+# sce[sce$Sample[sce$bulkTypeSepHb == "OPC"] %in% dropSample, ]
+# cleaning OPC cluster
+sce_OPC_dirty <- sce[, which(sce$bulkTypeSepHb == "OPC")]
+sce_OPC_clean <- sce_OPC_dirty[, which(!sce_OPC_dirty$Sample %in% dropSample)]
+
+# grabbing sce object with old OPC cluster
+sce_no_OPC <- sce[ , which(sce$snAnno3 != "OPC")]
+
+# created new official OPC cluster
+clean_sce <- cbind(sce_no_OPC, sce_OPC_clean)
+
+# removing parts 
+rm(sce_no_OPC)
+rm(sce_OPC_clean)
+rm(sce_OPC_dirty)
+
+# adding symbols
 clean_sce_symbol <- clean_sce
 rownames(clean_sce_symbol) <- rowData(clean_sce)$Symbol
+
+# check 
+dim(clean_sce_symbol)
+  # [1] 33848 16437
+
+dim(sce)
+  # [1] 33848 17031
 
 ######## Pre-Bisque ############################################################
 ## remember, this is the broad analyses meaning that these annotations are solely
@@ -80,12 +101,12 @@ fc <- findMarkers_1vAll(clean_sce_symbol,
 marker_stats <- left_join(ratios, fc, by = c("gene", "cellType.target"))
 
 # Random color scheme [NEED TO ESTABLISH MY OWN FOR THIS STEP]
-cell_types <- levels(sce_symbol$cellType)
+cell_types <- levels(clean_sce_symbol$cellType)
 # cell_colors <- create_cell_colors(cell_types = cell_types, pallet = "classic", split = "\\.", preview = TRUE)
   # cell_colors errorr
 
 # printing top 10 markers 
-plot_marker_express_ALL(sce_symbol,
+plot_marker_express_ALL(clean_sce_symbol,
                       marker_stats,
                       n_genes = 10,
                       rank_col = "rank_ratio",
@@ -108,9 +129,9 @@ exp_set_bulk <- Biobase::ExpressionSet(assayData = assays(rse_gene[marker_genes,
                                        phenoData=AnnotatedDataFrame(
                                          as.data.frame(colData(rse_gene))[c("BrNum")]))
 
-exp_set_sce <- Biobase::ExpressionSet(assayData = as.matrix(assays(sce_symbol[marker_genes,])$counts),
+exp_set_sce <- Biobase::ExpressionSet(assayData = as.matrix(assays(clean_sce_symbol[marker_genes,])$counts),
                                       phenoData=AnnotatedDataFrame(
-                                        as.data.frame(colData(sce_symbol))[,c("bulkTypeSepHb","Sample")]))
+                                        as.data.frame(colData(clean_sce_symbol))[,c("bulkTypeSepHb","Sample")]))
 
 # checking for nuclei with 0 marker expression
 zero_cell_filter <- colSums(exprs(exp_set_sce)) != 0
@@ -127,11 +148,22 @@ est_prop <- ReferenceBasedDecomposition(bulk.eset = exp_set_bulk,
 # Samples are contributing to the noise in this cluster and will be dropped.
 # They are as follows: "Br5555", "Br1204", and "Br1092".
 
-# update sce 
-
-
 # I haven't edited the previous copies of this sce. Will need to go back and drop 
 # where I dropped the Hb cluster!
+
+# adding color group
+marker_stats$Top25 <- "No"
+marker_stats[which(marker_stats$rank_ratio <= 25), "Top25"] <- "Yes"
+
+# plotting
+# this is the hockey stick plot for the split up snAnno
+pdf(here(plot_dir, "hockystick_cleanedOPC.pdf"))
+  ggplot(marker_stats, aes(ratio, std.logFC)) +
+    geom_point(size = 0.5, aes(colour = Top25)) +  
+    facet_wrap(~cellType.target, scales = "free") 
+dev.off()
+
+
 
 
 #### Saving
