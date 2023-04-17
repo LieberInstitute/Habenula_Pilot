@@ -10,8 +10,8 @@ library("DeconvoBuddies")
 library("ggplot2")
 
 # loading regular sce object
-load(here("processed-data", "06_deconvolution", "sce_objects", "sce_first_bulkTypes.RDATA"))
-
+load(here("processed-data", "99_paper_figs", "sce_objects", 
+          "official_final_sce.RDATA"))
 # creating directories for saving  
   ## output save directory
   new_dir <- here("processed-data", "06_deconvolution", "sce_objects", "expression_data")
@@ -25,6 +25,15 @@ load(here("processed-data", "06_deconvolution", "sce_objects", "sce_first_bulkTy
     dir.create(plot_dir)
   }
 
+
+dim(sce)
+# [1] 33848 17031
+
+old_sce <- sce
+
+# dropping noisy OPC 
+sce <- sce[, which(sce$OPC_clean == "Yes")]  
+  
 ##### Running expression code! #####
     # mean ratio
   mean_ratio_SepHb <- get_mean_ratio2(

@@ -12,8 +12,8 @@ library(BisqueRNA)
 library(ggplot2)
 
 # loading sce object (sn data) post drop of Hb cluster! 
-load(here("processed-data", "06_deconvolution", "sce_objects", "sce_first_bulkTypes.RDATA"),
-     verbose = TRUE)
+load(here("processed-data", "99_paper_figs", "sce_objects", 
+          "official_final_sce.RDATA"), verbose = TRUE)
       # sce 
 # loading cleaned rse object (bulk data)
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
