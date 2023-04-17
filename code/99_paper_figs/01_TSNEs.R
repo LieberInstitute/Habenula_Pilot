@@ -24,7 +24,7 @@ table(sce_final_preHbdrop$final_Annotations)
 # 152          540           18          145         2178         1796 
 
 # creating plot directory
-plot_dir <- here("plots", "99_paper_figs", "02_TSNEs")
+plot_dir <- here("plots", "99_paper_figs", "01_TSNEs")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
@@ -51,29 +51,37 @@ cluster_colors <- c( "Oligo" = c("#5C4033"), # dark grown
 )
 
 ##### PLOTTING TSNEs ###########################################################
+# Pre-Harmonization
+
+
+# Post-Harmonnization
 pdf(here(plot_dir, "TSNE_harmony_by_finalAnno.pdf"))
 plotReducedDim(sce_final_preHbdrop, dimred = "TSNE") +
   geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
-  scale_colour_manual(values = cluster_colors)
+  scale_colour_manual(values = cluster_colors) + 
+  guides(color = guide_legend(title="Cell Type"))
 dev.off()
 
 pdf(here(plot_dir, "TSNE_harmony_by_final_Annotations_splitbyfinalAnno.pdf"))
 plotReducedDim(sce_final_preHbdrop, dimred = "TSNE") +
   geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce_final_preHbdrop$final_Annotations)
+  facet_wrap(~ sce_final_preHbdrop$final_Annotations) + 
+  guides(color = guide_legend(title="Cell Type"))
 dev.off()
 
 # 
 plot_sorted <-   plotReducedDim(sce_sorted, dimred = "TSNE") +
   geom_point(aes(color = sce_sorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample)
+  facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample) + 
+  guides(color = guide_legend(title="Cell Type"))
 
 plot_unsorted <-   plotReducedDim(sce_unsorted, dimred = "TSNE") +
   geom_point(aes(color = sce_unsorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample)
+  facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample) + 
+  guides(color = guide_legend(title="Cell Type"))
 
 
 pdf(here(plot_dir, "TSNE_harmony_by_finalAnno_splitbySampleAndSorting.pdf"), width = 13, height = 9)

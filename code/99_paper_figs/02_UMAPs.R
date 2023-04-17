@@ -54,26 +54,38 @@ cluster_colors <- c( "Oligo" = c("#5C4033"), # dark grown
 pdf(here(plot_dir, "UMAP_harmony_by_finalAnno.pdf"))
   plotReducedDim(sce_final_preHbdrop, dimred = "UMAP") +
     geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
-    scale_colour_manual(values = cluster_colors)
+    scale_colour_manual(values = cluster_colors) + 
+    guides(color = guide_legend(title="Cell Type"))
 dev.off()
 
-pdf(here(plot_dir, "UMAP_harmony_by_final_Annotations_splitbyfinalAnno.pdf"))
-  plotReducedDim(sce_final_preHbdrop, dimred = "UMAP") +
+pdf(here(plot_dir, "UMAP_harmony_by_final_Annotations_splitbyfinalAnno.pdf"),
+    width = 12, height = 7)
+  plot1 <- plotReducedDim(sce_final_preHbdrop, dimred = "UMAP") +
+    geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
+    scale_colour_manual(values = cluster_colors) + 
+    theme(legend.position = "none")
+
+  plot2 <- plotReducedDim(sce_final_preHbdrop, dimred = "UMAP") +
     geom_point(aes(color = sce_final_preHbdrop$final_Annotations), alpha = 0.4) + 
     scale_colour_manual(values = cluster_colors) +
-    facet_wrap(~ sce_final_preHbdrop$final_Annotations)
+    facet_wrap(~ sce_final_preHbdrop$final_Annotations) + 
+    guides(color = guide_legend(title="Cell Type"))
+  
+  plot_grid(plot1, plot2)
 dev.off()
 
 # 
 plot_sorted <-   plotReducedDim(sce_sorted, dimred = "UMAP") +
   geom_point(aes(color = sce_sorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample)
+  facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample) + 
+  guides(color = guide_legend(title="Cell Type"))
 
 plot_unsorted <-   plotReducedDim(sce_unsorted, dimred = "UMAP") +
   geom_point(aes(color = sce_unsorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample)
+  facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample) + 
+  guides(color = guide_legend(title="Cell Type"))
 
 
 pdf(here(plot_dir, "UMAP_harmony_by_finalAnno_splitbySampleAndSorting.pdf"), width = 13, height = 9)
