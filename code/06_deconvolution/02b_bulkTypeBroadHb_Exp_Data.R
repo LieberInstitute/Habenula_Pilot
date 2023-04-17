@@ -10,7 +10,8 @@ library("DeconvoBuddies")
 library("ggplot2")
 
 # loading regular sce object
-load(here("processed-data", "06_deconvolution", "sce_objects", "sce_first_bulkTypes.RDATA"))
+load(here("processed-data", "06_deconvolution", "sce_objects", "sce_first_bulkTypes.RDATA"),
+     verbose = TRUE)
 
 # creating directories for saving  
 ## output save directory

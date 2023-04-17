@@ -8,21 +8,10 @@ library("SingleCellExperiment")
 library("here")
 
 # loading regular sce object
-load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_final.Rdata"),
-     verbose = TRUE)
-sce <- sce_final
-rm(sce_final)
+load(here("processed-data", "99_paper_figs", "sce_objects", 
+          "official_final_sce.RDATA"), verbose = TRUE)
 
 ##### Cleaning up sce object ###################################################
-dropNames <- c("louvain10", "louvain20", "louvain50", "wT_10_Erik", "wT_20_Erik",
-               "wT_50_Erik", "groupErik", "wt10_ANNO", "wt50_ANNO", "cellType_wT10",
-               "cellType_wT20", "cellType_wT50", "splitProbClusts", "splitSNType", 
-               "snAnno", "snAnno2", "splitSNType2", "splitSNType3")
-
-for(i in dropNames){
-  colData(sce)[, dropNames] <- NULL
-}
-
 ## check 
 table(sce$final_Annotations)
     # Astrocyte   Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
@@ -31,6 +20,17 @@ table(sce$final_Annotations)
     # 477         83         39       1014        152        540         18 
     # Microglia  Oligo        OPC 
     # 145        2178       1796
+
+table(sce$OPC_clean)
+# No   Yes 
+# 594 16437
+
+# dropping noisy OPC
+sce <- sce[, which(sce$OPC_clean == "Yes")]
+
+table(sce$OPC_clean)
+# Yes 
+# 16437 
 
 ##### Bulk Annotations #########################################################
 # 1: bulkTypeSepHb 
@@ -75,7 +75,7 @@ sce$bulkTypeAllCollapse[sce$bulkTypeAllCollapse %in% grep("^Inhib\\.", unique(sc
   # check! 
   table(sce$bulkTypeAllCollapse)
     # Astrocyte   Endo    Hb        Microglia  Oligo       OPC      Thal 
-    # 538         38      2924       145        2178      1796      9412 
+    # 538         38      2924       145        2178      1202      9412 
 
 new_dir <- here("processed-data", "06_deconvolution", "sce_objects")
 if(!dir.exists(new_dir)){
