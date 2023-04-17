@@ -48,10 +48,13 @@ pd <- colData(rse_gene) |>
   as.data.frame() |>
   select(Sample = RNum, BrNum, PrimaryDx)
 
+est_prop$bulk.props <- t(est_prop$bulk.props)
+head(est_prop$bulk.props)
+
 prop_long <- est_prop$bulk.props |>
   as.data.frame() |>
-  rownames_to_column("cellType") |>
-  tidyr::pivot_longer(!cellType, names_to = "Sample", values_to = "prop") |>
+  rownames_to_column("Sample") |>
+  tidyr::pivot_longer(!Sample, names_to = "cellType", values_to = "prop") |>
   left_join(pd) 
 
 prop_long$HbSum <- NA
@@ -63,16 +66,14 @@ for(i in unique(prop_long$BrNum)) {
   prop_long[prop_long$BrNum == i,]$HbSum <- HbSummer
 }
 
-prop_long$Hb_Order <- order(prop_long$HbSum)
-
-prop_long <- prop_long %>% arrange(desc(Hb_Order))
+prop_long$HbSum <- as.factor(prop_long$HbSum)
 
 ## create composition bar plots
-pdf(here(plot_dir, "composition_bar_plot_bulkTypeSepHb_2.pdf"), width = 20, height = 10)
-  plot_composition_bar(prop_long = prop_long, sample_col = "BrNum",
+pdf(here(plot_dir, "composition_bar_plot_bulkTypeSepHb_3.pdf"), width = 20, height = 10)
+  plot_composition_bar(prop_long = prop_long, sample_col = "Sample",
                         x_col = "BrNum", ct_col = "cellType") + 
     scale_fill_manual(values = color_bulk_clusters) +
-    aes(x = reorder(prop_long$BrNum, prop_long$Hb_Order), y = prop_long$prop)
+    aes(x = sort(prop_long$HbSum, decreasing = FALSE))
 dev.off()
 
 

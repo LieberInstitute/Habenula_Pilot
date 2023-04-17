@@ -12,8 +12,8 @@ library(BisqueRNA)
 library(ggplot2)
 
 # loading sce object (sn data) post drop of Hb cluster! 
-load(here("processed-data", "99_paper_figs", "sce_objects", 
-          "official_final_sce.RDATA"), verbose = TRUE)
+load(here("processed-data", "06_deconvolution", "sce_objects", "sce_first_bulkTypes.RDATA"),
+     verbose = TRUE)
       # sce 
 # loading cleaned rse object (bulk data)
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
@@ -37,59 +37,34 @@ table(sce$bulkTypeSepHb)
     # Astrocyte   Endo Excit.Thal   Inhib.Thal   LHb        MHb  Microglia 
     # 538         38       1800       7612       2214        710        145 
     # Oligo       OPC 
-    # 2178       1796
+    # 2178       1202
 
-# fixing sample issue
-sce$Sample <- sce$RealSample
-sce$FakeSample <- NULL
-sce$RealSample <- NULL
-
-# changing rownames of rse_gene to actual gene symbols
-rownames(rse_gene) <- rowData(rse_gene)$Symbol
-
-# dropping OPC Cluster Samples in sce object (check note from below)
-dropSample <- c("Br5555", "Br1204", "Br1092")
-keepSample <- c("Br1469", "Br1735", "Br5558", "Br5639") 
-
-# sce[sce$Sample[sce$bulkTypeSepHb == "OPC"] %in% dropSample, ]
-# cleaning OPC cluster
-sce_OPC_dirty <- sce[, which(sce$bulkTypeSepHb == "OPC")]
-sce_OPC_clean <- sce_OPC_dirty[, which(!sce_OPC_dirty$Sample %in% dropSample)]
-
-# grabbing sce object with old OPC cluster
-sce_no_OPC <- sce[ , which(sce$snAnno3 != "OPC")]
-
-# created new official OPC cluster
-clean_sce <- cbind(sce_no_OPC, sce_OPC_clean)
-
-# removing parts 
-rm(sce_no_OPC)
-rm(sce_OPC_clean)
-rm(sce_OPC_dirty)
 
 # adding symbols
-clean_sce_symbol <- clean_sce
-rownames(clean_sce_symbol) <- rowData(clean_sce)$Symbol
+sym_sce <- sce
+rownames(sym_sce) <- rowData(sce)$Symbol
 
 # check 
-dim(clean_sce_symbol)
+dim(sym_sce)
   # [1] 33848 16437
 
-dim(sce)
-  # [1] 33848 17031
+
+# adding symbols 
+rownames(rse_gene) <- rowData(rse_gene)$Symbol
+
 
 ######## Pre-Bisque ############################################################
 ## remember, this is the broad analyses meaning that these annotations are solely
 # for bulk deconvo
 
 # Creating mean_ratios based on our specified annotations
-ratios <- get_mean_ratio2(clean_sce_symbol,
+ratios <- get_mean_ratio2(sym_sce,
                           cellType_col = "bulkTypeSepHb",
                           assay_name = "logcounts",
                           add_symbol = TRUE)
 
 # Using the 1 vs All standard fold change for each gene x cell type
-fc <- findMarkers_1vAll(clean_sce_symbol,
+fc <- findMarkers_1vAll(sym_sce,
                         assay_name = "counts",
                         cellType_col = "bulkTypeSepHb",
                         add_symbol = FALSE,
@@ -101,12 +76,12 @@ fc <- findMarkers_1vAll(clean_sce_symbol,
 marker_stats <- left_join(ratios, fc, by = c("gene", "cellType.target"))
 
 # Random color scheme [NEED TO ESTABLISH MY OWN FOR THIS STEP]
-cell_types <- levels(clean_sce_symbol$cellType)
+cell_types <- levels(sym_sce$cellType)
 # cell_colors <- create_cell_colors(cell_types = cell_types, pallet = "classic", split = "\\.", preview = TRUE)
   # cell_colors errorr
 
 # printing top 10 markers 
-plot_marker_express_ALL(clean_sce_symbol,
+plot_marker_express_ALL(sym_sce,
                       marker_stats,
                       n_genes = 10,
                       rank_col = "rank_ratio",
@@ -122,16 +97,16 @@ marker_genes <- marker_stats |>
   pull(gene)
 
 length(marker_genes)
-# [1] 188
+# [1] 170
 
 ##### Running BISQUE ###########################################################
 exp_set_bulk <- Biobase::ExpressionSet(assayData = assays(rse_gene[marker_genes,])$counts,
                                        phenoData=AnnotatedDataFrame(
                                          as.data.frame(colData(rse_gene))[c("BrNum")]))
 
-exp_set_sce <- Biobase::ExpressionSet(assayData = as.matrix(assays(clean_sce_symbol[marker_genes,])$counts),
+exp_set_sce <- Biobase::ExpressionSet(assayData = as.matrix(assays(sym_sce[marker_genes,])$counts),
                                       phenoData=AnnotatedDataFrame(
-                                        as.data.frame(colData(clean_sce_symbol))[,c("bulkTypeSepHb","Sample")]))
+                                        as.data.frame(colData(sym_sce))[,c("bulkTypeSepHb","Sample")]))
 
 # checking for nuclei with 0 marker expression
 zero_cell_filter <- colSums(exprs(exp_set_sce)) != 0
