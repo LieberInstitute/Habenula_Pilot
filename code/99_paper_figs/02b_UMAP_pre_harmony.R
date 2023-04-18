@@ -1,5 +1,5 @@
-## April 17, 2023 - Bukola Ajanaku
-# Plotting same TSNE plots but pre-harmony.
+## April 18, 2023 - Bukola Ajanaku
+# Plotting same UMAP plots but pre-harmony.
 # qrsh -l mem_free=50G,h_vmem=50G
 
 library("SingleCellExperiment")
@@ -10,45 +10,13 @@ library("ggplot2")
 library("cowplot")
 
 # loading old sce object (post qc sce object)
-load(here("processed-data", "04_snRNA-seq", "sce_objects", 
-         "sce_uncorrected_PCA.Rdata"), verbose = TRUE)
-# sce_uncorrected 
-
-dim(sce_uncorrected)
-# [1] 33848 17082
-
-# loading official sce object 
 load(here("processed-data", "99_paper_figs", "sce_objects", 
-          "official_final_sce.RDATA"), verbose = TRUE)
-# sce
-
-dim(sce)
-# [1] 33848 17031
-
-# making sure colnames of sce_uncorrected are unique 
-colnames(sce_uncorrected) <- paste0(sce_uncorrected$Sample, "_", sce_uncorrected$Barcode)
-
-# subsetting sce_uncorrected to only the nuclei we've kept in sce
-sce_uncorrected_clean <- sce_uncorrected[, which(colnames(sce_uncorrected) %in% colnames(sce))]
-
-dim(sce_uncorrected_clean)
-# [1] 33848 17031
-
-# Now making sure phenotype data from sce is in sce_uncorrected (clean)
-colData(sce_uncorrected_clean) <- colData(sce)
-
-# just checking for final Annotations
-table(sce_uncorrected_clean$final_Annotations)
-    # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
-    # 538         38       1800       7612        201        266        134 
-    # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
-    # 477         83         39       1014        152        540         18 
-    # Microglia      Oligo        OPC 
-    # 145       2178       1796 
+    "official_final_uncorrected_sce.RDATA"), verbose = TRUE)
+# sce_uncorrected_clean
 
 #### Prepping for plotting #####################################################
 # creating plot directory
-plot_dir <- here("plots", "99_paper_figs", "01_TSNEs", "Pre-Harmony")
+plot_dir <- here("plots", "99_paper_figs", "02_UMAPs", "Pre-Harmony")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
@@ -78,23 +46,23 @@ cluster_colors <- c( "Oligo" = c("#475c6c"),
 sce_unc_sorted <- sce_uncorrected_clean[, which(sce_uncorrected_clean$NeuN == "NeuN.Sorted")]
 sce_unc_unsorted <- sce_uncorrected_clean[, which(sce_uncorrected_clean$NeuN == "NeuN.Unsorted")]
 
-##### PLOTTING TSNEs ###########################################################
+##### PLOTTING UMAPs ###########################################################
 # Post-Harmonnization
-pdf(here(plot_dir, "TSNE_harmony_by_finalAnno_PRE-HARMONY.pdf"))
-plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
+pdf(here(plot_dir, "UMAP_harmony_by_finalAnno_PRE-HARMONY.pdf"))
+plotReducedDim(sce_uncorrected_clean, dimred = "UMAP") +
   geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
   scale_colour_manual(values = cluster_colors) + 
   guides(color = guide_legend(title="Cell Type"))
 dev.off()
 
-pdf(here(plot_dir, "TSNE_harmony_by_final_Annotations_splitbyfinalAnno_PRE-HARMONY.pdf"), 
+pdf(here(plot_dir, "UMAP_harmony_by_final_Annotations_splitbyfinalAnno_PRE-HARMONY.pdf"), 
     width = 10)
-plot1 <- plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
+plot1 <- plotReducedDim(sce_uncorrected_clean, dimred = "UMAP") +
   geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
   scale_colour_manual(values = cluster_colors) + 
   theme(legend.position = "none")
 
-plot2 <- plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
+plot2 <- plotReducedDim(sce_uncorrected_clean, dimred = "UMAP") +
   geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
   scale_colour_manual(values = cluster_colors) +
   facet_wrap(~ sce_uncorrected_clean$final_Annotations) + 
@@ -104,20 +72,20 @@ plot_grid(plot1, plot2)
 dev.off()
 
 # for NeuN sorting and Non-NeuN sorting
-plot_sorted <- plotReducedDim(sce_unc_sorted, dimred = "TSNE") +
+plot_sorted <- plotReducedDim(sce_unc_sorted, dimred = "UMAP") +
   geom_point(aes(color = sce_unc_sorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
   facet_grid(sce_unc_sorted$NeuN ~ sce_unc_sorted$Sample) + 
   guides(color = guide_legend(title="Cell Type"))
 
-plot_unsorted <-   plotReducedDim(sce_unc_unsorted, dimred = "TSNE") +
+plot_unsorted <-   plotReducedDim(sce_unc_unsorted, dimred = "UMAP") +
   geom_point(aes(color = sce_unc_unsorted$final_Annotations), alpha = 0.4) + 
   scale_colour_manual(values = cluster_colors) +
   facet_grid(sce_unc_unsorted$NeuN ~ sce_unc_unsorted$Sample) + 
   guides(color = guide_legend(title="Cell Type"))
 
 
-pdf(here(plot_dir, "TSNE_harmony_by_finalAnno_splitbySampleAndSorting_PRE-HARMONY.pdf"), width = 13, height = 9)
+pdf(here(plot_dir, "UMAP_harmony_by_finalAnno_splitbySampleAndSorting_PRE-HARMONY.pdf"), width = 13, height = 9)
 plot_grid(
   plot_sorted,
   plot_unsorted,
@@ -125,15 +93,15 @@ plot_grid(
 )
 dev.off()
 
-pdf(here(plot_dir, "TSNE_harmony_by_final_Annotations_splitbyRun_PRE-HARMONY.pdf"), 
+pdf(here(plot_dir, "UMAP_harmony_by_final_Annotations_splitbyRun_PRE-HARMONY.pdf"), 
     width = 20, height = 8)
-plot1 <- plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
+plot1 <- plotReducedDim(sce_uncorrected_clean, dimred = "UMAP") +
   geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
   scale_colour_manual(values = cluster_colors) +
   facet_wrap(~ sce_uncorrected_clean$Run) + 
   theme(legend.position = "none")
 
-plot2 <- plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
+plot2 <- plotReducedDim(sce_uncorrected_clean, dimred = "UMAP") +
   geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
   scale_colour_manual(values = cluster_colors) +
   facet_wrap(~ sce_uncorrected_clean$final_Annotations) + 
@@ -142,9 +110,6 @@ plot2 <- plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
 plot_grid(plot1, plot2)
 dev.off()
 
-# Saving uncorrected sce object 
-save(sce_uncorrected_clean, file = here("processed-data", "99_paper_figs", "sce_objects", 
-           "official_final_uncorrected_sce.RDATA"))
 
 # Done.
 
