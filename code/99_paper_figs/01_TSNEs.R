@@ -54,11 +54,7 @@ cluster_colors <- c( "Oligo" = c("#475c6c"),
 sce_sorted <- sce[, which(sce$NeuN == "NeuN.Sorted")]
 sce_unsorted <- sce[, which(sce$NeuN == "NeuN.Unsorted")]
 
-
 ##### PLOTTING TSNEs ###########################################################
-# Pre-Harmonization
-
-
 # Post-Harmonnization
 pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_finalAnno.pdf"))
 plotReducedDim(sce, dimred = "TSNE") +
