@@ -50,6 +50,11 @@ cluster_colors <- c( "Oligo" = c("#475c6c"),
                      "MHb.3" = c("#D2042D") 
 )
 
+## create sce_scorted and unsorted based on NeuN
+sce_sorted <- sce[, which(sce$NeuN == "NeuN.Sorted")]
+sce_unsorted <- sce[, which(sce$NeuN == "NeuN.Unsorted")]
+
+
 ##### PLOTTING UMAPs ###########################################################
 # Post-Harmonnization
 pdf(here(plot_dir, "Post-Harmony", "UMAP_harmony_by_finalAnno.pdf"))

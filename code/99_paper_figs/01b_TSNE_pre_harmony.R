@@ -35,8 +35,8 @@ dim(sce_uncorrected_clean)
 # [1] 33848 17031
 
 # Now combining pheno data to sce_uncorrected_clean before saving.
-colData(sce_uncorrected_clean) <- left_join(colData(sce_uncorrected_clean), 
-                                  colData(sce))
+colData(sce_uncorrected_clean) <- merge(colData(sce_uncorrected_clean), 
+                                  colData(sce), by = colnames(sce_uncorrected_clean))
 
 
 
