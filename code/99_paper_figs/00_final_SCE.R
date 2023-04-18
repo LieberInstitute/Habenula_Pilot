@@ -18,6 +18,9 @@ load(here("processed-data", "99_paper_figs",  "sce_objects", "sce_final_preHbdro
 sce <- sce_final_preHbdrop
 rm(sce_final_preHbdrop)
 
+dim(sce)
+# [1] 33848 17082
+
 table(sce$final_Annotations)
 
 # dropping redundant colData 
@@ -46,9 +49,14 @@ sce$Rows <- rownames(colData(sce))
 # OPC_noisy Samples = c("Br5555", "Br1204", "Br1092")
 OPC_noisy = c("Br5555", "Br1204", "Br1092")
 
-# grabbing barcodes for noisy OPC
-RowNos <- sce[, sce[, which(sce$Sample %in% 
-                  OPC_noisy)]$final_Annotations == "OPC"]$Rows
+# grabbing barcodes for  OPC
+onlyOPC <- sce[, which(sce$final_Annotations == "OPC")]
+
+# grabbing noisy OPC
+onlyOPC <- onlyOPC[, which(onlyOPC$Sample %in% OPC_noisy)]
+       
+# grabbing barcodes            
+RowNos <- onlyOPC$Rows
 
 # adding Nos to RowNos 
 sce[, sce$Rows %in% RowNos]$OPC_clean <- "No"
@@ -56,8 +64,9 @@ sce[, sce$Rows %in% RowNos]$OPC_clean <- "No"
 # check
 table(sce$Sample, sce$OPC_clean)
 
+# save
+save(sce, file = here("processed-data", "99_paper_figs", "sce_objects", 
+                      "official_final_sce.RDATA"))
 
 
-
-# 
-
+# Done.
