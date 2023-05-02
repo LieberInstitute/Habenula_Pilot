@@ -1,5 +1,5 @@
 ## May 2, 2023 - Bukola Ajanaku
-# Cleaned up QC plots in violin form. 
+# sce data pre-qc on violin plots to show threshold for drops. 
 # qrsh -l mem_free=30G,h_vmem=30G
 
 # loading relevant libraries
