@@ -73,8 +73,8 @@ pd <- as.data.frame(colData(sce))
 
 pdf(here(plot_dir, "sce_pre_QC_violin_plots_by_Run_2.pdf"), width = 8)
 
-ggplot(pd, aes(x = Sample, y = subsets_Mito_percent, color = high_mito)) +
-  geom_point(position = position_jitter(seed = 1, width = 0.01)) +
+ggplot(pd, aes(x = Sample, y = subsets_Mito_percent)) +
+  geom_point(aes(color = high_mito), position = position_jitter(seed = 1, width = 0.01)) +
   geom_violin(alpha = 0.4, position = "identity", scale = 3)
 
 dev.off()
