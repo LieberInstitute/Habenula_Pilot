@@ -55,7 +55,7 @@ sce_sorted <- sce[, which(sce$NeuN == "NeuN.Sorted")]
 sce_unsorted <- sce[, which(sce$NeuN == "NeuN.Unsorted")]
 
 ##### PLOTTING TSNEs ###########################################################
-# Post-Harmonnization
+# Post-Harmonization TSNE main fig colored by ct
 pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_finalAnno.pdf"))
 plotReducedDim(sce, dimred = "TSNE") +
   geom_point(aes(color = sce$final_Annotations)) + 
@@ -63,59 +63,52 @@ plotReducedDim(sce, dimred = "TSNE") +
   guides(color = guide_legend(title="Cell Type"))
 dev.off()
 
-pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_final_Annotations_splitbyfinalAnno.pdf"), 
-    width = 10)
+# post-harmony TSNE colored by Sample and faceted by Sample (shows harmony effects)
+pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_Sample.pdf"), 
+    width = 14, height = 9)
   plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$final_Annotations)) + 
-    scale_colour_manual(values = cluster_colors) + 
+    geom_point(aes(color = sce$Sample)) + 
     theme(legend.position = "none")
   
   plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$final_Annotations)) + 
-    scale_colour_manual(values = cluster_colors) +
-    facet_wrap(~ sce$final_Annotations) + 
-    guides(color = guide_legend(title="Cell Type"))
+    geom_point(aes(color = sce$Sample)) + 
+    facet_wrap(~ sce$Sample) + 
+    guides(color = guide_legend(title="Sample ID"))
   
   plot_grid(plot1, plot2)
 dev.off()
 
-# for NeuN sorting and Non-NeuN sorting
-plot_sorted <- plotReducedDim(sce_sorted, dimred = "TSNE") +
-  geom_point(aes(color = sce_sorted$final_Annotations), alpha = 0.4) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample) + 
-  guides(color = guide_legend(title="Cell Type"))
+# post-harmony TSNE colored by NeuN sorting and faceted by Sample 
+pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_NeuN.pdf"), width = 9, height = 5)
 
-plot_unsorted <-   plotReducedDim(sce_unsorted, dimred = "TSNE") +
-  geom_point(aes(color = sce_unsorted$final_Annotations), alpha = 0.4) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample) + 
-  guides(color = guide_legend(title="Cell Type"))
-
-
-pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_finalAnno_splitbySampleAndSorting.pdf"), width = 13, height = 9)
-plot_grid(
-  plot_sorted,
-  plot_unsorted,
-  ncol = 1
-)
-dev.off()
-
-pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_final_Annotations_splitbyRun.pdf"), 
-    width = 20, height = 8)
 plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-  geom_point(aes(color = sce$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce$Run) + 
+  geom_point(aes(color = sce$NeuN)) + 
   theme(legend.position = "none")
 
 plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-  geom_point(aes(color = sce$final_Annotations)) + 
+  geom_point(aes(color = sce$NeuN)) +
+  facet_wrap(~ sce$Sample) + 
+#  guides(color = guide_legend(title="NeuN Sorted?")) +
+  scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No'))
+
+plot_grid(plot1, plot2)
+dev.off()
+
+# post-harmony TSNE colored by and facet-wrapped by final annotations
+pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_byandsplitby_finalAnno.pdf"),
+    width = 15, height = 8)
+plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$final_Annotations)) +
   scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce$final_Annotations) + 
+  theme(legend.position = "none")
+
+plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = cluster_colors) +
+  facet_wrap(~ sce$final_Annotations) +
   guides(color = guide_legend(title="Cell Type"))
 
 plot_grid(plot1, plot2)
 dev.off()
 
-# 
+# Done.
