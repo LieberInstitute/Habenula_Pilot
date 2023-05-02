@@ -69,21 +69,20 @@ table(sce$lowDetecFea, by = sce$Sample)
 
 
 ################ PLOTTING PER METRIC ###########################################
-pdf(here(plot_dir, "sce_pre_QC_violin_plots_by_Run.pdf"))
+pd <- as.data.frame(colData(sce))
 
-plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") + 
-  ggtitle("Mito Precent")
+pdf(here(plot_dir, "sce_pre_QC_violin_plots_by_Run_2.pdf"), width = 8)
 
-plotColData(sce, x = "Sample", y = "sum", colour_by = "lowLib") +
-  ggtitle("Library Size")
-
-plotColData(sce, x = "Sample", y = "detected", colour_by = "lowDetecFea") +
-  ggtitle("Detected Features")
+ggplot(pd, aes(x = Sample, y = subsets_Mito_percent, color = high_mito)) +
+  geom_point(position = position_jitter(seed = 1, width = 0.2)) +
+  geom_violin(alpha = 0.4, position = "identity", width = 1.5)
 
 dev.off()
 
 
 
+# plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") + 
+#   ggtitle("Mito Precent")
 
 # .
 
