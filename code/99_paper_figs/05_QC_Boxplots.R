@@ -50,7 +50,7 @@ cluster_colors <- c( "Oligo" = c("#475c6c"),
 
 # plotting per metric on final_Annotations 
 # also has OPC_noisy class
-pdf(file = here(plot_dir, "sce_Annotated_with_Ambig.pdf"), width = 12, height = 12)
+pdf(file = here(plot_dir, "sce_Annotated_with_Ambig_QC_boxplot.pdf"), width = 12, height = 12)
 
 plot1 <- ggcells(sce, mapping = aes(x = final_Annotations, y = doubletScore, fill = final_Annotations)) +
       geom_boxplot() +
@@ -93,6 +93,68 @@ plot_grid(plot1, plot2, plot3, plot4,
           ncol = 1)
 
 dev.off()
+
+# dropping Excit.Neuron
+sce_drop <- sce[, which(!sce$final_Annotations == "Excit.Neuron")]
+
+# check 
+table(sce_drop$final_Annotations)
+# Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
+# 538         38       1800       7612        201        266        134 
+# LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
+# 477         83         39       1014        152        540         18 
+# Microglia      Oligo        OPC 
+# 145       2178       1796
+
+# plotting per metric on final_Annotations without ambig class
+# also has OPC_noisy class
+pdf(file = here(plot_dir, "sce_No_Ambig_Annotated_QC_boxplot.pdf"), width = 12, height = 12)
+
+plot1 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = doubletScore, fill = final_Annotations)) +
+  geom_boxplot() +
+  scale_fill_manual(values = cluster_colors) +
+  theme_linedraw() +
+  theme(
+    legend.position = "none", axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) + labs (y = "Doublet Score")
+
+plot2 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = subsets_Mito_percent, fill = final_Annotations)) +
+  geom_boxplot() +
+  scale_fill_manual(values = cluster_colors) +
+  theme_linedraw() +
+  theme(
+    legend.position = "none", axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) + labs (y = "Percent Mito")
+
+plot3 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = sum, fill = final_Annotations)) +
+  geom_boxplot() +
+  scale_fill_manual(values = cluster_colors) +
+  theme_linedraw() +
+  theme(
+    legend.position = "none", axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) + labs (y = "Library Size")
+
+plot4 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = detected, fill = final_Annotations)) +
+  geom_boxplot() +
+  scale_fill_manual(values = cluster_colors) +
+  theme_linedraw() +
+  theme(
+    legend.position = "none", axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) + labs (y = "Detected Features")
+
+plot_grid(plot1, plot2, plot3, plot4,
+          labels = c("A", "B", "C", "D"),
+          ncol = 1)
+
+dev.off()
+
+
+
+
 
 
 # 
