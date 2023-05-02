@@ -24,7 +24,7 @@ table(sce$final_Annotations)
   # 152          540           18          145         2178         1796 
 
 # creating plot directory
-plot_dir <- here("plots", "99_paper_figs", "02_UMAPs")
+plot_dir <- here("plots", "99_paper_figs", "02_UMAPs", "Post-Harmony")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
@@ -56,67 +56,48 @@ sce_unsorted <- sce[, which(sce$NeuN == "NeuN.Unsorted")]
 
 
 ##### PLOTTING UMAPs ###########################################################
-# Post-Harmonnization
-pdf(here(plot_dir, "Post-Harmony", "UMAP_harmony_by_finalAnno.pdf"))
-plotReducedDim(sce, dimred = "UMAP") +
-  geom_point(aes(color = sce$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) + 
-  guides(color = guide_legend(title="Cell Type"))
-dev.off()
-
-pdf(here(plot_dir, "Post-Harmony", "UMAP_harmony_by_final_Annotations_splitbyfinalAnno.pdf"), 
-    width = 10)
-plot1 <- plotReducedDim(sce, dimred = "UMAP") +
-  geom_point(aes(color = sce$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) + 
+# Post-Harmony UMAP colored and split by Sample
+pdf(here(plot_dir, "UMAP_harmony_by_Sample.pdf"), width = 11, height = 7)
+plot1 <-plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$Sample), alpha = 0.4) + 
   theme(legend.position = "none")
 
-plot2 <- plotReducedDim(sce, dimred = "UMAP") +
-  geom_point(aes(color = sce$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce$final_Annotations) + 
-  guides(color = guide_legend(title="Cell Type"))
+plot2 <-plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$Sample), alpha = 0.4) +
+  facet_wrap(~ sce$Sample) +
+  guides(color = guide_legend(title="Sample ID"))
 
 plot_grid(plot1, plot2)
 dev.off()
 
-# for NeuN sorting and Non-NeuN sorting
-plot_sorted <- plotReducedDim(sce_sorted, dimred = "UMAP") +
-  geom_point(aes(color = sce_sorted$final_Annotations), alpha = 0.4) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_sorted$NeuN ~ sce_sorted$Sample) + 
-  guides(color = guide_legend(title="Cell Type"))
-
-plot_unsorted <-   plotReducedDim(sce_unsorted, dimred = "UMAP") +
-  geom_point(aes(color = sce_unsorted$final_Annotations), alpha = 0.4) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_unsorted$NeuN ~ sce_unsorted$Sample) + 
-  guides(color = guide_legend(title="Cell Type"))
-
-
-pdf(here(plot_dir, "Post-Harmony", "UMAP_harmony_by_finalAnno_splitbySampleAndSorting.pdf"), width = 13, height = 9)
-plot_grid(
-  plot_sorted,
-  plot_unsorted,
-  ncol = 1
-)
-dev.off()
-
-pdf(here(plot_dir, "Post-Harmony", "UMAP_harmony_by_final_Annotations_splitbyRun.pdf"), 
-    width = 20, height = 8)
-plot1 <- plotReducedDim(sce, dimred = "UMAP") +
-  geom_point(aes(color = sce$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce$Run) + 
+# Post-Harmony UMAP colored by Sample and split by Run
+pdf(here(plot_dir, "UMAP_harmony_by_Sample_splitby_Run.pdf"), width = 11, height = 5)
+plot1 <-plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$Sample), alpha = 0.4) + 
   theme(legend.position = "none")
 
-plot2 <- plotReducedDim(sce, dimred = "UMAP") +
-  geom_point(aes(color = sce$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce$final_Annotations) + 
-  guides(color = guide_legend(title="Cell Type"))
+plot2 <-plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$Sample), alpha = 0.4) +
+  facet_wrap(~ sce$Run) +
+  guides(color = guide_legend(title="Sample ID"))
+
+plot_grid(plot1, plot2, rel_widths = c(2,5))
+dev.off()
+
+# Post-Harmony UMAP colored by cell-type and split by cell-type
+pdf(here(plot_dir, "UMAP_harmony_by_final_Annotations.pdf"), width = 11, height = 5)
+plot1 <-plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$final_Annotations), alpha = 0.4) + 
+  theme(legend.position = "none") + 
+  scale_colour_manual(values = cluster_colors) 
+
+plot2 <-plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$final_Annotations), alpha = 0.4) +
+  facet_wrap(~ sce$final_Annotations) +
+  guides(color = guide_legend(title="Sample ID")) + 
+  scale_colour_manual(values = cluster_colors)
 
 plot_grid(plot1, plot2)
 dev.off()
 
-# 
+# Done.

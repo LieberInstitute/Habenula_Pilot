@@ -76,45 +76,5 @@ plot_grid(plot1, plot2, rel_widths = c(2,5))
 dev.off()
 
 
-# for NeuN sorting and Non-NeuN sorting
-plot_sorted <- plotReducedDim(sce_unc_sorted, dimred = "UMAP") +
-  geom_point(aes(color = sce_unc_sorted$final_Annotations), alpha = 0.4) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_unc_sorted$NeuN ~ sce_unc_sorted$Sample) + 
-  guides(color = guide_legend(title="Cell Type"))
-
-plot_unsorted <-   plotReducedDim(sce_unc_unsorted, dimred = "UMAP") +
-  geom_point(aes(color = sce_unc_unsorted$final_Annotations), alpha = 0.4) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_grid(sce_unc_unsorted$NeuN ~ sce_unc_unsorted$Sample) + 
-  guides(color = guide_legend(title="Cell Type"))
-
-
-pdf(here(plot_dir, "UMAP_harmony_by_finalAnno_splitbySampleAndSorting_PRE-HARMONY.pdf"), width = 13, height = 9)
-plot_grid(
-  plot_sorted,
-  plot_unsorted,
-  ncol = 1
-)
-dev.off()
-
-pdf(here(plot_dir, "UMAP_harmony_by_final_Annotations_splitbyRun_PRE-HARMONY.pdf"), 
-    width = 20, height = 8)
-plot1 <- plotReducedDim(sce_uncorrected_clean, dimred = "UMAP") +
-  geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce_uncorrected_clean$Run) + 
-  theme(legend.position = "none")
-
-plot2 <- plotReducedDim(sce_uncorrected_clean, dimred = "UMAP") +
-  geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce_uncorrected_clean$final_Annotations) + 
-  guides(color = guide_legend(title="Cell Type"))
-
-plot_grid(plot1, plot2)
-dev.off()
-
-
 # Done.
 
