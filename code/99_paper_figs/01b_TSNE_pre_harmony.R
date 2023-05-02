@@ -79,28 +79,34 @@ sce_unc_sorted <- sce_uncorrected_clean[, which(sce_uncorrected_clean$NeuN == "N
 sce_unc_unsorted <- sce_uncorrected_clean[, which(sce_uncorrected_clean$NeuN == "NeuN.Unsorted")]
 
 ##### PLOTTING TSNEs ###########################################################
-# Post-Harmonnization
-pdf(here(plot_dir, "TSNE_harmony_by_finalAnno_PRE-HARMONY.pdf"))
-plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
-  geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) + 
-  guides(color = guide_legend(title="Cell Type"))
+# Pre-Harmonization colored by Samplel and faceted by Sample
+pdf(here(plot_dir, "TSNE_uncorrected_by_Sample.pdf"), width = 14, height = 9)
+plot1 <-  plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
+    geom_point(aes(color = sce_uncorrected_clean$Sample)) + 
+    guides(color = guide_legend(title="Sample ID")) + 
+  theme(legend.position = "none")
+
+plot2 <-  plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
+  geom_point(aes(color = sce_uncorrected_clean$Sample)) + 
+  guides(color = guide_legend(title="Sample ID")) +
+  facet_wrap(~ sce_uncorrected_clean$Sample)
+
+plot_grid(plot1, plot2)
 dev.off()
 
-pdf(here(plot_dir, "TSNE_harmony_by_final_Annotations_splitbyfinalAnno_PRE-HARMONY.pdf"), 
-    width = 10)
+# Pre-Harmonization colored by Samplel and faceted by Run
+pdf(here(plot_dir, "TSNE_uncorrected_by_Run.pdf"), 
+    width = 14, height = 9)
 plot1 <- plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
-  geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) + 
+  geom_point(aes(color = sce_uncorrected_clean$Sample)) + 
   theme(legend.position = "none")
 
 plot2 <- plotReducedDim(sce_uncorrected_clean, dimred = "TSNE") +
-  geom_point(aes(color = sce_uncorrected_clean$final_Annotations)) + 
-  scale_colour_manual(values = cluster_colors) +
-  facet_wrap(~ sce_uncorrected_clean$final_Annotations) + 
-  guides(color = guide_legend(title="Cell Type"))
+  geom_point(aes(color = sce_uncorrected_clean$Sample)) + 
+  facet_wrap(~ sce_uncorrected_clean$Run) + 
+  guides(color = guide_legend(title="Sample ID"))
 
-plot_grid(plot1, plot2)
+plot_grid(plot1, plot2, rel_widths = c(1,2))
 dev.off()
 
 # for NeuN sorting and Non-NeuN sorting
