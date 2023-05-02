@@ -16,7 +16,7 @@ load(here("processed-data", "99_paper_figs", "sce_objects",
 # sce
 
 table(sce$final_Annotations)
-    # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
+    # Astrocyte       Endo Excit.Thal Inhib.Thal  LHb.1      LHb.2      LHb.3 
     # 538         38       1800       7612        201        266        134 
     # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
     # 477         83         39       1014        152        540         18 
@@ -49,10 +49,6 @@ cluster_colors <- c( "Oligo" = c("#475c6c"),
                      "MHb.2" = c("#D70040"),
                      "MHb.3" = c("#D2042D") 
 )
-
-## create sce_scorted and unsorted based on NeuN
-sce_sorted <- sce[, which(sce$NeuN == "NeuN.Sorted")]
-sce_unsorted <- sce[, which(sce$NeuN == "NeuN.Unsorted")]
 
 ##### PLOTTING TSNEs ###########################################################
 # Post-Harmonization TSNE main fig colored by ct
@@ -110,5 +106,27 @@ plot2 <- plotReducedDim(sce, dimred = "TSNE") +
 
 plot_grid(plot1, plot2)
 dev.off()
+
+# bonus!
+# post-harmony PC2 vs PC3
+pdf(here(plot_dir, "Post-Harmony", "PC2_vs_PC3_splitbyClusters.pdf"),
+    width = 15, height = 8)
+plot1 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = cluster_colors) +
+  theme(legend.position = "none")
+
+plot2 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = cluster_colors) +
+  facet_wrap(~ sce$final_Annotations) +
+  guides(color = guide_legend(title="Cell Type"))
+
+plot_grid(plot1, plot2)
+dev.off()
+
+
+
+
 
 # Done.
