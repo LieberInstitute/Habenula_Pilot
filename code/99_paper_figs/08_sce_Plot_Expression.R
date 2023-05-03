@@ -31,11 +31,6 @@ pd$Prop <- NA
 for(i in unique(sce$Sample)){
   pD <- pd[pd$Sample == i, ]
   
-  # make sure each nuclei is unique
-  if(any(duplicated(rownames(pD)))){
-    return(print("ERROR: Rownames are not unique!"))
-  }
-  
   # grab the total number of nuclei per Sample
   total_nuclei <- nrow(pD)
   
@@ -44,9 +39,10 @@ for(i in unique(sce$Sample)){
     pD <- pD[pD$final_Annotations == n, ]
     
     # calculating proportion for given sample in respective cluster
-    pD$Prop <- nrow(pD) / total_nuclei
+    pD$Prop <- (nrow(pD) / total_nuclei) * 100
   }
   
+  return(pD)
 }
 
 table(sce$final_Annotations)
