@@ -8,6 +8,7 @@ library(here)
 library(SingleCellExperiment)
 library(DeconvoBuddies)
 library(tidyverse)
+library(tibble)
 
 # loading sce object with dropped ambig cluster
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
@@ -30,7 +31,7 @@ table(sce$OPC_clean)
     # 16437 
 
 # grabbing relevant columns
-pd <- as.data.frame(colData(sce)[,c("Sample", 
+pd <- as_tibble(colData(sce)[,c("Sample", 
                                     "final_Annotations", "NeuN", "Run")])
 pd$total_nuclei <- NA
 pd$ct_nuclei <- NA
@@ -51,8 +52,7 @@ for(i in unique(pd$Sample)){
   }
 }
 
-pd$prop <- signif((pd$ct_nuclei / pd$total_nuclei), 3)
-pd$Sample <- as.factor(pd$Sample)
+pd$prop <- ( pd$ct_nuclei / pd$total_nuclei )
 
 # testing to make sure it adds up to %100
   # test <- pd[pd$Sample == i,]
@@ -65,13 +65,23 @@ pd$Sample <- as.factor(pd$Sample)
 pdf(file = here(plot_dir, "sce_Comp_Expression.pdf"))
   
 ggplot(pd, aes(fill = final_Annotations, y = prop, x = Sample)) +
-    geom_bar(position="fill", stat="identity")
+    geom_col(stat = "identity")
+
+dev.off()
+
+## create composition bar plots (using plot_composition_bar)
+pdf(here(plot_dir, "sce_Comp_Express_Bar.pdf"), width = 21, height = 12)
+
+plot_composition_bar(prop_long = pd, sample_col = "Sample",
+                     x_col = "Sample", ct_col = "final_Annotations")
 
 dev.off()
 
 
 
+# testing summary 
 
+summary(pd[pd$Sample == i,])
 
 
 #  
