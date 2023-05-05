@@ -25,24 +25,37 @@ table(sce$OPC_clean)
 
 # grabbing relevant columns
 pd <- colData(sce)[,c("Sample", "final_Annotations", "NeuN", "Run")]
-pd$Prop <- NA
+pd$total_nuclei <- NA
+pd$ct_nuclei <- NA
 
 # creating function that summarizes data
 for(i in unique(sce$Sample)){
-  pD <- pd[pd$Sample == i, ]
+  pd[pd$Sample == i, ]$total_nuclei <- nrow(pd[pd$Sample == i, ])
   
-  # grab the total number of nuclei per Sample
-  total_nuclei <- nrow(pD)
+  paste("Sample:", i)
   
-  # running through each cluster
-  for(n in unique(pD$final_Annotations)){
-    pD <- pD[pD$final_Annotations == n, ]
+  for(n in unique(pd$final_Annotations)){
+    
+    if(is.na(nrow(pd[pd$final_Annotations, ]))){
+      tot_ct = 0
+    } else{
+      tot_ct = nrow(pd[pd$final_Annotations, ])
+    }
+    
+    pd[pd$final_Annotations, ]$ct_nuclei <- tot_ct
+    
+    paste(n)
+  }
+}
+
+# running through each cluster
+for(n in unique(pd$final_Annotations)){
+    pD <- pD[pD$ct_nuclei == n, ]
+    ct_nuclei <- nrow(pD)
     
     # calculating proportion for given sample in respective cluster
-    pD$Prop <- (nrow(pD) / total_nuclei) * 100
+    pD$Prop <- (ct_nuclei / total_nuclei) * 100
   }
-  
-  return(pD)
 }
 
 table(sce$final_Annotations)

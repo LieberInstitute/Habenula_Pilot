@@ -169,7 +169,8 @@ prop_long <- left_join(prop_long, sum_Prop) |>
 pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 21, height = 12)
 plot_composition_bar(prop_long = prop_long, sample_col = "Br_Order",
                      x_col = "Br_Order", ct_col = "factor_CT") + 
-  scale_fill_manual(values = color_bulk_clusters) 
+  scale_fill_manual(values = color_bulk_clusters) +
+  ggtitle("OPC_clean")
 dev.off()
 
 

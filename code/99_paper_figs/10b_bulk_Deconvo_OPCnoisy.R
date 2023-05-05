@@ -84,7 +84,6 @@ plot_marker_express_ALL(sym_sce,
                         pdf_fn = here(plot_dir, "Top_10_Markers_OPC_noisy.pdf")
 )
 
-
 ## copied directly from run_Bisque.R file in the bulk deconvo folder 
 ## creating marker_list of top 25 genes
 marker_genes <- marker_stats |>
@@ -161,7 +160,8 @@ prop_long <- left_join(prop_long, sum_Prop) |>
 pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_noisy.pdf"), width = 21, height = 12)
 plot_composition_bar(prop_long = prop_long, sample_col = "Br_Order",
                      x_col = "Br_Order", ct_col = "factor_CT") + 
-  scale_fill_manual(values = color_bulk_clusters) 
+  scale_fill_manual(values = color_bulk_clusters) +
+  ggtitle("OPC_noisy")
 dev.off()
 
 # 
