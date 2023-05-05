@@ -13,6 +13,12 @@ library(tidyverse)
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
                  "official_final_sce.RDATA"))
 
+# creating plot_dir
+plot_dir <- here("plots", "99_paper_figs", "08_sce_Plot_Expression")
+if(!dir.exists(plot_dir)){
+  dir.create(plot_dir)
+}
+
 # dropping OPC_noisy
 table(sce$OPC_clean)
     # No   Yes 
@@ -24,7 +30,8 @@ table(sce$OPC_clean)
     # 16437 
 
 # grabbing relevant columns
-pd <- colData(sce)[,c("Sample", "final_Annotations", "NeuN", "Run")]
+pd <- as.data.frame(colData(sce)[,c("Sample", 
+                                    "final_Annotations", "NeuN", "Run")])
 pd$total_nuclei <- NA
 pd$ct_nuclei <- NA
 
@@ -44,7 +51,9 @@ for(i in unique(pd$Sample)){
   }
 }
 
-pd$prop <- (pd$ct_nuclei / pd$total_nuclei)*100
+pd$prop <- signif((pd$ct_nuclei / pd$total_nuclei), 3)
+pd$Sample <- as.factor(pd$Sample)
+
 # testing to make sure it adds up to %100
   # test <- pd[pd$Sample == i,]
   # tester <- unique(test$prop)
@@ -52,10 +61,17 @@ pd$prop <- (pd$ct_nuclei / pd$total_nuclei)*100
    # [1] 99.90193
 
 
+# creating sce composition plot
+pdf(file = here(plot_dir, "sce_Comp_Expression.pdf"))
+  
+ggplot(pd, aes(fill = final_Annotations, y = prop, x = Sample)) +
+    geom_bar(position="fill", stat="identity")
+
+dev.off()
 
 
 
 
 
 
-# 
+#  
