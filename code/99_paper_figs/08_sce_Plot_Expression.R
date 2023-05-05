@@ -28,34 +28,34 @@ pd <- colData(sce)[,c("Sample", "final_Annotations", "NeuN", "Run")]
 pd$total_nuclei <- NA
 pd$ct_nuclei <- NA
 
-# creating function that summarizes data
-for(i in unique(sce$Sample)){
+# creating function that collects nuclei data
+for(i in unique(pd$Sample)){
+
   pd[pd$Sample == i, ]$total_nuclei <- nrow(pd[pd$Sample == i, ])
-  
-  paste("Sample:", i)
-  
-  for(n in unique(pd$final_Annotations)){
+
+  for(p in unique(pd$final_Annotations)){
     
-    if(is.na(nrow(pd[pd$final_Annotations, ]))){
+    if(nrow(pd[pd$Sample == i & pd$final_Annotations == p, ]) == 0){
       tot_ct = 0
     } else{
-      tot_ct = nrow(pd[pd$final_Annotations, ])
+      tot_ct = nrow(pd[pd$Sample == i & pd$final_Annotations == p, ])
+      pd[pd$Sample == i & pd$final_Annotations == p, ]$ct_nuclei <- tot_ct
     }
-    
-    pd[pd$final_Annotations, ]$ct_nuclei <- tot_ct
-    
-    paste(n)
   }
 }
 
-# running through each cluster
-for(n in unique(pd$final_Annotations)){
-    pD <- pD[pD$ct_nuclei == n, ]
-    ct_nuclei <- nrow(pD)
-    
-    # calculating proportion for given sample in respective cluster
-    pD$Prop <- (ct_nuclei / total_nuclei) * 100
-  }
-}
+pd$prop <- (pd$ct_nuclei / pd$total_nuclei)*100
+# testing to make sure it adds up to %100
+  # test <- pd[pd$Sample == i,]
+  # tester <- unique(test$prop)
+  # sum(tester)
+   # [1] 99.90193
 
-table(sce$final_Annotations)
+
+
+
+
+
+
+
+# 
