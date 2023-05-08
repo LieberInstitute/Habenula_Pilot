@@ -1,6 +1,6 @@
 ## May 2, 2023 - Bukola Ajanaku
 # Plotting cell-type expression pre and post drop per sample 
-# qrsh -l mem_free=20G,h_vmem=20G
+# qrsh -l mem_free=50G,h_vmem=50G
 
 # loading relevant libraries
 library(SummarizedExperiment)
@@ -12,13 +12,40 @@ library(tibble)
 
 # loading sce object with dropped ambig cluster
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
-                 "official_final_sce.RDATA"))
+                 "sce_final_preHbdrop.RDATA"))
+sce <- sce_final_preHbdrop
+
 
 # creating plot_dir
 plot_dir <- here("plots", "99_paper_figs", "08_sce_Plot_Expression")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
+
+# changing OPC_noisy class into a cluster of it's own.
+  # adding rownames of colData as a row for easier subsetting
+OPC_noisy_Samps = c("Br5555", "Br1204", "Br1092")
+
+# grabbing barcodes for  OPC
+onlyOPC <- sce[, which(sce$final_Annotations == "OPC")]
+
+# grabbing noisy OPC
+onlyOPC <- onlyOPC[, which(onlyOPC$Barcode %in% OPC_noisy_Samps)]
+
+# grabbing barcodes            
+RowNos <- rownames(colData(onlyOPC))
+
+# adding Nos to RowNos 
+sce[, rownames(sce) %in% RowNos]$final_Annotations <- "OPC_noisy"
+
+# check
+table(sce$Sample, sce$final_Annotations)
+
+
+
+
+
+
 
 # dropping OPC_noisy
 table(sce$OPC_clean)
