@@ -12,9 +12,16 @@ library(tibble)
 
 # loading sce object with dropped ambig cluster
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
-                 "sce_final_preHbdrop.RDATA"))
-sce <- sce_final_preHbdrop
-
+                 "sce_final_preHbdrop.RDATA"), verbose = TRUE)
+table(sce$final_Annotations)
+# Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal        LHb.1 
+# 538           38           51         1800         7612          201 
+# LHb.2        LHb.3        LHb.4        LHb.5        LHb.6        LHb.7 
+# 266          134          477           83           39         1014 
+# MHb.1        MHb.2        MHb.3    Microglia        Oligo          OPC 
+# 152          540           18          145         2178         1202 
+# OPC_noisy 
+# 594 
 
 # creating plot_dir
 plot_dir <- here("plots", "99_paper_figs", "08_sce_Plot_Expression")
@@ -22,93 +29,65 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# changing OPC_noisy class into a cluster of it's own.
-  # adding rownames of colData as a row for easier subsetting
-OPC_noisy_Samps = c("Br5555", "Br1204", "Br1092")
+# creating cell-type colors 
 
-# grabbing barcodes for  OPC
-onlyOPC <- sce[, which(sce$final_Annotations == "OPC")]
+#### get proportions before dropping ambig #####################################
+colData(sce)[, c("final_Annotations", "Sample", "NeuN")]
 
-# grabbing noisy OPC
-onlyOPC <- onlyOPC[, which(onlyOPC$Barcode %in% OPC_noisy_Samps)]
+prop_dirty <- as.data.frame(colData(sce)[, 
+                                         c("final_Annotations", "Sample", "NeuN")]) |>
+  group_by(Sample, final_Annotations, NeuN) |>
+  summarize(n = n()) |>
+  group_by(Sample) |>
+  mutate(prop = n / sum(n))
 
-# grabbing barcodes            
-RowNos <- rownames(colData(onlyOPC))
+# dropping the clusters we dropped
+sce <- sce[, sce$final_Annotations != "OPC_noisy"]
+sce <- sce[, sce$final_Annotations != "Excit.Neuron"]
 
-# adding Nos to RowNos 
-sce[, rownames(sce) %in% RowNos]$final_Annotations <- "OPC_noisy"
+#### proportions of nuclei using post-drop information #########################
+pd <- as.data.frame(colData(sce))
+table(pd$final_Annotations)
+# Astrocyte   Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
+# 538         38       1800       7612        201        266        134 
+# LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
+# 477         83         39       1014        152        540         18 
+# Microglia Oligo        OPC 
+# 145       2178       1202 
 
-# check
-table(sce$Sample, sce$final_Annotations)
-
-
-
-
-
-
-
-# dropping OPC_noisy
-table(sce$OPC_clean)
-    # No   Yes 
-    # 594 16437 
-sce <- sce[, which(sce$OPC_clean == "Yes")]
-# check again
-table(sce$OPC_clean)
-    # Yes 
-    # 16437 
-
-# grabbing relevant columns
-pd <- as_tibble(colData(sce)[,c("Sample", 
-                                    "final_Annotations", "NeuN", "Run")])
-pd$total_nuclei <- NA
-pd$ct_nuclei <- NA
-
-# creating function that collects nuclei data
-for(i in unique(pd$Sample)){
-
-  pd[pd$Sample == i, ]$total_nuclei <- nrow(pd[pd$Sample == i, ])
-
-  for(p in unique(pd$final_Annotations)){
-    
-    if(nrow(pd[pd$Sample == i & pd$final_Annotations == p, ]) == 0){
-      tot_ct = 0
-    } else{
-      tot_ct = nrow(pd[pd$Sample == i & pd$final_Annotations == p, ])
-      pd[pd$Sample == i & pd$final_Annotations == p, ]$ct_nuclei <- tot_ct
-    }
-  }
-}
-
-pd$prop <- ( pd$ct_nuclei / pd$total_nuclei )
-
-# testing to make sure it adds up to %100
-  # test <- pd[pd$Sample == i,]
-  # tester <- unique(test$prop)
-  # sum(tester)
-   # [1] 99.90193
+prop_clean <- pd[,c("final_Annotations", "Sample", "NeuN")] |>
+  group_by(Sample, final_Annotations, NeuN) |>
+  summarize(n = n()) |>
+  group_by(Sample) |>
+  mutate(prop = n / sum(n))
 
 
-# creating sce composition plot
-pdf(file = here(plot_dir, "sce_Comp_Expression.pdf"))
+### combines prop_dirty and prop_clean
+prop_ambig_plus <- prop_dirty |>
+  mutate(ambig = "Pre-drop") |>
+  bind_rows(prop_clean |> mutate(ambig = "Post-drop"))
+
+# plots composition plot using prop_clean and prop_dirty
+comp_plot_both <- ggplot(data = prop_ambig_plus, aes(x = Sample, y = prop, fill = final_Annotations)) +
+  geom_bar(stat = "identity") +
+  geom_text(
+    aes(
+      label = ifelse(prop > 0.02, format(round(prop, 3), 3), ""),
+    ),
+    size = 2.5,
+    position = position_stack(vjust = 0.5),
+    color = "black"
+  ) +
+  labs(y = "Proportion", fill = "Cell Type") +
+  facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free") +
   
-ggplot(pd, aes(fill = final_Annotations, y = prop, x = Sample)) +
-    geom_col(stat = "identity")
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  guides(color = FALSE, fill = guide_legend(ncol = 1))
 
+pdf(file = here(plot_dir, "full_Comp_Express_Plot.pdf"))
+comp_plot_both 
 dev.off()
-
-## create composition bar plots (using plot_composition_bar)
-pdf(here(plot_dir, "sce_Comp_Express_Bar.pdf"), width = 21, height = 12)
-
-plot_composition_bar(prop_long = pd, sample_col = "Sample",
-                     x_col = "Sample", ct_col = "final_Annotations")
-
-dev.off()
-
-
-
-# testing summary 
-
-summary(pd[pd$Sample == i,])
 
 
 #  
