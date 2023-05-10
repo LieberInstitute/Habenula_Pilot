@@ -103,13 +103,22 @@ prop_df <- as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
   mutate(prop = n / sum(n))
 
 comp_plot <- ggplot(prop_df, 
-                        aes(x = bulkTypeSepHb, y = prop, fill = bulkTypeSepHb)) +
+                        aes(x = Sample, y = prop, fill = bulkTypeSepHb)) +
   geom_col() +
-  geom_text(aes(label = prop), size = 4) +
+  geom_text(
+    aes(
+    label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
+    ), 
+    size = 3,
+    position = position_stack(vjust = 0.5),
+    color = "white",
+  ) +
   scale_fill_manual(values = cluster_colors) +
   theme_bw() +
-  #  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+  theme(legend.position = "None", 
+        axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
   labs(y = "Composition Cell Type")
+
 
 pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height = 9)
   comp_plot
