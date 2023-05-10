@@ -70,7 +70,7 @@ pdf(file = here(plot_dir, "bulk_clean_TSNE.pdf"), width = 9, height = 5)
   plot_grid(TSNE, TSNE_facet)
 dev.off()
 
-############ TABLE 1: TOTAL NUCLEI PLOT PER CT (bulk annotation) ###############
+############ TABLE 2: TOTAL NUCLEI PLOT PER CT (bulk annotation) ###############
 # number of nuclei per cell type post drop
 num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations", 
                                          "bulkTypeSepHb", "Sample", "NeuN")]) |>
@@ -86,7 +86,7 @@ num_nuc_comp_plot <- num_nuc |>
   geom_label(aes(label = tot_across_Samps),
              fill = "#FFFFFF",
              size = 4) +
-  scale_fill_manual(values = cluster_colors, ) +
+  scale_fill_manual(values = cluster_colors) +
   theme_bw() +
   labs(y = "Number of Nuclei", fill = "Cell Type") +
   theme(axis.title.x = element_blank())
@@ -95,8 +95,25 @@ pdf(file = here(plot_dir, "num_nuclei_post_clean.pdf"), width = 15, height = 6)
   num_nuc_comp_plot 
 dev.off()
 
+############ TABLE 3: TOTAL NUCLEI PLOT PER CT (bulk annotation) ###############
+prop_df <- as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
+  group_by(Sample, bulkTypeSepHb) |>
+  summarize(n = n()) |>
+  group_by(Sample) |>
+  mutate(prop = n / sum(n))
 
-# 
+comp_plot <- ggplot(prop_df, 
+                        aes(x = bulkTypeSepHb, y = prop, fill = bulkTypeSepHb)) +
+  geom_col() +
+  geom_text(aes(label = prop), size = 4) +
+  scale_fill_manual(values = cluster_colors) +
+  theme_bw() +
+  #  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+  labs(y = "Composition Cell Type")
+
+pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height = 9)
+  comp_plot
+dev.off()
 
 
 
