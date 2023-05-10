@@ -54,8 +54,7 @@ cluster_colors <- c( "Oligo" = c("#ba6425"),
 
 ####### FINAL ANNOTATIONS LEVEL #################################################
 #### get proportions before dropping ambig #####################################
-colData(sce)[, c("final_Annotations", "Sample", "NeuN")]
-
+# grabbing proportion information
 prop_dirty_sn <- as.data.frame(colData(sce)[, 
                                          c("final_Annotations", "Sample", "NeuN")]) |>
   group_by(Sample, final_Annotations, NeuN) |>
@@ -82,7 +81,6 @@ prop_clean_sn <- pd_sn[,c("final_Annotations", "Sample", "NeuN")] |>
   summarize(n = n()) |>
   group_by(Sample) |>
   mutate(prop = n / sum(n))
-
 
 ### combines prop_dirty and prop_clean
 prop_ambig_plus_sn <- prop_dirty_sn |>
@@ -148,6 +146,7 @@ prop_dirty_bulk <- as.data.frame(colData(sce)[,
   group_by(Sample) |>
   mutate(prop = n / sum(n))
 
+
 #### proportions of nuclei using post-drop information #########################
 pd_bulk <- as.data.frame(colData(sce_drop))
 table(pd_bulk$bulkTypeSepHb)
@@ -165,7 +164,7 @@ prop_clean_bulk <- pd_bulk[,c("bulkTypeSepHb", "Sample", "NeuN")] |>
 ### combines prop_dirty and prop_clean
 prop_ambig_plus_bulk <- prop_dirty_bulk |>
   mutate(ambig = "Pre-drop") |>
-  bind_rows(prop_clean_bulk |> mutate(ambig = "Post-drop")) |>
+  bind_rows(prop_clean_bulk |> mutate(ambig = "Post-drop")) |> 
   mutate(ct_levels = factor(bulkTypeSepHb, levels = 
                               c("Excit.Neuron",
                                 "Astrocyte", 
@@ -205,10 +204,39 @@ pdf(file = here(plot_dir, "full_Comp_Express_Plot_bulkAnnoLEVEL_OFFICIAL.pdf"), 
   comp_plot_both_bulk
 dev.off()
 
+# plotting total nuclei information per sample
+barplot_n_nuc_bulk <- ggplot(prop_ambig_plus_bulk, 
+  aes(x = Sample, y = n, fill = bulkTypeSepHb)) +
+  geom_col() +
+  geom_text(aes(label = n), size = 2.5) +
+  scale_fill_manual(values = cluster_colors_bulk) +
+  theme_bw() +
+#  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+  labs(y = "Number of Nuclei") +
+  facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free")
 
+pdf(file = here(plot_dir, "num_Nuc_Comp_Plot_bulkAnnoLEVEL.pdf"))
+  barplot_n_nuc_bulk
+dev.off()
 
+# plotting total nuclei information per sample
+sum_nuc_ambig_plus_prop <- prop_ambig_plus_bulk |>
+  group_by(ambig, Sample, bulkTypeSepHb) |>
+  summarize(n_across_samps = sum(n))
 
+barplot_n_nuc_bulk_tot <- ggplot(sum_nuc_ambig_plus_prop, 
+         aes(x = bulkTypeSepHb, y = n_across_samps, fill = bulkTypeSepHb)) +
+  geom_col() +
+  geom_text(aes(label = n_across_samps), size = 2.5) +
+  scale_fill_manual(values = cluster_colors_bulk) +
+  theme_bw() +
+  #  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+  labs(y = "Number of Nuclei") +
+  facet_wrap( ~ ambig, ncol = 1)
 
+pdf(file = here(plot_dir, "num_Nuc_Comp_Plot_bulkAnnoLEVEL_overall.pdf"), width = 10, height = 9)
+ barplot_n_nuc_bulk_tot
+dev.off()
 
 
 
