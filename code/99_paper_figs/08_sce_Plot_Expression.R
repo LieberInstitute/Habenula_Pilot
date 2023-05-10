@@ -113,17 +113,17 @@ pdf(file = here(plot_dir, "full_Comp_Express_Plot_finalAnnoLEVEL2.pdf"), width =
 dev.off()
 
 ####### BULK COLLAPSE LEVEL ####################################################
-cluster_colors_bulk <- c("Oligo" = c("#ba6425"), 
-                     "OPC"= c("#987020"), 
+cluster_colors_bulk <- c("Oligo" = c("#4d5802"), 
+                     "OPC"= c("#9e4ad1"), 
                      "OPC_noisy" = c("#A9A9A9"),
                      "Microglia" = c("#1c0f77"), 
-                     "Astrocyte" = c("#4e8f39"), 
-                     "Endo" = c("#e295de"), 
+                     "Astrocyte" = c("#8d363c"), 
+                     "Endo" = c("#ee6c14"), 
                      "Excit.Neuron" = c("#71797E"), 
-                     "Inhib.Thal" = c("#eed7a1"),  
-                     "Excit.Thal" = c('#E1F8DC'), 
-                     "LHb" = c("#00FFFF"),
-                     "MHb" = c("#D70040")
+                     "Inhib.Thal" = c("#d3c871"),  
+                     "Excit.Thal" = c('#b5a2ff'), 
+                     "LHb" = c("#0085af"),
+                     "MHb" = c("#fa246a")
 )
 
 # creating bulk annotations level
@@ -165,7 +165,20 @@ prop_clean_bulk <- pd_bulk[,c("bulkTypeSepHb", "Sample", "NeuN")] |>
 ### combines prop_dirty and prop_clean
 prop_ambig_plus_bulk <- prop_dirty_bulk |>
   mutate(ambig = "Pre-drop") |>
-  bind_rows(prop_clean_bulk |> mutate(ambig = "Post-drop"))
+  bind_rows(prop_clean_bulk |> mutate(ambig = "Post-drop")) |>
+  mutate(ct_levels = factor(bulkTypeSepHb, levels = 
+                              c("Excit.Neuron",
+                                "Astrocyte", 
+                                "Endo", 
+                                "Microglia", 
+                                "Oligo", 
+                                "OPC_noisy",
+                                "OPC",
+                                "Inhib.Thal", 
+                                "Excit.Thal" , 
+                                "MHb", 
+                                "LHb")) ) |>
+  arrange(ct_levels)
 
 # plots composition plot using prop_clean and prop_dirty
 comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample, 
@@ -188,8 +201,8 @@ comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample,
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(color = FALSE, fill = guide_legend(ncol = 1))
 
-pdf(file = here(plot_dir, "full_Comp_Express_Plot_bulkAnnoLEVEL.pdf"), width = 7, height = 11)
-  comp_plot_both_bulk 
+pdf(file = here(plot_dir, "full_Comp_Express_Plot_bulkAnnoLEVEL_OFFICIAL.pdf"), width = 7, height = 11)
+  comp_plot_both_bulk
 dev.off()
 
 
