@@ -43,7 +43,7 @@ cluster_colors <- c("Oligo" = c("#4d5802"),
 )
 
 
-############ TABLE 1: TSNE using sn annotations ################################
+############ PLOT 1: TSNE using sn annotations ##################################
 # grabbing bulk annotations 
 sce$bulkTypeSepHb <- sce$final_Annotations
 
@@ -70,13 +70,12 @@ pdf(file = here(plot_dir, "bulk_clean_TSNE.pdf"), width = 9, height = 5)
   plot_grid(TSNE, TSNE_facet)
 dev.off()
 
-############ TABLE 2: TOTAL NUCLEI PLOT PER CT (bulk annotation) ###############
+############ PLOT 2: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
 # number of nuclei per cell type post drop
 num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations", 
                                          "bulkTypeSepHb", "Sample", "NeuN")]) |>
   group_by(Sample, bulkTypeSepHb, NeuN) |>
   mutate(n_nuc = n())
-
 
 num_nuc_comp_plot <- num_nuc |>
   group_by(bulkTypeSepHb) |>
@@ -89,13 +88,15 @@ num_nuc_comp_plot <- num_nuc |>
   scale_fill_manual(values = cluster_colors) +
   theme_bw() +
   labs(y = "Number of Nuclei", fill = "Cell Type") +
-  theme(axis.title.x = element_blank())
+  theme(axis.title.x = element_blank()) +
+  theme(legend.position = "None", 
+    axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
 
 pdf(file = here(plot_dir, "num_nuclei_post_clean.pdf"), width = 15, height = 6)
   num_nuc_comp_plot 
 dev.off()
 
-############ TABLE 3: TOTAL NUCLEI PLOT PER CT (bulk annotation) ###############
+############ PLOT 3: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
 prop_df <- as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
   group_by(Sample, bulkTypeSepHb) |>
   summarize(n = n()) |>
@@ -124,10 +125,17 @@ pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height =
   comp_plot
 dev.off()
 
+########## COMBINING PLOTS #####################################################
+pdf(file = here(plot_dir, "stepWise_Plot_Post_Drop.pdf"), width = 10, height = 10)
+plot_grid(
+  TSNE, 
+  TSNE_facet,
+  num_nuc_comp_plot,
+  comp_plot,
+  labels = c("A", "", "B", "C")
+)
 
-
-
-
+dev.off()
 
 
 # 
