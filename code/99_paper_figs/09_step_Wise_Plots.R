@@ -30,13 +30,13 @@ if(!dir.exists(plot_dir)){
 
 # setting manual colors
 cluster_colors <- c("Oligo" = c("#4d5802"), 
-                         "OPC"= c("#9e4ad1"), 
+                         "OPC"= c("#d3c871"), 
                          "OPC_noisy" = c("#A9A9A9"),
                          "Microglia" = c("#1c0f77"), 
                          "Astrocyte" = c("#8d363c"), 
                          "Endo" = c("#ee6c14"), 
                          "Excit.Neuron" = c("#71797E"), 
-                         "Inhib.Thal" = c("#d3c871"),  
+                         "Inhib.Thal" = c("#9e4ad1"),  
                          "Excit.Thal" = c('#b5a2ff'), 
                          "LHb" = c("#0085af"),
                          "MHb" = c("#fa246a")
@@ -58,7 +58,8 @@ table(sce$bulkTypeSepHb)
 TSNE <- plotReducedDim(sce, dimred = "TSNE") +
   geom_point(aes(color = sce$bulkTypeSepHb)) +
   scale_colour_manual(values = cluster_colors) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
 TSNE_facet <- plotReducedDim(sce, dimred = "TSNE") +
   geom_point(aes(color = sce$bulkTypeSepHb)) +
@@ -118,7 +119,7 @@ comp_plot <- ggplot(prop_df,
   theme_bw() +
   theme(legend.position = "None", 
         axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
-  labs(y = "Composition Cell Type")
+  labs(y = "Proportion")
 
 
 pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height = 9)
