@@ -73,15 +73,26 @@ num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations", "bulkTypeSepHb", "
   group_by(Sample, bulkTypeSepHb, NeuN) |>
   mutate(n_nuc = n())
 
+max_nuc <- num_nuc |>
+  group_by(Sample, final_Annotations, NeuN) |>
+  summarize(max_n = max(n_nuc))
+
+num_nuc <- max_nuc |>
+  left_join(num_nuc,
+             by = c("Sample" = "Sample", "final_Annotations" = "final_Annotations"))
+
+
 num_nuc_comp_plot <- ggplot(num_nuc, aes(x = final_Annotations, y = n_nuc, fill = bulkTypeSepHb)) +
   geom_col() +
-  geom_text(aes(label = n_nuc), size = 2.5) +
+  geom_text(aes(label = max_nuc), size = 2.5) +
   scale_fill_manual(values = cluster_colors) +
   theme_bw() +
   labs(y = "Number of Nuclei") 
+  
 
-png(file = here(plot_dir, "num_nuclei_post_clean.png"), width = 900, height = 700)
-  num_nuc_comp_plot
+png(file = here(plot_dir, "num_nuclei_post_clean2.png"), width = 900, height = 700)
+  num_nuc_comp_plot +
+    scale_y_continuous(trans='log10')
 dev.off()
 
 
