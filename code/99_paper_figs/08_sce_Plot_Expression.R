@@ -195,7 +195,6 @@ comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample,
   scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
   labs(y = "Proportion", fill = "Cell Type") +
   facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free") +
-  
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(color = FALSE, fill = guide_legend(ncol = 1))
