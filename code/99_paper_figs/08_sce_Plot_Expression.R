@@ -56,7 +56,7 @@ cluster_colors <- c( "Oligo" = c("#ba6425"),
 #### get proportions before dropping ambig #####################################
 colData(sce)[, c("final_Annotations", "Sample", "NeuN")]
 
-prop_dirty <- as.data.frame(colData(sce)[, 
+prop_dirty_sn <- as.data.frame(colData(sce)[, 
                                          c("final_Annotations", "Sample", "NeuN")]) |>
   group_by(Sample, final_Annotations, NeuN) |>
   summarize(n = n()) |>
@@ -64,12 +64,12 @@ prop_dirty <- as.data.frame(colData(sce)[,
   mutate(prop = n / sum(n))
 
 # dropping the clusters we dropped
-sce <- sce[, sce$final_Annotations != "OPC_noisy"]
-sce <- sce[, sce$final_Annotations != "Excit.Neuron"]
+sce_drop <- sce[, sce$final_Annotations != "OPC_noisy"]
+sce_drop <- sce_drop[, sce_drop$final_Annotations != "Excit.Neuron"]
 
 #### proportions of nuclei using post-drop information #########################
-pd <- as.data.frame(colData(sce))
-table(pd$final_Annotations)
+pd_sn <- as.data.frame(colData(sce_drop))
+table(pd_sn$final_Annotations)
 # Astrocyte   Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
 # 538         38       1800       7612        201        266        134 
 # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
@@ -77,7 +77,7 @@ table(pd$final_Annotations)
 # Microglia Oligo        OPC 
 # 145       2178       1202 
 
-prop_clean <- pd[,c("final_Annotations", "Sample", "NeuN")] |>
+prop_clean_sn <- pd_sn[,c("final_Annotations", "Sample", "NeuN")] |>
   group_by(Sample, final_Annotations, NeuN) |>
   summarize(n = n()) |>
   group_by(Sample) |>
@@ -85,12 +85,12 @@ prop_clean <- pd[,c("final_Annotations", "Sample", "NeuN")] |>
 
 
 ### combines prop_dirty and prop_clean
-prop_ambig_plus <- prop_dirty |>
+prop_ambig_plus_sn <- prop_dirty_sn |>
   mutate(ambig = "Pre-drop") |>
-  bind_rows(prop_clean |> mutate(ambig = "Post-drop"))
+  bind_rows(prop_clean_sn |> mutate(ambig = "Post-drop"))
 
 # plots composition plot using prop_clean and prop_dirty
-comp_plot_both <- ggplot(data = prop_ambig_plus, aes(x = Sample, y = prop, fill = final_Annotations)) +
+comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop, fill = final_Annotations)) +
   geom_bar(stat = "identity") +
   geom_text(
     aes(
@@ -103,14 +103,13 @@ comp_plot_both <- ggplot(data = prop_ambig_plus, aes(x = Sample, y = prop, fill 
   scale_fill_manual(values = c(cluster_colors)) +
   scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
   labs(y = "Proportion", fill = "Cell Type") +
-  facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free") +
-  
+  facet_grid(ambig ~ NeuN, scales = "free", space = "free") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(color = FALSE, fill = guide_legend(ncol = 1))
 
-pdf(file = here(plot_dir, "full_Comp_Express_Plot_finalAnnoLEVEL.pdf"), width = 7, height = 11)
-comp_plot_both 
+pdf(file = here(plot_dir, "full_Comp_Express_Plot_finalAnnoLEVEL2.pdf"), width = 7, height = 11)
+  comp_plot_both_sn
 dev.off()
 
 ####### BULK COLLAPSE LEVEL ####################################################
@@ -127,47 +126,49 @@ cluster_colors_bulk <- c("Oligo" = c("#ba6425"),
                      "MHb" = c("#D70040")
 )
 
-# Combining into 5 glia, two thalamus, 1 broad LHb, and 1 broad MHb.
+# creating bulk annotations level
 sce$bulkTypeSepHb <- sce$final_Annotations
 
-# collapsed on into bulk annotations
+# Combining into 5 glia, two thalamus, 1 broad LHb, and 1 broad MHb.
 sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^LHb\\.", unique(sce$bulkTypeSepHb), value = TRUE)] <-  'LHb'
 sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^MHb\\.", unique(sce$bulkTypeSepHb), value = TRUE)] <-  'MHb'
 
+# check levels
+table(sce$bulkTypeSepHb)
+    # Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal          LHb 
+    # 538           38           51         1800         7612         2214 
+    # MHb    Microglia        Oligo          OPC    OPC_noisy 
+    # 710          145         2178         1202          594
+
 #### get proportions before dropping ambig #####################################
-prop_dirty <- as.data.frame(colData(sce)[, 
+prop_dirty_bulk <- as.data.frame(colData(sce)[, 
                                 c("bulkTypeSepHb", "Sample", "NeuN")]) |>
   group_by(Sample, bulkTypeSepHb, NeuN) |>
   summarize(n = n()) |>
   group_by(Sample) |>
   mutate(prop = n / sum(n))
 
-# dropping the clusters we dropped
-sce <- sce[, sce$bulkTypeSepHb != "OPC_noisy"]
-sce <- sce[, sce$bulkTypeSepHb != "Excit.Neuron"]
-
 #### proportions of nuclei using post-drop information #########################
-pd <- as.data.frame(colData(sce))
-table(pd$bulkTypeSepHb)
+pd_bulk <- as.data.frame(colData(sce_drop))
+table(pd_bulk$bulkTypeSepHb)
     # Astrocyte       Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia 
     # 538         38       1800       7612       2214        710        145 
     # Oligo        OPC 
-    # 2178       1202 
+    # 2178       1202
 
-prop_clean <- pd[,c("bulkTypeSepHb", "Sample", "NeuN")] |>
+prop_clean_bulk <- pd_bulk[,c("bulkTypeSepHb", "Sample", "NeuN")] |>
   group_by(Sample, bulkTypeSepHb, NeuN) |>
   summarize(n = n()) |>
   group_by(Sample) |>
   mutate(prop = n / sum(n))
 
-
 ### combines prop_dirty and prop_clean
-prop_ambig_plus <- prop_dirty |>
+prop_ambig_plus_bulk <- prop_dirty_bulk |>
   mutate(ambig = "Pre-drop") |>
-  bind_rows(prop_clean |> mutate(ambig = "Post-drop"))
+  bind_rows(prop_clean_bulk |> mutate(ambig = "Post-drop"))
 
 # plots composition plot using prop_clean and prop_dirty
-comp_plot_both <- ggplot(data = prop_ambig_plus, aes(x = Sample, 
+comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample, 
                               y = prop, fill = bulkTypeSepHb)) +
   geom_bar(stat = "identity") +
   geom_text(
@@ -188,7 +189,7 @@ comp_plot_both <- ggplot(data = prop_ambig_plus, aes(x = Sample,
   guides(color = FALSE, fill = guide_legend(ncol = 1))
 
 pdf(file = here(plot_dir, "full_Comp_Express_Plot_bulkAnnoLEVEL.pdf"), width = 7, height = 11)
-comp_plot_both 
+  comp_plot_both_bulk 
 dev.off()
 
 
