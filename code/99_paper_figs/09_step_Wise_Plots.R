@@ -42,6 +42,8 @@ cluster_colors <- c("Oligo" = c("#4d5802"),
                          "MHb" = c("#fa246a")
 )
 
+
+############ TABLE 1: TSNE using sn annotations ################################
 # grabbing bulk annotations 
 sce$bulkTypeSepHb <- sce$final_Annotations
 
@@ -64,38 +66,41 @@ TSNE_facet <- plotReducedDim(sce, dimred = "TSNE") +
   facet_wrap(~ sce$bulkTypeSepHb) +
   guides(color = guide_legend(title="Cell Type"))
 
-png(file = here(plot_dir, "bulk_clean_TSNE.png"), width = 900, height = 700)
+pdf(file = here(plot_dir, "bulk_clean_TSNE.pdf"), width = 9, height = 5)
   plot_grid(TSNE, TSNE_facet)
 dev.off()
 
+############ TABLE 1: TOTAL NUCLEI PLOT PER CT (bulk annotation) ###############
 # number of nuclei per cell type post drop
-num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations", "bulkTypeSepHb", "Sample", "NeuN")]) |>
+num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations", 
+                                         "bulkTypeSepHb", "Sample", "NeuN")]) |>
   group_by(Sample, bulkTypeSepHb, NeuN) |>
   mutate(n_nuc = n())
 
-# adding information regarding total number of nuclei per final_Annotation resolution 
-# cluster across all samples
-tot_nuc <- num_nuc |>
-  group_by(final_Annotations) |>
-  summarize(tot_across_Samps = sum(n_nuc))
 
-num_nuc <- tot_nuc |>
-  left_join(num_nuc,
-             by = c("final_Annotations" = "final_Annotations"))
-
-
-num_nuc_comp_plot <- ggplot(num_nuc, aes(x = final_Annotations, y = tot_across_Samps, fill = bulkTypeSepHb)) +
+num_nuc_comp_plot <- num_nuc |>
+  group_by(bulkTypeSepHb) |>
+  summarize(tot_across_Samps = n()) |>
+  ggplot(aes(x = bulkTypeSepHb, y = tot_across_Samps , fill = bulkTypeSepHb)) +
   geom_col() +
-  geom_text(aes(label = tot_across_Samps), size = 2.5, position = position_dodge(width=0.9), vjust=-0.25) +
-  scale_fill_manual(values = cluster_colors) +
+  geom_label(aes(label = tot_across_Samps),
+             fill = "#FFFFFF",
+             size = 4) +
+  scale_fill_manual(values = cluster_colors, ) +
   theme_bw() +
-  labs(y = "Number of Nuclei") +
-  scale_y_continuous(labels = scales::comma) 
-  
+  labs(y = "Number of Nuclei", fill = "Cell Type") +
+  theme(axis.title.x = element_blank())
 
-png(file = here(plot_dir, "num_nuclei_post_clean7.png"), width = 900, height = 700)
+pdf(file = here(plot_dir, "num_nuclei_post_clean.pdf"), width = 15, height = 6)
   num_nuc_comp_plot 
 dev.off()
+
+
+# 
+
+
+
+
 
 
 
