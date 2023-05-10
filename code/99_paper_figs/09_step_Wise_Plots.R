@@ -73,26 +73,28 @@ num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations", "bulkTypeSepHb", "
   group_by(Sample, bulkTypeSepHb, NeuN) |>
   mutate(n_nuc = n())
 
-max_nuc <- num_nuc |>
-  group_by(Sample, final_Annotations, NeuN) |>
-  summarize(max_n = max(n_nuc))
+# adding information regarding total number of nuclei per final_Annotation resolution 
+# cluster across all samples
+tot_nuc <- num_nuc |>
+  group_by(final_Annotations) |>
+  summarize(tot_across_Samps = sum(n_nuc))
 
-num_nuc <- max_nuc |>
+num_nuc <- tot_nuc |>
   left_join(num_nuc,
-             by = c("Sample" = "Sample", "final_Annotations" = "final_Annotations"))
+             by = c("final_Annotations" = "final_Annotations"))
 
 
-num_nuc_comp_plot <- ggplot(num_nuc, aes(x = final_Annotations, y = n_nuc, fill = bulkTypeSepHb)) +
+num_nuc_comp_plot <- ggplot(num_nuc, aes(x = final_Annotations, y = tot_across_Samps, fill = bulkTypeSepHb)) +
   geom_col() +
-  geom_text(aes(label = max_nuc), size = 2.5) +
+  geom_text(aes(label = tot_across_Samps), size = 2.5, position = position_dodge(width=0.9), vjust=-0.25) +
   scale_fill_manual(values = cluster_colors) +
   theme_bw() +
-  labs(y = "Number of Nuclei") 
+  labs(y = "Number of Nuclei") +
+  scale_y_continuous(labels = scales::comma) 
   
 
-png(file = here(plot_dir, "num_nuclei_post_clean2.png"), width = 900, height = 700)
-  num_nuc_comp_plot +
-    scale_y_continuous(trans='log10')
+png(file = here(plot_dir, "num_nuclei_post_clean7.png"), width = 900, height = 700)
+  num_nuc_comp_plot 
 dev.off()
 
 
