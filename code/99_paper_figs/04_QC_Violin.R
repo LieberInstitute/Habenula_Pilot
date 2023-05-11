@@ -71,21 +71,19 @@ table(sce$lowDetecFea, by = sce$Sample)
 ################ PLOTTING PER METRIC ###########################################
 pd <- as.data.frame(colData(sce))
 
-pdf(here(plot_dir, "sce_pre_QC_violin_plots_by_Run_2.pdf"), width = 8)
+pdf(here(plot_dir, "sce_pre_QC_violin_plots_by_Run_4.pdf"), width = 8)
 
 ggplot(pd, aes(x = Sample, y = subsets_Mito_percent)) +
   geom_point(aes(color = high_mito), position = position_jitter(seed = 1, width = 0.01)) +
-  geom_violin(alpha = 0.4, position = "identity", scale = 3)
+  geom_violin(alpha = 0.4, position = "identity", scale = 3) + 
+
+
 
 dev.off()
 
-
-
-# plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") + 
+# this version doesn't work correctly anymore: 
+# plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
 #   ggtitle("Mito Precent")
-
-# .
-
 
 
 print("Reproducibility information:")

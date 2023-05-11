@@ -111,7 +111,7 @@ marker_stats$Top25 <- "No"
 marker_stats[which(marker_stats$rank_ratio <= 25), "Top25"] <- "Yes"
 
 # plotting hockey sticks 
-pdf(here(plot_dir, "hockysticks_Official.pdf"))
+pdf(here(plot_dir, "hockeysticks_Official.pdf"))
 ggplot(marker_stats, aes(ratio, std.logFC)) +
   geom_point(size = 0.5, aes(colour = Top25)) +  
   facet_wrap(~cellType.target, scales = "free") +
