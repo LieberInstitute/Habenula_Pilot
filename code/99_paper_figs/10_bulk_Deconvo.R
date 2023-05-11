@@ -11,11 +11,15 @@ library(dplyr)
 library(BisqueRNA)
 library(ggplot2)
 library(tidyverse)
+library(xlsx)
+library(sessioninfo)
 
 # loading final sce object 
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
                  "official_final_sce.RDATA"), verbose = TRUE)
 # sce
+dim(sce)
+  # [1] 33848 16437 (dropped OPC_noisy and Excit.Neuron ambig)
 
 # loading final rse object (didn't change the location for this one)
 load(here("processed-data", "02_bulk_qc", "count_data_bukola", 
@@ -27,15 +31,6 @@ plot_dir <- here("plots", "99_paper_figs", "10_bulk_Deconvo", "OPC_clean")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
-
-### CLEANING OPC ###############################################################
-dim(sce)
-  # [1] 33848 17031
-
-sce <- sce[, which(sce$OPC_clean == "Yes")]
-
-dim(sce)
-  # [1] 33848 16437
 
 ###### Adding bulk collapsed annotations to sce object #########################
 sce$bulkTypeSepHb <- sce$final_Annotations
@@ -77,6 +72,15 @@ fc <- findMarkers_1vAll(sym_sce,
 
 # combining the two to form marker_stats
 marker_stats <- left_join(ratios, fc, by = c("gene", "cellType.target"))
+
+## grabbing the top 50 genes for export 
+exp_Mark_Table <- marker_stats |>
+  filter(rank_ratio <= 50)
+
+# exporting (into plotting directory (i know)) as a csv table
+write.xlsx(exp_Mark_Table, file = here(plot_dir, "top50MarkerGenes.xlsx"),
+           sheetName = "Top 50 Marker Genes Per Cell Type", append = FALSE)
+
 
 # Random color scheme [NEED TO ESTABLISH MY OWN FOR THIS STEP]
 cell_types <- levels(sym_sce$cellType)
