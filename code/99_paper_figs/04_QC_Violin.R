@@ -77,11 +77,15 @@ pdf(here(plot_dir, "sce_pre_QC_violin_plots_by_Run_5.pdf"), width = 8)
 ggplot(pd, aes(x = Sample, y = subsets_Mito_percent)) +
   geom_point(aes(color = high_mito), position = 
                position_jitter(seed = 1, width = 0.01)) +
+  labs(y = "Mitochodrial Percent", colour = "High Mito?") +
   geom_violin(alpha = 0.4, position = "identity", scale = 3) +
-  
   geom_violin(data = pd[pd$high_mito == FALSE, ],
-              alpha = 0.4, position = "identity", 
-              scale = 3, aes(fill = high_mito))
+              alpha = 0.4, position = "identity",
+              scale = 3, aes(fill = high_mito)) + 
+              guides(fill = FALSE) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        axis.title.x = element_blank()) +
+  theme_bw()
 
 dev.off()
 
