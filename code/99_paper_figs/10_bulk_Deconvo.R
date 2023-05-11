@@ -74,13 +74,13 @@ fc <- findMarkers_1vAll(sym_sce,
 marker_stats <- left_join(ratios, fc, by = c("gene", "cellType.target"))
 
 ## grabbing the top 50 genes for export 
-exp_Mark_Table <- marker_stats |>
-  filter(rank_ratio <= 50)
+# exp_Mark_Table <- marker_stats |>
+#   filter(rank_ratio <= 50)
 
 # exporting (into plotting directory (i know)) as a csv table
-write.xlsx(exp_Mark_Table, file = here(plot_dir, "top50MarkerGenes.xlsx"),
-           sheetName = "Top 50 Marker Genes Per Cell Type", append = FALSE)
-
+# write.xlsx(exp_Mark_Table, file = here(plot_dir, "top50MarkerGenes.xlsx"),
+#            sheetName = "Top 50 Marker Genes Per Cell Type", append = FALSE)
+# 
 
 # Random color scheme [NEED TO ESTABLISH MY OWN FOR THIS STEP]
 cell_types <- levels(sym_sce$cellType)
@@ -105,6 +105,20 @@ marker_genes <- marker_stats |>
 
 length(marker_genes)
 # [1] 170
+
+# adding color group
+marker_stats$Top25 <- "No"
+marker_stats[which(marker_stats$rank_ratio <= 25), "Top25"] <- "Yes"
+
+# plotting hockey sticks 
+pdf(here(plot_dir, "hockysticks_Official.pdf"))
+ggplot(marker_stats, aes(ratio, std.logFC)) +
+  geom_point(size = 0.5, aes(colour = Top25)) +  
+  facet_wrap(~cellType.target, scales = "free") +
+  labs(x = "Mean Ratio") +
+  guides(colour = guide_legend(title = "Top 25 Marker"))
+dev.off()
+
 
 ##### Running BISQUE ###########################################################
 exp_set_bulk <- Biobase::ExpressionSet(assayData = assays(rse_gene[marker_genes,])$counts,
