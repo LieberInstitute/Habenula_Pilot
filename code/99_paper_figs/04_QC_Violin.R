@@ -76,39 +76,40 @@ sce$Sample <- as.factor(sce$Sample)
 
 ## high_mito
 pdf(here(plot_dir, "official_Violin_QC_High_Mito.pdf"), width = 8)
-  ggplot(pd, aes(x = Sample, y = subsets_Mito_percent)) +
-    geom_jitter(aes(color = high_mito), position = 
-                 position_jitter(seed = 1, width = 0.01)) +
-    labs(y = "Mitochodrial Percent", colour = "High Mito?") +
-    geom_violin(alpha = 0.4, position = "identity", scale = 3) +
-    scale_y_log10() +
-    geom_violin(
-                # data = pd[pd$high_mito == FALSE, ],
-                alpha = 0.4, position = "identity",
-                scale = 3, aes(fill = high_mito)) + 
-                guides(fill = FALSE) + 
+  plotColData(sce, x = "Sample", y="subsets_Mito_percent", colour_by="high_mito") +
+    scale_y_log10() + 
+    labs(y = "Mito Percent") + 
+    scale_colour_discrete(name="High Mito?") +
+    aes(group = pd$Sample) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-          axis.title.x = element_blank()) +
-    theme_bw() + 
-    scale_y_log10()
+          axis.title.x = element_blank())
 dev.off()
 
 # low libray size
 pdf(here(plot_dir, "official_Violin_QC_Low_Lib.pdf"), width = 8)
-  ggplot(pd, aes(x = Sample, y = sum, group = Sample, fill = lowLib)) +
-    geom_point(aes(color = lowLib, group = Sample)) +
-    geom_violin(data = pd, alpha = 0.4, position = "identity", 
-                inherit.aes = TRUE) +
-    labs(y = "Library Size", colour = "Low Lib Size?") +
-    scale_y_log10()
-
-dev.off()
-
-pdf(here(plot_dir, "test.pdf"))
   plotColData(sce, x = "Sample", y="sum", colour_by="lowLib") +
-    scale_y_log10() + ggtitle("Total count") + aes(group = pd$Sample)
+    scale_y_log10() + 
+    labs(y = "Library Size") + 
+    scale_colour_discrete(name="Low Lib Size?") +
+    aes(group = pd$Sample) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+          axis.title.x = element_blank()) 
 dev.off()
 
+
+# low libray size
+pdf(here(plot_dir, "official_Violin_QC_Low_Det_Feat.pdf"), width = 8)
+  plotColData(sce, x = "Sample", y="detected", colour_by="lowDetecFea") +
+    scale_y_log10() + 
+    labs(y = "Detected Feature") + 
+    scale_colour_discrete(name="Low Detected?") +
+    aes(group = pd$Sample) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+          axis.title.x = element_blank()) 
+dev.off()
+
+
+# done.
 
 
 print("Reproducibility information:")
