@@ -1,5 +1,5 @@
-## May 10, 2023 - Bukola Ajanaku
-# Making stepwise plot using cleaned TSNE, cleaned num nuclei plots, and cleaning
+## May 12, 2023 - Bukola Ajanaku
+# Making stepwise plot using not cleaned TSNE, cleaned num nuclei plots, and cleaning
 # composition plots.
 # qrsh -l mem_free=20G,h_vmem=20G
 
@@ -18,28 +18,24 @@ load(file = here("processed-data", "99_paper_figs", "sce_objects",
                  "sce_final_preHbdrop.RDATA"), verbose = TRUE)
 table(sce$final_Annotations)
 
-# dropping Excit.Neuron and OPC_noisy clusters
-sce <- sce[, sce$final_Annotations != "OPC_noisy"]
-sce <- sce[, sce$final_Annotations != "Excit.Neuron"]
-
 # creating plot_dir
-plot_dir <- here("plots", "99_paper_figs", "09_step_Wise_Plots")
+plot_dir <- here("plots", "99_paper_figs", "09_step_Wise_Plots_Ambiguous")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
 # setting manual colors
 cluster_colors <- c("Oligo" = c("#4d5802"), 
-                         "OPC"= c("#d3c871"), 
-                         "OPC_noisy" = c("#A9A9A9"),
-                         "Microglia" = c("#1c0f77"), 
-                         "Astrocyte" = c("#8d363c"), 
-                         "Endo" = c("#ee6c14"), 
-                         "Excit.Neuron" = c("#71797E"), 
-                         "Inhib.Thal" = c("#9e4ad1"),  
-                         "Excit.Thal" = c('#b5a2ff'), 
-                         "LHb" = c("#0085af"),
-                         "MHb" = c("#fa246a")
+                    "OPC"= c("#d3c871"), 
+                    "OPC_noisy" = c("#A9A9A9"),
+                    "Microglia" = c("#1c0f77"), 
+                    "Astrocyte" = c("#8d363c"), 
+                    "Endo" = c("#ee6c14"), 
+                    "Excit.Neuron" = c("#71797E"), 
+                    "Inhib.Thal" = c("#9e4ad1"),  
+                    "Excit.Thal" = c('#b5a2ff'), 
+                    "LHb" = c("#0085af"),
+                    "MHb" = c("#fa246a")
 )
 
 
@@ -68,7 +64,7 @@ TSNE_facet <- plotReducedDim(sce, dimred = "TSNE") +
   guides(color = guide_legend(title="Cell Type"))
 
 pdf(file = here(plot_dir, "bulk_clean_TSNE.pdf"), width = 9, height = 5)
-  plot_grid(TSNE, TSNE_facet)
+plot_grid(TSNE, TSNE_facet)
 dev.off()
 
 ############ PLOT 2: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
@@ -91,10 +87,10 @@ num_nuc_comp_plot <- num_nuc |>
   labs(y = "Number of Nuclei", fill = "Cell Type") +
   theme(axis.title.x = element_blank()) +
   theme(legend.position = "None", 
-    axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
+        axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
 
 pdf(file = here(plot_dir, "num_nuclei_post_clean.pdf"), width = 15, height = 6)
-  num_nuc_comp_plot 
+num_nuc_comp_plot 
 dev.off()
 
 ############ PLOT 3: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
@@ -105,11 +101,11 @@ prop_df <- as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
   mutate(prop = n / sum(n))
 
 comp_plot <- ggplot(prop_df, 
-                        aes(x = Sample, y = prop, fill = bulkTypeSepHb)) +
+                    aes(x = Sample, y = prop, fill = bulkTypeSepHb)) +
   geom_col() +
   geom_text(
     aes(
-    label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
+      label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
     ), 
     size = 3,
     position = position_stack(vjust = 0.5),
@@ -123,7 +119,7 @@ comp_plot <- ggplot(prop_df,
 
 
 pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height = 9)
-  comp_plot
+comp_plot
 dev.off()
 
 ########## COMBINING PLOTS #####################################################
