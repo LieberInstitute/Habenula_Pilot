@@ -137,18 +137,17 @@ est_prop <- ReferenceBasedDecomposition(bulk.eset = exp_set_bulk,
 
 #### grabbed from my exploreBisque.R file in the bulk deconvo folder
 # custom color scheme
-color_bulk_clusters <- c("Oligo" = c("#4d5802"), 
-                    "OPC"= c("#d3c871"), 
-                    "OPC_noisy" = c("#A9A9A9"),
-                    "Microglia" = c("#1c0f77"), 
-                    "Astrocyte" = c("#8d363c"), 
-                    "Endo" = c("#ee6c14"), 
-                    "Excit.Neuron" = c("#71797E"), 
-                    "Inhib.Thal" = c("#9e4ad1"),  
-                    "Excit.Thal" = c('#b5a2ff'), 
-                    "LHb" = c("#0085af"),
-                    "MHb" = c("#fa246a")
-)
+color_bulk_clusters <- 
+  c( "Oligo" = c("#A9A9A9"), # dark grey
+     "OPC"= c("#7393B3"), # blue grey
+     "Microglia" = c("#E5E4E2"), # platinum
+     "Astrocyte" = c("#36454F"), # ash grey
+     "Endo" = c("#848884"), # smoke
+     "Inhib.Thal" = c('#2AAA8A'), # jungle green
+     "Excit.Thal" = c("#478778"), # lincoln green
+     "LHb" = c("#DE3163"), # cerise
+     "MHb" = c("#00FFFF") # aqua
+  )
 
 # grabbing relevant phenotype info for bulk data
 pd <- colData(rse_gene) |>
@@ -180,15 +179,42 @@ prop_long <- left_join(prop_long, sum_Prop) |>
 
 
 ## create composition bar plots
-pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 21, height = 12)
-  plot_composition_bar(prop_long = prop_long, sample_col = "Br_Order",
-                       x_col = "Br_Order", ct_col = "factor_CT") + 
-    scale_fill_manual(values = color_bulk_clusters) +
-    ggtitle("Bulk Deconvolution") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
-    
+pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 19, height = 12)
+comp_plot <- ggplot(prop_long, 
+                    aes(x = BrNum, y = prop, fill = cellType)) +
+  geom_col() +
+  geom_text(
+    aes(
+      label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
+    ), 
+    size = 3.5,
+    position = position_stack(vjust = 0.5),
+    angle = -90,
+    fontface = "bold",
+    colour = "black"
+  ) +
+  scale_fill_manual(values = alpha(color_bulk_clusters, 0.9)) +
+  theme_bw() +
+  theme(legend.position = "None", 
+        axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+  labs(y = "Proportion") +
+  ggtitle("Bulk Deconvolution")
+
+comp_plot
+
 dev.off()
+  
+  # pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 21, height = 12)
+  #   plot_composition_bar(prop_long = prop_long, sample_col = "Br_Order",
+  #                        x_col = "Br_Order", ct_col = "factor_CT") + 
+  #     scale_fill_manual(values = color_bulk_clusters) +
+  #     ggtitle("Bulk Deconvolution") + 
+  #     theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+  #     
+  # dev.off()
 
+  
+  
+  
 
-
-# 
+#
