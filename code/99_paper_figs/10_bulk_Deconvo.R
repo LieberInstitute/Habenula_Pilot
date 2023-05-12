@@ -28,9 +28,9 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
 
 # creating plotting directory
 plot_dir <- here("plots", "99_paper_figs", "10_bulk_Deconvo", "OPC_clean")
-if(!dir.exists(plot_dir)){
-  dir.create(plot_dir)
-}
+  # if(!dir.exists(plot_dir)){
+  #   dir.create(plot_dir)
+  # }
 
 ###### Adding bulk collapsed annotations to sce object #########################
 sce$bulkTypeSepHb <- sce$final_Annotations
@@ -73,21 +73,17 @@ fc <- findMarkers_1vAll(sym_sce,
 # combining the two to form marker_stats
 marker_stats <- left_join(ratios, fc, by = c("gene", "cellType.target"))
 
-## grabbing the top 50 genes for export 
-# exp_Mark_Table <- marker_stats |>
-#   filter(rank_ratio <= 50)
+    ## grabbing the top 50 genes for export 
+    # exp_Mark_Table <- marker_stats |>
+    #   filter(rank_ratio <= 50)
+    
+    # exporting (into plotting directory (i know)) as a csv table
+    # write.xlsx(exp_Mark_Table, file = here(plot_dir, "top50MarkerGenes.xlsx"),
+    #            sheetName = "Top 50 Marker Genes Per Cell Type", append = FALSE)
+    # 
 
-# exporting (into plotting directory (i know)) as a csv table
-# write.xlsx(exp_Mark_Table, file = here(plot_dir, "top50MarkerGenes.xlsx"),
-#            sheetName = "Top 50 Marker Genes Per Cell Type", append = FALSE)
-# 
 
-# Random color scheme [NEED TO ESTABLISH MY OWN FOR THIS STEP]
-cell_types <- levels(sym_sce$cellType)
-# cell_colors <- create_cell_colors(cell_types = cell_types, pallet = "classic", split = "\\.", preview = TRUE)
-# cell_colors errorr
-
-# printing top 10 markers 
+######### PLOTTING TOP 10 GENE MARKERS #########################################
 plot_marker_express_ALL(sym_sce,
                         marker_stats,
                         n_genes = 10,
@@ -96,16 +92,7 @@ plot_marker_express_ALL(sym_sce,
                         cellType_col = "bulkTypeSepHb",
                         pdf_fn = here(plot_dir, "Top_10_Markers_OPC_clean.pdf")
 )
-
-## copied directly from run_Bisque.R file in the bulk deconvo folder 
-## creating marker_list of top 25 genes
-marker_genes <- marker_stats |>
-  filter(rank_ratio <= 25, gene %in% rownames(rse_gene)) |>
-  pull(gene)
-
-length(marker_genes)
-# [1] 170
-
+########## PLOTTING HOCKEY STICKS ##############################################
 # adding color group
 marker_stats$Top25 <- "No"
 marker_stats[which(marker_stats$rank_ratio <= 25), "Top25"] <- "Yes"
@@ -121,6 +108,14 @@ dev.off()
 
 
 ##### Running BISQUE ###########################################################
+## creating marker_list of top 25 genes
+marker_genes <- marker_stats |>
+  filter(rank_ratio <= 25, gene %in% rownames(rse_gene)) |>
+  pull(gene)
+
+length(marker_genes)
+# [1] 170
+
 exp_set_bulk <- Biobase::ExpressionSet(assayData = assays(rse_gene[marker_genes,])$counts,
                                        phenoData=AnnotatedDataFrame(
                                          as.data.frame(colData(rse_gene))[c("BrNum")]))
@@ -185,10 +180,13 @@ prop_long <- left_join(prop_long, sum_Prop) |>
 
 ## create composition bar plots
 pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 21, height = 12)
-plot_composition_bar(prop_long = prop_long, sample_col = "Br_Order",
-                     x_col = "Br_Order", ct_col = "factor_CT") + 
-  scale_fill_manual(values = color_bulk_clusters) +
-  ggtitle("OPC_clean")
+  plot_composition_bar(prop_long = prop_long, sample_col = "Br_Order",
+                       x_col = "Br_Order", ct_col = "factor_CT") + 
+    scale_fill_manual(values = color_bulk_clusters) +
+    ggtitle("Bulk Deconvolution") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+    geom_text(aes(angle = 90))
+    
 dev.off()
 
 
