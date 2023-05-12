@@ -175,30 +175,34 @@ sum_Prop <- prop_long |>
   arrange(Br_Order)
 
 prop_long <- left_join(prop_long, sum_Prop) |>
-  arrange(Br_Order) 
-
+  arrange(Br_Order) |>
+  mutate(prop_perc = prop * 100)
 
 ## create composition bar plots
-pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 19, height = 12)
+pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 21, height = 11)
 comp_plot <- ggplot(prop_long, 
-                    aes(x = BrNum, y = prop, fill = cellType)) +
+                    aes(x = Br_Order, y = prop_perc, fill = factor_CT)) +
   geom_col() +
   geom_text(
+    data = subset(prop_long, prop_perc >= 1),
     aes(
-      label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
+      label = round(prop_perc, 1)
     ), 
-    size = 3.5,
-    position = position_stack(vjust = 0.5),
+    size = 4,
+    position = position_stack(vjust = 0.4),
     angle = -90,
     fontface = "bold",
     colour = "black"
   ) +
-  scale_fill_manual(values = alpha(color_bulk_clusters, 0.9)) +
+  scale_fill_manual(values = alpha(color_bulk_clusters, 0.8)) +
   theme_bw() +
   theme(legend.position = "None", 
-        axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
-  labs(y = "Proportion") +
-  ggtitle("Bulk Deconvolution")
+        axis.text.x = element_text(angle = 45, hjust = 1), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 16),
+        plot.title = element_text(size = 16, hjust = 0.5)) +
+  ggtitle("Bulk Deconvolution") +
+  ylab("Proportion")
 
 comp_plot
 
