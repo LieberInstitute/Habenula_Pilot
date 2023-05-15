@@ -47,13 +47,11 @@ table(sce$bulkTypeSepHb)
 # cleaned TSNE with facet_wrap
 TSNE <- plotReducedDim(sce, dimred = "TSNE") +
   geom_point(aes(color = sce$bulkTypeSepHb)) +
-  scale_colour_manual(values = cluster_colors) +
   theme(legend.position = "none") +
   labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
 TSNE_facet <- plotReducedDim(sce, dimred = "TSNE") +
   geom_point(aes(color = sce$bulkTypeSepHb)) +
-  scale_colour_manual(values = cluster_colors) +
   facet_wrap(~ sce$bulkTypeSepHb) +
   guides(color = guide_legend(title="Cell Type"))
 
@@ -75,7 +73,6 @@ comp_plot <- ggplot(prop_df,
     position = position_stack(vjust = 0.5),
     color = "white",
   ) +
-  scale_fill_manual(values = cluster_colors) +
   theme_bw() +
   theme(legend.position = "None", 
         axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
@@ -89,15 +86,14 @@ deconvo_plot <- ggplot(prop_long,
     data = subset(prop_long, prop_perc >= 1),
     aes(
       label = round(prop_perc, 1),
-      check_overlap = TRUE
     ), 
     size = 4,
     position = position_stack(vjust = 0.4),
     angle = -90,
     fontface = "bold",
-    colour = "black"
+    colour = "black",
+    check_overlap = TRUE
   ) +
-  scale_fill_manual(values = alpha(color_bulk_clusters, 0.8)) +
   theme_bw() +
   theme(legend.position = "None", 
         axis.text.x = element_text(angle = 45, hjust = 1), 
@@ -108,22 +104,77 @@ deconvo_plot <- ggplot(prop_long,
   ylab("Proportion")
 
 ########## CHANGE PAL FUNCTION #################################################
-
 change_Colors <- function(new_col_pal){
-  plot_grid( 
-    TSNE + scale_colour_manual(values = new_col_pal), 
-    TSNE_facet + scale_colour_manual(values = new_col_pal), 
-    comp_plot + scale_fill_manual(values = cluster_colors),
-    deconvo_plot + scale_fill_manual(values = alpha(color_bulk_clusters, 0.8))
+  plot.top_1 <- plot_grid(TSNE + scale_colour_manual(values = new_col_pal), 
+                       TSNE_facet + scale_colour_manual(values = new_col_pal), 
+                       nrow = 1)
+  
+  plot.top_2 <- plot_grid(plot.top_1, 
+                          comp_plot + scale_fill_manual(values = new_col_pal), 
+                          nrow = 1,
+                          rel_widths = c(.75, .25))
+  
+  plot_grid( plot.top_2,
+             deconvo_plot + scale_fill_manual(values = alpha(new_col_pal, 0.8)),
+             ncol = 1
   )
 }
 
 
+### color pal test
+# dr. mayanrd's ask
+new_col_pal <- c("Oligo" = c("#4d5802"), 
+                    "OPC"= c("#d3c871"), 
+                    "OPC_noisy" = c("#A9A9A9"),
+                    "Microglia" = c("#1c0f77"), 
+                    "Astrocyte" = c("#8d363c"), 
+                    "Endo" = c("#ee6c14"), 
+                    "Excit.Neuron" = c("#71797E"), 
+                    "Inhib.Thal" = c('#b5a2ff'),  
+                    "Excit.Thal" = c("#9e4ad1"), 
+                    "LHb" = c("#0085af"),
+                    "MHb" = c("#fa246a")
+)
 
-###
+# louise's preference 
+new_col_pal_2 <- c("Oligo" = c("#4d5802"), 
+                 "OPC"= c("#d3c871"), 
+                 "OPC_noisy" = c("#A9A9A9"),
+                 "Microglia" = c("#1c0f77"), 
+                 "Astrocyte" = c("#8d363c"), 
+                 "Endo" = c("#ee6c14"), 
+                 "Excit.Neuron" = c("#71797E"), 
+                 "Inhib.Thal" = c("#9e4ad1"),  
+                 "Excit.Thal" = c('#b5a2ff'), 
+                 "LHb" = c("#0085af"),
+                 "MHb" = c("#fa246a")
+)
 
+# my idea 
+new_col_pal_3 <- c("Oligo" = c("#4d5802"), 
+                 "OPC"= c("#d3c871"), 
+                 "OPC_noisy" = c("#A9A9A9"),
+                 "Microglia" = c("#1c0f77"), 
+                 "Astrocyte" = c("#8d363c"), 
+                 "Endo" = c("#ee6c14"), 
+                 "Excit.Neuron" = c("#71797E"), 
+                 "Inhib.Thal" = c('#b5a2ff'),  
+                 "Excit.Thal" = c("#9e4ad1"), 
+                 "LHb" = c("#0085af"),
+                 "MHb" = c("#fa246a")
+)
 
+pdf(file = here(plot_dir, "test.pdf"), width = 15, height = 12)
+  change_Colors(new_col_pal)
+dev.off()
 
+pdf(file = here(plot_dir, "test_2.pdf"), width = 15, height = 12)
+  change_Colors(new_col_pal_2)
+dev.off()
+
+pdf(file = here(plot_dir, "test__3.pdf"), width = 15, height = 12)
+  change_Colors(new_col_pal_3)
+dev.off()
 
 
 # 
