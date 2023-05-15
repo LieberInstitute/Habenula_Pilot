@@ -218,7 +218,8 @@ dev.off()
   # dev.off()
 
   
-  
+# saving prop_long data (bulk deconvolution data) for further investigation
+save(prop_long, file = here("processed-data", "99_paper_figs", "sce_objects", "prop_long.RDATA"))
   
 
-#
+# Done.
