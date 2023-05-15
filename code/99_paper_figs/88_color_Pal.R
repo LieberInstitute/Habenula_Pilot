@@ -104,7 +104,7 @@ deconvo_plot <- ggplot(prop_long,
   ylab("Proportion")
 
 ########## CHANGE PAL FUNCTION #################################################
-change_Colors <- function(new_col_pal){
+change_Colors <- function(new_col_pal, title ){
   plot.top_1 <- plot_grid(TSNE + scale_colour_manual(values = new_col_pal), 
                        TSNE_facet + scale_colour_manual(values = new_col_pal), 
                        nrow = 1)
@@ -116,8 +116,9 @@ change_Colors <- function(new_col_pal){
   
   plot_grid( plot.top_2,
              deconvo_plot + scale_fill_manual(values = alpha(new_col_pal, 0.8)),
-             ncol = 1
-  )
+             ncol = 1,
+             labels = title
+  ) 
 }
 
 
@@ -165,15 +166,15 @@ new_col_pal_3 <- c("Oligo" = c("#4d5802"),
 )
 
 pdf(file = here(plot_dir, "test.pdf"), width = 15, height = 12)
-  change_Colors(new_col_pal)
+  change_Colors(new_col_pal, "Scheme 1")
 dev.off()
 
 pdf(file = here(plot_dir, "test_2.pdf"), width = 15, height = 12)
-  change_Colors(new_col_pal_2)
+  change_Colors(new_col_pal_2, "Scheme 2")
 dev.off()
 
-pdf(file = here(plot_dir, "test__3.pdf"), width = 15, height = 12)
-  change_Colors(new_col_pal_3)
+pdf(file = here(plot_dir, "test_3.pdf"), width = 15, height = 12)
+  change_Colors(new_col_pal_3, "Scheme 3")
 dev.off()
 
 
