@@ -18,7 +18,7 @@ bulk_colors <- c("Oligo" = c("#4d5802"),
 
 
 # single nucleus resolution
-sn_colors_1 <- c("Oligo" = c("#4d5802"), 
+sn_colors <- c("Oligo" = c("#4d5802"), 
                  "OPC"= c("#d3c871"), 
                  "OPC_noisy" = c("#CCCCCC"),
                  "Microglia" = c("#222222"), 
