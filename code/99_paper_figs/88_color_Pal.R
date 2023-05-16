@@ -155,7 +155,7 @@ new_col_pal_2 <- c("Oligo" = c("#d3c871"),
 new_col_pal_3 <- c("Oligo" = c("#4d5802"), 
                  "OPC"= c("#d3c871"), 
                  "OPC_noisy" = c("#A9A9A9"),
-                 "Microglia" = c("#1c0f77"), 
+                 "Microglia" = c("#222222"), 
                  "Astrocyte" = c("#8d363c"), 
                  "Endo" = c("#ee6c14"), 
                  "Excit.Neuron" = c("#71797E"), 
@@ -201,11 +201,11 @@ sn_test <- function(sn_color_pal, title) {
 # Colors 1
 sn_colors_1 <- c("Oligo" = c("#4d5802"), 
                    "OPC"= c("#d3c871"), 
-                   "OPC_noisy" = c("#A9A9A9"),
-                   "Microglia" = c("#1c0f77"), 
+                   "OPC_noisy" = c("#CCCCCC"),
+                   "Microglia" = c("#222222"), 
                    "Astrocyte" = c("#8d363c"), 
                    "Endo" = c("#ee6c14"), 
-                   "Excit.Neuron" = c("#71797E"), 
+                   "Excit.Neuron" = c("#666666"), 
                    "Inhib.Thal" = c('#b5a2ff'),  
                    "Excit.Thal" = c("#9e4ad1"),
                    "LHb.1" = c("#0085af"),
@@ -221,12 +221,9 @@ sn_colors_1 <- c("Oligo" = c("#4d5802"),
 
 )
 
-pdf(file = here(plot_dir, "sn_test_1.pdf"), height = 7, width = 12)
+pdf(file = here(plot_dir, "sn_test_1.pdf"), height = 7, width = 13)
   sn_test(sn_colors_1, "snRNA Scheme 1")
 dev.off()
 
 
-
-
-# 
-# 
+# Done. 
