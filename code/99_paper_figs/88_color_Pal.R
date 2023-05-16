@@ -138,8 +138,8 @@ new_col_pal <- c("Oligo" = c("#4d5802"),
 )
 
 # louise's preference 
-new_col_pal_2 <- c("Oligo" = c("#4d5802"), 
-                 "OPC"= c("#d3c871"), 
+new_col_pal_2 <- c("Oligo" = c("#d3c871"), 
+                 "OPC"= c("#4d5802"), 
                  "OPC_noisy" = c("#A9A9A9"),
                  "Microglia" = c("#1c0f77"), 
                  "Astrocyte" = c("#8d363c"), 
@@ -151,7 +151,7 @@ new_col_pal_2 <- c("Oligo" = c("#4d5802"),
                  "MHb" = c("#fa246a")
 )
 
-# my idea 
+# my idea : BULK COLOR PALATTE WINNER!!!!! #####################################
 new_col_pal_3 <- c("Oligo" = c("#4d5802"), 
                  "OPC"= c("#d3c871"), 
                  "OPC_noisy" = c("#A9A9A9"),
@@ -165,6 +165,7 @@ new_col_pal_3 <- c("Oligo" = c("#4d5802"),
                  "MHb" = c("#fa246a")
 )
 
+################################################################################
 pdf(file = here(plot_dir, "test.pdf"), width = 15, height = 12)
   change_Colors(new_col_pal, "Scheme 1")
 dev.off()
@@ -177,5 +178,55 @@ pdf(file = here(plot_dir, "test_3.pdf"), width = 15, height = 12)
   change_Colors(new_col_pal_3, "Scheme 3")
 dev.off()
 
+#### Single Cell Resolution Color Trials #######################################
+sn_test <- function(sn_color_pal, title) {
+  plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+    geom_point(aes(color = sce$final_Annotations)) +
+    scale_colour_manual(values = sn_color_pal) +
+    theme(legend.position = "none") +
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+  
+  plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+    geom_point(aes(color = sce$final_Annotations)) +
+    scale_colour_manual(values = sn_color_pal) +
+    facet_wrap(~ sce$final_Annotations) +
+    guides(color = guide_legend(title="Cell Type")) +
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+  
+  plot_grid(plot1, plot2,
+            nrow = 1,
+            labels = title)
+} 
 
+# Colors 1
+sn_colors_1 <- c("Oligo" = c("#4d5802"), 
+                   "OPC"= c("#d3c871"), 
+                   "OPC_noisy" = c("#A9A9A9"),
+                   "Microglia" = c("#1c0f77"), 
+                   "Astrocyte" = c("#8d363c"), 
+                   "Endo" = c("#ee6c14"), 
+                   "Excit.Neuron" = c("#71797E"), 
+                   "Inhib.Thal" = c('#b5a2ff'),  
+                   "Excit.Thal" = c("#9e4ad1"),
+                   "LHb.1" = c("#0085af"),
+                   "LHb.2" = c("#0096FF"), 
+                   "LHb.3" = c ("#89CFF0"), 
+                   "LHb.4" = c("#6F8FAF"), 
+                   "LHb.5" = c("#40E0D0"), 
+                   "LHb.6" = c("#008080"),  
+                   "LHb.7" = c("#7DF9FF"), 
+                   "MHb.1" = c("#FF00FF"), 
+                   "MHb.2" = c("#FAA0A0"),
+                   "MHb.3" = c("#fa246a") 
+
+)
+
+pdf(file = here(plot_dir, "sn_test_1.pdf"), height = 7, width = 12)
+  sn_test(sn_colors_1, "snRNA Scheme 1")
+dev.off()
+
+
+
+
+# 
 # 
