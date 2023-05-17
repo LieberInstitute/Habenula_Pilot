@@ -198,30 +198,37 @@ pdf(here(plot_dir, "TSNE_by_CellType_PrePostDrop.pdf"),
 dev.off()
 
 # TSNE pre and post Harmony, colored by NeuN-sorting and faceted by Sample ID.
-pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_NeuN.pdf"), width = 16, height = 9)
-    plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-      geom_point(aes(color = sce_uncorrected$NeuN)) + 
-      theme(legend.position = "none")
-    
-    plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-      geom_point(aes(color = sce_uncorrected$NeuN)) +
-      facet_wrap(~ sce_uncorrected$Sample) + 
-      scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No'))
-    
-    plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-      geom_point(aes(color = sce$NeuN)) + 
-      theme(legend.position = "none")
-    
-    plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-      geom_point(aes(color = sce$NeuN)) +
-      facet_wrap(~ sce$Sample) + 
-      scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No'))
-    
-    plot_grid(plot1_unc, plot2_unc, plot1, plot2,
-              nrow = 2,
-              labels = c("A", "", "B", ""),
-              rel_widths = c(.3, .6))
+pdf(here(plot_dir, "TSNE_PrePostHarmony_by_NeuN.pdf"), width = 10, height = 9)
+
+# grabbing NeuN data for sce uncorrected
+  sce_uncorrected$NeuN <- sce_dirty$NeuN[match(sce_uncorrected$Barcode, sce_dirty$Barcode)]
+  
+      plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+        geom_point(aes(color = sce_uncorrected$NeuN)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+      plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+        geom_point(aes(color = sce_uncorrected$NeuN)) +
+        facet_wrap(~ sce_uncorrected$Sample) + 
+        scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No')) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+      plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$NeuN)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+      plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$NeuN)) +
+        facet_wrap(~ sce$Sample) + 
+        scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No')) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+      plot_grid(plot1_unc, plot2_unc, plot1, plot2,
+                nrow = 2,
+                labels = c("A", "", "B", ""))
 dev.off()
 
 
-# 
+# Done.
