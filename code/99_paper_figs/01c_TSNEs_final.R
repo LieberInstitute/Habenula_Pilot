@@ -1,5 +1,5 @@
 ## May 16, 2023 - Bukola Ajanaku
-# Updated TSNEs with confirmed color pallete, finalizing axes titles, separating out 
+# Updated TSNEs with confirmed color palette, finalizing axes titles, separating out 
 # OPC_noisy class, and printing pre/post Harmony together!
 # qrsh -l mem_free=40G,h_vmem=40G
 
@@ -88,7 +88,8 @@ plot_grid(plot1_unc, plot2_unc, plot1, plot2,
 dev.off()
 
 # TSNE pre and post harmony colored by Sample, faceted by Run
-# changing Run Labels 
+
+  # changing Run Labels 
 sce_uncorrected$Run <- recode(sce_uncorrected$Run,
                               "1" = "Run 1",
                               "2" = "Run 2",
