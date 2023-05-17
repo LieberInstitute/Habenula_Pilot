@@ -14,16 +14,16 @@ library("cowplot")
 # loading pre-harmony sce object 
 load(here("processed-data", "04_snRNA-seq", "sce_objects", 
           "sce_uncorrected_PCA.Rdata"), verbose = TRUE)
-  # sce_uncorrected
+# sce_uncorrected
 
 # Loading post-harmony sce object
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
                  "sce_final_preHbdrop.RDATA"), verbose = TRUE)
-  # sce 
+# sce 
 
 # sourcing official color palette 
 source(file = here("code", "99_paper_figs", "source_colors.R"))
-  # bulk_colors and sn_colors
+# bulk_colors and sn_colors
 
 # creating plot directory 
 plot_dir <- here("plots", "99_paper_figs", "01c_TSNEs_final")
@@ -32,14 +32,14 @@ if(!dir.exists(plot_dir)){
 }
 
 table(sce$final_Annotations)
-  # Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal        LHb.1 
-  # 538           38           51         1800         7612          201 
-  # LHb.2        LHb.3        LHb.4        LHb.5        LHb.6        LHb.7 
-  # 266          134          477           83           39         1014 
-  # MHb.1        MHb.2        MHb.3    Microglia        Oligo          OPC 
-  # 152          540           18          145         2178         1202 
-  # OPC_noisy 
-  # 594
+# Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal        LHb.1 
+# 538           38           51         1800         7612          201 
+# LHb.2        LHb.3        LHb.4        LHb.5        LHb.6        LHb.7 
+# 266          134          477           83           39         1014 
+# MHb.1        MHb.2        MHb.3    Microglia        Oligo          OPC 
+# 152          540           18          145         2178         1202 
+# OPC_noisy 
+# 594
 
 sce_dirty <- sce 
 
@@ -48,43 +48,43 @@ sce <- sce[, sce$final_Annotations != "OPC_noisy"]
 sce <- sce[, sce$final_Annotations != "Excit.Neuron"]
 
 table(sce$final_Annotations)
-  # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
-  # 538         38       1800       7612        201        266        134 
-  # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
-  # 477         83         39       1014        152        540         18 
-  # Microglia      Oligo        OPC 
-  # 145       2178       1202 
+# Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
+# 538         38       1800       7612        201        266        134 
+# LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
+# 477         83         39       1014        152        540         18 
+# Microglia      Oligo        OPC 
+# 145       2178       1202 
 
 
 # TSNE pre and post harmony by Sample 
 pdf(here(plot_dir, "TSNE_PrePostHarmony_bySample.pdf"), 
     width = 11, height = 9)
 
-    plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-      geom_point(aes(color = sce_uncorrected$Sample)) + 
-      theme(legend.position = "none") + 
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-    
-    plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-      geom_point(aes(color = sce_uncorrected$Sample)) + 
-      facet_wrap(~ sce_uncorrected$Sample) + 
-      guides(color = guide_legend(title="Sample ID")) + 
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-    
-    plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-      geom_point(aes(color = sce$Sample)) + 
-      theme(legend.position = "none") + 
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-    
-    plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-      geom_point(aes(color = sce$Sample)) + 
-      facet_wrap(~ sce$Sample) + 
-      guides(color = guide_legend(title="Sample ID")) + 
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+  geom_point(aes(color = sce_uncorrected$Sample)) + 
+  theme(legend.position = "none") + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
-  plot_grid(plot1_unc, plot2_unc, plot1, plot2,
-            nrow = 2,
-            labels = c("A", "", "B", ""))
+plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+  geom_point(aes(color = sce_uncorrected$Sample)) + 
+  facet_wrap(~ sce_uncorrected$Sample) + 
+  guides(color = guide_legend(title="Sample ID")) + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+
+plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$Sample)) + 
+  theme(legend.position = "none") + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+
+plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$Sample)) + 
+  facet_wrap(~ sce$Sample) + 
+  guides(color = guide_legend(title="Sample ID")) + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+
+plot_grid(plot1_unc, plot2_unc, plot1, plot2,
+          nrow = 2,
+          labels = c("A", "", "B", ""))
 dev.off()
 
 # TSNE pre and post harmony colored by Sample, faceted by Run
@@ -101,39 +101,127 @@ sce$Run <- recode(sce$Run,
 pdf(here(plot_dir, "TSNE_PrePostHarmony_bySample_facetbyRun.pdf"), 
     width = 16, height = 9)
 
-    plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-      geom_point(aes(color = sce_uncorrected$Sample)) + 
-      theme(legend.position = "none") + 
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-    
-    plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-      geom_point(aes(color = sce_uncorrected$Sample)) + 
-      facet_wrap(~ sce_uncorrected$Run) + 
-      guides(color = guide_legend(title="Sample ID")) + 
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-    
-    plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-      geom_point(aes(color = sce$Sample)) + 
-      theme(legend.position = "none") + 
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-    
-    plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-      geom_point(aes(color = sce$Sample)) + 
-      facet_wrap(~ sce$Run) + 
-      guides(color = guide_legend(title="Sample ID")) + 
-      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+  geom_point(aes(color = sce_uncorrected$Sample)) + 
+  theme(legend.position = "none") + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
-  plot_grid(plot1_unc, plot2_unc, plot1, plot2,
-            nrow = 2,
-            labels = c("A", "", "B", ""),
-            rel_widths = c(.3, .6))
+plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+  geom_point(aes(color = sce_uncorrected$Sample)) + 
+  facet_wrap(~ sce_uncorrected$Run) + 
+  guides(color = guide_legend(title="Sample ID")) + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+
+plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$Sample)) + 
+  theme(legend.position = "none") + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+
+plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$Sample)) + 
+  facet_wrap(~ sce$Run) + 
+  guides(color = guide_legend(title="Sample ID")) + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+
+plot_grid(plot1_unc, plot2_unc, plot1, plot2,
+          nrow = 2,
+          labels = c("A", "", "B", ""),
+          rel_widths = c(.3, .6))
 dev.off()
 
+## TSNE by cell type
+pdf(here(plot_dir, "TSNE_harmony_by_CellType.pdf"))
+plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$final_Annotations)) + 
+  scale_colour_manual(values = sn_colors) + 
+  guides(color = guide_legend(title="Cell Type")) + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+dev.off()
 
+## TSNE by cell type facet wrapped
+pdf(here(plot_dir, "TSNE_harmony_by_CellType_faceted.pdf"),
+    width = 15, height = 8)
+plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = sn_colors) +
+  theme(legend.position = "none") + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
+plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = sn_colors) +
+  facet_wrap(~ sce$final_Annotations) +
+  guides(color = guide_legend(title="Cell Type")) + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
+plot_grid(plot1, plot2)
+dev.off()
 
+# TSNE by cell type pre and post drop
+pdf(here(plot_dir, "TSNE_by_CellType_PrePostDrop.pdf"), 
+    width = 11, height = 9)
+  plot1_dirty <- plotReducedDim(sce_dirty, dimred = "TSNE") +
+    geom_point(aes(color = sce_dirty$final_Annotations)) + 
+    theme(legend.position = "none") +
+    guides(color = guide_legend(title="Cell Type")) + 
+    scale_colour_manual(values = sn_colors) + 
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+  
+  
+  plot2_dirty <- plotReducedDim(sce_dirty, dimred = "TSNE") +
+    geom_point(aes(color = sce_dirty$final_Annotations)) + 
+    facet_wrap(~ sce_dirty$final_Annotations) + 
+    guides(color = guide_legend(title="Cell Type")) + 
+    scale_colour_manual(values = sn_colors) + 
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+  
+  
+  plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+    geom_point(aes(color = sce$final_Annotations)) + 
+    theme(legend.position = "none") +
+    guides(color = guide_legend(title="Cell Type")) + 
+    scale_colour_manual(values = sn_colors) + 
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+  
+  
+  plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+    geom_point(aes(color = sce$final_Annotations)) + 
+    facet_wrap(~ sce$final_Annotations) + 
+    guides(color = guide_legend(title="Cell Type")) + 
+    scale_colour_manual(values = sn_colors) + 
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+  
+  
+  plot_grid(plot1_dirty, plot2_dirty, plot1, plot2,
+            nrow = 2,
+            labels = c("A", "", "B", ""))
+dev.off()
 
+# TSNE pre and post Harmony, colored by NeuN-sorting and faceted by Sample ID.
+pdf(here(plot_dir, "Post-Harmony", "TSNE_harmony_by_NeuN.pdf"), width = 16, height = 9)
+    plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+      geom_point(aes(color = sce_uncorrected$NeuN)) + 
+      theme(legend.position = "none")
+    
+    plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+      geom_point(aes(color = sce_uncorrected$NeuN)) +
+      facet_wrap(~ sce_uncorrected$Sample) + 
+      scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No'))
+    
+    plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+      geom_point(aes(color = sce$NeuN)) + 
+      theme(legend.position = "none")
+    
+    plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+      geom_point(aes(color = sce$NeuN)) +
+      facet_wrap(~ sce$Sample) + 
+      scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No'))
+    
+    plot_grid(plot1_unc, plot2_unc, plot1, plot2,
+              nrow = 2,
+              labels = c("A", "", "B", ""),
+              rel_widths = c(.3, .6))
+dev.off()
 
 
 # 
