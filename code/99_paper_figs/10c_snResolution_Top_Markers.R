@@ -78,24 +78,41 @@ marker_stats$Top25 <- "No"
 marker_stats[which(marker_stats$rank_ratio <= 25), "Top25"] <- "Yes"
 
 # plotting hockey sticks 
-pdf(here(plot_dir, "snResolution_hockeysticks_top25.pdf"))
-  pos = position_jitter(seed = 1)
+plot_list = list()
+c = 1
+
+for(i in unique(marker_stats$cellType.target)) {
   
-  ggplot(marker_stats, aes(ratio, std.logFC)) +
-  geom_jitter(size = 0.5, 
-               aes(colour = Top25),
-               position = pos) + 
-    labs(x = "Mean Ratio") +
-    guides(colour = guide_legend(title = "Top 25 Marker")) +
-    geom_text(
-      data = subset(marker_stats, Top25 == "Yes"),
-      position = pos,
-      aes(
-        label = Symbol
-      )
-    ) 
+  pos = position_jitter(width = 0.3, height = 0.5, seed = 1)
+  
+  marking <- marker_stats[marker_stats$cellType.target == i, ]
+  
+  plot_list[[c]] <- ggplot(marking, aes(ratio, std.logFC)) +
+      geom_jitter(size = 1, 
+                  aes(colour = Top25),
+                  position = pos) + 
+      labs(x = "Mean Ratio") +
+      guides(colour = guide_legend(title = "Top 25 Marker")) +
+      geom_text(
+        data = subset(marking, Top25 == "Yes"),
+        position = pos,
+        aes(
+          label = Symbol
+        ),
+        size = 3
+      ) + 
+    ggtitle(paste(i, "Top 25 Marker Genes"))
+  
+  c = c + 1
+}
+
+pdf(here(plot_dir, "snResolution_hockeysticks_top25.pdf"), width = 10, height = 8)
+
+  plot_list
   
 dev.off()
+
+
 
 ########### EXPORTING TOP MARKER GENES #########################################
 exp_Mark_Table <- marker_stats |>
