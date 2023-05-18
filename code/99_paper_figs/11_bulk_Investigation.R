@@ -51,33 +51,21 @@ prop_long <- left_join(prop_long, sum_Prop) |>
 prop_long$prop_perc <- NULL
 
 # making data frame for ease of merge with rse ColData
-comp_invest <- as.data.frame(
-                  prop_long[,c("Sample", "Hb_sum", "Thal_sum", "Hb_over_Thal")] |> 
-                  group_by(Sample) )
+comp_invest <- as.data.frame(prop_long[,c("Sample", "Hb_sum", "Thal_sum", "Hb_over_Thal")])
+comp_invest$RNum = comp_invest$Sample
+comp_invest$Sample = NULL
 
-# grabbing colData of rse for modifications 
+
 new_rse_colData <- colData(rse_gene) 
-new_rse_colData$Sample <- new_rse_colData$Run
-new_rse_colData$Run <- NULL
+new_rse_colData <- as_tibble(new_rse_colData) |>
+                      left_join(new_rse_colData,
+                                comp_invest[match(unique(comp_invest$RNum), comp_invest$RNum),]
+                                )
 
-# merging Hb_sum, Thal_sum, Hb_over_Thal sum with rse colData
-new_rse_colData <- merge(new_rse_colData, 
-                         comp_invest[,c("Sample", "Hb_sum", "Thal_sum", "Hb_over_Thal")],
-                         by = "Sample")
+new_rse_colData <- DataFrame(new_rse_colData)
 
-
-
-
-
-test <- as.data.frame(t(comp_invest))
-
-
-# 
-
-
-
-
-
+# setting new colData 
+colData(rse_gene) <- new_rse_colData
 
 
 # 
