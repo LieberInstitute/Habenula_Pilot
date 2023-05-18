@@ -32,6 +32,11 @@ plot_dir <- here("plots", "99_paper_figs", "10_bulk_Deconvo", "OPC_clean")
   #   dir.create(plot_dir)
   # }
 
+# sourcing official color palette 
+source(file = here("code", "99_paper_figs", "source_colors.R"))
+# bulk_colors and sn_colors
+
+
 ###### Adding bulk collapsed annotations to sce object #########################
 sce$bulkTypeSepHb <- sce$final_Annotations
 # making separated Hb (2)
@@ -136,19 +141,6 @@ est_prop <- ReferenceBasedDecomposition(bulk.eset = exp_set_bulk,
                                         use.overlap = FALSE)
 
 #### grabbed from my exploreBisque.R file in the bulk deconvo folder
-# custom color scheme
-color_bulk_clusters <- 
-  c( "Oligo" = c("#A9A9A9"), # dark grey
-     "OPC"= c("#7393B3"), # blue grey
-     "Microglia" = c("#E5E4E2"), # platinum
-     "Astrocyte" = c("#36454F"), # ash grey
-     "Endo" = c("#848884"), # smoke
-     "Inhib.Thal" = c('#2AAA8A'), # jungle green
-     "Excit.Thal" = c("#478778"), # lincoln green
-     "LHb" = c("#DE3163"), # cerise
-     "MHb" = c("#00FFFF") # aqua
-  )
-
 # grabbing relevant phenotype info for bulk data
 pd <- colData(rse_gene) |>
   as.data.frame() |>
@@ -194,7 +186,7 @@ comp_plot <- ggplot(prop_long,
     fontface = "bold",
     colour = "black"
   ) +
-  scale_fill_manual(values = alpha(color_bulk_clusters, 0.8)) +
+  scale_fill_manual(values = alpha(bulk_colors, 0.8)) +
   theme_bw() +
   theme(legend.position = "None", 
         axis.text.x = element_text(angle = 45, hjust = 1), 
@@ -211,7 +203,7 @@ dev.off()
   # pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 21, height = 12)
   #   plot_composition_bar(prop_long = prop_long, sample_col = "Br_Order",
   #                        x_col = "Br_Order", ct_col = "factor_CT") + 
-  #     scale_fill_manual(values = color_bulk_clusters) +
+  #     scale_fill_manual(values = bulk_colors) +
   #     ggtitle("Bulk Deconvolution") + 
   #     theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
   #     

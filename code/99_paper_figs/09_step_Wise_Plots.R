@@ -28,20 +28,9 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# setting manual colors
-cluster_colors <- c("Oligo" = c("#4d5802"), 
-                         "OPC"= c("#d3c871"), 
-                         "OPC_noisy" = c("#A9A9A9"),
-                         "Microglia" = c("#1c0f77"), 
-                         "Astrocyte" = c("#8d363c"), 
-                         "Endo" = c("#ee6c14"), 
-                         "Excit.Neuron" = c("#71797E"), 
-                         "Inhib.Thal" = c("#9e4ad1"),  
-                         "Excit.Thal" = c('#b5a2ff'), 
-                         "LHb" = c("#0085af"),
-                         "MHb" = c("#fa246a")
-)
-
+# sourcing official color palette 
+source(file = here("code", "99_paper_figs", "source_colors.R"))
+# bulk_colors and bulk_colors
 
 ############ PLOT 1: TSNE using sn annotations ##################################
 # grabbing bulk annotations 
@@ -57,13 +46,13 @@ table(sce$bulkTypeSepHb)
 # cleaned TSNE with facet_wrap
 TSNE <- plotReducedDim(sce, dimred = "TSNE") +
   geom_point(aes(color = sce$bulkTypeSepHb)) +
-  scale_colour_manual(values = cluster_colors) +
+  scale_colour_manual(values = bulk_colors) +
   theme(legend.position = "none") +
   labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
 TSNE_facet <- plotReducedDim(sce, dimred = "TSNE") +
   geom_point(aes(color = sce$bulkTypeSepHb)) +
-  scale_colour_manual(values = cluster_colors) +
+  scale_colour_manual(values = bulk_colors) +
   facet_wrap(~ sce$bulkTypeSepHb) +
   guides(color = guide_legend(title="Cell Type"))
 
@@ -86,7 +75,7 @@ num_nuc_comp_plot <- num_nuc |>
   geom_label(aes(label = tot_across_Samps),
              fill = "#FFFFFF",
              size = 4) +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = bulk_colors) +
   theme_bw() +
   labs(y = "Number of Nuclei", fill = "Cell Type") +
   theme(axis.title.x = element_blank()) +
@@ -115,7 +104,7 @@ comp_plot <- ggplot(prop_df,
     position = position_stack(vjust = 0.5),
     color = "white",
   ) +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = bulk_colors) +
   theme_bw() +
   theme(legend.position = "None", 
         axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +

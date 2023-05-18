@@ -29,28 +29,10 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# creating cell-type colors 
-# adding color pallete (same color scheme used for progress report heatmap)
-cluster_colors <- c( "Oligo" = c("#ba6425"), 
-                     "OPC"= c("#987020"), 
-                     "OPC_noisy" = c("#bf9146"),
-                     "Microglia" = c("#5e0056"), 
-                     "Astrocyte" = c("#e2693e"), 
-                     "Endo" = c("#e295de"), 
-                     "Excit.Neuron" = c("#709438"), 
-                     "Inhib.Thal" = c("#eed7a1"),  
-                     "Excit.Thal" = c('#E1F8DC'), 
-                     "LHb.1" = c("#00FFFF"),
-                     "LHb.2" = c("#0096FF"), 
-                     "LHb.3" = c ("#1434A4"), 
-                     "LHb.4" = c("#00008B"), 
-                     "LHb.5" = c("#40E0D0"), 
-                     "LHb.6" = c("#008080"),  
-                     "LHb.7" = c("#7DF9FF"), 
-                     "MHb.1" = c("#800020"), 
-                     "MHb.2" = c("#D70040"),
-                     "MHb.3" = c("#D2042D") 
-)
+# sourcing official color palette 
+source(file = here("code", "99_paper_figs", "source_colors.R"))
+# bulk_colors and sn_colors
+
 
 ####### FINAL ANNOTATIONS LEVEL #################################################
 #### get proportions before dropping ambig #####################################
@@ -98,32 +80,19 @@ comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop,
     position = position_stack(vjust = 0.5),
     color = "black"
   ) +
-  scale_fill_manual(values = c(cluster_colors)) +
+  scale_fill_manual(values = c(sn_colors)) +
   scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
   labs(y = "Proportion", fill = "Cell Type") +
   facet_grid(ambig ~ NeuN, scales = "free", space = "free") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  guides(color = FALSE, fill = guide_legend(ncol = 1))
+  guides(color = "none", fill = guide_legend(ncol = 1))
 
 pdf(file = here(plot_dir, "full_Comp_Express_Plot_finalAnnoLEVEL2.pdf"), width = 7, height = 11)
   comp_plot_both_sn
 dev.off()
 
 ####### BULK COLLAPSE LEVEL ####################################################
-cluster_colors_bulk <- c("Oligo" = c("#4d5802"), 
-                     "OPC"= c("#9e4ad1"), 
-                     "OPC_noisy" = c("#A9A9A9"),
-                     "Microglia" = c("#1c0f77"), 
-                     "Astrocyte" = c("#8d363c"), 
-                     "Endo" = c("#ee6c14"), 
-                     "Excit.Neuron" = c("#71797E"), 
-                     "Inhib.Thal" = c("#d3c871"),  
-                     "Excit.Thal" = c('#b5a2ff'), 
-                     "LHb" = c("#0085af"),
-                     "MHb" = c("#fa246a")
-)
-
 # creating bulk annotations level
 sce$bulkTypeSepHb <- sce$final_Annotations
 
@@ -148,7 +117,7 @@ prop_dirty_bulk <- as.data.frame(colData(sce)[,
 
 
 #### proportions of nuclei using post-drop information #########################
-pd_bulk <- as.data.frame(colData(sce_drop))
+pd_bulk <- as.data.frame(colData(sce))
 table(pd_bulk$bulkTypeSepHb)
     # Astrocyte       Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia 
     # 538         38       1800       7612       2214        710        145 
@@ -191,7 +160,7 @@ comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample,
     position = position_stack(vjust = 0.5),
     color = "black"
   ) +
-  scale_fill_manual(values = c(cluster_colors_bulk)) +
+  scale_fill_manual(values = c(bulk_colors)) +
   scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
   labs(y = "Proportion", fill = "Cell Type") +
   facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free") +
@@ -208,7 +177,7 @@ barplot_n_nuc_bulk <- ggplot(prop_ambig_plus_bulk,
   aes(x = Sample, y = n, fill = bulkTypeSepHb)) +
   geom_col() +
   geom_text(aes(label = n), size = 2.5) +
-  scale_fill_manual(values = cluster_colors_bulk) +
+  scale_fill_manual(values = bulk_colors) +
   theme_bw() +
 #  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
   labs(y = "Number of Nuclei") +
@@ -227,7 +196,7 @@ barplot_n_nuc_bulk_tot <- ggplot(sum_nuc_ambig_plus_prop,
          aes(x = bulkTypeSepHb, y = n_across_samps, fill = bulkTypeSepHb)) +
   geom_col() +
   geom_text(aes(label = n_across_samps), size = 2.5) +
-  scale_fill_manual(values = cluster_colors_bulk) +
+  scale_fill_manual(values = bulk_colors) +
   theme_bw() +
   #  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
   labs(y = "Number of Nuclei") +
