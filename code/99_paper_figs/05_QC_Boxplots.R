@@ -20,6 +20,9 @@ sce_unsorted <- NULL
 sce <- sce_final_preHbdrop
 rm(sce_final_preHbdrop)
 
+# sourcing official color palette 
+source(file = here("code", "99_paper_figs", "source_colors.R"))
+# bulk_colors and sn_colors
 
 # creating plot_dir
 plot_dir <- here("plots", "99_paper_figs", "05_QC_Boxplots")
@@ -27,34 +30,13 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# adding color pallete (same color scheme used for progress report heatmap)
-cluster_colors <- c( "Oligo" = c("#475c6c"), 
-                     "OPC"= c("#899499"), 
-                     "Microglia" = c("#bfb5b2"), 
-                     "Astrocyte" = c("#c7bbc9"), 
-                     "Endo" = c("#8a8583"), 
-                     "Excit.Neuron" = c("#cd8b62"), 
-                     "Inhib.Thal" = c("#eed7a1"),  
-                     "Excit.Thal" = c('#f7efd2'), 
-                     "LHb.1" = c("#00FFFF"),
-                     "LHb.2" = c("#0096FF"), 
-                     "LHb.3" = c ("#1434A4"), 
-                     "LHb.4" = c("#00008B"), 
-                     "LHb.5" = c("#40E0D0"), 
-                     "LHb.6" = c("#008080"),  
-                     "LHb.7" = c("#7DF9FF"), 
-                     "MHb.1" = c("#800020"), 
-                     "MHb.2" = c("#D70040"),
-                     "MHb.3" = c("#D2042D") 
-)
-
 # plotting per metric on final_Annotations 
 # also has OPC_noisy class
 pdf(file = here(plot_dir, "sce_Annotated_with_Ambig_QC_boxplot.pdf"), width = 12, height = 12)
 
 plot1 <- ggcells(sce, mapping = aes(x = final_Annotations, y = doubletScore, fill = final_Annotations)) +
       geom_boxplot() +
-      scale_fill_manual(values = cluster_colors) +
+      scale_fill_manual(values = sn_colors) +
       theme_linedraw() +
       theme(
         legend.position = "none", axis.title.x = element_blank(),
@@ -63,7 +45,7 @@ plot1 <- ggcells(sce, mapping = aes(x = final_Annotations, y = doubletScore, fil
 
 plot2 <- ggcells(sce, mapping = aes(x = final_Annotations, y = subsets_Mito_percent, fill = final_Annotations)) +
   geom_boxplot() +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = sn_colors) +
   theme_linedraw() +
   theme(
     legend.position = "none", axis.title.x = element_blank(),
@@ -72,7 +54,7 @@ plot2 <- ggcells(sce, mapping = aes(x = final_Annotations, y = subsets_Mito_perc
 
 plot3 <- ggcells(sce, mapping = aes(x = final_Annotations, y = sum, fill = final_Annotations)) +
   geom_boxplot() +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = sn_colors) +
   theme_linedraw() +
   theme(
     legend.position = "none", axis.title.x = element_blank(),
@@ -81,7 +63,7 @@ plot3 <- ggcells(sce, mapping = aes(x = final_Annotations, y = sum, fill = final
 
 plot4 <- ggcells(sce, mapping = aes(x = final_Annotations, y = detected, fill = final_Annotations)) +
   geom_boxplot() +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = sn_colors) +
   theme_linedraw() +
   theme(
     legend.position = "none", axis.title.x = element_blank(),
@@ -96,6 +78,7 @@ dev.off()
 
 # dropping Excit.Neuron
 sce_drop <- sce[, which(!sce$final_Annotations == "Excit.Neuron")]
+sce_drop <- sce[, which(!sce$final_Annotations == "OPC_noisy")]
 
 # check 
 table(sce_drop$final_Annotations)
@@ -112,7 +95,7 @@ pdf(file = here(plot_dir, "sce_No_Ambig_Annotated_QC_boxplot.pdf"), width = 12, 
 
 plot1 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = doubletScore, fill = final_Annotations)) +
   geom_boxplot() +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = sn_colors) +
   theme_linedraw() +
   theme(
     legend.position = "none", axis.title.x = element_blank(),
@@ -121,7 +104,7 @@ plot1 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = doubletScore
 
 plot2 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = subsets_Mito_percent, fill = final_Annotations)) +
   geom_boxplot() +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = sn_colors) +
   theme_linedraw() +
   theme(
     legend.position = "none", axis.title.x = element_blank(),
@@ -130,7 +113,7 @@ plot2 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = subsets_Mito
 
 plot3 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = sum, fill = final_Annotations)) +
   geom_boxplot() +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = sn_colors) +
   theme_linedraw() +
   theme(
     legend.position = "none", axis.title.x = element_blank(),
@@ -139,7 +122,7 @@ plot3 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = sum, fill = 
 
 plot4 <- ggcells(sce_drop, mapping = aes(x = final_Annotations, y = detected, fill = final_Annotations)) +
   geom_boxplot() +
-  scale_fill_manual(values = cluster_colors) +
+  scale_fill_manual(values = sn_colors) +
   theme_linedraw() +
   theme(
     legend.position = "none", axis.title.x = element_blank(),

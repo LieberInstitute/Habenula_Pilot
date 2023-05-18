@@ -32,6 +32,9 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
+# sourcing official color palette 
+source(file = here("code", "99_paper_figs", "source_colors.R"))
+  # bulk_colors and sn_colors
 
 # Pseudobulking to create compressed sce object
 ## faking the pseudobulking function out by setting sample as all same sample
@@ -41,7 +44,6 @@ sce_final$Sample <- sce_final$FakeSample
 
 set.seed(20220907) 
 sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
-
 
 # list of marker genes 
 official_markers = list(
@@ -95,30 +97,30 @@ row_namers <- c("Oligo",
 # neurons: purple (inhib (red) vs excit (blue))
 
 color_official_markers = c(
-  "Oligo" = c("#5C4033"), # dark grown
-  "OPC"= c("#899499"), # pewter (grey)
-  "Micro" = c("#4CBB17"), # kelly green
-  "Astro" = c("#CC5500"), # burnt orange
-  "Endo" = c("#702963"), # byzantium
-  "Thal" = c("#FF69B4"), # hot pink
-  "LHb.A" = c("#5F9EA0"), # cadet Blue
-  "LHb.B" = c("#5D3FD3"), # iris
-  "LHb.C" = c ("#4682B4"), #Steel Blue
-  "LHb.D" = c("#1F51FF"), # neon blue
-  "LHb.E" = c("#6495ED"), # Cornflower Blue
-  "LHb.F" = c("#088F8F"), # Blue Green 
-  "LHb.G" = c("#4169E1"), # royal bluee
-  "MHb.A" = c("#40E0D0"), # Turquoise
-  "MHb.B" = c("#96DED1"), #Robin Egg Blue
-  "MHb.C" = c("#7DF9FF"), # Electric Blue
-  "Hb" = c("#6082B6"), # glaucous (ashy blue like denim)
-  "MHb" = c("#00FFFF"), # aqua (bright blue)
-  "LHb" = c("#3F00FF"), # indigo (deeper blue)
-  'Neuron' = c('#800080'), # purple
-  'Exc_Neuron' = c('#0818A8'), # zaffre (dark blue)
-  "Inh_Neuron" = c('#FF0000') #  red
+  "Oligo" = c("#4d5802"),
+  "OPC"= c("#d3c871"), 
+  "Micro" = c("#222222"), 
+  "Astro" = c("#8d363c"), 
+  "Endo" = c("#ee6c14"), 
+  "Thal" = c("#EADDCA"), 
+  "LHb.A" = c("#0085af"),
+  "LHb.B" = c("#0096FF"),
+  "LHb.C" = c ("#89CFF0"), 
+  "LHb.D" = c("#6F8FAF"), 
+  "LHb.E" = c("#40E0D0"),
+  "LHb.F" = c("#008080"), 
+  "LHb.G" = c("#7DF9FF"), 
+  "MHb.A" = c("#FF00FF"),
+  "MHb.B" = c("#FAA0A0"), 
+  "MHb.C" = c("#fa246a"),
+  "Hb" = c("#702963"), 
+  "MHb" = c("#F33A6A"),
+  "LHb" = c("#0000FF"), 
+  'Neuron' = c('#D8BFD8'),
+  'Exc_Neuron' = c("#9e4ad1"), 
+  "Inh_Neuron" = c('#b5a2ff')
 )
-#833866
+
 
 # check colors 
 preview_colors <- function(cell_colors) {
@@ -136,29 +138,8 @@ png(here(plot_dir, "gene_markers_color_pal.png"))
   preview_colors(color_official_markers)
 dev.off()
 
-
-## glia cells: glia (5 colors), thalamus (2 reds), 
-color_row_namers <- c( "Oligo" = c("#5C4033"), # dark grown
-                       "OPC"= c("#899499"), # pewter (grey)
-                       "Microglia" = c("#4CBB17"), # kelly green
-                       "Astrocyte" = c("#CC5500"), # burnt orange
-                       "Endo" = c("#702963"), # byzantium
-                       "Inhib.Thal" = c('#FF0000'), #red
-                       "Excit.Thal" = c('#0818A8'), # zaffre (dark blue)
-                       "LHb.1" = c("#5F9EA0"), # cadet Blue
-                       "LHb.2" = c("#5D3FD3"), # iris
-                       "LHb.3" = c ("#4682B4"), #Steel Blue
-                       "LHb.4" = c("#1F51FF"), # neon blue
-                       "LHb.5" = c("#6495ED"), # Cornflower Blue
-                       "LHb.6" = c("#088F8F"), # Blue Green 
-                       "LHb.7" = c("#4169E1"), # royal bluee
-                       "MHb.1" = c("#40E0D0"), # Turquoise
-                       "MHb.2" = c("#96DED1"), #Robin Egg Blue
-                       "MHb.3" = c("#7DF9FF") # light blue
-)
-
 png(here(plot_dir, "clusters_color_pal.png"))
-  preview_colors(color_row_namers)
+  preview_colors(sn_colors)
 dev.off()
 
 ####### PLOTTING ###############################################################
@@ -210,7 +191,7 @@ names(clusterData) <- "cellType"
 # heatmap row annotationn
 row_ha <- rowAnnotation(
   Clusters = clusterData$cellType,
-  col = list(Clusters = color_row_namers)
+  col = list(Clusters = sn_colors)
 )
 
 heatmapped <- Heatmap(marker_z_score,
@@ -228,7 +209,7 @@ heatmapped <- Heatmap(marker_z_score,
 
 
 # printing 
-pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Annotations_Simple_Pseudobulk.pdf"), width = 12, height = 8)
+pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Anno_FINAL.pdf"), width = 12, height = 8)
   heatmapped
 dev.off()
 
