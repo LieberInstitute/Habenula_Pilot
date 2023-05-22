@@ -52,9 +52,9 @@ prop_long <- left_join(prop_long, sum_Prop) |>
 prop_long$prop_perc <- NULL
 
 # making data frame for ease of merge with rse ColData
-comp_invest <- as.data.frame(prop_long[,c("Sample", "Hb_sum", "Thal_sum", "Hb_over_Thal")])
+comp_invest <- as.data.frame(prop_long[,c("Sample", "Hb_sum", "Thal_sum", "Hb_over_Thal",
+                                          "BrNum")])
 comp_invest$RNum = comp_invest$Sample
-comp_invest$Sample = NULL
 
 
 new_rse_colData <- as_tibble(colData(rse_gene))
@@ -84,7 +84,22 @@ pca_data<-cbind(pca$x, colData(rse_gene))
 pca_data<-as.data.frame(pca_data)
   
 ##### PLOTTING
+pdf(file = here(plot_dir, "PC1_Investigation.pdf")) 
 
+pos = position_jitter(width = 0.1, height = 0.1, seed = 1)
+
+  ggplot(pca_data, 
+         aes(x = PC1,
+         y = Hb_sum,
+         color = PrimaryDx),
+         ) + 
+    geom_jitter(position = pos) +
+    ggtitle("Hb_sum_VS_Primary_Dx") +
+    geom_text(position = pos,
+              aes(color = "grey"),
+              label = pca_data$BrNum)
+  
+dev.off()
 
 
 
