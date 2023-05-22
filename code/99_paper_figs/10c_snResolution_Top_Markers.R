@@ -113,7 +113,6 @@ pdf(here(plot_dir, "snResolution_hockeysticks_top25.pdf"), width = 10, height = 
 dev.off()
 
 
-
 ########### EXPORTING TOP MARKER GENES #########################################
 exp_Mark_Table <- marker_stats |>
   filter(rank_ratio <= 50)

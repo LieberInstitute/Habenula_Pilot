@@ -6,6 +6,7 @@ library(SummarizedExperiment)
 library(here)
 library(tidyverse)
 library(ggplot2)
+library(jaffelab)
 
 # loading deconvo data
 load(file = here("processed-data", "99_paper_figs", "sce_objects", "prop_long.RDATA"),
@@ -56,16 +57,51 @@ comp_invest$RNum = comp_invest$Sample
 comp_invest$Sample = NULL
 
 
-new_rse_colData <- colData(rse_gene) 
-new_rse_colData <- as_tibble(new_rse_colData) |>
-                      left_join(new_rse_colData,
-                                comp_invest[match(unique(comp_invest$RNum), comp_invest$RNum),]
-                                )
+new_rse_colData <- as_tibble(colData(rse_gene))
+new_rse_colData <- new_rse_colData |>
+                    left_join(comp_invest[match(unique(comp_invest$RNum), comp_invest$RNum),],
+                              copy = TRUE
+                              )
 
 new_rse_colData <- DataFrame(new_rse_colData)
 
 # setting new colData 
 colData(rse_gene) <- new_rse_colData
 
+############## GRABBING PC VALUES ##############################################
+# grabbing PC values 
+pca <- prcomp(t(assays(rse_gene)$logcounts))
+  
+  ## % of the variance explained by each PC
+pca_vars <- getPcaVars(pca)
+pca_vars_labs<- paste0("PC", seq(along = pca_vars), ": ",
+                       pca_vars, "% Var Expl")
 
-# 
+  ## Joining PC and sample info
+pca_data<-cbind(pca$x, colData(rse_gene))
+  
+  ## Add samples' phenotypes
+pca_data<-as.data.frame(pca_data)
+  
+##### PLOTTING
+
+
+
+
+
+
+
+# Grabbing metrics of interest
+phenoMets <- c("AgeDeath", "PrimaryDx", "Flowcell", "mitoRate",
+               "RIN")
+# mainMets <c("Hb_sum", "Thal_sum", "Hb_over_Thal")
+
+
+
+
+
+
+
+
+
+
