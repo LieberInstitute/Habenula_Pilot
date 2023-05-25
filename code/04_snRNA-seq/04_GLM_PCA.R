@@ -199,10 +199,3 @@ saveHDF5SummarizedExperiment(sce_uncorrected, dir = here("processed-data", "04_s
 
 
 
-# TO DO:
-# 1) Track down batch info in code to color by.
-# 2) Plot everything again by batch data but also qc metrics.
-# 3) Share on Slack 
-# 4) Run harmony by sample.
-# 5) 1/18/23 (Louise): Work on doublet detection for sn qc.
-
