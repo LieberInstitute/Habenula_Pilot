@@ -32,7 +32,7 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-##### PLOTTING  ###########################################################
+##### PLOTTING  ################################################################
 # post-harmony PC2 vs PC3
 pdf(here(plot_dir, "PC2_vs_PC3_splitbyClusters.pdf"),
     width = 15, height = 8)
@@ -49,6 +49,36 @@ plot2 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
 
 plot_grid(plot1, plot2)
 dev.off()
+
+
+##### FOR ONE DRIVE PIECES #####################################################
+pdf(here(plot_dir, "forOneDrive","sfigu_PC2vsPC3_HabvsThalModality_.pdf"),
+    width = 8, height = 4.5)
+    plot1 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
+      geom_point(aes(color = sce$final_Annotations)) +
+      scale_colour_manual(values = sn_colors) +
+      theme(legend.position = "none")
+    
+    plot2 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
+      geom_point(aes(color = sce$final_Annotations)) +
+      scale_colour_manual(values = sn_colors) +
+      facet_wrap(~ sce$final_Annotations) +
+      guides(color = guide_legend(title="Cell Type")) + 
+      theme(axis.text = element_text(size = 6)) 
+
+  plot_grid(plot1, plot2,
+            rel_widths = c(.4, .6))
+dev.off()
+
+
+
+
+
+
+
+
+
+
 
 
 # Done.
