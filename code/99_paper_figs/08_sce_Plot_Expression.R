@@ -70,7 +70,8 @@ prop_ambig_plus_sn <- prop_dirty_sn |>
   bind_rows(prop_clean_sn |> mutate(ambig = "Post-drop"))
 
 # plots composition plot using prop_clean and prop_dirty
-comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop, fill = final_Annotations)) +
+comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop, 
+                            fill = final_Annotations, group = ambig)) +
   geom_bar(stat = "identity") +
   geom_text(
     aes(
@@ -83,7 +84,7 @@ comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop,
   scale_fill_manual(values = c(sn_colors)) +
   scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
   labs(y = "Proportion", fill = "Cell Type") +
-  facet_grid(ambig ~ NeuN, scales = "free", space = "free") +
+  facet_grid(ambig ~ NeuN, scales = "free_y", space = "free") + coord_flip() +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(color = "none", fill = guide_legend(ncol = 1))
