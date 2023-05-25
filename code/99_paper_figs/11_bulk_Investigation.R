@@ -7,6 +7,9 @@ library(here)
 library(tidyverse)
 library(ggplot2)
 library(jaffelab)
+library(ggrepel)
+library(cowplot)
+library(ggthemes)
 
 # loading deconvo data
 load(file = here("processed-data", "99_paper_figs", "sce_objects", "prop_long.RDATA"),
@@ -83,33 +86,128 @@ pca_data<-cbind(pca$x, colData(rse_gene))
   ## Add samples' phenotypes
 pca_data<-as.data.frame(pca_data)
   
-##### PLOTTING
-pdf(file = here(plot_dir, "PC1_Investigation.pdf")) 
-
-pos = position_jitter(width = 0.1, height = 0.1, seed = 1)
-
-  ggplot(pca_data, 
-         aes(x = PC1,
-         y = Hb_sum,
-         color = PrimaryDx),
-         ) + 
-    geom_jitter(position = pos) +
-    ggtitle("Hb_sum_VS_Primary_Dx") +
-    geom_text(position = pos,
-              aes(color = "grey"),
-              label = pca_data$BrNum)
-  
-dev.off()
-
-
-
-
-
-
-# Grabbing metrics of interest
+##### PLOTTING #################################################################
 phenoMets <- c("AgeDeath", "PrimaryDx", "Flowcell", "mitoRate",
                "RIN")
-# mainMets <c("Hb_sum", "Thal_sum", "Hb_over_Thal")
+
+cont_vars <- c("AgeDeath", "mitoRate", "RIN") 
+disc_vars <- c("PrimaryDx", "Flowcell")
+
+# adding no glia problem sanples 
+pca_data$Notes <- "Normal"
+
+# only thalamus 
+pca_data[pca_data$BrNum %in% c("Br5572"), ]$Notes <- "All.Thal"
+
+# no glia 
+pca_data[pca_data$BrNum %in% c("Br5558", "Br2015", "Br8050", "Br1682", 
+                               "Br6197"), ]$Notes <- "NoGlia"
+
+
+# creating function for plotting
+plot_pcs <- function(xer, yer, color_by){ 
+  pos = position_jitter(width = 0.3, height = 0.3, seed = 1)
+  
+  plot_list = list()
+  c = 1
+  
+  for(i in color_by) { 
+    
+    if(i %in% disc_vars){ 
+
+        plot_list[[c]] <- ggplot(pca_data, 
+                           aes_string(x = xer,
+                               y = yer,
+                               group = as.factor(pca_data$Notes))) +
+                          geom_point() +
+                          geom_jitter(
+                            position = pos,
+                            size = 3,
+                            aes_string(color = as.factor(pca_data[, i]),
+                                       shape = as.factor(pca_data$Notes))) +
+                           geom_text_repel(position = pos,
+                                           color = "darkgrey",
+                                           max.overlaps = 7,
+                                           size = 4,
+                                           aes_string(label = "BrNum")
+                                           )  + 
+                          ggtitle(paste(xer, "vs", yer, "Colored by", i)) + 
+                          guides(color =guide_legend(title= i)) + 
+                          scale_color_tableau(
+                            palette = "Classic Purple-Gray 6"
+                          )
+                          
+    } else if(i %in% cont_vars){ 
+      
+      plot_list[[c]] <- ggplot(pca_data, 
+                               aes_string(x = xer,
+                                  y = yer,
+                                  group = as.factor(pca_data$Notes))) +
+                        geom_point() + 
+                        geom_jitter(
+                          position = pos,
+                          size = 3,
+                          aes_string(color = pca_data[, i],
+                          shape = as.factor(pca_data$Notes))) +
+                        geom_text_repel(position = pos,
+                                        color = "darkgrey",
+                                        max.overlaps = 7,
+                                        size = 4,
+                                        aes_string(label = "BrNum")
+                        )  + 
+                        ggtitle(paste(xer, "vs", yer, "Colored by", i)) + 
+                        guides(color = guide_legend(title= i)) +
+                        scale_color_continuous_tableau(
+                          palette = "Blue"
+                        )
+                      
+      }
+    
+    
+      c = c + 1
+  }
+  
+  return(plot_list) 
+} 
+
+pdf(file = here(plot_dir, "PCvsPC", "PC1_VS_PC2_Investigation.pdf")) 
+  plot_pcs(x = "PC1", y = "PC2", color_by = phenoMets)
+dev.off()
+
+pdf(file = here(plot_dir, "PCvsPC", "PC2_VS_PC3_Investigation.pdf")) 
+  plot_pcs(x = "PC2", y = "PC3", color_by = phenoMets)
+dev.off()
+
+# metrics against PC values 
+pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_over_Thal_VS_PC1_Investigation.pdf")) 
+  plot_pcs(x = "PC1", y = "Hb_over_Thal", color_by = phenoMets)
+dev.off()
+pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_sum_VS_PC1_Investigation.pdf")) 
+  plot_pcs(x = "PC1", y = "Hb_sum", color_by = phenoMets)
+dev.off()
+pdf(file = here(plot_dir, "Metric_Against_PC", "Thal_sum_VS_PC1_Investigation.pdf")) 
+  plot_pcs(x = "PC1", y = "Thal_sum", color_by = phenoMets)
+dev.off()
+
+pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_over_Thal_VS_PC2_Investigation.pdf")) 
+  plot_pcs(x = "PC2", y = "Hb_over_Thal", color_by = phenoMets)
+dev.off()
+pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_sum_VS_PC2_Investigation.pdf")) 
+  plot_pcs(x = "PC2", y = "Hb_sum", color_by = phenoMets)
+dev.off()
+pdf(file = here(plot_dir, "Metric_Against_PC", "Thal_sum_VS_PC2_Investigation.pdf")) 
+  plot_pcs(x = "PC2", y = "Thal_sum", color_by = phenoMets)
+dev.off()
+
+pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_over_Thal_VS_PC3_Investigation.pdf")) 
+  plot_pcs(x = "PC3", y = "Hb_over_Thal", color_by = phenoMets)
+dev.off()
+pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_sum_VS_PC3_Investigation.pdf")) 
+  plot_pcs(x = "PC3", y = "Hb_sum", color_by = phenoMets)
+dev.off()
+pdf(file = here(plot_dir, "Metric_Against_PC", "Thal_sum_VS_PC3_Investigation.pdf")) 
+  plot_pcs(x = "PC3", y = "Thal_sum", color_by = phenoMets)
+dev.off()
 
 
 

@@ -188,13 +188,14 @@ comp_plot <- ggplot(prop_long,
   ) +
   scale_fill_manual(values = alpha(bulk_colors, 0.8)) +
   theme_bw() +
-  theme(legend.position = "None", 
+  theme(legend.position = "bottom", 
         axis.text.x = element_text(angle = 45, hjust = 1), 
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 16),
         plot.title = element_text(size = 16, hjust = 0.5)) +
   ggtitle("Bulk Deconvolution") +
-  ylab("Proportion")
+  ylab("Proportion") +
+  guides(fill = guide_legend(title= "Cell Type"))
 
 comp_plot
 

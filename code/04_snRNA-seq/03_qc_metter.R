@@ -22,6 +22,7 @@ library("reshape")
 library("cowplot")
 library("dplyr")
 library("scDblFinder")
+library("sessioninfo")
 
 # Loading filtered pre-QC sce object for all 7 Habenula samples
 load(here("processed-data", "04_snRNA-seq", "sce_objects", "sce_hb_preQC.Rdata"))
@@ -517,5 +518,113 @@ save(ctErik_drop, file = here("processed-data", "04_snRNA-seq", "sce_objects",
 save(combinedData, file = here("processed-data", "04_snRNA-seq", "sce_objects", 
                               "combinedData.Rdata"))
 
-## Do doublet scores before dropping doublet scores and then make a table regarding
-# how many cells are dropped after QC. - Erik 
+### sessionInfo()
+
+# R version 4.2.3 Patched (2023-04-07 r84211)
+# Platform: x86_64-conda-linux-gnu (64-bit)
+# Running under: CentOS Linux 7 (Core)
+# 
+# Matrix products: default
+# BLAS:   /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/lib/libRblas.so
+# LAPACK: /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/lib/libRlapack.so
+# 
+# locale:
+#   [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+# [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+# [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+# [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+# [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+# [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+# 
+# attached base packages:
+#   [1] stats4    stats     graphics  grDevices datasets  utils     methods  
+# [8] base     
+# 
+# other attached packages:
+#   [1] sessioninfo_1.2.2           scDblFinder_1.12.0         
+# [3] dplyr_1.1.1                 cowplot_1.1.1              
+# [5] reshape_0.8.9               EnsDb.Hsapiens.v86_2.99.0  
+# [7] ensembldb_2.22.0            AnnotationFilter_1.22.0    
+# [9] GenomicFeatures_1.50.4      AnnotationDbi_1.60.2       
+# [11] gridExtra_2.3               Rtsne_0.16                 
+# [13] DropletUtils_1.18.1         uwot_0.1.14                
+# [15] Matrix_1.5-4                scry_1.10.0                
+# [17] scran_1.26.2                batchelor_1.14.1           
+# [19] scater_1.26.1               scuttle_1.8.4              
+# [21] ggrepel_0.9.3               ggplot2_3.4.2              
+# [23] here_1.0.1                  VariantAnnotation_1.44.1   
+# [25] Rsamtools_2.14.0            Biostrings_2.66.0          
+# [27] XVector_0.38.0              jaffelab_0.99.32           
+# [29] rafalib_1.0.0               SingleCellExperiment_1.20.1
+# [31] SummarizedExperiment_1.28.0 Biobase_2.58.0             
+# [33] GenomicRanges_1.50.2        GenomeInfoDb_1.34.9        
+# [35] IRanges_2.32.0              S4Vectors_0.36.2           
+# [37] BiocGenerics_0.44.0         MatrixGenerics_1.10.0      
+# [39] matrixStats_0.63.0          colorout_1.2-2             
+# 
+# loaded via a namespace (and not attached):
+#   [1] BiocFileCache_2.6.1       plyr_1.8.8               
+# [3] igraph_1.4.2              lazyeval_0.2.2           
+# [5] splines_4.2.3             BiocParallel_1.32.6      
+# [7] digest_0.6.31             viridis_0.6.2            
+# [9] fansi_1.0.4               magrittr_2.0.3           
+# [11] memoise_2.0.1             BSgenome_1.66.3          
+# [13] ScaledMatrix_1.6.0        cluster_2.1.4            
+# [15] limma_3.54.2              R.utils_2.12.2           
+# [17] prettyunits_1.1.1         colorspace_2.1-0         
+# [19] blob_1.2.4                rappdirs_0.3.3           
+# [21] jsonlite_1.8.4            crayon_1.5.2             
+# [23] RCurl_1.98-1.12           glue_1.6.2               
+# [25] gtable_0.3.3              gargle_1.3.0             
+# [27] zlibbioc_1.44.0           DelayedArray_0.24.0      
+# [29] BiocSingular_1.14.0       Rhdf5lib_1.20.0          
+# [31] HDF5Array_1.26.0          scales_1.2.1             
+# [33] DBI_1.1.3                 edgeR_3.40.2             
+# [35] Rcpp_1.0.10               viridisLite_0.4.1        
+# [37] progress_1.2.2            dqrng_0.3.0              
+# [39] bit_4.0.5                 rsvd_1.0.5               
+# [41] ResidualMatrix_1.8.0      metapod_1.6.0            
+# [43] httr_1.4.5                RColorBrewer_1.1-3       
+# [45] pkgconfig_2.0.3           XML_3.99-0.14            
+# [47] R.methodsS3_1.8.2         dbplyr_2.3.2             
+# [49] locfit_1.5-9.7            utf8_1.2.3               
+# [51] tidyselect_1.2.0          rlang_1.1.0              
+# [53] munsell_0.5.0             tools_4.2.3              
+# [55] cachem_1.0.7              xgboost_1.7.5.1          
+# [57] cli_3.6.1                 generics_0.1.3           
+# [59] RSQLite_2.3.1             stringr_1.5.0            
+# [61] fastmap_1.1.1             yaml_2.3.7               
+# [63] bit64_4.0.5               fs_1.6.1                 
+# [65] purrr_1.0.1               KEGGREST_1.38.0          
+# [67] nlme_3.1-162              sparseMatrixStats_1.10.0 
+# [69] R.oo_1.25.0               xml2_1.3.3               
+# [71] biomaRt_2.54.1            compiler_4.2.3           
+# [73] beeswarm_0.4.0            filelock_1.0.2           
+# [75] curl_5.0.0                png_0.1-8                
+# [77] tibble_3.2.1              statmod_1.5.0            
+# [79] stringi_1.7.12            lattice_0.20-45          
+# [81] bluster_1.8.0             ProtGenerics_1.30.0      
+# [83] vctrs_0.6.1               pillar_1.9.0             
+# [85] lifecycle_1.0.3           rhdf5filters_1.10.1      
+# [87] BiocNeighbors_1.16.0      data.table_1.14.8        
+# [89] bitops_1.0-7              irlba_2.3.5.1            
+# [91] rtracklayer_1.58.0        R6_2.5.1                 
+# [93] BiocIO_1.8.0              vipor_0.4.5              
+# [95] codetools_0.2-19          MASS_7.3-58.2            
+# [97] rhdf5_2.42.1              rprojroot_2.0.3          
+# [99] rjson_0.2.21              withr_2.5.0              
+# [101] GenomicAlignments_1.34.1  GenomeInfoDbData_1.2.9   
+# [103] parallel_4.2.3            hms_1.1.3                
+# [105] grid_4.2.3                beachmat_2.14.2          
+# [107] DelayedMatrixStats_1.20.0 segmented_1.6-2          
+# [109] googledrive_2.1.0         ggbeeswarm_0.7.1         
+# [111] restfulr_0.0.15          
+ 
+
+
+
+
+
+
+
+
