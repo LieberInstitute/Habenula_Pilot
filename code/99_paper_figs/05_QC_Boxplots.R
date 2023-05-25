@@ -12,13 +12,7 @@ library("cowplot")
 # loading sce object post-cleaning and annotations (includes Hb cluster)
 load(here("processed-data", "99_paper_figs",  "sce_objects", "sce_final_preHbdrop.RDATA"),
      verbose = TRUE)
-# not needed 
-sce_sorted <- NULL
-sce_unsorted <- NULL
-
-# renaming for ease
-sce <- sce_final_preHbdrop
-rm(sce_final_preHbdrop)
+# sce 
 
 # sourcing official color palette 
 source(file = here("code", "99_paper_figs", "source_colors.R"))
@@ -78,16 +72,11 @@ dev.off()
 
 # dropping Excit.Neuron
 sce_drop <- sce[, which(!sce$final_Annotations == "Excit.Neuron")]
-sce_drop <- sce[, which(!sce$final_Annotations == "OPC_noisy")]
+sce_drop <- sce_drop[, which(!sce_drop$final_Annotations == "OPC_noisy")]
 
 # check 
 table(sce_drop$final_Annotations)
-# Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
-# 538         38       1800       7612        201        266        134 
-# LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
-# 477         83         39       1014        152        540         18 
-# Microglia      Oligo        OPC 
-# 145       2178       1796
+
 
 # plotting per metric on final_Annotations without ambig class
 # also has OPC_noisy class
@@ -135,5 +124,133 @@ plot_grid(plot1, plot2, plot3, plot4,
 
 dev.off()
 
+##### FOR ONE DRIVE PIECES #####################################################
+# dirty qc 
+pdf(file = here(plot_dir, "forOneDrive", "sfigu_doublet_score_boxplot_PRE-QC.pdf"), 
+    width = 8, height = 3.5)
 
-# Done.
+    ggcells(sce, mapping = aes(x = final_Annotations, y = doubletScore, fill = final_Annotations)) +
+      geom_boxplot() +
+      scale_fill_manual(values = sn_colors) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) + 
+      labs (y = "Doublet Score")
+
+dev.off()
+
+pdf(file = here(plot_dir, "forOneDrive", "sfigu_mito_percent_boxplot_PRE-QC.pdf"), 
+    width = 8, height = 3.5)
+
+    ggcells(sce, mapping = aes(x = final_Annotations, y = subsets_Mito_percent, fill = final_Annotations)) +
+      geom_boxplot() +
+      scale_fill_manual(values = sn_colors) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) + 
+      labs (y = "Percent Mito")
+
+dev.off()
+
+pdf(file = here(plot_dir, "forOneDrive", "sfigu_library_size_boxplot_PRE-QC.pdf"), 
+    width = 8, height = 3.5)
+
+    ggcells(sce, mapping = aes(x = final_Annotations, y = sum, fill = final_Annotations)) +
+      geom_boxplot() +
+      scale_fill_manual(values = sn_colors) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) + 
+      labs (y = "Library Size")
+
+dev.off()
+
+pdf(file = here(plot_dir, "forOneDrive", "sfigu_detected_features_boxplot_PRE-QC.pdf"), 
+    width = 8, height = 3.5)
+
+    ggcells(sce, mapping = aes(x = final_Annotations, y = detected, fill = final_Annotations)) +
+      geom_boxplot() +
+      scale_fill_manual(values = sn_colors) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) + 
+      labs (y = "Detected Features")
+
+dev.off()
+
+# post-qc
+pdf(file = here(plot_dir, "forOneDrive", "sfigu_doublet_score_boxplot_POST-QCDrop.pdf"), 
+    width = 8, height = 3.5)
+
+    ggcells(sce_drop, mapping = aes(x = final_Annotations, y = doubletScore, fill = final_Annotations)) +
+      geom_boxplot() +
+      scale_fill_manual(values = sn_colors) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) + 
+      labs (y = "Doublet Score")
+
+dev.off()
+
+pdf(file = here(plot_dir, "forOneDrive", "sfigu_mito_percent_boxplot_POST-QCDrop.pdf"), 
+    width = 8, height = 3.5)
+
+    ggcells(sce_drop, mapping = aes(x = final_Annotations, y = subsets_Mito_percent, fill = final_Annotations)) +
+      geom_boxplot() +
+      scale_fill_manual(values = sn_colors) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) + 
+      labs (y = "Percent Mito")
+
+dev.off()
+
+pdf(file = here(plot_dir, "forOneDrive", "sfigu_library_size_boxplot_POST-QCDrop.pdf"), 
+    width = 8, height = 3.5)
+
+    ggcells(sce_drop, mapping = aes(x = final_Annotations, y = sum, fill = final_Annotations)) +
+      geom_boxplot() +
+      scale_fill_manual(values = sn_colors) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) + 
+      labs (y = "Library Size")
+
+dev.off()
+
+pdf(file = here(plot_dir, "forOneDrive", "sfigu_dectected_features_boxplot_POST-QCDrop.pdf"), 
+    width = 8, height = 3.5)
+
+    ggcells(sce_drop, mapping = aes(x = final_Annotations, y = detected, fill = final_Annotations)) +
+      geom_boxplot() +
+      scale_fill_manual(values = sn_colors) +
+      theme_linedraw() +
+      theme(
+        legend.position = "none", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) + 
+      labs (y = "Detected Features")
+
+dev.off()
+
+
+
+
+
+
+
+# 
