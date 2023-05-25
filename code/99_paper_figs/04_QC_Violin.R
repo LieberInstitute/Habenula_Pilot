@@ -102,7 +102,7 @@ pdf(here(plot_dir, "official_Violin_QC_Low_Lib.pdf"), width = 8)
 dev.off()
 
 
-# low libray size
+# low detected features
 c <-  plotColData(sce, x = "Sample", y="detected", colour_by="lowDetecFea") +
   scale_y_log10() + 
   labs(y = "Detected Feature") + 
@@ -119,6 +119,48 @@ pdf(here(plot_dir, "official_All_QC_Violin_Plots.pdf"), width = 10, height = 13)
   a <- a + theme(axis.text.x = element_blank())
   b <- b + theme(axis.text.x = element_blank())
   plot_grid(a, b, c, ncol = 1)
+dev.off()
+
+####### FOR ONE DRIVE ##########################################################
+## high_mito
+
+pdf(here(plot_dir, "forOneDrive", "sfigu_mito_percent_qc_violin.pdf"), 
+    height = 5, width = 7.5)
+
+      plotColData(sce, x = "Sample", y="subsets_Mito_percent", colour_by="high_mito") +
+        scale_y_log10() + 
+        labs(y = "Mito Percent") + 
+        scale_colour_discrete(name="High Mito?") +
+        aes(group = pd$Sample) +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+              axis.title.x = element_blank())
+dev.off()
+
+# low libray size
+pdf(here(plot_dir, "forOneDrive", "sfigu_lib_size_qc_violin.pdf"), 
+    height = 5, width = 7.5)
+
+      plotColData(sce, x = "Sample", y="sum", colour_by="lowLib") +
+        scale_y_log10() + 
+        labs(y = "Library Size") + 
+        scale_colour_discrete(name="Low Lib Size?") +
+        aes(group = pd$Sample) +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+              axis.title.x = element_blank())
+dev.off()
+
+
+# low detected features
+pdf(here(plot_dir, "forOneDrive" , "sfigu_detected_feats_qc_violin.pdf"), 
+      height = 5, width = 7.5)
+
+        plotColData(sce, x = "Sample", y="detected", colour_by="lowDetecFea") +
+          scale_y_log10() + 
+          labs(y = "Detected Features") + 
+          scale_colour_discrete(name="Low Detected?") +
+          aes(group = pd$Sample) +
+          theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+                axis.title.x = element_blank())
 dev.off()
 
 
