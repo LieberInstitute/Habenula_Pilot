@@ -99,7 +99,6 @@ dev.off()
 ####### BULK COLLAPSE LEVEL ####################################################
 # creating bulk annotations level
 sce$bulkTypeSepHb <- sce$final_Annotations
-
 # Combining into 5 glia, two thalamus, 1 broad LHb, and 1 broad MHb.
 sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^LHb\\.", unique(sce$bulkTypeSepHb), value = TRUE)] <-  'LHb'
 sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^MHb\\.", unique(sce$bulkTypeSepHb), value = TRUE)] <-  'MHb'
@@ -111,6 +110,10 @@ table(sce$bulkTypeSepHb)
     # MHb    Microglia        Oligo          OPC    OPC_noisy 
     # 710          145         2178         1202          594
 
+sce_drop$bulkTypeSepHb <- sce_drop$final_Annotations
+sce_drop$bulkTypeSepHb[sce_drop$bulkTypeSepHb %in% grep("^LHb\\.", unique(sce_drop$bulkTypeSepHb), value = TRUE)] <-  'LHb'
+sce_drop$bulkTypeSepHb[sce_drop$bulkTypeSepHb %in% grep("^MHb\\.", unique(sce_drop$bulkTypeSepHb), value = TRUE)] <-  'MHb'
+
 #### get proportions before dropping ambig #####################################
 prop_dirty_bulk <- as.data.frame(colData(sce)[, 
                                 c("bulkTypeSepHb", "Sample", "NeuN")]) |>
@@ -119,14 +122,20 @@ prop_dirty_bulk <- as.data.frame(colData(sce)[,
   group_by(Sample) |>
   mutate(prop = n / sum(n))
 
-
 #### proportions of nuclei using post-drop information #########################
-pd_bulk <- as.data.frame(colData(sce))
+# dirty
+pd_bulk_dirty <- as.data.frame(colData(sce))
+table(pd_bulk_dirty$bulkTypeSepHb)
+
+prop_dirty_bulk <- pd_bulk_dirty[,c("bulkTypeSepHb", "Sample", "NeuN")] |>
+  group_by(Sample, bulkTypeSepHb, NeuN) |>
+  summarize(n = n()) |>
+  group_by(Sample) |>
+  mutate(prop = n / sum(n))
+
+# clean
+pd_bulk <- as.data.frame(colData(sce_drop))
 table(pd_bulk$bulkTypeSepHb)
-    # Astrocyte       Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia 
-    # 538         38       1800       7612       2214        710        145 
-    # Oligo        OPC 
-    # 2178       1202
 
 prop_clean_bulk <- pd_bulk[,c("bulkTypeSepHb", "Sample", "NeuN")] |>
   group_by(Sample, bulkTypeSepHb, NeuN) |>
@@ -152,6 +161,10 @@ prop_ambig_plus_bulk <- prop_dirty_bulk |>
                                 "LHb")) ) |>
   arrange(ct_levels)
 
+prop_ambig_plus_bulk$ambig <- factor(prop_ambig_plus_bulk$ambig, 
+                                  levels = c("Pre-drop", "Post-drop"))
+
+
 # plots composition plot using prop_clean and prop_dirty
 comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample, 
                               y = prop, fill = bulkTypeSepHb)) +
@@ -165,14 +178,13 @@ comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample,
     color = "black"
   ) +
   scale_fill_manual(values = c(bulk_colors)) +
-  scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
   labs(y = "Proportion", fill = "Cell Type") +
   facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  guides(color = FALSE, fill = guide_legend(ncol = 1))
+  guides(color = "none", fill = guide_legend(ncol = 1))
 
-pdf(file = here(plot_dir, "full_Comp_Express_Plot_bulkAnnoLEVEL_OFFICIAL.pdf"), width = 7, height = 11)
+pdf(file = here(plot_dir, "sce_Comp_Plot_BROAD.pdf"), width = 7, height = 11)
   comp_plot_both_bulk
 dev.off()
 
