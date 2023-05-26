@@ -66,12 +66,15 @@ prop_clean_sn <- pd_sn[,c("final_Annotations", "Sample", "NeuN")] |>
 
 ### combines prop_dirty and prop_clean
 prop_ambig_plus_sn <- prop_dirty_sn |>
-  mutate(ambig = "Pre-drop") |>
-  bind_rows(prop_clean_sn |> mutate(ambig = "Post-drop"))
+  mutate(Drop = "Pre-drop") |>
+  bind_rows(prop_clean_sn |> mutate(Drop = "Post-drop")) 
+
+prop_ambig_plus_sn$Drop <- factor(prop_ambig_plus_sn$Drop, 
+                                  levels = c("Pre-drop", "Post-drop"))
 
 # plots composition plot using prop_clean and prop_dirty
 comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop, 
-                            fill = final_Annotations, group = ambig)) +
+                            fill = final_Annotations, group = Drop)) +
   geom_bar(stat = "identity") +
   geom_text(
     aes(
@@ -82,14 +85,14 @@ comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop,
     color = "black"
   ) +
   scale_fill_manual(values = c(sn_colors)) +
-  scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
   labs(y = "Proportion", fill = "Cell Type") +
-  facet_grid(ambig ~ NeuN, scales = "free_y", space = "free") + coord_flip() +
+  facet_grid(Drop ~ NeuN, scales = "free", space = "free") + 
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  guides(color = "none", fill = guide_legend(ncol = 1))
+  guides(color = "none", fill = guide_legend(ncol = 1,
+                                             reverse = TRUE))
 
-pdf(file = here(plot_dir, "full_Comp_Express_Plot_finalAnnoLEVEL2.pdf"), width = 7, height = 11)
+pdf(file = here(plot_dir, "sce_Comp_Plot_GRANULAR.pdf"), width = 7, height = 11)
   comp_plot_both_sn
 dev.off()
 
