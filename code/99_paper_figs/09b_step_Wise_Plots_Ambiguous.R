@@ -52,7 +52,7 @@ TSNE_facet <- plotReducedDim(sce, dimred = "TSNE") +
   facet_wrap(~ sce$bulkTypeSepHb) +
   guides(color = guide_legend(title="Cell Type"))
 
-pdf(file = here(plot_dir, "bulk_clean_TSNE.pdf"), width = 9, height = 5)
+pdf(file = here(plot_dir, "bulk_dirty_TSNE.pdf"), width = 9, height = 5)
 plot_grid(TSNE, TSNE_facet)
 dev.off()
 
@@ -78,7 +78,7 @@ num_nuc_comp_plot <- num_nuc |>
   theme(legend.position = "None", 
         axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
 
-pdf(file = here(plot_dir, "num_nuclei_post_clean.pdf"), width = 15, height = 6)
+pdf(file = here(plot_dir, "num_nuclei_pre_clean.pdf"), width = 15, height = 6)
 num_nuc_comp_plot 
 dev.off()
 
@@ -107,12 +107,12 @@ comp_plot <- ggplot(prop_df,
   labs(y = "Proportion")
 
 
-pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height = 9)
+pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno_dirty.pdf"), width = 10, height = 9)
 comp_plot
 dev.off()
 
 ########## COMBINING PLOTS #####################################################
-pdf(file = here(plot_dir, "stepWise_Plot_Post_Drop.pdf"), width = 10, height = 10)
+pdf(file = here(plot_dir, "stepWise_Plot_Pre_Drop.pdf"), width = 10, height = 10)
 plot_grid(
   TSNE, 
   TSNE_facet,

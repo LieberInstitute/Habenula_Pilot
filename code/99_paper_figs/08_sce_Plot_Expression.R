@@ -188,39 +188,39 @@ pdf(file = here(plot_dir, "sce_Comp_Plot_BROAD.pdf"), width = 7, height = 11)
   comp_plot_both_bulk
 dev.off()
 
-# plotting total nuclei information per sample
-barplot_n_nuc_bulk <- ggplot(prop_ambig_plus_bulk, 
-  aes(x = Sample, y = n, fill = bulkTypeSepHb)) +
-  geom_col() +
-  geom_text(aes(label = n), size = 2.5) +
-  scale_fill_manual(values = bulk_colors) +
-  theme_bw() +
-#  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
-  labs(y = "Number of Nuclei") +
-  facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free")
-
-pdf(file = here(plot_dir, "num_Nuc_Comp_Plot_bulkAnnoLEVEL.pdf"))
-  barplot_n_nuc_bulk
-dev.off()
-
-# plotting total nuclei information per sample
-sum_nuc_ambig_plus_prop <- prop_ambig_plus_bulk |>
-  group_by(ambig, Sample, bulkTypeSepHb) |>
-  summarize(n_across_samps = sum(n))
-
-barplot_n_nuc_bulk_tot <- ggplot(sum_nuc_ambig_plus_prop, 
-         aes(x = bulkTypeSepHb, y = n_across_samps, fill = bulkTypeSepHb)) +
-  geom_col() +
-  geom_text(aes(label = n_across_samps), size = 2.5) +
-  scale_fill_manual(values = bulk_colors) +
-  theme_bw() +
-  #  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
-  labs(y = "Number of Nuclei") +
-  facet_wrap( ~ ambig, ncol = 1)
-
-pdf(file = here(plot_dir, "num_Nuc_Comp_Plot_bulkAnnoLEVEL_overall.pdf"), width = 10, height = 9)
- barplot_n_nuc_bulk_tot
-dev.off()
+# # plotting total nuclei information per sample
+# barplot_n_nuc_bulk <- ggplot(prop_ambig_plus_bulk, 
+#   aes(x = Sample, y = n, fill = bulkTypeSepHb)) +
+#   geom_col() +
+#   geom_text(aes(label = n), size = 2.5) +
+#   scale_fill_manual(values = bulk_colors) +
+#   theme_bw() +
+# #  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+#   labs(y = "Number of Nuclei") +
+#   facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free")
+# 
+# pdf(file = here(plot_dir, "num_Nuc_Comp_Plot_bulkAnnoLEVEL.pdf"))
+#   barplot_n_nuc_bulk
+# dev.off()
+# 
+# # plotting total nuclei information per sample
+# sum_nuc_ambig_plus_prop <- prop_ambig_plus_bulk |>
+#   group_by(ambig, Sample, bulkTypeSepHb) |>
+#   summarize(n_across_samps = sum(n))
+# 
+# barplot_n_nuc_bulk_tot <- ggplot(sum_nuc_ambig_plus_prop, 
+#          aes(x = bulkTypeSepHb, y = n_across_samps, fill = bulkTypeSepHb)) +
+#   geom_col() +
+#   geom_text(aes(label = n_across_samps), size = 2.5) +
+#   scale_fill_manual(values = bulk_colors) +
+#   theme_bw() +
+#   #  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+#   labs(y = "Number of Nuclei") +
+#   facet_wrap( ~ ambig, ncol = 1)
+# 
+# pdf(file = here(plot_dir, "num_Nuc_Comp_Plot_bulkAnnoLEVEL_overall.pdf"), width = 10, height = 9)
+#  barplot_n_nuc_bulk_tot
+# dev.off()
 
 
 
