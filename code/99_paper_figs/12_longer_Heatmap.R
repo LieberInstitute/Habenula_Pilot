@@ -29,9 +29,13 @@ source(file = here("code", "99_paper_figs", "source_colors.R"))
 # bulk_colors and sn_colors
 
 # messing with columns for registration pseudobulk
-table(sce_final$RealSample)
-  # Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639 
-  # 3208   1193   2150   3101   3542    778   3059
+  table(sce_final$RealSample)
+    # Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639 
+    # 3208   1193   2150   3101   3542    778   3059
+  
+  table(sce_final$Sample)
+    # Br1011 
+    # 17031
 
 table(sce_final$final_Annotations)
   # grabbing the resolution we need
@@ -44,10 +48,6 @@ sce_final$longerAnno[sce_final$longerAnno %in% grep("Thal*", unique(sce_final$lo
 table(sce_final$longerAnno)
     # Astrocyte      Endo       LHb       MHb Microglia     Oligo       OPC  Thalamus 
     # 538        38      2214       710       145      2178      1796      9412 
-
-set.seed(20220907) 
-sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final, "longerAnno", "Sample")
-
 # finding necessary gene markers 
 # adding symbols
 rownames(sce_final) <- rowData(sce_final)$Symbol
@@ -71,20 +71,36 @@ fc <- findMarkers_1vAll(sce_final,
 # combining data
 marker_stats <- left_join(ratios, fc, by = c("gene", "cellType.target"))
 
+# grabbing top 5 markers 
+marker_genes <- marker_stats |>
+  filter(rank_ratio <= 5)
 
+as.list(marker_genes[marker_genes$cellType.target == "LHb", ]$gene)
 
 # list of marker genes 
 official_markers = list(
-  "Astrocyte" = c("MOBP"),
-  "Endo" = c(),
-  "Microglia" = c(),
-  "Oligo" = c(),
-  "OPC" = c(),
-  "Thalamus" = c(),
-  "LHb" = c(),
-  "MHb" = c()
+  "Astrocyte" = as.list(marker_genes[marker_genes$cellType.target == "Astrocyte", ]$gene),
+  "Endo" = as.list(marker_genes[marker_genes$cellType.target == "Endo", ]$gene),
+  "Microglia" = as.list(marker_genes[marker_genes$cellType.target == "Microglia", ]$gene),
+  "Oligo" = as.list(marker_genes[marker_genes$cellType.target == "Oligo", ]$gene),
+  "OPC" = as.list(marker_genes[marker_genes$cellType.target == "OPC", ]$gene),
+  "Thalamus" = as.list(marker_genes[marker_genes$cellType.target == "Thalamus", ]$gene),
+  "LHb" = as.list(marker_genes[marker_genes$cellType.target == "LHb", ]$gene),
+  "MHb" = as.list(marker_genes[marker_genes$cellType.target == "MHb", ]$gene)
 )
 
+set.seed(20220907) 
+sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
+
+# row_namers <- c("Oligo",
+#                 "OPC",
+#                 "Microglia",
+#                 "Astrocyte",
+#                 "Endo",
+#                 "Thalamus",
+#                 "LHb",
+#                 "MHb"
+# )
 
 row_namers <- c("Oligo",
                 "OPC",
@@ -104,3 +120,88 @@ row_namers <- c("Oligo",
                 "MHb.2",
                 "MHb.3"
 )
+
+
+# explicit colour scheme for row namers
+color_official_markers <- c(
+  "Oligo" = c("#4d5802"), 
+  "OPC"= c("#d3c871"), 
+  "Microglia" = c("#222222"), 
+  "Astrocyte" = c("#8d363c"), 
+  "Endo" = c("#ee6c14"), 
+  "Thalamus"= c("#EADDCA"),
+  "LHb" = c("#0085af"),
+  "MHb" = c("#fa246a")
+)
+
+####### PLOTTING ###############################################################
+# Plotting ComplexHeatmap
+sce = sce_simple_pb_snAnno3
+clusterMethod = "longerAnno"
+markerList = official_markers
+
+# Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
+rownames(sce) <- rowData(sce)$Symbol
+
+# renaming rownnames of colData(sce) based on row annotations
+rownames(colData(sce)) <- paste(colData(sce)[, clusterMethod])
+
+# reordering sce object for plottability
+sce_reorder <- sce[unlist(markerList) , row_namers]
+
+# Making data frame of genes we are interested in annd their general classification
+markTable <- as.data.frame(unlist(markerList)) |> 
+  rownames_to_column("cellType") |>
+  rename(gene = `unlist(markerList)`) |>
+  mutate(cellType = gsub("\\d+", "", cellType)) |>
+  filter(gene %in% rowData(sce_reorder)$Symbol)
+
+# getting z scores
+marker_z_score <- scale(t(logcounts(sce_reorder)))
+# corner(marker_z_score)
+
+# heatmap columns annotation
+column_ha <- HeatmapAnnotation(
+  Gene_Marker = markTable$cellType,
+  col = list(Gene_Marker = color_official_markers),
+  annotation_legend_param = list(
+    Gene_Marker = list(
+      title = "Gene_Marker" 
+    )
+  ))
+
+# grabbing the annotations per cluster from the sce_reorder object
+clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
+names(clusterData) <- "cellType"
+
+# prepping the colors we want
+# for cell type
+# num_pal <- length(unique(clusterData$cellType))
+# col_pal_ct <- grabColors(num_pal, start = 4)
+# names(col_pal_ct) = unique(clusterData$cellType)
+
+# heatmap row annotationn
+row_ha <- rowAnnotation(
+  Clusters = clusterData$cellType,
+  col = list(Clusters = sn_colors)
+)
+
+heatmapped <- Heatmap(marker_z_score,
+                      cluster_rows = FALSE,
+                      cluster_columns = FALSE,
+                      right_annotation = row_ha,
+                      top_annotation = column_ha,
+                      column_split = factor(markTable$cellType), 
+                      column_title_rot = 30,
+                      heatmap_legend_param = list(
+                        title = c("Z_Score"),
+                        border = "black"
+                      ))
+
+
+
+# printing 
+pdf(here(plot_dir, "longer_Complex_Heatmap.pdf"), width = 12, height = 8)
+  heatmapped
+dev.off()
+

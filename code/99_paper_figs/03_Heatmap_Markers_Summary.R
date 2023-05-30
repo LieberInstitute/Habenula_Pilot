@@ -93,9 +93,6 @@ row_namers <- c("Oligo",
 
 
 # explicit color scheme 
-## # glia cells: greens (5), thalamus (yellow #d6c68c), habenula (lateral  vs medial), 
-# neurons: purple (inhib (red) vs excit (blue))
-
 color_official_markers = c(
   "Oligo" = c("#4d5802"),
   "OPC"= c("#d3c871"), 
