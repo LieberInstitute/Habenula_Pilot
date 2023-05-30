@@ -10,6 +10,8 @@ library(jaffelab)
 library(ggrepel)
 library(cowplot)
 library(ggthemes)
+library(viridis)
+library(RColorBrewer)
 
 # loading deconvo data
 load(file = here("processed-data", "99_paper_figs", "sce_objects", "prop_long.RDATA"),
@@ -126,7 +128,7 @@ plot_pcs <- function(xer, yer, color_by){
                                                y = yer,
                                                color = as.factor(pca_data[, i])),
                                     position = pos,
-                                    size = 3) +
+                                    size = 2) +
                                   geom_text_repel(position = pos,
                                                   color = "darkgrey",
                                                   max.overlaps = 7,
@@ -145,10 +147,8 @@ plot_pcs <- function(xer, yer, color_by){
                                                   position = pos,
                                                   size = 4) +
                                   ggtitle(paste(xer, "vs", yer, "Colored by", i)) + 
-                                  guides(color =guide_legend(title= i)) + 
-                                  scale_color_tableau(
-                                    palette = "Classic Purple-Gray 6"
-                                  )
+                                  guides(color =guide_legend(title= i)) +
+                                  scale_color_brewer(palette = "Dark2")
                           
     } else if(i %in% cont_vars){ 
       
@@ -158,7 +158,7 @@ plot_pcs <- function(xer, yer, color_by){
                               geom_point() + 
                               geom_jitter(
                                 position = pos,
-                                size = 3,
+                                size = 2,
                                 aes_string(color = pca_data[, i])) +
                               geom_text_repel(position = pos,
                                               color = "darkgrey",
@@ -179,9 +179,7 @@ plot_pcs <- function(xer, yer, color_by){
                                               size = 4) +
                               ggtitle(paste(xer, "vs", yer, "Colored by", i)) + 
                               guides(color = guide_legend(title= i)) +
-                              scale_color_continuous_tableau(
-                                palette = "Blue"
-                              )
+                              scale_color_distiller(palette = "YlGnBu")
                       
       }
     
