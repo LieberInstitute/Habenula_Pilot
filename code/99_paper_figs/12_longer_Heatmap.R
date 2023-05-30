@@ -18,6 +18,10 @@ load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_final.Rdata"),
      verbose = TRUE)
 # sce_final 
 
+# making duplicate for later use
+sce_final2 <- sce_final
+rownames(sce_final2) <- rowData(sce_final2)$Symbol
+
 # creating plot directory
 plot_dir <- here("plots", "99_paper_figs", "12_longer_Heatmap")
 if(!dir.exists(plot_dir)){
@@ -90,36 +94,36 @@ official_markers = list(
 )
 
 set.seed(20220907) 
-sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
-
-# row_namers <- c("Oligo",
-#                 "OPC",
-#                 "Microglia",
-#                 "Astrocyte",
-#                 "Endo",
-#                 "Thalamus",
-#                 "LHb",
-#                 "MHb"
-# )
+sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final2, "final_Annotations", "Sample")
 
 row_namers <- c("Oligo",
                 "OPC",
                 "Microglia",
                 "Astrocyte",
                 "Endo",
-                'Inhib.Thal', 
-                'Excit.Thal', 
-                "LHb.1",
-                "LHb.2",
-                "LHb.3",
-                "LHb.4",
-                "LHb.5",
-                "LHb.6",
-                "LHb.7",
-                "MHb.1", 
-                "MHb.2",
-                "MHb.3"
+                "Thalamus",
+                "LHb",
+                "MHb"
 )
+
+# row_namers <- c("Oligo",
+#                 "OPC",
+#                 "Microglia",
+#                 "Astrocyte",
+#                 "Endo",
+#                 'Inhib.Thal', 
+#                 'Excit.Thal', 
+#                 "LHb.1",
+#                 "LHb.2",
+#                 "LHb.3",
+#                 "LHb.4",
+#                 "LHb.5",
+#                 "LHb.6",
+#                 "LHb.7",
+#                 "MHb.1", 
+#                 "MHb.2",
+#                 "MHb.3"
+# )
 
 
 # explicit colour scheme for row namers
@@ -137,7 +141,7 @@ color_official_markers <- c(
 ####### PLOTTING ###############################################################
 # Plotting ComplexHeatmap
 sce = sce_simple_pb_snAnno3
-clusterMethod = "longerAnno"
+clusterMethod = "final_Annotations"
 markerList = official_markers
 
 # Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
@@ -146,18 +150,18 @@ rownames(sce) <- rowData(sce)$Symbol
 # renaming rownnames of colData(sce) based on row annotations
 rownames(colData(sce)) <- paste(colData(sce)[, clusterMethod])
 
-# reordering sce object for plottability
-sce_reorder <- sce[unlist(markerList) , row_namers]
+# # reordering sce object for plottability
+# sce_reorder <- sce[unlist(markerList) , row_namers]
 
 # Making data frame of genes we are interested in annd their general classification
 markTable <- as.data.frame(unlist(markerList)) |> 
   rownames_to_column("cellType") |>
   rename(gene = `unlist(markerList)`) |>
   mutate(cellType = gsub("\\d+", "", cellType)) |>
-  filter(gene %in% rowData(sce_reorder)$Symbol)
+  filter(gene %in% rowData(sce)$Symbol)
 
 # getting z scores
-marker_z_score <- scale(t(logcounts(sce_reorder)))
+marker_z_score <- scale(t(logcounts(sce)))
 # corner(marker_z_score)
 
 # heatmap columns annotation
@@ -170,19 +174,10 @@ column_ha <- HeatmapAnnotation(
     )
   ))
 
-# grabbing the annotations per cluster from the sce_reorder object
-clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
-names(clusterData) <- "cellType"
-
-# prepping the colors we want
-# for cell type
-# num_pal <- length(unique(clusterData$cellType))
-# col_pal_ct <- grabColors(num_pal, start = 4)
-# names(col_pal_ct) = unique(clusterData$cellType)
 
 # heatmap row annotationn
 row_ha <- rowAnnotation(
-  Clusters = clusterData$cellType,
+  Clusters = sce_final$final_Annotations,
   col = list(Clusters = sn_colors)
 )
 
@@ -191,7 +186,6 @@ heatmapped <- Heatmap(marker_z_score,
                       cluster_columns = FALSE,
                       right_annotation = row_ha,
                       top_annotation = column_ha,
-                      column_split = factor(markTable$cellType), 
                       column_title_rot = 30,
                       heatmap_legend_param = list(
                         title = c("Z_Score"),
