@@ -2,9 +2,11 @@ library("here")
 library("SummarizedExperiment")
 library("recount")
 library("dplyr")
+library("readxl")
 library("ggplot2")
 library("cowplot")
 library("stringr")
+library("rlang")
 library("RColorBrewer")
 library("sessioninfo")
 
@@ -111,9 +113,8 @@ colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
 })
 
 qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "log10_library_size", "detected_num_genes", "RIN")
-
-## Sample variables of interest
 sample_variables <- c("PrimaryDx", "Flowcell")
+
 
 ## Function to create boxplots of QC metrics for groups of samples
 QC_boxplots <- function(qc_metric, sample_var) {
@@ -149,8 +150,6 @@ QC_boxplots <- function(qc_metric, sample_var) {
     return(plot)
 }
 
-
-## Plotting
 for (sample_var in sample_variables) {
     width <- 35
     height <- 30
@@ -165,6 +164,33 @@ for (sample_var in sample_variables) {
 }
 
 
+## Correlation between AgeDeath and the QC variables in habenula samples
+rse_gene_df <- data.frame(colData(rse_gene))
+
+corrs_age <- sapply(
+    qc_metrics,
+    function(x) {
+        round(cor(rse_gene_df$AgeDeath, rse_gene_df[, x], method = c("pearson")), 3)
+    }
+)
+
+plot_corrs = function(qc_metric){
+    ggplot(rse_gene_df, aes_string(x = "AgeDeath", y = qc_metric)) +
+        geom_point(aes_string(colour = "PrimaryDx")) +
+        scale_color_manual(values = c("Schizo" = "darkgoldenrod3", "Control" = "turquoise3")) +
+        stat_smooth(geom = "line", alpha = 0.7, size = 1.1, span = 0.1, method = lm, show.legend = FALSE) +
+        theme_bw() +
+        xlab("Age (when death)") +
+        ylab(str_replace_all(qc_metric, pattern = "_", replacement = " ")) +
+        annotate("text",
+            x = max(rse_gene_df$AgeDeath) - max(rse_gene_df$AgeDeath)/10,
+            y = max(rse_gene_df[,qc_metric]) - (max(rse_gene_df[,qc_metric]) - min(rse_gene_df[,qc_metric]))/10,
+            label = paste0("r = ", corrs_age[qc_metric]))
+}
+
+corr_plots <- lapply(qc_metrics, plot_corrs)
+plot_grid(corr_plots[[1]], corr_plots[[2]], corr_plots[[3]], corr_plots[[4]], corr_plots[[5]], corr_plots[[6]], corr_plots[[7]], corr_plots[[8]], nrow = 3)
+ggsave(here("plots/10_DEA/Corr_AgeDeath_vs_QCmetrics.pdf"),  width = 40, height = 30, units = "cm")
 
 ###############################################################################
 
