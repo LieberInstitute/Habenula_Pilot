@@ -190,6 +190,7 @@ plot_pcs <- function(xer, yer, color_by){
   return(plot_list) 
 } 
 
+## Plotting PC vs PC
 pdf(file = here(plot_dir, "PCvsPC", "PC1_VS_PC2_Investigation.pdf")) 
   plot_pcs(x = "PC1", y = "PC2", color_by = phenoMets)
 dev.off()
@@ -198,44 +199,141 @@ pdf(file = here(plot_dir, "PCvsPC", "PC2_VS_PC3_Investigation.pdf"))
   plot_pcs(x = "PC2", y = "PC3", color_by = phenoMets)
 dev.off()
 
+# creating similar function that plots metrics in a specific manner 
+plot_mets <- function(xer, qc_met, color_by, metric_title){ 
+  
+  pos = position_jitter(seed = 777)
+  
+  plot_list = list()
+  c = 1
+  for(i in color_by) { 
+    
+    if(i %in% disc_vars){ 
+
+      plot_list[[c]] <- ggplot(pca_data, 
+                               aes_string(x = xer,
+                                          y = qc_met)) +
+        geom_point() +
+        geom_jitter(
+          aes_string(x = xer,
+                     y = qc_met,
+                     color = as.factor(pca_data[, i])),
+                     position = pos,
+                     size = 2) +
+        geom_text_repel(position = pos,
+                        color = "darkgrey",
+                        max.overlaps = 7,
+                        size = 4,
+                        aes_string(label = "BrNum"),
+                        data = pca_data[pca_data$Notes == "Normal",]
+        )  + 
+        geom_text_repel(aes_string(label = "BrNum"),
+                        color = "red", 
+                        data = pca_data[pca_data$Notes == "NoGlia",],
+                        position = pos,
+                        size = 4) +
+        geom_text_repel(aes_string(label = "BrNum"),
+                        color = "black", 
+                        data = pca_data[pca_data$Notes == "All.Thal",],
+                        position = pos,
+                        size = 4) +
+        ggtitle(paste(metric_title, "by", i)) + 
+        guides(color =guide_legend(title= metric_title)) +
+        scale_color_brewer(palette = "Dark2") +
+        ylab(metric_title)
+      
+    } else if(i %in% cont_vars){ 
+      
+      plot_list[[c]] <- ggplot(pca_data, 
+                               aes_string(x = xer,
+                                          y = qc_met)) +
+        geom_point() + 
+        geom_jitter(
+          position = pos,
+          size = 2,
+          aes_string(color = pca_data[, i])) +
+        geom_text_repel(position = pos,
+                        color = "darkgrey",
+                        max.overlaps = 7,
+                        size = 4,
+                        aes_string(label = "BrNum"),
+                        data = pca_data[pca_data$Notes == "Normal",]
+        )  + 
+        geom_text_repel(aes_string(label = "BrNum"),
+                        color = "red", 
+                        data = pca_data[pca_data$Notes == "NoGlia",],
+                        position = pos,
+                        size = 4) +
+        geom_text_repel(aes_string(label = "BrNum"),
+                        color = "black", 
+                        data = pca_data[pca_data$Notes == "All.Thal",],
+                        position = pos,
+                        size = 4) +
+        ggtitle(paste(metric_title, "by", i)) + 
+        guides(color = guide_legend(title= metric_title)) +
+        scale_color_distiller(palette = "YlGnBu") + 
+        ylab(metric_title)
+      
+    }
+    
+    
+    c = c + 1
+  }
+  
+  return(plot_list) 
+} 
+
+
 # metrics against PC values 
+
+# PC1
 pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_over_Thal_VS_PC1_Investigation.pdf")) 
-  plot_pcs(x = "PC1", y = "Hb_over_Thal", color_by = phenoMets)
+  plot_mets(xer = "PC1", qc_met = "Hb_over_Thal", color_by = phenoMets, 
+            metric_title = "Hb/Thal")
 dev.off()
+
 pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_sum_VS_PC1_Investigation.pdf")) 
-  plot_pcs(x = "PC1", y = "Hb_sum", color_by = phenoMets)
+  plot_mets(xer = "PC1", qc_met = "Hb_sum", color_by = phenoMets, 
+            metric_title = "Hb Sum Ratio")
 dev.off()
 pdf(file = here(plot_dir, "Metric_Against_PC", "Thal_sum_VS_PC1_Investigation.pdf")) 
-  plot_pcs(x = "PC1", y = "Thal_sum", color_by = phenoMets)
+  plot_mets(xer = "PC1", qc_met = "Thal_sum", color_by = phenoMets, 
+            metric_title = "Thal Sum Ratio")
 dev.off()
 
+# PC2
 pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_over_Thal_VS_PC2_Investigation.pdf")) 
-  plot_pcs(x = "PC2", y = "Hb_over_Thal", color_by = phenoMets)
+  plot_mets(xer = "PC2", qc_met = "Hb_over_Thal", color_by = phenoMets, 
+            metric_title = "Hb/Thal")
 dev.off()
+
 pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_sum_VS_PC2_Investigation.pdf")) 
-  plot_pcs(x = "PC2", y = "Hb_sum", color_by = phenoMets)
+  plot_mets(xer = "PC2", qc_met = "Hb_sum", color_by = phenoMets, 
+            metric_title = "Hb Sum Ratio")
 dev.off()
+
 pdf(file = here(plot_dir, "Metric_Against_PC", "Thal_sum_VS_PC2_Investigation.pdf")) 
-  plot_pcs(x = "PC2", y = "Thal_sum", color_by = phenoMets)
+  plot_mets(xer = "PC2", qc_met = "Thal_sum", color_by = phenoMets, 
+            metric_title = "Thal Sum Ratio")
 dev.off()
 
+# PC3:
 pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_over_Thal_VS_PC3_Investigation.pdf")) 
-  plot_pcs(x = "PC3", y = "Hb_over_Thal", color_by = phenoMets)
+  plot_mets(xer = "PC3", qc_met = "Hb_over_Thal", color_by = phenoMets, 
+            metric_title = "Hb/Thal")
 dev.off()
+
 pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_sum_VS_PC3_Investigation.pdf")) 
-  plot_pcs(x = "PC3", y = "Hb_sum", color_by = phenoMets)
+  plot_mets(xer = "PC3", qc_met = "Hb_sum", color_by = phenoMets, 
+            metric_title = "Hb Sum Ratio")
 dev.off()
+
 pdf(file = here(plot_dir, "Metric_Against_PC", "Thal_sum_VS_PC3_Investigation.pdf")) 
-  plot_pcs(x = "PC3", y = "Thal_sum", color_by = phenoMets)
+  plot_mets(xer = "PC3", qc_met = "Thal_sum", color_by = phenoMets, 
+            metric_title = "Thal Sum Ratio")
 dev.off()
 
 
 
 
-
-
-pdf(file = here (plot_dir, "test.pdf"))
-
-dev.off()
-
-
+# 
