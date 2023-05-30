@@ -141,7 +141,7 @@ color_official_markers <- c(
 ####### PLOTTING ###############################################################
 # Plotting ComplexHeatmap
 sce = sce_simple_pb_snAnno3
-clusterMethod = "final_Annotations"
+clusterMethod = "longerAnno"
 markerList = official_markers
 
 # Replacing genes with symbols for heatmap (remember, this is pseudobulked data)

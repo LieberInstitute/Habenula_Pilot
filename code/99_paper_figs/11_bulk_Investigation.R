@@ -115,51 +115,73 @@ plot_pcs <- function(xer, yer, color_by){
     
     if(i %in% disc_vars){ 
 
+      
+  
         plot_list[[c]] <- ggplot(pca_data, 
-                           aes_string(x = xer,
-                               y = yer,
-                               group = as.factor(pca_data$Notes))) +
-                          geom_point() +
-                          geom_jitter(
-                            position = pos,
-                            size = 3,
-                            aes_string(color = as.factor(pca_data[, i]),
-                                       shape = as.factor(pca_data$Notes))) +
-                           geom_text_repel(position = pos,
-                                           color = "darkgrey",
-                                           max.overlaps = 7,
-                                           size = 4,
-                                           aes_string(label = "BrNum")
-                                           )  + 
-                          ggtitle(paste(xer, "vs", yer, "Colored by", i)) + 
-                          guides(color =guide_legend(title= i)) + 
-                          scale_color_tableau(
-                            palette = "Classic Purple-Gray 6"
-                          )
+                                 aes_string(x = xer,
+                                            y = yer)) +
+                                  geom_point() +
+                                  geom_jitter(
+                                    aes_string(x = xer,
+                                               y = yer,
+                                               color = as.factor(pca_data[, i])),
+                                    position = pos,
+                                    size = 3) +
+                                  geom_text_repel(position = pos,
+                                                  color = "darkgrey",
+                                                  max.overlaps = 7,
+                                                  size = 4,
+                                                  aes_string(label = "BrNum"),
+                                                  data = pca_data[pca_data$Notes == "Normal",]
+                                  )  + 
+                                  geom_text_repel(aes_string(label = "BrNum"),
+                                                  color = "red", 
+                                                  data = pca_data[pca_data$Notes == "NoGlia",],
+                                                  position = pos,
+                                                  size = 4) +
+                                  geom_text_repel(aes_string(label = "BrNum"),
+                                                  color = "black", 
+                                                  data = pca_data[pca_data$Notes == "All.Thal",],
+                                                  position = pos,
+                                                  size = 4) +
+                                  ggtitle(paste(xer, "vs", yer, "Colored by", i)) + 
+                                  guides(color =guide_legend(title= i)) + 
+                                  scale_color_tableau(
+                                    palette = "Classic Purple-Gray 6"
+                                  )
                           
     } else if(i %in% cont_vars){ 
       
       plot_list[[c]] <- ggplot(pca_data, 
                                aes_string(x = xer,
-                                  y = yer,
-                                  group = as.factor(pca_data$Notes))) +
-                        geom_point() + 
-                        geom_jitter(
-                          position = pos,
-                          size = 3,
-                          aes_string(color = pca_data[, i],
-                          shape = as.factor(pca_data$Notes))) +
-                        geom_text_repel(position = pos,
-                                        color = "darkgrey",
-                                        max.overlaps = 7,
-                                        size = 4,
-                                        aes_string(label = "BrNum")
-                        )  + 
-                        ggtitle(paste(xer, "vs", yer, "Colored by", i)) + 
-                        guides(color = guide_legend(title= i)) +
-                        scale_color_continuous_tableau(
-                          palette = "Blue"
-                        )
+                                          y = yer)) +
+                              geom_point() + 
+                              geom_jitter(
+                                position = pos,
+                                size = 3,
+                                aes_string(color = pca_data[, i])) +
+                              geom_text_repel(position = pos,
+                                              color = "darkgrey",
+                                              max.overlaps = 7,
+                                              size = 4,
+                                              aes_string(label = "BrNum"),
+                                              data = pca_data[pca_data$Notes == "Normal",]
+                              )  + 
+                              geom_text_repel(aes_string(label = "BrNum"),
+                                              color = "red", 
+                                              data = pca_data[pca_data$Notes == "NoGlia",],
+                                              position = pos,
+                                              size = 4) +
+                              geom_text_repel(aes_string(label = "BrNum"),
+                                              color = "black", 
+                                              data = pca_data[pca_data$Notes == "All.Thal",],
+                                              position = pos,
+                                              size = 4) +
+                              ggtitle(paste(xer, "vs", yer, "Colored by", i)) + 
+                              guides(color = guide_legend(title= i)) +
+                              scale_color_continuous_tableau(
+                                palette = "Blue"
+                              )
                       
       }
     
@@ -214,7 +236,8 @@ dev.off()
 
 
 
+pdf(file = here (plot_dir, "test.pdf"))
 
-
+dev.off()
 
 
