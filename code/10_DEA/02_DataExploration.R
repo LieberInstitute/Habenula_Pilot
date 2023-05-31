@@ -111,7 +111,9 @@ load(
 
 
 
-############################## Data exploration ###############################
+################### Boxpots: sample_variables - qc_metrics ####################
+
+## NOTE: This section is done with unfiltered and not normalized counts
 
 colData(rse_gene)$library_size <- apply(assay(rse_gene), 2, sum)
 colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
@@ -127,14 +129,10 @@ sample_variables <- c("PrimaryDx", "Flowcell")
 QC_boxplots <- function(qc_metric, sample_var) {
     if (sample_var == "PrimaryDx") {
         colors <- c("HVYTYBBXX" = "darkmagenta", "HW252BBXX" = "yellow3")
-        violin_width <- 0.7
-        jitter_width <- 0.1
         x_label <- "PrimaryDx"
         sample_var_v2 <- "Flowcell"
     } else if (sample_var == "Flowcell") {
         colors <- c("Schizo" = "darkgoldenrod3", "Control" = "turquoise3")
-        violin_width <- 0.7
-        jitter_width <- 0.1
         x_label <- "Flowcell"
         sample_var_v2 <- "PrimaryDx"
     }
@@ -144,8 +142,8 @@ QC_boxplots <- function(qc_metric, sample_var) {
     data <- data.frame(colData(rse_gene))
     plot <- ggplot(data = data, mapping = aes(x = !!rlang::sym(sample_var), y = !!rlang::sym(qc_metric), color = !!rlang::sym(sample_var_v2))) +
         theme_bw() +
-        geom_violin(alpha = 0, size = 0.4, color = "black", width = violin_width) +
-        geom_jitter(width = jitter_width, alpha = 0.7, size = 2) +
+        geom_violin(alpha = 0, size = 0.4, color = "black", width = 0.7) +
+        geom_jitter(width = 0.1, alpha = 0.7, size = 2) +
         geom_boxplot(alpha = 0, size = 0.4, width = 0.1, color = "black") +
         scale_color_manual(values = colors) +
         labs(y = y_label, x = x_label) +
@@ -158,8 +156,6 @@ QC_boxplots <- function(qc_metric, sample_var) {
 }
 
 for (sample_var in sample_variables) {
-    width <- 35
-    height <- 30
     i <- 1
     plots <- list()
     for (qc_metric in qc_metrics) {
@@ -167,7 +163,7 @@ for (sample_var in sample_variables) {
         i <- i + 1
     }
     plot_grid(plots[[1]], plots[[2]], plots[[3]], plots[[4]], plots[[5]], plots[[6]], plots[[7]], plots[[8]], nrow = 3)
-    ggsave(paste(here("plots/10_DEA/QC_boxplots_"), sample_var, ".pdf", sep = ""), width = width, height = height, units = "cm")
+    ggsave(paste(here("plots/10_DEA/QC_boxplots_"), sample_var, ".pdf", sep = ""), width = 35, height = 30, units = "cm")
 }
 
 
