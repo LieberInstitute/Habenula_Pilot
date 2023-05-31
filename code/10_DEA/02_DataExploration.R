@@ -216,11 +216,59 @@ ggsave(
 ###############################################################################
 
 
+
+######################## Principal component analysis #########################
+
+## NOTE: This section is done with filtered and normalized counts
+
+pca <- prcomp(t(assays(rse_gene_filt)$logcounts))
+pca_df <- cbind(as.data.frame(pca$x), colData(rse_gene_filt))
+
+## % of the variance explained by each PC
+pca_vars <- (summary(pca))$importance[2, ] * 100
+pca_vars_labs <- paste0(
+    "PC", seq(along = pca_vars), ": ",
+    pca_vars, "%"
+)
+
+sample_variables <- c("PrimaryDx", "Flowcell", "AgeDeath")
+
+pca_samplevars <- function(sample_var) {
+    gg_plot <- ggpairs(pca_df,
+    columns = 1:10, aes_string(color = sample_var, alpha = 0.5),
+    upper = list(continuous = wrap("points", size = 2))
+) +
+    theme_bw()
+
+    if(sample_var == "Flowcell"){
+       gg_plot <- gg_plot +
+           scale_color_manual(values = c("HVYTYBBXX" = "darkmagenta", "HW252BBXX" = "yellow3"))
+    }else if (sample_var == "PrimaryDx") {
+        gg_plot <- gg_plot +
+           scale_color_manual(values = c("Schizo" = "darkgoldenrod3", "Control" = "turquoise3") )
+    }else if (sample_var == "AgeDeath") {
+        gg_plot <- gg_plot +
+            scale_color_gradient(low = "#F19E93", high = "#00433F")
+    }
+
+    ggsave(paste(here("plots/10_DEA/"), "PCA_", sample_var, ".pdf", sep = ""), gg_plot, width = 30, height = 34, units = "cm")
 }
 
-corr_plots <- lapply(qc_metrics, plot_corrs)
-plot_grid(corr_plots[[1]], corr_plots[[2]], corr_plots[[3]], corr_plots[[4]], corr_plots[[5]], corr_plots[[6]], corr_plots[[7]], corr_plots[[8]], nrow = 3)
-ggsave(here("plots/10_DEA/Corr_AgeDeath_vs_QCmetrics.pdf"),  width = 40, height = 30, units = "cm")
+lapply(sample_variables, pca_samplevars)
+
+pca_qcmetrics <- function(qc_metric) {
+    gg_plot <- ggpairs(pca_df,
+        columns = 1:10, aes_string(color = qc_metric, alpha = 0.5),
+        upper = list(continuous = wrap("points", size = 2))
+    ) +
+        theme_bw() +
+        scale_color_gradient(low = "yellow", high = "darkblue") +
+        theme(legend.position = "bottom")
+
+    ggsave(paste(here("plots/10_DEA/"), "PCA_", qc_metric, ".pdf", sep = ""), gg_plot, width = 30, height = 30, units = "cm")
+}
+
+lapply(qc_metrics, pca_qcmetrics)
 
 ###############################################################################
 
