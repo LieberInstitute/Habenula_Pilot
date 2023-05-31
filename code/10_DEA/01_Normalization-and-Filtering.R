@@ -48,6 +48,19 @@ colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
 ###############################################################################
 
 
+
+############################## Gene normalization #############################
+
+length(which(assay(rse_gene) == 0)) * 100 / (dim(rse_gene)[1] * dim(rse_gene)[2])
+# [1] 45.30061
+
+# hist(assay(rse_gene), breaks = 50)
+
+assays(rse_gene, withDimnames = FALSE)$logcounts <- edgeR::cpm(calcNormFactors(rse_gene, method = "TMM"), log = TRUE, prior.count = 0.5)
+
+# hist(assays(rse_gene)$logcounts, breaks = 50, prob = TRUE)
+
+###############################################################################
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
