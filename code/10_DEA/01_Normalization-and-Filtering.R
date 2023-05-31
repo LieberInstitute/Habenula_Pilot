@@ -61,6 +61,25 @@ assays(rse_gene, withDimnames = FALSE)$logcounts <- edgeR::cpm(calcNormFactors(r
 # hist(assays(rse_gene)$logcounts, breaks = 50, prob = TRUE)
 
 ###############################################################################
+
+
+############################## Feature filtering ##############################
+
+rse_gene_filt <- rse_gene[which(filterByExpr(assay(rse_gene),
+    design = with(colData(rse_gene), model.matrix(~PrimaryDx))
+)), ]
+dim(rse_gene_filt)
+# [1] 20568    69
+
+## Percentage of genes that were kept
+dim(rse_gene_filt)[1] * 100 / dim(rse_gene)[1]
+# [1] 35.43946
+
+filt_assay <- assays(rse_gene)$logcounts[rownames(assay(rse_gene)) %in% rownames(assay(rse_gene_filt)), ]
+# hist(filt_assay, breaks = 50)
+
+###############################################################################
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
