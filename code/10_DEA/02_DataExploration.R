@@ -1,18 +1,14 @@
 library("here")
 library("SummarizedExperiment")
-library("recount")
-library("dplyr")
-library("readxl")
+library("stringr")
 library("ggplot2")
 library("cowplot")
-library("stringr")
-library("rlang")
-library("RColorBrewer")
+library("GGally")
 library("sessioninfo")
 
 
 
-############################# Load rse gene object ############################
+############################ Load rse gene objects ############################
 
 load(
     here(
@@ -206,3 +202,5 @@ options(width = 120)
 session_info()
 
 ###############################################################################
+
+
