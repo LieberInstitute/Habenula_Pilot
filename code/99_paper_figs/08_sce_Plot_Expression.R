@@ -188,6 +188,9 @@ pdf(file = here(plot_dir, "sce_Comp_Plot_BROAD.pdf"), width = 7, height = 11)
   comp_plot_both_bulk
 dev.off()
 
+
+
+
 # # plotting total nuclei information per sample
 # barplot_n_nuc_bulk <- ggplot(prop_ambig_plus_bulk, 
 #   aes(x = Sample, y = n, fill = bulkTypeSepHb)) +
