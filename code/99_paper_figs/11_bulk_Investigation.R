@@ -48,17 +48,23 @@ sum_Prop <- prop_long |>
   group_by(BrNum) |>
   summarize(Thal_sum = sum(prop)) 
 
+glia_Prop <- prop_long |>
+  filter(cellType %in% c("Astrocyte", "Endo", "Microglia", "Oligo", "OPC")) |>
+  group_by(BrNum) |>
+  summarize(Glia_sum = sum(prop)) 
+
 prop_long <- left_join(prop_long, sum_Prop) |>
   arrange(Br_Order) |>
-  mutate(Hb_over_Thal = (Hb_sum / Thal_sum) )
-    # %>% print(width = Inf)
+  mutate(Hb_over_Thal = (Hb_sum / Thal_sum) ) |>
+  mutate(prop_perc = NULL) 
 
-# dropping confusing prop_perc as this was the percentages of just Hb_sum
-prop_long$prop_perc <- NULL
+prop_long <- left_join(prop_long, glia_Prop) |>
+  arrange(Br_Order)
+    # %>% print(width = Inf)
 
 # making data frame for ease of merge with rse ColData
 comp_invest <- as.data.frame(prop_long[,c("Sample", "Hb_sum", "Thal_sum", "Hb_over_Thal",
-                                          "BrNum")])
+                                          "Glia_sum", "BrNum")])
 comp_invest$RNum = comp_invest$Sample
 
 
@@ -238,7 +244,7 @@ plot_mets <- function(xer, qc_met, color_by, metric_title){
                         position = pos,
                         size = 4) +
         ggtitle(paste(metric_title, "by", i)) + 
-        guides(color =guide_legend(title= metric_title)) +
+        guides(color =guide_legend(title= i)) +
         scale_color_brewer(palette = "Dark2") +
         ylab(metric_title)
       
@@ -270,7 +276,7 @@ plot_mets <- function(xer, qc_met, color_by, metric_title){
                         position = pos,
                         size = 4) +
         ggtitle(paste(metric_title, "by", i)) + 
-        guides(color = guide_legend(title= metric_title)) +
+        guides(color = guide_legend(title= i)) +
         scale_color_distiller(palette = "YlGnBu") + 
         ylab(metric_title)
       
@@ -285,7 +291,6 @@ plot_mets <- function(xer, qc_met, color_by, metric_title){
 
 
 # metrics against PC values 
-
 # PC1
 pdf(file = here(plot_dir, "Metric_Against_PC", "Hb_over_Thal_VS_PC1_Investigation.pdf")) 
   plot_mets(xer = "PC1", qc_met = "Hb_over_Thal", color_by = phenoMets, 
@@ -333,7 +338,45 @@ pdf(file = here(plot_dir, "Metric_Against_PC", "Thal_sum_VS_PC3_Investigation.pd
             metric_title = "Thal Sum Ratio")
 dev.off()
 
+## Metrics Against Glia Sum 
+pdf(file = here(plot_dir, "Metric_Against_Glia", "Hb_sum_VS_Glia_sum.pdf")) 
+  plot_mets(xer = "Glia_sum", qc_met = "Hb_sum", color_by = phenoMets, 
+            metric_title = "Hb Sum Ratio")
+dev.off()
 
+pdf(file = here(plot_dir, "Metric_Against_Glia", "Thal_sum_VS_Glia_sum.pdf")) 
+plot_mets(xer = "Glia_sum", qc_met = "Thal_sum", color_by = phenoMets, 
+          metric_title = "Thal Sum Ratio")
+dev.off()
 
+pdf(file = here(plot_dir, "Metric_Against_Glia", "Hb_over_Thal_VS_Glia_sum.pdf")) 
+plot_mets(xer = "Glia_sum", qc_met = "Hb_over_Thal", color_by = phenoMets, 
+          metric_title = "Hb/Thal")
+dev.off()
 
+# pc vs glia
+pdf(file = here(plot_dir, "Metric_Against_Glia", "PC3_VS_Glia_sum.pdf")) 
+plot_mets(xer = "PC3", qc_met = "Glia_sum", color_by = phenoMets, 
+          metric_title = "Glia Sum Prop")
+dev.off()
+
+pdf(file = here(plot_dir, "Metric_Against_Glia", "PC2_VS_Glia_sum.pdf")) 
+plot_mets(xer = "PC2", qc_met = "Glia_sum", color_by = phenoMets, 
+          metric_title = "Glia Sum Prop")
+dev.off()
+
+pdf(file = here(plot_dir, "Metric_Against_Glia", "PC1_VS_Glia_sum.pdf")) 
+plot_mets(xer = "PC1", qc_met = "Glia_sum", color_by = phenoMets, 
+          metric_title = "Glia Sum Prop")
+dev.off()
+
+pdf(file = here(plot_dir, "Metric_Against_Glia", "PC4_VS_Glia_sum.pdf")) 
+plot_mets(xer = "PC4", qc_met = "Glia_sum", color_by = phenoMets, 
+          metric_title = "Glia Sum Prop")
+dev.off()
+
+pdf(file = here(plot_dir, "Metric_Against_Glia", "PC5_VS_Glia_sum.pdf")) 
+plot_mets(xer = "PC5", qc_met = "Glia_sum", color_by = phenoMets, 
+          metric_title = "Glia Sum Prop")
+dev.off()
 # 

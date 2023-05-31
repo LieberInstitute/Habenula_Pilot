@@ -236,41 +236,78 @@ dev.off()
 # 1 & 2:  TSNE pre and post harmony by Sample 
 
 # pre-harmony
-pdf(here(plot_dir, "forOneDrive","sfigu_preHarmony_TSNE_bySample.pdf"), 
-    width = 7, height = 3.5)
-
-  plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-    geom_point(aes(color = sce_uncorrected$Sample)) + 
-    theme(legend.position = "none") + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-  plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-    geom_point(aes(color = sce_uncorrected$Sample)) + 
-    facet_wrap(~ sce_uncorrected$Sample) + 
-    guides(color = guide_legend(title="Sample ID")) + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-
-
+    # pdf
+    pdf(here(plot_dir, "forOneDrive","sfigu_preHarmony_TSNE_bySample.pdf"), 
+        width = 7, height = 3.5)
+    
+      plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+        geom_point(aes(color = sce_uncorrected$Sample)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+        geom_point(aes(color = sce_uncorrected$Sample)) + 
+        facet_wrap(~ sce_uncorrected$Sample) + 
+        guides(color = guide_legend(title="Sample ID")) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
+    
+        plot_grid(plot1_unc, plot2_unc,
+                  nrow = 1)
+    dev.off()
+    # png
+    png(here(plot_dir, "forOneDrive","sfigu_preHarmony_TSNE_bySample.png"), 
+        width = 7, height = 3.5, units = "in", res = 1200)
+    
+      plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+        geom_point(aes(color = sce_uncorrected$Sample)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+        geom_point(aes(color = sce_uncorrected$Sample)) + 
+        facet_wrap(~ sce_uncorrected$Sample) + 
+        guides(color = guide_legend(title="Sample ID")) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
     plot_grid(plot1_unc, plot2_unc,
               nrow = 1)
-dev.off()
+    dev.off()
 
 # post-harmony 
-pdf(here(plot_dir, "forOneDrive", "sfigu_postHarmony_TSNE_bySample.pdf"), 
-    width = 7, height = 3.5)
-
-  plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$Sample)) + 
-    theme(legend.position = "none") + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-  plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$Sample)) + 
-    facet_wrap(~ sce$Sample) + 
-    guides(color = guide_legend(title="Sample ID")) + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-
+    # pdf
+    pdf(here(plot_dir, "forOneDrive", "sfigu_postHarmony_TSNE_bySample.pdf"), 
+        width = 7, height = 3.5)
+    
+      plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$Sample)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$Sample)) + 
+        facet_wrap(~ sce$Sample) + 
+        guides(color = guide_legend(title="Sample ID")) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
+        plot_grid(plot1, plot2,
+                  nrow = 1)
+    dev.off()
+    # png
+    png(here(plot_dir, "forOneDrive", "sfigu_postHarmony_TSNE_bySample.png"), 
+        width = 7, height = 3.5, units = "in", res = 1200)
+    
+    plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+      geom_point(aes(color = sce$Sample)) + 
+      theme(legend.position = "none") + 
+      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+      geom_point(aes(color = sce$Sample)) + 
+      facet_wrap(~ sce$Sample) + 
+      guides(color = guide_legend(title="Sample ID")) + 
+      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
     plot_grid(plot1, plot2,
               nrow = 1)
-dev.off()
+    dev.off()
+
 
 
 # 3 & 4: TSNE pre and post harmony colored by Sample, faceted by Run
@@ -285,6 +322,7 @@ sce$Run <- recode(sce$Run,
                   "3" = "Run 3")
 
 # pre-harmony
+# pdf
 pdf(here(plot_dir, "forOneDrive", "sfigu_preHarmony_TSNE_byRun.pdf"), 
     width = 8, height = 3)
 
@@ -302,39 +340,107 @@ pdf(here(plot_dir, "forOneDrive", "sfigu_preHarmony_TSNE_byRun.pdf"),
               nrow = 1,
               rel_widths = c(.3, .7))
 dev.off()
+# png
+png(here(plot_dir, "forOneDrive", "sfigu_preHarmony_TSNE_byRun.png"), 
+    width = 8, height = 3, units = "in", res = 1200)
+
+plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+  geom_point(aes(color = sce_uncorrected$Sample)) + 
+  theme(legend.position = "none") + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+  geom_point(aes(color = sce_uncorrected$Sample)) + 
+  facet_wrap(~ sce_uncorrected$Run) + 
+  guides(color = guide_legend(title="Sample ID")) + 
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+
+plot_grid(plot1_unc, plot2_unc,
+          nrow = 1,
+          rel_widths = c(.3, .7))
+dev.off()
+
+######
 
 # post-harmony 
-pdf(here(plot_dir, "forOneDrive", "sfigu_postHarmony_TSNE_byRun.pdf"), 
-    width = 8, height = 3)
+    # pdf
+    pdf(here(plot_dir, "forOneDrive", "sfigu_postHarmony_TSNE_byRun.pdf"), 
+        width = 8, height = 3)
+    
+      plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$Sample)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$Sample)) + 
+        facet_wrap(~ sce$Run) + 
+        guides(color = guide_legend(title="Sample ID")) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
+        plot_grid(plot1, plot2,
+                  nrow = 1,
+                  rel_widths = c(.3, .7))
+    dev.off()
+    # png
+    png(here(plot_dir, "forOneDrive", "sfigu_postHarmony_TSNE_byRun.png"), 
+        width = 8, height = 3, units = "in", res = 1200)
+    
+      plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$Sample)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$Sample)) + 
+        facet_wrap(~ sce$Run) + 
+        guides(color = guide_legend(title="Sample ID")) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
+        plot_grid(plot1, plot2,
+                  nrow = 1,
+                  rel_widths = c(.3, .7))
+    dev.off()
 
-  plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$Sample)) + 
-    theme(legend.position = "none") + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-  plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$Sample)) + 
-    facet_wrap(~ sce$Run) + 
-    guides(color = guide_legend(title="Sample ID")) + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-
-    plot_grid(plot1, plot2,
-              nrow = 1,
-              rel_widths = c(.3, .7))
-dev.off()
-
+######
 
 ## TSNE by cell type
-pdf(here(plot_dir, "forOneDrive", "mfigu_TSNE_byCellType_noFacet.pdf"))
-  plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$final_Annotations)) + 
-    scale_colour_manual(values = sn_colors) + 
-    guides(color = guide_legend(title="Cell Type")) + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-dev.off()
+    # pdf
+    pdf(here(plot_dir, "forOneDrive", "mfigu_TSNE_byCellType_noFacet.pdf"))
+      plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$final_Annotations)) + 
+        scale_colour_manual(values = sn_colors) + 
+        guides(color = guide_legend(title="Cell Type")) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    dev.off()
+    # png
+    png(here(plot_dir, "forOneDrive", "mfigu_TSNE_byCellType_noFacet.png"))
+      plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$final_Annotations)) + 
+        scale_colour_manual(values = sn_colors) + 
+        guides(color = guide_legend(title="Cell Type")) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    dev.off()
 
 ## TSNE by cell type facet wrapped
-pdf(here(plot_dir,  "forOneDrive", "mfigu_TSNE_byCellType_faceted.pdf"),
-    width = 9, height = 4)
+    # pdf 
+    pdf(here(plot_dir,  "forOneDrive", "mfigu_TSNE_byCellType_faceted.pdf"),
+        width = 9, height = 4)
+        plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+          geom_point(aes(color = sce$final_Annotations)) +
+          scale_colour_manual(values = sn_colors) +
+          theme(legend.position = "none") + 
+          labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+        plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+          geom_point(aes(color = sce$final_Annotations)) +
+          scale_colour_manual(values = sn_colors) +
+          facet_wrap(~ sce$final_Annotations) +
+          guides(color = guide_legend(title="Cell Type")) + 
+          labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
+          plot_grid(plot1, plot2,
+                    rel_widths = c(.4, .6))
+    dev.off()
+    # png
+    png(here(plot_dir,  "forOneDrive", "mfigu_TSNE_byCellType_faceted.png"),
+        width = 9, height = 4, units = "in", res = 1200)
     plot1 <- plotReducedDim(sce, dimred = "TSNE") +
       geom_point(aes(color = sce$final_Annotations)) +
       scale_colour_manual(values = sn_colors) +
@@ -346,101 +452,185 @@ pdf(here(plot_dir,  "forOneDrive", "mfigu_TSNE_byCellType_faceted.pdf"),
       facet_wrap(~ sce$final_Annotations) +
       guides(color = guide_legend(title="Cell Type")) + 
       labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-
-      plot_grid(plot1, plot2,
-                rel_widths = c(.4, .6))
-dev.off()
+    
+    plot_grid(plot1, plot2,
+              rel_widths = c(.4, .6))
+    dev.off()
 
 
 # TSNE by cell type pre and post drop (already harmonized)
-# pre-drop 
-pdf(here(plot_dir, "forOneDrive", "sfigu_TSNE_harmony_preDrop_byCellType.pdf"), 
-    width = 9, height = 4)
-    plot1_dirty <- plotReducedDim(sce_dirty, dimred = "TSNE") +
-      geom_point(aes(color = sce_dirty$final_Annotations)) + 
+      # pre-drop 
+        # pdf
+      pdf(here(plot_dir, "forOneDrive", "sfigu_TSNE_harmony_preDrop_byCellType.pdf"), 
+          width = 9, height = 4)
+          plot1_dirty <- plotReducedDim(sce_dirty, dimred = "TSNE") +
+            geom_point(aes(color = sce_dirty$final_Annotations)) + 
+            theme(legend.position = "none") +
+            guides(color = guide_legend(title="Cell Type")) + 
+            scale_colour_manual(values = sn_colors) + 
+            labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+          
+          plot2_dirty <- plotReducedDim(sce_dirty, dimred = "TSNE") +
+            geom_point(aes(color = sce_dirty$final_Annotations)) + 
+            facet_wrap(~ sce_dirty$final_Annotations) + 
+            guides(color = guide_legend(title="Cell Type")) + 
+            scale_colour_manual(values = sn_colors) + 
+            labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+            
+            plot_grid(plot1_dirty, plot2_dirty,
+                      nrow = 1,
+                      rel_widths = c(.4, .6))
+      dev.off()
+        # png
+      png(here(plot_dir, "forOneDrive", "sfigu_TSNE_harmony_preDrop_byCellType.png"), 
+          width = 9, height = 4, units = "in", res = 1200)
+      plot1_dirty <- plotReducedDim(sce_dirty, dimred = "TSNE") +
+        geom_point(aes(color = sce_dirty$final_Annotations)) + 
+        theme(legend.position = "none") +
+        guides(color = guide_legend(title="Cell Type")) + 
+        scale_colour_manual(values = sn_colors) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+      plot2_dirty <- plotReducedDim(sce_dirty, dimred = "TSNE") +
+        geom_point(aes(color = sce_dirty$final_Annotations)) + 
+        facet_wrap(~ sce_dirty$final_Annotations) + 
+        guides(color = guide_legend(title="Cell Type")) + 
+        scale_colour_manual(values = sn_colors) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+      
+      plot_grid(plot1_dirty, plot2_dirty,
+                nrow = 1,
+                rel_widths = c(.4, .6))
+      dev.off()
+
+  # post-drop
+    # pdf 
+    pdf(here(plot_dir, "forOneDrive", "sfigu_TSNE_harmony_postDrop_byCellType.pdf"), 
+        width = 9, height = 4)
+    
+      plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$final_Annotations)) + 
+        theme(legend.position = "none") +
+        guides(color = guide_legend(title="Cell Type")) + 
+        scale_colour_manual(values = sn_colors) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+      
+      plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$final_Annotations)) + 
+        facet_wrap(~ sce$final_Annotations) + 
+        guides(color = guide_legend(title="Cell Type")) + 
+        scale_colour_manual(values = sn_colors) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+        plot_grid(plot1, plot2,
+                  nrow = 1,
+                  rel_widths = c(.4, .6))
+    dev.off()
+    # png
+    png(here(plot_dir, "forOneDrive", "sfigu_TSNE_harmony_postDrop_byCellType.png"), 
+        width = 9, height = 4, units = "in", res = 1200)
+    
+    plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+      geom_point(aes(color = sce$final_Annotations)) + 
       theme(legend.position = "none") +
       guides(color = guide_legend(title="Cell Type")) + 
       scale_colour_manual(values = sn_colors) + 
       labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
     
-    plot2_dirty <- plotReducedDim(sce_dirty, dimred = "TSNE") +
-      geom_point(aes(color = sce_dirty$final_Annotations)) + 
-      facet_wrap(~ sce_dirty$final_Annotations) + 
+    
+    plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+      geom_point(aes(color = sce$final_Annotations)) + 
+      facet_wrap(~ sce$final_Annotations) + 
       guides(color = guide_legend(title="Cell Type")) + 
       scale_colour_manual(values = sn_colors) + 
       labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-
-      
-      plot_grid(plot1_dirty, plot2_dirty,
-                nrow = 1,
-                rel_widths = c(.4, .6))
-dev.off()
-
-# post-drop
-pdf(here(plot_dir, "forOneDrive", "sfigu_TSNE_harmony_postDrop_byCellType.pdf"), 
-    width = 9, height = 4)
-
-  plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$final_Annotations)) + 
-    theme(legend.position = "none") +
-    guides(color = guide_legend(title="Cell Type")) + 
-    scale_colour_manual(values = sn_colors) + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-  
-  
-  plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$final_Annotations)) + 
-    facet_wrap(~ sce$final_Annotations) + 
-    guides(color = guide_legend(title="Cell Type")) + 
-    scale_colour_manual(values = sn_colors) + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-  
+    
     plot_grid(plot1, plot2,
               nrow = 1,
               rel_widths = c(.4, .6))
-dev.off()
-
+    dev.off()
 
 # TSNE pre and post Harmony, colored by NeuN-sorting and faceted by Sample ID.
 # grabbing NeuN data for sce uncorrected
 sce_uncorrected$NeuN <- sce_dirty$NeuN[match(sce_uncorrected$Barcode, sce_dirty$Barcode)]
 
 # pre-harmony
-pdf(here(plot_dir, "forOneDrive", "sfigu_TSNE_preHarmony_colorByNeuNSort.pdf"), 
-    width = 7.5, height = 3.5)
-
-  plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-    geom_point(aes(color = sce_uncorrected$NeuN)) + 
-    theme(legend.position = "none") + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-  plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
-    geom_point(aes(color = sce_uncorrected$NeuN)) +
-    facet_wrap(~ sce_uncorrected$Sample) + 
-    scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No')) + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    # pdf 
+    pdf(here(plot_dir, "forOneDrive", "sfigu_TSNE_preHarmony_colorByNeuNSort.pdf"), 
+        width = 7.5, height = 3.5)
+    
+      plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+        geom_point(aes(color = sce_uncorrected$NeuN)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+        geom_point(aes(color = sce_uncorrected$NeuN)) +
+        facet_wrap(~ sce_uncorrected$Sample) + 
+        scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No')) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+        
+        plot_grid(plot1_unc, plot2_unc, 
+                  nrow = 1,
+                  rel_widths = c(.4, .6))
+    dev.off()
+    # png
+    png(here(plot_dir, "forOneDrive", "sfigu_TSNE_preHarmony_colorByNeuNSort.png"), 
+        width = 7.5, height = 3.5, units = "in", res = 1200)
+    
+    plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+      geom_point(aes(color = sce_uncorrected$NeuN)) + 
+      theme(legend.position = "none") + 
+      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "TSNE") +
+      geom_point(aes(color = sce_uncorrected$NeuN)) +
+      facet_wrap(~ sce_uncorrected$Sample) + 
+      scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No')) + 
+      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
     
     plot_grid(plot1_unc, plot2_unc, 
               nrow = 1,
               rel_widths = c(.4, .6))
-dev.off()
+    dev.off()
 
-# post-harmony 
-pdf(here(plot_dir, "forOneDrive", "sfigu_TSNE_postHarmony_colorByNeuNSort.pdf"), 
-    width = 7.5, height = 3.5)
-  plot1 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$NeuN)) + 
-    theme(legend.position = "none") + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-  
-  plot2 <- plotReducedDim(sce, dimred = "TSNE") +
-    geom_point(aes(color = sce$NeuN)) +
-    facet_wrap(~ sce$Sample) + 
-    scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No')) + 
-    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
-
+    # post-harmony 
+    # pdf 
+    pdf(here(plot_dir, "forOneDrive", "sfigu_TSNE_postHarmony_colorByNeuNSort.pdf"), 
+        width = 7.5, height = 3.5)
+      plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$NeuN)) + 
+        theme(legend.position = "none") + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+      
+      plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+        geom_point(aes(color = sce$NeuN)) +
+        facet_wrap(~ sce$Sample) + 
+        scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No')) + 
+        labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
+        plot_grid(plot1, plot2,
+                  nrow = 1,
+                  rel_widths = c(.4, .6))
+    dev.off()
+    # png 
+    png(here(plot_dir, "forOneDrive", "sfigu_TSNE_postHarmony_colorByNeuNSort.png"), 
+        width = 7.5, height = 3.5, units = "in", res = 1200)
+    plot1 <- plotReducedDim(sce, dimred = "TSNE") +
+      geom_point(aes(color = sce$NeuN)) + 
+      theme(legend.position = "none") + 
+      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
+    plot2 <- plotReducedDim(sce, dimred = "TSNE") +
+      geom_point(aes(color = sce$NeuN)) +
+      facet_wrap(~ sce$Sample) + 
+      scale_color_discrete(name = "NeuN Sorted?", labels=c('Yes', 'No')) + 
+      labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    
     plot_grid(plot1, plot2,
               nrow = 1,
               rel_widths = c(.4, .6))
-dev.off()
+    dev.off()
 
 # Done.

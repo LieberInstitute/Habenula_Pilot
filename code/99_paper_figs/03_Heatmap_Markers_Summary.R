@@ -211,10 +211,16 @@ pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Anno_FINAL.pdf"), width = 12
 dev.off()
 
 #### FOR ONE DRIVE 
+# pdf
 pdf(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.pdf"), width = 12, height = 8)
   heatmapped
 dev.off()
 
+# png
+png(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.png"), 
+    width = 12, height = 8, units = "in", res = 1200)
+heatmapped
+dev.off()
 
 
 # Done.

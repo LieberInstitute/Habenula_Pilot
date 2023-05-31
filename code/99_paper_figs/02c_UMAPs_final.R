@@ -132,27 +132,45 @@ dev.off()
 ##### for OneDrive Pieces ######################################################
 # UMAP pre and post harmony by Sample 
 # pre-harmony
-pdf(here(plot_dir, "forOneDrive" , "sfigu_preHarmony_UMAP_bySample.pdf"), 
-    width = 7, height = 3.5)
-
-  plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
-    geom_point(aes(color = sce_uncorrected$Sample)) + 
-    theme(legend.position = "none") + 
-    labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
-  plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
-    geom_point(aes(color = sce_uncorrected$Sample)) + 
-    facet_wrap(~ sce_uncorrected$Sample) + 
-    guides(color = guide_legend(title="Sample ID")) + 
-    labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
-      
-      plot_grid(plot1_unc, plot2_unc,
-                nrow = 1)
-dev.off()
+    # pdf 
+    pdf(here(plot_dir, "forOneDrive" , "sfigu_preHarmony_UMAP_bySample.pdf"), 
+        width = 7, height = 3.5)
+    
+      plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
+        geom_point(aes(color = sce_uncorrected$Sample)) + 
+        theme(legend.position = "none") + 
+        labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+      plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
+        geom_point(aes(color = sce_uncorrected$Sample)) + 
+        facet_wrap(~ sce_uncorrected$Sample) + 
+        guides(color = guide_legend(title="Sample ID")) + 
+        labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+          
+          plot_grid(plot1_unc, plot2_unc,
+                    nrow = 1)
+    dev.off()
+    # png
+    png(here(plot_dir, "forOneDrive" , "sfigu_preHarmony_UMAP_bySample.png"), 
+        width = 7, height = 3.5, units = "in", res = 1200)
+    
+    plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
+      geom_point(aes(color = sce_uncorrected$Sample)) + 
+      theme(legend.position = "none") + 
+      labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+    plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
+      geom_point(aes(color = sce_uncorrected$Sample)) + 
+      facet_wrap(~ sce_uncorrected$Sample) + 
+      guides(color = guide_legend(title="Sample ID")) + 
+      labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+    
+    plot_grid(plot1_unc, plot2_unc,
+              nrow = 1)
+    dev.off()
 
 # post-harmony
-pdf(here(plot_dir, "forOneDrive" , "sfigu_preHarmony_UMAP_bySample.pdf"), 
-    width = 7, height = 3.5)
-
+# pdf 
+png(here(plot_dir, "forOneDrive" , "sfigu_postHarmony_UMAP_bySample.png"), 
+    width = 7, height = 3.5, units = "in", res = 1200)
   plot1 <- plotReducedDim(sce, dimred = "UMAP") +
     geom_point(aes(color = sce$Sample)) + 
     theme(legend.position = "none") + 
@@ -165,6 +183,22 @@ pdf(here(plot_dir, "forOneDrive" , "sfigu_preHarmony_UMAP_bySample.pdf"),
   
       plot_grid(plot1, plot2,
               nrow = 1)
+dev.off()
+# png
+pdf(here(plot_dir, "forOneDrive" , "sfigu_postHarmony_UMAP_bySample.pdf"), 
+    width = 7, height = 3.5)
+plot1 <- plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$Sample)) + 
+  theme(legend.position = "none") + 
+  labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+plot2 <- plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$Sample)) + 
+  facet_wrap(~ sce$Sample) + 
+  guides(color = guide_legend(title="Sample ID")) + 
+  labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+
+plot_grid(plot1, plot2,
+          nrow = 1)
 dev.off()
 
 # UMAP pre and post harmony colored by Sample, faceted by Run
@@ -179,28 +213,66 @@ sce$Run <- recode(sce$Run,
                   "3" = "Run 3")
 
 # pre-harmony
-pdf(here(plot_dir, "forOneDrive" , "sfigu_preHarmony_UMAP_byRun.pdf"), 
-    width = 8, height = 3)
-
-  plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
-    geom_point(aes(color = sce_uncorrected$Sample)) + 
-    theme(legend.position = "none") + 
-    labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
-  plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
-    geom_point(aes(color = sce_uncorrected$Sample)) + 
-    facet_wrap(~ sce_uncorrected$Run) + 
-    guides(color = guide_legend(title="Sample ID")) + 
-    labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
-
+    # pdf 
+    pdf(here(plot_dir, "forOneDrive" , "sfigu_preHarmony_UMAP_byRun.pdf"), 
+        width = 8, height = 3)
+    
+      plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
+        geom_point(aes(color = sce_uncorrected$Sample)) + 
+        theme(legend.position = "none") + 
+        labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+      plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
+        geom_point(aes(color = sce_uncorrected$Sample)) + 
+        facet_wrap(~ sce_uncorrected$Run) + 
+        guides(color = guide_legend(title="Sample ID")) + 
+        labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+    
+        plot_grid(plot1_unc, plot2_unc,
+                  nrow = 1,
+                  rel_widths = c(.3, .7))
+    dev.off()
+    # png
+    png(here(plot_dir, "forOneDrive" , "sfigu_preHarmony_UMAP_byRun.png"), 
+        width = 8, height = 3, units = "in", res = 1200)
+    
+    plot1_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
+      geom_point(aes(color = sce_uncorrected$Sample)) + 
+      theme(legend.position = "none") + 
+      labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+    plot2_unc <- plotReducedDim(sce_uncorrected, dimred = "UMAP") +
+      geom_point(aes(color = sce_uncorrected$Sample)) + 
+      facet_wrap(~ sce_uncorrected$Run) + 
+      guides(color = guide_legend(title="Sample ID")) + 
+      labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+    
     plot_grid(plot1_unc, plot2_unc,
               nrow = 1,
               rel_widths = c(.3, .7))
-dev.off()
+    dev.off()
+
 
 # post-harmony
-pdf(here(plot_dir, "forOneDrive" , "sfigu_postHarmony_UMAP_byRun.pdf"), 
-    width = 8, height = 3)
-  
+  # pdf 
+  pdf(here(plot_dir, "forOneDrive" , "sfigu_postHarmony_UMAP_byRun.pdf"), 
+      width = 8, height = 3)
+    plot1 <- plotReducedDim(sce, dimred = "UMAP") +
+      geom_point(aes(color = sce$Sample)) + 
+      theme(legend.position = "none") + 
+      labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+    
+    plot2 <- plotReducedDim(sce, dimred = "UMAP") +
+      geom_point(aes(color = sce$Sample)) + 
+      facet_wrap(~ sce$Run) + 
+      guides(color = guide_legend(title="Sample ID")) + 
+      labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+      
+      plot_grid(plot1_unc, plot2_unc, 
+                nrow = 1,
+                rel_widths = c(.3, .7))
+  dev.off()
+# png
+  png(here(plot_dir, "forOneDrive" , "sfigu_postHarmony_UMAP_byRun.png"), 
+      width = 8, height = 3, units = "in", res = 1200)
   plot1 <- plotReducedDim(sce, dimred = "UMAP") +
     geom_point(aes(color = sce$Sample)) + 
     theme(legend.position = "none") + 
@@ -211,13 +283,14 @@ pdf(here(plot_dir, "forOneDrive" , "sfigu_postHarmony_UMAP_byRun.pdf"),
     facet_wrap(~ sce$Run) + 
     guides(color = guide_legend(title="Sample ID")) + 
     labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
-    
-    plot_grid(plot1_unc, plot2_unc, 
-              nrow = 1,
-              rel_widths = c(.3, .7))
-dev.off()
+  
+  plot_grid(plot1_unc, plot2_unc, 
+            nrow = 1,
+            rel_widths = c(.3, .7))
+  dev.off()
 
 ## UMAP by cell type facet wrapped
+  # pdf 
 pdf(here(plot_dir, "forOneDrive", "sfigu_UMAP_byCellType_faceted.pdf"),
     width = 9, height = 4)
 
@@ -238,6 +311,26 @@ pdf(here(plot_dir, "forOneDrive", "sfigu_UMAP_byCellType_faceted.pdf"),
             rel_widths = c(.4, .6))
 dev.off()
 
+# png
+png(here(plot_dir, "forOneDrive", "sfigu_UMAP_byCellType_faceted.png"),
+    width = 9, height = 4, units = "in", res = 1200)
+
+plot1 <- plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = sn_colors) +
+  theme(legend.position = "none") + 
+  labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+
+plot2 <- plotReducedDim(sce, dimred = "UMAP") +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = sn_colors) +
+  facet_wrap(~ sce$final_Annotations) +
+  guides(color = guide_legend(title="Cell Type")) + 
+  labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
+
+plot_grid(plot1, plot2,
+          rel_widths = c(.4, .6))
+dev.off()
 
 
 # 

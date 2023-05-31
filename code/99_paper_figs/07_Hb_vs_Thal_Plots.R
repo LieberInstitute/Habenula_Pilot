@@ -52,7 +52,8 @@ dev.off()
 
 
 ##### FOR ONE DRIVE PIECES #####################################################
-pdf(here(plot_dir, "forOneDrive","sfigu_PC2vsPC3_HabvsThalModality_.pdf"),
+# pdf 
+pdf(here(plot_dir, "forOneDrive","sfigu_PC2vsPC3_HabvsThalModality.pdf"),
     width = 8, height = 4.5)
     plot1 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
       geom_point(aes(color = sce$final_Annotations)) +
@@ -70,8 +71,24 @@ pdf(here(plot_dir, "forOneDrive","sfigu_PC2vsPC3_HabvsThalModality_.pdf"),
             rel_widths = c(.4, .6))
 dev.off()
 
+# png
+png(here(plot_dir, "forOneDrive","sfigu_PC2vsPC3_HabvsThalModality.png"),
+    width = 8, height = 4.5, units = "in", res = 1200)
+plot1 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = sn_colors) +
+  theme(legend.position = "none")
 
+plot2 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
+  geom_point(aes(color = sce$final_Annotations)) +
+  scale_colour_manual(values = sn_colors) +
+  facet_wrap(~ sce$final_Annotations) +
+  guides(color = guide_legend(title="Cell Type")) + 
+  theme(axis.text = element_text(size = 6)) 
 
+plot_grid(plot1, plot2,
+          rel_widths = c(.4, .6))
+dev.off()
 
 
 
