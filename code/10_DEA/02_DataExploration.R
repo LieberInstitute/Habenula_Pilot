@@ -166,10 +166,17 @@ for (sample_var in sample_variables) {
     ggsave(paste(here("plots/10_DEA/QC_boxplots_"), sample_var, ".pdf", sep = ""), width = 35, height = 30, units = "cm")
 }
 
+###############################################################################
 
-## Correlation between AgeDeath and the QC variables in habenula samples
+
+
+################## Correlation plots: AgeDeath - qc_metrics ###################
+
+## NOTE: This section is done with unfiltered and not normalized counts
+
 rse_gene_df <- data.frame(colData(rse_gene))
 
+## Calculate correlations with Pearson
 corrs_age <- sapply(
     qc_metrics,
     function(x) {
@@ -177,7 +184,8 @@ corrs_age <- sapply(
     }
 )
 
-plot_corrs = function(qc_metric){
+## Function to plot
+plot_correlations <- function(qc_metric) {
     ggplot(rse_gene_df, aes_string(x = "AgeDeath", y = qc_metric)) +
         geom_point(aes_string(colour = "PrimaryDx")) +
         scale_color_manual(values = c("Schizo" = "darkgoldenrod3", "Control" = "turquoise3")) +
@@ -186,9 +194,28 @@ plot_corrs = function(qc_metric){
         xlab("Age (when death)") +
         ylab(str_replace_all(qc_metric, pattern = "_", replacement = " ")) +
         annotate("text",
-            x = max(rse_gene_df$AgeDeath) - max(rse_gene_df$AgeDeath)/10,
-            y = max(rse_gene_df[,qc_metric]) - (max(rse_gene_df[,qc_metric]) - min(rse_gene_df[,qc_metric]))/10,
-            label = paste0("r = ", corrs_age[qc_metric]))
+            x = max(rse_gene_df$AgeDeath) - max(rse_gene_df$AgeDeath) / 10,
+            y = max(rse_gene_df[, qc_metric]) - (max(rse_gene_df[, qc_metric]) - min(rse_gene_df[, qc_metric])) / 10,
+            label = paste0("r = ", corrs_age[qc_metric])
+        )
+}
+
+corr_plots <- lapply(qc_metrics, plot_correlations)
+ggsave(
+    here(
+        "plots",
+        "10_DEA",
+        "Corr_AgeDeath_vs_QCmetrics.pdf"
+    ),
+    plot_grid(plotlist = corr_plots, nrow = 3),
+    width = 40,
+    height = 30,
+    units = "cm"
+)
+
+###############################################################################
+
+
 }
 
 corr_plots <- lapply(qc_metrics, plot_corrs)
