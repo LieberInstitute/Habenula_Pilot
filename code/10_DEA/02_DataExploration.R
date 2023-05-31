@@ -96,6 +96,17 @@ table(colData(rse_gene)$Flowcell)
 # HVYTYBBXX HW252BBXX
 #        34        35
 
+load(
+    here(
+        "processed-data",
+        "10_DEA",
+        "rse_gene_filt.Rdata"
+    ),
+    verbose = TRUE
+)
+# Loading objects:
+#   rse_gene_filt
+
 ###############################################################################
 
 
