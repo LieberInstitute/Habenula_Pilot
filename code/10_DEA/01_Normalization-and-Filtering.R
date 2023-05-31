@@ -80,6 +80,22 @@ filt_assay <- assays(rse_gene)$logcounts[rownames(assay(rse_gene)) %in% rownames
 
 ###############################################################################
 
+
+############################# Save filtered data ##############################
+
+## Save rdata file with filtered and normalized counts
+save(rse_gene_filt,
+    file = here(
+        "processed-data",
+        "10_DEA",
+        "rse_gene_filt.Rdata"
+    )
+)
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
