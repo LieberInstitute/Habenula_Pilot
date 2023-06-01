@@ -145,8 +145,8 @@ prop_clean_bulk <- pd_bulk[,c("bulkTypeSepHb", "Sample", "NeuN")] |>
 
 ### combines prop_dirty and prop_clean
 prop_ambig_plus_bulk <- prop_dirty_bulk |>
-  mutate(ambig = "Pre-drop") |>
-  bind_rows(prop_clean_bulk |> mutate(ambig = "Post-drop")) |> 
+  mutate(Drop = "Pre-drop") |>
+  bind_rows(prop_clean_bulk |> mutate(Drop = "Post-drop")) |> 
   mutate(ct_levels = factor(bulkTypeSepHb, levels = 
                               c("Excit.Neuron",
                                 "Astrocyte", 
@@ -161,13 +161,13 @@ prop_ambig_plus_bulk <- prop_dirty_bulk |>
                                 "LHb")) ) |>
   arrange(ct_levels)
 
-prop_ambig_plus_bulk$ambig <- factor(prop_ambig_plus_bulk$ambig, 
+prop_ambig_plus_bulk$Drop <- factor(prop_ambig_plus_bulk$Drop, 
                                   levels = c("Pre-drop", "Post-drop"))
 
 
 # plots composition plot using prop_clean and prop_dirty
 comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample, 
-                              y = prop, fill = bulkTypeSepHb)) +
+                              y = prop, fill = bulkTypeSepHb, group = Drop)) +
   geom_bar(stat = "identity") +
   geom_text(
     aes(
@@ -179,17 +179,20 @@ comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample,
   ) +
   scale_fill_manual(values = c(bulk_colors)) +
   labs(y = "Proportion", fill = "Cell Type") +
-  facet_grid(fct_rev(ambig) ~ NeuN, scales = "free", space = "free") +
+  facet_grid(Drop ~ NeuN, scales = "free", space = "free") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  guides(color = "none", fill = guide_legend(ncol = 1))
-
+  guides(color = "none", fill = guide_legend(ncol = 1,
+                                             reverse = TRUE))
+# pdf version
 pdf(file = here(plot_dir, "sce_Comp_Plot_BROAD.pdf"), width = 7, height = 11)
   comp_plot_both_bulk
 dev.off()
 
-
-
+# png version 
+png(file = here(plot_dir, "sce_Comp_Plot_BROAD.png"), width = 7, height = 11)
+  comp_plot_both_bulk
+dev.off()
 
 # # plotting total nuclei information per sample
 # barplot_n_nuc_bulk <- ggplot(prop_ambig_plus_bulk, 
