@@ -54,6 +54,27 @@ ggsave(filename = here("plots/10_DEA/ExplanatoryVars.pdf"), varience_plot, width
 ###############################################################################
 
 
+
+######################### Correlation between variables #######################
+
+formula <- ~ mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + log10_library_size + detected_num_genes + RIN
+
+corpairs <- canCorPairs(formula, colData(rse_gene_filt))
+
+pheatmap(
+        corpairs,
+        color = hcl.colors(50, "YlOrRd", rev = TRUE),
+        fontsize = 8,
+        border_color = "black",
+        height = 6,
+        width = 6.5,
+        filename = here("plots/10_DEA/CCA_heatmap.pdf")
+    )
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
