@@ -80,9 +80,10 @@ comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop,
     aes(
       label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
     ),
-    size = 2.5,
+    size = 3,
     position = position_stack(vjust = 0.5),
-    color = "black"
+    color = "black",
+    family = "bold"
   ) +
   scale_fill_manual(values = c(sn_colors)) +
   labs(y = "Proportion", fill = "Cell Type") +
@@ -91,8 +92,14 @@ comp_plot_both_sn <- ggplot(data = prop_ambig_plus_sn, aes(x = Sample, y = prop,
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(color = "none", fill = guide_legend(ncol = 1,
                                              reverse = TRUE))
-
+# pdf version
 pdf(file = here(plot_dir, "sce_Comp_Plot_GRANULAR.pdf"), width = 7, height = 11)
+  comp_plot_both_sn
+dev.off()
+
+# png version 
+png(file = here(plot_dir, "sce_Comp_Plot_GRANULAR.png"), width = 7, height = 11, 
+    units = "in", res = 1200)
   comp_plot_both_sn
 dev.off()
 
@@ -173,7 +180,7 @@ comp_plot_both_bulk <- ggplot(data = prop_ambig_plus_bulk, aes(x = Sample,
     aes(
       label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
     ),
-    size = 2.5,
+    size = 3,
     position = position_stack(vjust = 0.5),
     color = "black"
   ) +
@@ -190,7 +197,8 @@ pdf(file = here(plot_dir, "sce_Comp_Plot_BROAD.pdf"), width = 7, height = 11)
 dev.off()
 
 # png version 
-png(file = here(plot_dir, "sce_Comp_Plot_BROAD.png"), width = 7, height = 11)
+png(file = here(plot_dir, "sce_Comp_Plot_BROAD.png"), width = 7, height = 11,
+    units = "in", res = 1200)
   comp_plot_both_bulk
 dev.off()
 

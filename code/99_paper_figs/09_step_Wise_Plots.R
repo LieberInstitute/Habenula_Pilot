@@ -54,9 +54,16 @@ TSNE_facet <- plotReducedDim(sce, dimred = "TSNE") +
   geom_point(aes(color = sce$bulkTypeSepHb)) +
   scale_colour_manual(values = bulk_colors) +
   facet_wrap(~ sce$bulkTypeSepHb) +
-  guides(color = guide_legend(title="Cell Type"))
+  guides(color = guide_legend(title="Cell Type")) +
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
 pdf(file = here(plot_dir, "bulk_clean_TSNE.pdf"), width = 9, height = 5)
+  plot_grid(TSNE, TSNE_facet)
+dev.off()
+
+# for One Drive
+png(file = here(plot_dir, "mfigu_TSNE_by_CellType_CLEAN_FACETED_A.png"), width = 9, height = 5,
+    units = "in", res = 1200)
   plot_grid(TSNE, TSNE_facet)
 dev.off()
 
@@ -86,6 +93,13 @@ pdf(file = here(plot_dir, "num_nuclei_post_clean.pdf"), width = 15, height = 6)
   num_nuc_comp_plot 
 dev.off()
 
+# for One Drive
+png(file = here(plot_dir, "mfigu_num_Nuclei_by_CellType_CLEAN_B.png"), width = 7, height = 6,
+    units = "in", res = 1200)
+  num_nuc_comp_plot 
+dev.off()
+
+
 ############ PLOT 3: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
 prop_df <- as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
   group_by(Sample, bulkTypeSepHb) |>
@@ -112,6 +126,11 @@ comp_plot <- ggplot(prop_df,
 
 
 pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height = 9)
+  comp_plot
+dev.off()
+
+png(file = here(plot_dir, "mfigu_sce_Sample_Comp_Plot_C.png"), width = 10, height = 9,
+    units = "in", res = 1200)
   comp_plot
 dev.off()
 
