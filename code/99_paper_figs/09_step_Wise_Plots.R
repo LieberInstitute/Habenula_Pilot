@@ -129,7 +129,8 @@ pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height =
   comp_plot
 dev.off()
 
-png(file = here(plot_dir, "mfigu_sce_Sample_Comp_Plot_C.png"), width = 10, height = 9,
+# for One Drive
+png(file = here(plot_dir, "mfigu_sce_Sample_Comp_Plot_CLEAN_C.png"), width = 7, height = 6,
     units = "in", res = 1200)
   comp_plot
 dev.off()
