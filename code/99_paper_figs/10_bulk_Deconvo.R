@@ -27,7 +27,7 @@ load(here("processed-data", "02_bulk_qc", "count_data_bukola",
 # rse_gene
 
 # creating plotting directory
-plot_dir <- here("plots", "99_paper_figs", "10_bulk_Deconvo", "OPC_clean")
+plot_dir <- here("plots", "99_paper_figs", "10_bulk_Deconvo", "forOneDrive")
   # if(!dir.exists(plot_dir)){
   #   dir.create(plot_dir)
   # }
@@ -103,14 +103,23 @@ marker_stats$Top25 <- "No"
 marker_stats[which(marker_stats$rank_ratio <= 25), "Top25"] <- "Yes"
 
 # plotting hockey sticks 
-pdf(here(plot_dir, "hockeysticks_Official.pdf"))
-ggplot(marker_stats, aes(ratio, std.logFC)) +
-  geom_point(size = 0.5, aes(colour = Top25)) +  
-  facet_wrap(~cellType.target, scales = "free") +
-  labs(x = "Mean Ratio") +
-  guides(colour = guide_legend(title = "Top 25 Marker"))
+pdf(file = here(plot_dir, "hockeysticks_Official.pdf"))
+  ggplot(marker_stats, aes(ratio, std.logFC)) +
+    geom_point(size = 0.5, aes(colour = Top25)) +  
+    facet_wrap(~cellType.target, scales = "free") +
+    labs(x = "Mean Ratio") +
+    guides(colour = guide_legend(title = "Top 25 Marker"))
 dev.off()
 
+# for One Drive
+png(file = here(plot_dir, "hockeysticks_Official.png"), width = 6, height = 6,
+    units = "in", res = 1200)
+  ggplot(marker_stats, aes(ratio, std.logFC)) +
+    geom_point(size = 0.5, aes(colour = Top25)) +  
+    facet_wrap(~cellType.target, scales = "free") +
+    labs(x = "Mean Ratio") +
+    guides(colour = guide_legend(title = "Top 25 Marker"))
+dev.off()
 
 ##### Running BISQUE ###########################################################
 ## creating marker_list of top 25 genes
@@ -200,6 +209,39 @@ comp_plot <- ggplot(prop_long,
 comp_plot
 
 dev.off()
+
+# for One Drive
+png(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.png"), width = 21, height = 11,
+    units = "in", res = 1200)
+comp_plot <- ggplot(prop_long, 
+                    aes(x = Br_Order, y = prop_perc, fill = factor_CT)) +
+  geom_col() +
+  geom_text(
+    data = subset(prop_long, prop_perc >= 1),
+    aes(
+      label = round(prop_perc, 1)
+    ), 
+    size = 4,
+    position = position_stack(vjust = 0.4),
+    angle = -90,
+    fontface = "bold",
+    colour = "black"
+  ) +
+  scale_fill_manual(values = alpha(bulk_colors, 0.8)) +
+  theme_bw() +
+  theme(legend.position = "bottom", 
+        axis.text.x = element_text(angle = 45, hjust = 1), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 16),
+        plot.title = element_text(size = 16, hjust = 0.5)) +
+  ggtitle("Bulk Deconvolution") +
+  ylab("Proportion") +
+  guides(fill = guide_legend(title= "Cell Type"))
+
+comp_plot
+
+dev.off()
+
   
   # pdf(here(plot_dir, "bulk_Deconvo_Composition_OPC_clean.pdf"), width = 21, height = 12)
   #   plot_composition_bar(prop_long = prop_long, sample_col = "Br_Order",
