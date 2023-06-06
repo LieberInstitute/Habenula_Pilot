@@ -44,6 +44,7 @@ colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
 colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
     length(x[which(x > 0)])
 })
+colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
 
 ###############################################################################
 
