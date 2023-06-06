@@ -34,8 +34,8 @@ class(rse_gene_filt)
 ############################## Variance explained #############################
 
 ## Set up qc_metrics and colors for the plot
-qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "log10_library_size", "detected_num_genes", "RIN")
-colors <- c("mitoRate" = "turquoise4", "rRNA_rate" = "bisque2", "overallMapRate" = "indianred1", "totalAssignedGene" = "blueviolet", "concordMapRate" = "lightsalmon", "log10_library_size" = "palegreen3", "detected_num_genes" = "skyblue2", "RIN" = "blue3")
+qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "library_size", "detected_num_genes", "RIN", "abs_ERCCsumLogErr", "PrimaryDx", "Flowcell", "AgeDeath")
+colors <- c("mitoRate" = "turquoise4", "rRNA_rate" = "bisque2", "overallMapRate" = "indianred1", "totalAssignedGene" = "blueviolet", "concordMapRate" = "lightsalmon", "library_size" = "palegreen3", "detected_num_genes" = "skyblue2", "RIN" = "blue3", "abs_ERCCsumLogErr" = "#06d6a0", "PrimaryDx" = "#a14a76","Flowcell" = "#fdc500", "AgeDeath" = "#dda15e")
 
 exp_vars <- getVarianceExplained(rse_gene_filt, variables = qc_metrics, exprs_values = "logcounts")
 
