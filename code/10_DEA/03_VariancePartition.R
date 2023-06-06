@@ -92,6 +92,28 @@ ggsave(
 
 
 
+######################## Variance partition - filtered ########################
+
+## Plots without overallMapRate, concordMapRate, detected_num_genes
+formula <-  ~ (1|PrimaryDx) + AgeDeath + (1|Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + library_size
+
+varPart <- fitExtractVarPartModel(assays(rse_gene_filt)$logcounts, formula, colData(rse_gene_filt))
+# Warning messages:
+# 1: Some predictor variables are on very different scales: consider rescaling
+
+# Sort variables by median fraction of variance explained
+vp <- sortCols(varPart)
+
+p <- plotVarPart(vp)
+ggsave(
+    filename = here("plots/10_DEA/VarPartition_filtered.pdf"),
+    p, width = 40, height = 20, units = "cm"
+)
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
