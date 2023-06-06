@@ -77,7 +77,7 @@ if (length(genes_var_zero) > 0) {
     rse_gene_filt <- rse_gene_filt[-genes_var_zero, ]
 }
 
-formula <- ~ mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + log10_library_size + detected_num_genes + RIN
+formula <- ~ mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN +  abs_ERCCsumLogErr + PrimaryDx + Flowcell + AgeDeath
 
 ## Loop over each gene to fit model and extract variance explained by each variable
 varPart <- fitExtractVarPartModel(assays(rse_gene_filt)$logcounts, formula, colData(rse_gene_filt))
