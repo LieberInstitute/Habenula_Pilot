@@ -120,8 +120,9 @@ colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
 colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
     length(x[which(x > 0)])
 })
+colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
 
-qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "log10_library_size", "detected_num_genes", "RIN")
+qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "log10_library_size", "detected_num_genes", "RIN", "abs_ERCCsumLogErr")
 sample_variables <- c("PrimaryDx", "Flowcell")
 
 
@@ -162,7 +163,7 @@ for (sample_var in sample_variables) {
         plots[[i]] <- QC_boxplots(qc_metric, sample_var)
         i <- i + 1
     }
-    plot_grid(plots[[1]], plots[[2]], plots[[3]], plots[[4]], plots[[5]], plots[[6]], plots[[7]], plots[[8]], nrow = 3)
+    plot_grid(plotlist = plots, nrow = 3)
     ggsave(paste(here("plots/10_DEA/QC_boxplots_"), sample_var, ".pdf", sep = ""), width = 35, height = 30, units = "cm")
 }
 
