@@ -52,7 +52,7 @@ ggsave(filename = here("plots/10_DEA/ExplanatoryVars.pdf"), varience_plot, width
 
 ######################### Correlation between variables #######################
 
-formula <- ~ mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + log10_library_size + detected_num_genes + RIN
+formula <- ~ mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN +  abs_ERCCsumLogErr + PrimaryDx + Flowcell + AgeDeath
 
 corpairs <- canCorPairs(formula, colData(rse_gene_filt))
 
