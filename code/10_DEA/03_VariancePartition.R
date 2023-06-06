@@ -1,9 +1,9 @@
 library("here")
 library("SummarizedExperiment")
-library("variancePartition")
 library("scater")
-library("ggplot2")
+library("variancePartition")
 library("pheatmap")
+library("ggplot2")
 library("sessioninfo")
 
 
