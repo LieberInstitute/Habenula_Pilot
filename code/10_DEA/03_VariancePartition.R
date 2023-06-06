@@ -72,15 +72,12 @@ pheatmap(
 
 ############################## Variance partition #############################
 
-genes_var_zero <- which(apply(assays(rse_gene_filt)$logcounts, 1, var) == 0)
-if (length(genes_var_zero) > 0) {
-    rse_gene_filt <- rse_gene_filt[-genes_var_zero, ]
-}
-
-formula <- ~ mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN +  abs_ERCCsumLogErr + PrimaryDx + Flowcell + AgeDeath
+formula <- ~ (1|PrimaryDx) + AgeDeath + (1|Flowcell) + mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN + abs_ERCCsumLogErr
 
 ## Loop over each gene to fit model and extract variance explained by each variable
 varPart <- fitExtractVarPartModel(assays(rse_gene_filt)$logcounts, formula, colData(rse_gene_filt))
+# Warning messages:
+# 1: Some predictor variables are on very different scales: consider rescaling
 
 # Sort variables by median fraction of variance explained
 vp <- sortCols(varPart)
