@@ -12,11 +12,9 @@ library("scater")
 library("EnsDb.Hsapiens.v86")
 #BiocManager::install("org.Rn.eg.db")
 library("org.Hs.eg.db")
-library("org.Mm.eg.db")
-library("Mus.musculus")
-# library("wget")
-# library("BSgenome.Mmusculus.UCSC.mm10")
-library("RCurl")
+# library("RCurl")
+library("AnnotationHub")
+
 
 # loading our final sce object
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
@@ -79,7 +77,26 @@ rowData(sce)$JAX.geneID <- hom_hs$DB.Class.Key[match(rowData(sce)$hs.entrezIds,
 
 ####### MOUSE ##################################################################
 # grabbing Ensembl GRCm38 release 87 information for Wallace data set
-
+ah <- AnnotationHub()
+query(ah, "EnsDb.Mmusculus.v87")
+edb <- ah[["AH53222"]]
+    # EnsDb for Ensembl:
+    #   |Backend: SQLite
+    # |Db type: EnsDb
+    # |Type of Gene ID: Ensembl Gene ID
+    # |Supporting package: ensembldb
+    # |Db created by: ensembldb package from Bioconductor
+    # |script_version: 0.3.1
+    # |Creation time: Fri Jun  9 08:40:26 2017
+    # |ensembl_version: 87
+    # |ensembl_host: localhost
+    # |Organism: mus_musculus
+    # |taxonomy_id: 10090
+    # |genome_build: GRCm38
+    # |DBSCHEMAVERSION: 2.1
+    # | No. of genes: 50143.
+    # | No. of transcripts: 124168.
+    # |Protein data available.
 
 rowData(wallData)$ID <- rownames(wallData)
 
