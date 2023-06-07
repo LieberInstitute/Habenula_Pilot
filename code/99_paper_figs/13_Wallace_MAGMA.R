@@ -182,22 +182,33 @@ for(g in 1:length(duplicatedSet.human)){
   gene2keep.human[g] <- names(rowmeansmat[order(rowmeansmat, decreasing=TRUE)])[1]
 }
 
-length(genes2compare.human) # 206
-length(unique(gene2keep.human)) # 181
-
+length(genes2compare.human) # 464
+length(unique(gene2keep.human)) # 319
 
 # This is because many 'tested' might have been orthologous,
 #   b/tw themselves (i.e. 3+ orthologous genes):
-length(unique(rowData(sce.rn.sub)$JAX.geneID[duplicatedSet.rat])) # 181 - good
+length(unique(rowData(sce.hsap.sub)$JAX.geneID[duplicatedSet.human])) # 319 <- good
 
-genesNoCompare.rat <- rownames(sce.rn.sub)[!(rownames(sce.rn.sub) %in% unlist(genes2compare.rat))]
+genesNoCompare.human <- rownames(sce.hsap.sub)[!(rownames(sce.hsap.sub) 
+                                                 %in% unlist(genes2compare.human))]
 
 # Finally combine and subset
-sce.rn.sub <- sce.rn.sub[c(genesNoCompare.rat, unique(gene2keep.rat)), ]
+sce.hsap.sub <- sce.hsap.sub[c(genesNoCompare.human, unique(gene2keep.human)), ]
 
-table(rowData(sce.rn.sub)$JAX.geneID %in% sharedHomologs) # 14007 TRUE
-table(duplicated(rowData(sce.rn.sub)$JAX.geneID)) # 14007 FALSE         dope.
+table(rowData(sce.hsap.sub)$JAX.geneID %in% sharedHomologs) # 15819 TRUE
+table(duplicated(rowData(sce.hsap.sub)$JAX.geneID)) # 15819 FALSE   <- yay, no more duplicates!
 
+## Mouse ===
+duplicatedSet.mouse <- which(duplicated(rowData(sce.mm.sub)$JAX.geneID))
+genes2compare.mouse <- list()
+gene2keep.mouse <- character()
+
+for(g in 1:length(duplicatedSet.mouse)){
+  genes2compare.mouse[[g]] <- rownames(sce.mm.sub)[rowData(sce.mm.sub)$JAX.geneID ==
+                                                   rowData(sce.mm.sub)$JAX.geneID[duplicatedSet.mouse[g]]]
+  rowmeansmat <- rowMeans(assay(sce.mm.sub[genes2compare.mouse[[g]], ], "logcounts"))
+  gene2keep.mouse[g] <- names(rowmeansmat[order(rowmeansmat, decreasing=TRUE)])[1]
+}
 
 
 
