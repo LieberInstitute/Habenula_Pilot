@@ -12,7 +12,7 @@ library("scater")
 library("EnsDb.Hsapiens.v86")
 #BiocManager::install("org.Rn.eg.db")
 library("org.Hs.eg.db")
-library("org.Rn.eg.db")
+library("org.Mm.eg.db")
 
 # loading our final sce object
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
@@ -35,7 +35,7 @@ source(file = here("code", "99_paper_figs", "source_colors.R"))
   # bulk_colors and sn_colors
 
 #### Adaptation of Matt's code #################################################
-####### HUMAN ################
+####### HUMAN ##################################################################
 # Add EntrezID for human genes in our final sce 
 hs.entrezIds <- mapIds(org.Hs.eg.db, keys = rowData(sce)$ID, 
                        column = "ENTREZID", keytype="ENSEMBL")
@@ -73,8 +73,38 @@ table(rowData(sce)$Symbol %in% hom_hs$Symbol)
 rowData(sce)$JAX.geneID <- hom_hs$DB.Class.Key[match(rowData(sce)$hs.entrezIds,
                                                      hom_hs$EntrezGene.ID)]
 
-####### RAT ################
+####### MOUSE ##################################################################
+rowData(wallData)$ID <- rownames(wallData)
 
+# grab the Symbol information 
+Mm.Symbol <- mapIds(org.Mm.eg.db, keys=rowData(wallData)$ID, 
+                    column="ENSEMBL", keytype="SYMBOL")
+
+table(!is.na(Mm.Symbol))
+# FALSE  TRUE 
+# 6515 18774 
+
+# Add Symbols to rowData
+rowData(wallData) <- cbind(rowData(wallData), Mm.Symbol)
+
+# finding entrez IDs 
+Mm.entrezIds <- mapIds(org.Mm.eg.db, keys=rowData(wallData)$ID, 
+                     column="ENTREZID", keytype="SYMBOL")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 
 
 
 
