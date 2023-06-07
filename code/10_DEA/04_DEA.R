@@ -59,6 +59,23 @@ factors <- samples_factors[match_samples, ]
 ## Formula and model
 formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + library_size
 model <- model.matrix(formula, data = colData(rse_gene_filt))
+
+## Use previous norm factors to scale the raw library sizes
+rse_gene_filt_scaled <- calcNormFactors(rse_gene_filt)
+rse_gene_filt_scaled$samples$library_size <- factors$library_size
+rse_gene_filt_scaled$samples$norm.factors <- factors$norm.factors
+
+## Transform counts to log2(CPM)
+## Estimate mean-variance relationship for each gene
+vGene <- voom(rse_gene_filt_scaled, design = model, plot = TRUE)
+
+## Fit linear model for each gene
+fitGene <- lmFit(vGene)
+
+## Empirical Bayesian calculation to obtain the significant genes:
+## compute moderated F and t-statistics, and log-odds of DE
+eBGene <- eBayes(fitGene)
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
