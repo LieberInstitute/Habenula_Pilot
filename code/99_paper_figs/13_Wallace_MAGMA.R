@@ -8,7 +8,11 @@ library("here")
 library("sessioninfo")
 library("jaffelab")
 library("Seurat")
-# library("zellkonverter")
+library("scater")
+library("EnsDb.Hsapiens.v86")
+#BiocManager::install("org.Rn.eg.db")
+library("org.Hs.eg.db")
+library("org.Rn.eg.db")
 
 # loading our final sce object
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
@@ -18,35 +22,48 @@ load(file = here("processed-data", "99_paper_figs", "sce_objects",
 # checking cluster data 
 table(sce$final_Annotations)
 
-# loading Wallace et al. clean data
-wallData <- readRDS(file = here("processed-data", "99_paper_figs", "MAGMA",
-                 "Wallace_mouse_data.rds"))
-test <- UpdateSeuratObject(wallData)
-
-test.sce <- Seurat::as.SingleCellExperiment(wallData)
-
+# loading Wallace et al. clean data, updating to version 3 of seurat object so 
+# I can just make into a sce object 
+wallData <- as.SingleCellExperiment(
+              UpdateSeuratObject(
+                readRDS(file = here("processed-data", "99_paper_figs", "MAGMA",
+                "Wallace_mouse_data.rds"))
+              ))
+  
 # sourcing official color palette 
 source(file = here("code", "99_paper_figs", "source_colors.R"))
   # bulk_colors and sn_colors
 
+#### Adaptation of Matt's code #################################################
+# Add EntrezID for human genes in our final sce 
+hs.entrezIds <- mapIds(org.Hs.eg.db, keys = rowData(sce)$ID, 
+                       column = "ENTREZID", keytype="ENSEMBL")
+  # "'select()' returned 1:many mapping between keys and columns"
 
-
-
-
-
-
-# adaptation of Matt's code:
-# Add EntrezID for human
-hs.entrezIds <- mapIds(org.Hs.eg.db, keys=rowData(sce.nac)$gene_id, 
-                       column="ENTREZID", keytype="ENSEMBL")
-# "'select()' returned 1:many mapping between keys and columns"
 table(!is.na(hs.entrezIds))
-# 21,191 valid entries (remember this is already subsetted for those non-zero genes only)
+  # FALSE  TRUE 
+  # 11126 22722
+
+# adding infor to metaData of our sce object 
+
+# storing genes without entrez IDs 
 withoutEntrez <- names(hs.entrezIds)[is.na(hs.entrezIds)]
-# Store those somewhere, maybe for later reference
-table(rowData(sce.nac)[rowData(sce.nac)$gene_id %in% withoutEntrez, ]$gene_id == withoutEntrez)
-names(withoutEntrez) <- rowData(sce.nac)[rowData(sce.nac)$gene_id %in% withoutEntrez, ]$gene_name
+# saving the genes without the EntezIDs elsewhere with their Symbol identities
+table(rowData(sce)[rowData(sce)$ID %in% withoutEntrez, ]$ID == withoutEntrez)
+names(withoutEntrez) <- rowData(sce)[rowData(sce)$ID %in% withoutEntrez, ]$Symbol
 
 
 # Add to rowData
 rowData(sce.nac) <- cbind(rowData(sce.nac), hs.entrezIds)
+
+
+
+
+
+
+
+
+
+
+
+
