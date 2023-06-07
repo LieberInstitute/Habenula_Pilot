@@ -35,6 +35,7 @@ source(file = here("code", "99_paper_figs", "source_colors.R"))
   # bulk_colors and sn_colors
 
 #### Adaptation of Matt's code #################################################
+####### HUMAN ################
 # Add EntrezID for human genes in our final sce 
 hs.entrezIds <- mapIds(org.Hs.eg.db, keys = rowData(sce)$ID, 
                        column = "ENTREZID", keytype="ENSEMBL")
@@ -52,15 +53,27 @@ withoutEntrez <- names(hs.entrezIds)[is.na(hs.entrezIds)]
 table(rowData(sce)[rowData(sce)$ID %in% withoutEntrez, ]$ID == withoutEntrez)
 names(withoutEntrez) <- rowData(sce)[rowData(sce)$ID %in% withoutEntrez, ]$Symbol
 
-
 # Add to rowData
-rowData(sce.nac) <- cbind(rowData(sce.nac), hs.entrezIds)
+rowData(sce) <- cbind(rowData(sce), hs.entrezIds)
 
+# Bring in 'DB.Class.Key' for human ===
+# JAX annotation info
+hom = read.delim("http://www.informatics.jax.org/downloads/reports/HOM_AllOrganism.rpt",
+                 as.is=TRUE)
+hom_hs <- hom[hom$Common.Organism.Name == "human", ]
+dim(hom_hs)
+# [1] 24609    12      <- 24,609 entries
 
+table(rowData(sce)$hs.entrezIds %in% hom_hs$EntrezGene.ID)
+# 17,632 trues
+table(rowData(sce)$Symbol %in% hom_hs$Symbol)
+# 17,249 trues - very minor difference which is good
 
+# adding JAX annotations to our sce metadata by the entrez ID
+rowData(sce)$JAX.geneID <- hom_hs$DB.Class.Key[match(rowData(sce)$hs.entrezIds,
+                                                     hom_hs$EntrezGene.ID)]
 
-
-
+####### RAT ################
 
 
 
