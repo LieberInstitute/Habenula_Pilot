@@ -12,7 +12,9 @@ library("sessioninfo")
 
 load(
     here(
-        "processed-data", "10_DEA", "rse_gene_filt.Rdata"
+        "processed-data",
+        "10_DEA",
+        "rse_gene_filt.Rdata"
     ),
     verbose = TRUE
 )
