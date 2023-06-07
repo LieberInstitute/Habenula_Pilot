@@ -39,6 +39,26 @@ load(
 
 ###############################################################################
 
+
+
+####################### Differential Expression Analysis ######################
+
+## Extract calcNormFactors for all samples
+norm_factors <- calcNormFactors(rse_gene, method = "TMM")
+
+samples_factors <- data.frame(
+    BrNum = norm_factors$samples$BrNum,
+    norm.factors = norm_factors$samples$norm.factors,
+    library_size = norm_factors$samples$library_size
+)
+
+## Previous lib sizes of each sample
+match_samples <- match(rse_gene_filt$BrNum, samples_factors$BrNum)
+factors <- samples_factors[match_samples, ]
+
+## Formula and model
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + library_size
+model <- model.matrix(formula, data = colData(rse_gene_filt))
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
