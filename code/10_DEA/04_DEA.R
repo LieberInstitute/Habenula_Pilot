@@ -86,7 +86,7 @@ limma::plotMA(eBGene,
 ## Plot -log(p-value) vs logFC
 volcanoplot(eBGene, coef = "PrimaryDxSchizo")
 
-## Top-ranked genes for Substance (cases vs ctrls)
+## Top-ranked genes for PrimaryDx (Schizo vs Control)
 top_genes <- topTable(eBGene, coef = "PrimaryDxSchizo", p.value = 1, number = nrow(rse_gene_filt), sort.by = "none")
 
 ## Histogram of adjusted p values
