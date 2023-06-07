@@ -76,6 +76,26 @@ fitGene <- lmFit(vGene)
 ## compute moderated F and t-statistics, and log-odds of DE
 eBGene <- eBayes(fitGene)
 
+## Plot average log expression vs logFC
+limma::plotMA(eBGene,
+    coef = "PrimaryDxSchizo",
+    xlab = "Mean of normalized counts",
+    ylab = "logFC"
+)
+
+## Plot -log(p-value) vs logFC
+volcanoplot(eBGene, coef = "PrimaryDxSchizo")
+
+## Top-ranked genes for Substance (cases vs ctrls)
+top_genes <- topTable(eBGene, coef = "PrimaryDxSchizo", p.value = 1, number = nrow(rse_gene_filt), sort.by = "none")
+
+## Histogram of adjusted p values
+hist(top_genes$adj.P.Val, xlab = "FDR", main = "")
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
