@@ -8,6 +8,7 @@ library("here")
 library("sessioninfo")
 library("jaffelab")
 library("Seurat")
+# library("zellkonverter")
 
 # loading our final sce object
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
@@ -20,13 +21,19 @@ table(sce$final_Annotations)
 # loading Wallace et al. clean data
 wallData <- readRDS(file = here("processed-data", "99_paper_figs", "MAGMA",
                  "Wallace_mouse_data.rds"))
+test <- UpdateSeuratObject(wallData)
 
-test <- as.data.frame(wallData)
-
+test.sce <- Seurat::as.SingleCellExperiment(wallData)
 
 # sourcing official color palette 
 source(file = here("code", "99_paper_figs", "source_colors.R"))
   # bulk_colors and sn_colors
+
+
+
+
+
+
 
 # adaptation of Matt's code:
 # Add EntrezID for human
