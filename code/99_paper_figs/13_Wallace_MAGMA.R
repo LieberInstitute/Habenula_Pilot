@@ -13,6 +13,10 @@ library("EnsDb.Hsapiens.v86")
 #BiocManager::install("org.Rn.eg.db")
 library("org.Hs.eg.db")
 library("org.Mm.eg.db")
+library("Mus.musculus")
+# library("wget")
+# library("BSgenome.Mmusculus.UCSC.mm10")
+library("RCurl")
 
 # loading our final sce object
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
@@ -74,6 +78,9 @@ rowData(sce)$JAX.geneID <- hom_hs$DB.Class.Key[match(rowData(sce)$hs.entrezIds,
                                                      hom_hs$EntrezGene.ID)]
 
 ####### MOUSE ##################################################################
+# grabbing Ensembl GRCm38 release 87 information for Wallace data set
+
+
 rowData(wallData)$ID <- rownames(wallData)
 
 # grab the Symbol information 
@@ -88,12 +95,10 @@ table(!is.na(Mm.Symbol))
 rowData(wallData) <- cbind(rowData(wallData), Mm.Symbol)
 
 # finding entrez IDs 
-Mm.entrezIds <- mapIds(org.Mm.eg.db, keys=rowData(wallData)$ID, 
+Mm.entrezIds <- mapIds(BSgenome.Mmusculus.UCSC.mm10, keys=rowData(wallData)$ID, 
                      column="ENTREZID", keytype="SYMBOL")
 
-
-
-
+table(!is.na(Mm.entrezIds))
 
 
 
