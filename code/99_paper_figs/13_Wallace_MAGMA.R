@@ -79,7 +79,7 @@ rowData(sce)$JAX.geneID <- hom_hs$DB.Class.Key[match(rowData(sce)$hs.entrezIds,
 # grabbing Ensembl GRCm38 release 87 information for Wallace data set
 ah <- AnnotationHub()
 query(ah, "EnsDb.Mmusculus.v87")
-edb <- ah[["AH53222"]]
+org.Mm.eg.db <- ah[["AH53222"]]
     # EnsDb for Ensembl:
     #   |Backend: SQLite
     # |Db type: EnsDb
@@ -98,35 +98,32 @@ edb <- ah[["AH53222"]]
     # | No. of transcripts: 124168.
     # |Protein data available.
 
-rowData(wallData)$ID <- rownames(wallData)
+# grabbing relevant data from ensdb
+mouse_gene_db <- DataFrame(genes(org.Mm.eg.db))
 
-# grab the Symbol information 
-Mm.Symbol <- mapIds(org.Mm.eg.db, keys=rowData(wallData)$ID, 
-                    column="ENSEMBL", keytype="SYMBOL")
+# making sure wallData has a column for it's symbols
+rowData(wallData)$Symbol <- rownames(wallData)
 
-table(!is.na(Mm.Symbol))
-# FALSE  TRUE 
-# 6515 18774 
+# adding gene_id to rowData of the Wallace sce object
+rowData(wallData)$gene_id <- mouse_gene_db$gene_id[match(rowData(wallData)$ID, mouse_gene_db$gene_name)]
 
-# Add Symbols to rowData
-rowData(wallData) <- cbind(rowData(wallData), Mm.Symbol)
+table(!is.na(rowData(wallData)$gene_id))
+  # FALSE  TRUE 
+  # 2345 22944     <- good, 22,944 gene_ids matched
 
-# finding entrez IDs 
-Mm.entrezIds <- mapIds(BSgenome.Mmusculus.UCSC.mm10, keys=rowData(wallData)$ID, 
-                     column="ENTREZID", keytype="SYMBOL")
+# adding entrez_id to rowData of the Wallace sce object
+rowData(wallData)$entrez_id <- mouse_gene_db$entrezid[match(rowData(wallData)$ID, mouse_gene_db$gene_name)]
 
-table(!is.na(Mm.entrezIds))
-
-
-
+table(!is.na(rowData(wallData)$entrez_id))
+  # FALSE  TRUE 
+  # 3764 21525      <- Not that far off, we're looking good.
 
 
 
 
 
 
-
-# 
+# .
 
 
 
