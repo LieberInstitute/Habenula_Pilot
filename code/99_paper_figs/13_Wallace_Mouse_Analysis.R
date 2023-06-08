@@ -1,5 +1,5 @@
 ## June 5, 2023 - Bukola Ajanaku
-# Working on MAGMA trans-special analysis of our sce object against the 
+# Working on trans-special analysis of our sce object against the 
 # Wallace et al. 2019 paper mouse data.
 # qrsh -l mem_free=50G,h_vmem=50G
 
@@ -28,9 +28,10 @@ table(sce$final_Annotations)
 # I can just make into a sce object 
 wallData <- as.SingleCellExperiment(
               UpdateSeuratObject(
-                readRDS(file = here("processed-data", "99_paper_figs", "MAGMA",
-                "Wallace_mouse_data.rds"))
-              ))
+                readRDS(file = here("processed-data", "99_paper_figs", 
+                                    "Trans_special_Comparison",
+                                    "Wallace_mouse_data.rds"))
+                ))
   
 # sourcing official color palette 
 source(file = here("code", "99_paper_figs", "source_colors.R"))
@@ -105,19 +106,19 @@ mouse_gene_db <- DataFrame(genes(org.Mm.eg.db))
 rowData(wallData)$Symbol <- rownames(wallData)
 
 # adding gene_id to rowData of the Wallace sce object
-rowData(wallData)$gene_id <- mouse_gene_db$gene_id[match(rowData(wallData)$ID, mouse_gene_db$gene_name)]
+rowData(wallData)$gene_id <- mouse_gene_db$gene_id[match(rowData(wallData)$Symbol, mouse_gene_db$gene_name)]
 
 table(!is.na(rowData(wallData)$gene_id))
   # FALSE  TRUE 
   # 2345 22944     <- good, 22,944 gene_ids matched
 
 # adding entrez_id to rowData of the Wallace sce object
-rowData(wallData)$entrez_id <- as.character(mouse_gene_db$entrezid[match(rowData(wallData)$ID, 
+rowData(wallData)$entrez_id <- as.character(mouse_gene_db$entrezid[match(rowData(wallData)$Symbol, 
                                                                          mouse_gene_db$symbol)])
 
 table(!is.na(rowData(wallData)$entrez_id))
-  # FALSE  TRUE 
-  # 3764 21525      <- Not that far off, we're looking good.
+  # TRUE 
+  # 25289       <- Not that far off, we're looking good.
 
 ######## COMPARING ORGANISMS ###################################################
 hom_mm <- hom[hom$Common.Organism.Name == "mouse, laboratory", ]
@@ -127,7 +128,7 @@ table(rowData(wallData)$entrez_id %in% hom_mm$EntrezGene.ID)
   # FALSE  TRUE 
   # 6723 18566     <- good, we have 18,566 genes in the shared list
 
-table(rowData(wallData)$ID %in% hom_mm$Symbol)
+table(rowData(wallData)$Symbol %in% hom_mm$Symbol)
   # FALSE  TRUE 
   # 8155 17134     <- again, not bad and not that far off!
 
@@ -159,14 +160,15 @@ sce.mm.sub <- wallData[rowData(wallData)$JAX.geneID %in% sharedHomologs, ]   # 1
 sce.hsap.sub <- sce[rowData(sce)$JAX.geneID %in% sharedHomologs, ]  # 16283
   ## Many are duplicated...
 
-rowData(sce.mm.sub)$ID[duplicated(rowData(sce.mm.sub)$JAX.geneID)]
+rowData(sce.mm.sub)$Symbol[duplicated(rowData(sce.mm.sub)$JAX.geneID)]
   # only these duplicates: [1] "Gm37240" "Rsph10b" "Yjefn3"  "Zfp708"  "a"
 
 rowData(sce.hsap.sub)$Symbol[duplicated(rowData(sce.hsap.sub)$JAX.geneID)]
   # total of 464
 
 #### getting rid of the duplicates ############
-## Human ===
+    ## Human ===
+# $Symbol = Symbol Names, $ID = EnsemblID, $hs.entrezIds = entrez IDs, $JAX.geneID = JAX #
 
 # first changing the rownames to EnsemblIDs
 rownames(sce.hsap.sub) <- rowData(sce.hsap.sub)$ID
@@ -199,6 +201,11 @@ table(rowData(sce.hsap.sub)$JAX.geneID %in% sharedHomologs) # 15819 TRUE
 table(duplicated(rowData(sce.hsap.sub)$JAX.geneID)) # 15819 FALSE   <- yay, no more duplicates!
 
 ## Mouse ===
+# $Symbol = Symbol Names, $gene_id = EnsemblID, $hs.entrezIds = entrez IDs, $JAX.geneID = JAX #
+
+# make sure rownames are EnsemblIDs
+rownames(sce.mm.sub) <- rowData(sce.mm.sub)$gene_id
+
 duplicatedSet.mouse <- which(duplicated(rowData(sce.mm.sub)$JAX.geneID))
 genes2compare.mouse <- list()
 gene2keep.mouse <- character()
@@ -209,6 +216,65 @@ for(g in 1:length(duplicatedSet.mouse)){
   rowmeansmat <- rowMeans(assay(sce.mm.sub[genes2compare.mouse[[g]], ], "logcounts"))
   gene2keep.mouse[g] <- names(rowmeansmat[order(rowmeansmat, decreasing=TRUE)])[1]
 }
+
+length(genes2compare.mouse) # 5
+length(unique(gene2keep.mouse)) # 5
+
+length(unique(rowData(sce.mm.sub)$JAX.geneID[duplicatedSet.mouse])) # 5
+
+genesNoCompare.mouse <- rownames(sce.mm.sub)[!(rownames(sce.mm.sub) %in% unlist(genes2compare.mouse))]
+
+# Finally combine and subset
+sce.mm.sub <- sce.mm.sub[c(genesNoCompare.mouse, unique(gene2keep.mouse)), ]
+
+table(rowData(sce.mm.sub)$JAX.geneID %in% sharedHomologs) # 15819  TRUE
+table(duplicated(rowData(sce.mm.sub)$JAX.geneID)) # 15819  FALSE         good.
+
+######## SAVING DATA ###########################################################
+sce.mm.sub <- sce.mm.sub[match(rowData(sce.hsap.sub)$JAX.geneID,
+                               rowData(sce.mm.sub)$JAX.geneID), ]
+
+table(rowData(sce.mm.sub)$JAX.geneID == rowData(sce.hsap.sub)$JAX.geneID)
+    # TRUE 
+    # 16283.  <- good
+
+# drop count 0 genes
+sce.mm.sub <- sce.mm.sub[!rowSums(assay(sce.mm.sub, "counts"))==0, ]
+ # 16212 genes
+
+# subset for corresponding hsap habenula data
+sce.hsap.sub <- sce.hsap.sub[rowData(sce.hsap.sub)$JAX.geneID %in% rowData(sce.mm.sub)$JAX.geneID, ]
+  # 16212 genes
+
+# subset so the lengths match
+sce.hsap.sub <- sce.hsap.sub[rowData(sce.hsap.sub)$JAX.geneID %in% 
+                               rowData(sce.rn.sub)$JAX.geneID, ]
+  # 16212 genes
+
+table(rowData(sce.mm.sub)$JAX.geneID == rowData(sce.hsap.sub)$JAX.geneID)
+  # TRUE 
+  # 16212 
+
+Readme <- "These two SCEs are subsetted and ordered for matching 'JAX.geneID' in the rowData. 
+This can be used to subset the nucleus-level SCEs in their respected Rdata files."
+
+save(sce.mm.sub, sce.hsap.sub, Readme, file = here("processed-data", "99_paper_figs", 
+                                                   "Trans_special_Comparison",
+                                                   "MAGMA_Wallace_2019_Analysis.rda"))
+
+###### FINALLY resume comparisons === === === === === ######
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
