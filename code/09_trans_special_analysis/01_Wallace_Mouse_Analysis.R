@@ -261,6 +261,9 @@ This can be used to subset the nucleus-level SCEs in their respected Rdata files
 save(sce.mm.sub, sce.hsap.sub, Readme, file = here("processed-data", "99_paper_figs", 
                                                    "Trans_special_Comparison",
                                                    "MAGMA_Wallace_2019_Analysis.rda"))
+load(file = here("processed-data", "99_paper_figs", 
+                 "Trans_special_Comparison",
+                 "MAGMA_Wallace_2019_Analysis.rda"))
 
 ###### FINALLY resume comparisons === === === === === ######
 
