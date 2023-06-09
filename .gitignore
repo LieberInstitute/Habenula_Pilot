@@ -17,3 +17,4 @@ processed-data/99_paper_figs/
 processed-data/09_trans_special_analysis/
 processed-data/sce_objects/
 >>>>>>> update .gitignore
+.Rhistory
