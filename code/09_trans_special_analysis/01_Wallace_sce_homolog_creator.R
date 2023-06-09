@@ -28,7 +28,7 @@ table(sce$final_Annotations)
 # I can just make into a sce object 
 wallData <- as.SingleCellExperiment(
               UpdateSeuratObject(
-                readRDS(file = here("processed-data", "99_paper_figs", 
+                readRDS(file = here("processed-data", 
                                     "Trans_special_Comparison",
                                     "Wallace_mouse_data.rds"))
                 ))
@@ -258,34 +258,11 @@ table(rowData(sce.mm.sub)$JAX.geneID == rowData(sce.hsap.sub)$JAX.geneID)
 Readme <- "These two SCEs are subsetted and ordered for matching 'JAX.geneID' in the rowData. 
 This can be used to subset the nucleus-level SCEs in their respected Rdata files."
 
-save(sce.mm.sub, sce.hsap.sub, Readme, file = here("processed-data", "99_paper_figs", 
-                                                   "Trans_special_Comparison",
-                                                   "MAGMA_Wallace_2019_Analysis.rda"))
-load(file = here("processed-data", "99_paper_figs", 
-                 "Trans_special_Comparison",
-                 "MAGMA_Wallace_2019_Analysis.rda"))
+save(sce.mm.sub, sce.hsap.sub, Readme, file = here("processed-data",  
+                                                   "09_trans_special_analysis",
+                                                   "sce_homologs_mm_hsap.rda"))
+load(file = here("processed-data",  
+                 "09_trans_special_analysis",
+                 "sce_homologs_mm_hsap.rda"))
 
-###### FINALLY resume comparisons === === === === === ######
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# .
-
-
-
-
-
+# Done.
