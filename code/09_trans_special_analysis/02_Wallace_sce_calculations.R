@@ -8,11 +8,6 @@ library("sessioninfo")
 library("spatialLIBD")
 # library("Seurat")
 
-read.csv(file = here("processed-data",  
-                 "09_trans_special_analysis",
-                 "habData.csv"))
-
-
 # loading the homologous sce objects
 load(file = here("processed-data",  
                  "09_trans_special_analysis",
@@ -36,5 +31,41 @@ table(sce.mm.sub$orig.ident)
 # query = mouse
 # reference = human
 
-sum(startsWith(colnames(sce.mm.sub), "hab_161105"))
+# rownames(sce.mm.sub) <- rowData(sce.mm.sub)$JAX.geneID
+# 
+# sce_modeling_results_hsap <- registration_wrapper(
+#   sce = sce.hsap.sub,
+#   var_registration = "final_Annotations",
+#   var_sample_id = "Sample",
+#   gene_ensembl = "ID",
+#   gene_name = "Symbol"
+# )
+# 
+# sce_pseudo_mm <- registration_pseudobulk(
+#    sce = sce.mm.sub,
+#    var_registration = "ident",
+#    var_sample_id = "Sample",
+#    min_ncells = NULL
+# )
+# 
+# 
+# reg.mod.mm <- registration_model(
+#   sce.mm.sub,
+#   covars = NULL,
+#   var_registration = "Sample"
+# )
+
+
+
+
+
+
+
+
+
+
+
+
+# .
+
 
