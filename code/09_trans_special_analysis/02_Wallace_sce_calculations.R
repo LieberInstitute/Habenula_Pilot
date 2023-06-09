@@ -57,6 +57,19 @@ table(sce.mm.sub$orig.ident)
 
 
 
+test <- readr::read_tsv(file = here("processed-data", 
+                            "09_trans_special_analysis",
+                            "Hash_data.tsv"))
+
+library(R.utils)
+
+test2 <- readr::read_tsv(gunzip(file = here("processed-data", 
+                                    "09_trans_special_analysis",
+                                    "Hash_data_barcodes.tsv.gz")))
+
+test3 <- gunzip(file = here("processed-data", 
+                                    "09_trans_special_analysis",
+                                    "Hash_data_matrix.gz"))
 
 
 

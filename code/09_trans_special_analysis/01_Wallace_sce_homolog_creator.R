@@ -32,7 +32,7 @@ wallData <- as.SingleCellExperiment(
                                     "09_trans_special_analysis",
                                     "Wallace_mouse_data.rds"))
                 ))
-  
+
 # sourcing official color palette 
 source(file = here("code", "99_paper_figs", "source_colors.R"))
   # bulk_colors and sn_colors
