@@ -1,6 +1,6 @@
 ## June 5, 2023 - Bukola Ajanaku
-# Working on trans-special analysis of our sce object against the 
-# Wallace et al. 2019 paper mouse data.
+# Creating homologous sce objects between humann and mouse (Wallace et al. 2019) 
+# habenula data. 
 # qrsh -l mem_free=50G,h_vmem=50G
 
 library("SingleCellExperiment")
@@ -29,7 +29,7 @@ table(sce$final_Annotations)
 wallData <- as.SingleCellExperiment(
               UpdateSeuratObject(
                 readRDS(file = here("processed-data", 
-                                    "Trans_special_Comparison",
+                                    "09_trans_special_analysis",
                                     "Wallace_mouse_data.rds"))
                 ))
   
@@ -261,8 +261,5 @@ This can be used to subset the nucleus-level SCEs in their respected Rdata files
 save(sce.mm.sub, sce.hsap.sub, Readme, file = here("processed-data",  
                                                    "09_trans_special_analysis",
                                                    "sce_homologs_mm_hsap.rda"))
-load(file = here("processed-data",  
-                 "09_trans_special_analysis",
-                 "sce_homologs_mm_hsap.rda"))
 
 # Done.
