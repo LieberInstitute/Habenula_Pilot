@@ -15,7 +15,6 @@ library("org.Hs.eg.db")
 # library("RCurl")
 library("AnnotationHub")
 
-
 # loading our final sce object
 load(file = here("processed-data", "99_paper_figs", "sce_objects", 
                  "official_final_sce.RDATA"), verbose = TRUE)
@@ -259,7 +258,6 @@ table(rowData(sce.mm.sub)$JAX.geneID == rowData(sce.hsap.sub)$JAX.geneID)
 ############ ADDING SAMPLE INFORMATION #########################################
 # realized that the sample data was not in the colData of the Wallace sce object
 # last minute
-
 colData(sce.mm.sub)$Sample <- NA
 
 # grabbing nuclei identifiers
@@ -274,6 +272,13 @@ colData(sce.mm.sub)[startsWith(colData(sce.mm.sub)$Row, "hab_161105" ), ]$Sample
 # adding hemispheric information
 colData(sce.mm.sub)$Hemi <- NA
 colData(sce.mm.sub)$Hemi <- ss(x = colData(sce.mm.sub)$Row, "_", slot = 4)
+
+
+
+
+
+
+
 
 Readme <- "These two SCEs are subsetted and ordered for matching 'JAX.geneID' in the rowData. 
 This can be used to subset the nucleus-level SCEs in their respected Rdata files."

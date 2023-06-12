@@ -9,6 +9,7 @@ library(VariantAnnotation)
 library(here)
 library(ggplot2)
 library(ggrepel)
+library(sessioninfo)
 
 # Loading data (pipeline output). 
 load(here("preprocessed_data", "rse_gene_Roche_Habenula_PairedEnd_n73.Rdata")) # gene info
@@ -250,3 +251,40 @@ save(rse_tx, file = here("preprocessed_data", paste0("count_data_bukola/rse_tx_R
 ## rank on quality ####
 # pdList = split(pd, pd$PrimaryDx)
 # lapply(pdList, function(x) x[order(x$totalAssignedGene,decreasing=TRUE)[1:5],c(1:8, 49:54)])
+
+## Reproducibility information
+print("Reproducibility information:")
+options(width = 120)
+sessioninfo::session_info()
+
+
+# ─ Packages ──────────────────────────────────────────────────────────────────────────────────────────────────────
+# package     * version date (UTC) lib 
+# > options(width = 120)
+# > sessioninfo::session_info()
+# ─ Session info ──────────────────────────────────────────────────────────────────────────────────────────────────
+# setting  value
+# version  R version 4.2.3 Patched (2023-04-07 r84211)
+# os       CentOS Linux 7 (Core)
+# system   x86_64, linux-gnu
+# ui       X11
+# language (EN)
+# collate  en_US.UTF-8
+# ctype    en_US.UTF-8
+# tz       US/Eastern
+# date     2023-06-09
+# pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/bin/pandoc
+# 
+# ─ Packages ──────────────────────────────────────────────────────────────────────────────────────────────────────
+# package     * version date (UTC) lib source
+# cli           3.6.1   2023-03-23 [2] CRAN (R 4.2.3)
+# colorout    * 1.2-2   2023-02-09 [1] Github (jalvesaq/colorout@79931fd)
+# sessioninfo * 1.2.2   2021-12-06 [2] CRAN (R 4.2.1)
+# 
+# [1] /users/bsimbiat/R/4.2.x
+# [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/site-library
+# [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/library
+# 
+# 
+# 
+# 
