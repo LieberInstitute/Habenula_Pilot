@@ -29,12 +29,12 @@ https://docs.google.com/presentation/d/12kh6N5ALssipqBmgmU5y0pVn9z9AqzdZdskzhC6v
 ## CODE ORGANIZATION:
 Please note that each folder has an internal README.md file for clarity.
 
-01_bulk_speaqeasy - bulk fastq files  
-07_cell_ranger - sn transcriptomics data (only folder majorly out of order*) 
-02_bulk_qc - bulk qc information 
-03_bulk_pca - ran pca on filtered bulk data and investigated trends 
+01_bulk_speaqeasy - bulk fastq files     
+07_cell_ranger - sn transcriptomics data (only folder majorly out of order*)    
+02_bulk_qc - bulk qc information     
+03_bulk_pca - ran pca on filtered bulk data and investigated trends    
 04_snRNA_seq - full qc, pca, harmonization, clustering, and annotation journey 
-05_explore_sce - process of correcting annotations, finalizing identities of clusters, and collecting gene marker information  
+05_explore_sce - process of correcting annotations, finalizing identities of clusters, and collecting gene marker information.    
 06_deconvolution - process of bulk deconvolution  
 09_trans_special_analysis - journey of performing trans-special analyses on snRNA habenula cluster data. 05_explore_sce - process of correcting annotations, finalizing identities of clusters, and collecting gene marker information 
 10_DEA - journey of differential expression analysis  
