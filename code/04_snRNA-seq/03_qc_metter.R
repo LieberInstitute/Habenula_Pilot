@@ -619,12 +619,5 @@ save(combinedData, file = here("processed-data", "04_snRNA-seq", "sce_objects",
 # [107] DelayedMatrixStats_1.20.0 segmented_1.6-2          
 # [109] googledrive_2.1.0         ggbeeswarm_0.7.1         
 # [111] restfulr_0.0.15          
- 
-
-
-
-
-
-
 
 
