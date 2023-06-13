@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd
 #$ -l mem_free=10G,h_vmem=10G,h_fsize=100G
-#$ -N 02_DataExploration
+#$ -N DataExploration
 #$ -o logs/02_DataExploration.txt
 #$ -e logs/02_DataExploration.txt
 #$ -m e
