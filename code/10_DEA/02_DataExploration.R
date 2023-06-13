@@ -168,7 +168,7 @@ for (sample_var in sample_variables) {
     plot_grid(plotlist = plots, nrow = 3)
 
     ggsave(
-        paste(output_path, "QC_boxplots_", sample_var, ".pdf", sep = ""),
+        paste(output_path, "/QC_boxplots_", sample_var, ".pdf", sep = ""),
         width = 35,
         height = 30,
         units = "cm"
@@ -211,7 +211,7 @@ plot_correlations <- function(qc_metric) {
 
 corr_plots <- lapply(qc_metrics, plot_correlations)
 ggsave(
-    paste(output_path, "Corr_AgeDeath_vs_QCmetrics.pdf", sep = ""),
+    paste(output_path, "/Corr_AgeDeath_vs_QCmetrics.pdf", sep = ""),
     plot_grid(plotlist = corr_plots, nrow = 3),
     width = 40,
     height = 30,
@@ -257,7 +257,7 @@ pca_samplevars <- function(sample_var) {
     }
 
     ggsave(
-        paste(output_path, "PCA_", sample_var, ".pdf", sep = ""),
+        paste(output_path, "/PCA_", sample_var, ".pdf", sep = ""),
         gg_plot,
         width = 30,
         height = 34,
@@ -277,7 +277,7 @@ pca_qcmetrics <- function(qc_metric) {
         theme(legend.position = "bottom")
 
     ggsave(
-        paste(output_path, "PCA_", qc_metric, ".pdf", sep = ""),
+        paste(output_path, "/PCA_", qc_metric, ".pdf", sep = ""),
         gg_plot,
         width = 30,
         height = 30,
