@@ -6,6 +6,8 @@ library("pheatmap")
 library("ggplot2")
 library("sessioninfo")
 
+output_path <- here("plots", "10_DEA", "03_VariancePartition")
+
 
 
 ########################### Load rse filtered object ##########################
@@ -37,7 +39,7 @@ class(rse_gene_filt)
 
 ## Set up qc_metrics and colors for the plot
 qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "library_size", "detected_num_genes", "RIN", "abs_ERCCsumLogErr", "PrimaryDx", "Flowcell", "AgeDeath")
-colors <- c("mitoRate" = "turquoise4", "rRNA_rate" = "bisque2", "overallMapRate" = "indianred1", "totalAssignedGene" = "blueviolet", "concordMapRate" = "lightsalmon", "library_size" = "palegreen3", "detected_num_genes" = "skyblue2", "RIN" = "blue3", "abs_ERCCsumLogErr" = "#06d6a0", "PrimaryDx" = "#a14a76","Flowcell" = "#fdc500", "AgeDeath" = "#dda15e")
+colors <- c("mitoRate" = "turquoise4", "rRNA_rate" = "bisque2", "overallMapRate" = "indianred1", "totalAssignedGene" = "blueviolet", "concordMapRate" = "lightsalmon", "library_size" = "palegreen3", "detected_num_genes" = "skyblue2", "RIN" = "blue3", "abs_ERCCsumLogErr" = "#06d6a0", "PrimaryDx" = "#a14a76", "Flowcell" = "#fdc500", "AgeDeath" = "#dda15e")
 
 exp_vars <- getVarianceExplained(rse_gene_filt, variables = qc_metrics, exprs_values = "logcounts")
 
@@ -46,7 +48,13 @@ varience_plot <- plotExplanatoryVariables(exp_vars, theme_size = 12, nvars_to_pl
 varience_plot <- varience_plot + scale_colour_manual(values = colors) +
     labs(color = "Variables")
 
-ggsave(filename = here("plots/10_DEA/ExplanatoryVars.pdf"), varience_plot, width = 35, height = 25, units = "cm")
+ggsave(
+    paste(output_path, "/", "ExplanatoryVars.pdf", sep = ""),
+    varience_plot,
+    width = 35,
+    height = 25,
+    units = "cm"
+)
 
 ###############################################################################
 
@@ -54,7 +62,7 @@ ggsave(filename = here("plots/10_DEA/ExplanatoryVars.pdf"), varience_plot, width
 
 ######################### Correlation between variables #######################
 
-formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN +  abs_ERCCsumLogErr
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN + abs_ERCCsumLogErr
 
 corpairs <- canCorPairs(formula, colData(rse_gene_filt))
 
@@ -65,7 +73,7 @@ pheatmap(
     border_color = "black",
     height = 6,
     width = 6.5,
-    filename = here("plots/10_DEA/CCA_heatmap.pdf")
+    filename = paste(output_path, "/", "CCA_heatmap.pdf", sep = "")
 )
 
 ###############################################################################
@@ -74,7 +82,7 @@ pheatmap(
 
 ############################## Variance partition #############################
 
-formula <- ~ (1|PrimaryDx) + AgeDeath + (1|Flowcell) + mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN + abs_ERCCsumLogErr
+formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN + abs_ERCCsumLogErr
 
 ## Loop over each gene to fit model and extract variance explained by each variable
 varPart <- fitExtractVarPartModel(assays(rse_gene_filt)$logcounts, formula, colData(rse_gene_filt))
@@ -86,8 +94,11 @@ vp <- sortCols(varPart)
 
 p <- plotVarPart(vp)
 ggsave(
-    filename = here("plots/10_DEA/VarPartition.pdf"),
-    p, width = 40, height = 20, units = "cm"
+    filename = paste(output_path, "/", "VarPartition.pdf", sep = ""),
+    p,
+    width = 40,
+    height = 20,
+    units = "cm"
 )
 
 ###############################################################################
@@ -97,7 +108,7 @@ ggsave(
 ######################## Variance partition - filtered ########################
 
 ## Plots without overallMapRate, concordMapRate, detected_num_genes
-formula <-  ~ (1|PrimaryDx) + AgeDeath + (1|Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + library_size
+formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + library_size
 
 varPart <- fitExtractVarPartModel(assays(rse_gene_filt)$logcounts, formula, colData(rse_gene_filt))
 # Warning messages:
@@ -108,8 +119,11 @@ vp <- sortCols(varPart)
 
 p <- plotVarPart(vp)
 ggsave(
-    filename = here("plots/10_DEA/VarPartition_filtered.pdf"),
-    p, width = 40, height = 20, units = "cm"
+    filename = paste(output_path, "/", "VarPartition_filtered.pdf", sep = ""),
+    p,
+    width = 40,
+    height = 20,
+    units = "cm"
 )
 
 ###############################################################################
