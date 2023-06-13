@@ -6,6 +6,8 @@ library("cowplot")
 library("GGally")
 library("sessioninfo")
 
+output_path <- here("plots", "10_DEA", "02_DataExploration")
+
 
 
 ############################ Load rse gene objects ############################
@@ -164,7 +166,13 @@ for (sample_var in sample_variables) {
         i <- i + 1
     }
     plot_grid(plotlist = plots, nrow = 3)
-    ggsave(paste(here("plots/10_DEA/QC_boxplots_"), sample_var, ".pdf", sep = ""), width = 35, height = 30, units = "cm")
+
+    ggsave(
+        paste(output_path, "QC_boxplots_", sample_var, ".pdf", sep = ""),
+        width = 35,
+        height = 30,
+        units = "cm"
+    )
 }
 
 ###############################################################################
@@ -203,11 +211,7 @@ plot_correlations <- function(qc_metric) {
 
 corr_plots <- lapply(qc_metrics, plot_correlations)
 ggsave(
-    here(
-        "plots",
-        "10_DEA",
-        "Corr_AgeDeath_vs_QCmetrics.pdf"
-    ),
+    paste(output_path, "Corr_AgeDeath_vs_QCmetrics.pdf", sep = ""),
     plot_grid(plotlist = corr_plots, nrow = 3),
     width = 40,
     height = 30,
@@ -236,23 +240,29 @@ sample_variables <- c("PrimaryDx", "Flowcell", "AgeDeath")
 
 pca_samplevars <- function(sample_var) {
     gg_plot <- ggpairs(pca_df,
-    columns = 1:10, aes_string(color = sample_var, alpha = 0.5),
-    upper = list(continuous = wrap("points", size = 2))
-) +
-    theme_bw()
+        columns = 1:10, aes_string(color = sample_var, alpha = 0.5),
+        upper = list(continuous = wrap("points", size = 2))
+    ) +
+        theme_bw()
 
-    if(sample_var == "Flowcell"){
-       gg_plot <- gg_plot +
-           scale_color_manual(values = c("HVYTYBBXX" = "darkmagenta", "HW252BBXX" = "yellow3"))
-    }else if (sample_var == "PrimaryDx") {
+    if (sample_var == "Flowcell") {
         gg_plot <- gg_plot +
-           scale_color_manual(values = c("Schizo" = "darkgoldenrod3", "Control" = "turquoise3") )
-    }else if (sample_var == "AgeDeath") {
+            scale_color_manual(values = c("HVYTYBBXX" = "darkmagenta", "HW252BBXX" = "yellow3"))
+    } else if (sample_var == "PrimaryDx") {
+        gg_plot <- gg_plot +
+            scale_color_manual(values = c("Schizo" = "darkgoldenrod3", "Control" = "turquoise3"))
+    } else if (sample_var == "AgeDeath") {
         gg_plot <- gg_plot +
             scale_color_gradient(low = "#F19E93", high = "#00433F")
     }
 
-    ggsave(paste(here("plots/10_DEA/"), "PCA_", sample_var, ".pdf", sep = ""), gg_plot, width = 30, height = 34, units = "cm")
+    ggsave(
+        paste(output_path, "PCA_", sample_var, ".pdf", sep = ""),
+        gg_plot,
+        width = 30,
+        height = 34,
+        units = "cm"
+    )
 }
 
 lapply(sample_variables, pca_samplevars)
@@ -266,7 +276,13 @@ pca_qcmetrics <- function(qc_metric) {
         scale_color_gradient(low = "yellow", high = "darkblue") +
         theme(legend.position = "bottom")
 
-    ggsave(paste(here("plots/10_DEA/"), "PCA_", qc_metric, ".pdf", sep = ""), gg_plot, width = 30, height = 30, units = "cm")
+    ggsave(
+        paste(output_path, "PCA_", qc_metric, ".pdf", sep = ""),
+        gg_plot,
+        width = 30,
+        height = 30,
+        units = "cm"
+    )
 }
 
 lapply(qc_metrics, pca_qcmetrics)
@@ -285,5 +301,3 @@ options(width = 120)
 session_info()
 
 ###############################################################################
-
-
