@@ -1,9 +1,9 @@
 #!/bin/bash
 #$ -cwd
 #$ -l mem_free=20G,h_vmem=20G,h_fsize=100G
-#$ -N code/10_DEA/03_VariancePartition
-#$ -o logs/code/10_DEA/03_VariancePartition.txt
-#$ -e logs/code/10_DEA/03_VariancePartition.txt
+#$ -N VariancePartition
+#$ -o logs/03_VariancePartition.txt
+#$ -e logs/03_VariancePartition.txt
 #$ -m e
 
 echo "**** Job starts ****"
