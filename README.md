@@ -27,7 +27,7 @@ Clustering (and comparing my cluster schemes to Erik’s previous cluster scheme
 Please note that each folder has an internal README.md file for clarity.
 
 [01_bulk_speaqeasy](https://github.com/LieberInstitute/Habenula_Bulk/tree/master/code/01_bulk_speaqeasy) - bulk fastq files     
-[07_cell_ranger](https://github.com/LieberInstitute/Habenula_Bulk/tree/master/code/07_cell_ranger) - sn transcriptomics data (only folder majorly out of order*)    
+[07_cellranger](https://github.com/LieberInstitute/Habenula_Bulk/tree/master/code/07_cellranger) - sn transcriptomics data (only folder majorly out of order*)    
 [02_bulk_qc](https://github.com/LieberInstitute/Habenula_Bulk/tree/master/code/02_bulk_qc) - bulk qc information     
 [03_bulk_pca](https://github.com/LieberInstitute/Habenula_Bulk/tree/master/code/03_bulk_pca) - ran pca on filtered bulk data and investigated trends    
 [04_snRNA_seq](https://github.com/LieberInstitute/Habenula_Bulk/tree/master/code/04_snRNA_seq) - full qc, pca, harmonization, clustering, and annotation journey  
