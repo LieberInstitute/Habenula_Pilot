@@ -3,5 +3,5 @@
 
 #### 70_GPR151 ####
 
-#### Description: ####
+#### Description ####
 Please disregard. Was just investigating the expression of GPR151 in our sce data for Dr. Maynard.
