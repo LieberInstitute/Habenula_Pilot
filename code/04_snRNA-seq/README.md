@@ -49,7 +49,7 @@ Loading post-qc sce object ("processed-data/04_snRNA-seq/sce_objects//sce_hb_pos
 "processed-data/04_snRNA-seq/sce_objects/sce_uncorrected_PCA.Rdata". This object was not harmonized. I later harmonize this data by sample. 
 
 
-- **05_GLM_Harmony.R ** 
+- **05_GLM_Harmony.R** 
 Corrected sce by Harmony and plotted by different metrics (similar to those plotted in 04_GLM_PCA.R) and was saved in "plots/04_snRNA-seq/05_GLM_Harmony_plots". Post-harmony GLM sce was saved as "processed-data/04_snRNA-seq/sce_objects/sce_harmony_by_Samp.Rdata"). 
 
 - **06_Clustering.R**
