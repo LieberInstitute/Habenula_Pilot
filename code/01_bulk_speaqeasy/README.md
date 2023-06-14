@@ -1,10 +1,17 @@
-June 12, 2023 - Bukola Ajanaku
+**June 12, 2023**  
+*Bukola Ajanaku*
 
-Folder: 01_bulk_speaqeasy
-Files: (1/1) prep_manifest.R
+#### 01_bulk_speaqeasy ####
 
-Description:
+|       Files     |
+| --------------- |
+| prep_manifest.R |
 
+
+#### Description ####
+
+- **prep_manifest.R**
+ 
 This folder was grandfathered in from the legacy code. 
 It grabs information from the FastQ files (the rawest form of snRNASeq data 
 possible) and writes them into their respective tables in prepartion for later
