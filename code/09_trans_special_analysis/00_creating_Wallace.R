@@ -22,12 +22,12 @@ wallData <- as.SingleCellExperiment(
   UpdateSeuratObject(
     readRDS(file = here("processed-data", 
                         "09_trans_special_analysis",
-                        "Wallace_mouse_data.rds"))
+                        "Wallacemousedata.rds"))
   ))
 
 wallSeu <- readRDS(file = here("processed-data", 
                                "09_trans_special_analysis",
-                               "Wallace_mouse_data.rds"))
+                               "Wallacemousedata.rds"))
 
 wall2s <- UpdateSeuratObject(wallSeu)
 idents(wallSeu)

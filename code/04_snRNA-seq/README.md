@@ -17,7 +17,7 @@ Files: only listing main R files
 (13/14) 08_Hierarchical_Clustering.R
 
 Description:
-This is the full snRNA-seq analysis journey that I went through during most of my time with LIBD. This was my take on the snRNA-seq data, similar to how Josh Stolz and Erik Nelson have done (in the Legacy folder). Please note that a great deal of this work was exploratory. All finialized pathways are in the 99_paper_figs folder.
+This is the full snRNA-seq analysis journey that I went through during most of my time with LIBD. This was my take on the snRNA-seq data, similar to how Josh Stolz and Erik Nelson have done (in the Legacy folder). Please note that a great deal of this work was exploratory. All finalized pathways are in the 99_paper_figs folder.
 
 1) 00_Color_Scheme_ct.R
 Unofficial unspecified color palette used for exploratory work.

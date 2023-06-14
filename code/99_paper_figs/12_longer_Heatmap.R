@@ -18,10 +18,6 @@ load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_final.Rdata"),
      verbose = TRUE)
 # sce_final 
 
-# making duplicate for later use
-sce_final2 <- sce_final
-rownames(sce_final2) <- rowData(sce_final2)$Symbol
-
 # creating plot directory
 plot_dir <- here("plots", "99_paper_figs", "12_longer_Heatmap")
 if(!dir.exists(plot_dir)){
@@ -32,6 +28,204 @@ if(!dir.exists(plot_dir)){
 source(file = here("code", "99_paper_figs", "source_colors.R"))
 # bulk_colors and sn_colors
 
+
+table(sce_final$final_Annotations)
+# grabbing the resolution we need
+sce_final$longerAnno <- sce_final$final_Annotations
+sce_final <- sce_final[, !sce_final$longerAnno %in% c("Astrocyte", "Endo", "Excit.Thal",
+                                       "Inhib.Thal", "Microglia", "Oligo",
+                                       "OPC") ]
+
+# creating marker list
+official_markers = list(
+  "LHb.A" = c("LINC02653","SYT2", "AC114316.1", "ONECUT2", "AC005906.2",
+              "ATP8B1", "MMRN1", "FGF9", "GRIK4", "PRCP"), 
+  "LHb.B" = c("AC073071.1", "CRH", "AC012501.2", "LINC01572", "AC020611.2",
+              "PTPRQ", 'KCNMB4', "MTMR8", "DTNBP1", "LRRN3"),
+  "LHb.C" = c ("ENTHD1","GRAP2", "MIR4500HG", "AC061958.1", "SYDE2", 
+               "LGI2", "PCSK1", "MCOLN3", "AL121821.2", "LINC02112"),
+  "LHb.D" = c("TLE2", "CBLN1", "ANKRD34B", "SDC2", "GLRA1", "UBASH3B",
+              "AC007656.2", "PCDH19", "KCNK2", "CLMP"),
+  "LHb.E" = c("LINC01619", "CCND2", "AC008574.1", "DIRAS3", "CDH7", "SEMA3D",
+              "TRHDE", "KCTD1", "GNG12", "KCNC2"),
+  "LHb.F" = c("TACR3", "ESRP1", "AC011369.1", "KCNAB2", "AL354771.1", "CHRNA4",
+              "MYO7A", "CHST8", "ANKRD50", "AP002989.1"),
+  "LHb.G" = c("AC008619.1", "LINC02296", "AC027312.1", "CLIC6", 'AC078845.1',
+              "UBE2QL1", 'EAF2', "RSPO2", "AC009264.1","LINC01497"),
+  "MHb.A" = c("EXOC1L","F13A1", 'AC012499.1', "TAC1", "FREM2", "WDR72", 
+              "TAC3", "PDE11A", 'AC107208.1', 'CCK'), 
+  "MHb.B" = c("CHAT", 'AC079760.2','LINC00616', "AC104170.1", "AC111198.1",
+              "HRH3", "AC002069.2", 'SLC17A7', "PLCH2", 'NUP214'),
+  "MHb.C" = c("BHLHE22", "PKP2", "EBF3", "MIR548XHG", "FGF10-AS1", "FGF10",
+              "FOXP4", "LINC01811", "AL136456.1", "PROX1-AS1")
+)
+
+# 'Hb' = c("GPR151", "CHRNB3", "POU4F1", "LINC01876", "CHRNA6")
+# "MHb" = c("CHAT", "LINC01307", "NEUROD1", "CHRNB4", "LINC02143", "AC114321.1",
+#           "AC104170.1", "AC079760.2", "AC024610.2", "AC022382.2"),
+# "LHb" = c("HTR4", "BVES", "NRP1", "HTR2C", "CDH4", "COL25A1", "CBLN2", 
+#           "CACNA1I", "WSCD2"),
+# 'Neuron' = c('SYT1'),
+# 'Exc_Neuron' = c('SLC17A6'), 
+# 'Inh_Neuron' = c('GAD1')
+
+row_namers <- c( 
+                "LHb.1",
+                "LHb.2",
+                "LHb.3",
+                "LHb.4",
+                "LHb.5",
+                "LHb.6",
+                "LHb.7",
+                "MHb.1", 
+                "MHb.2",
+                "MHb.3"
+)
+
+# explicit color scheme 
+color_official_markers = c(
+  "LHb.A" = c("#0085af"),
+  "LHb.B" = c("#0096FF"),
+  "LHb.C" = c ("#89CFF0"), 
+  "LHb.D" = c("#6F8FAF"), 
+  "LHb.E" = c("#40E0D0"),
+  "LHb.F" = c("#008080"), 
+  "LHb.G" = c("#7DF9FF"), 
+  "MHb.A" = c("#FF00FF"),
+  "MHb.B" = c("#FAA0A0"), 
+  "MHb.C" = c("#fa246a")
+)
+
+# "Hb" = c("#702963"), 
+# "MHb" = c("#F33A6A"),
+# "LHb" = c("#0000FF"), 
+# 'Neuron' = c('#D8BFD8'),
+# 'Exc_Neuron' = c("#9e4ad1"), 
+# "Inh_Neuron" = c('#b5a2ff')
+
+# checking colors
+preview_colors <- function(cell_colors) {
+  par(las = 2) # make label text perpendicular to axis
+  par(mar = c(5, 8, 4, 2)) # increase y-axis margin.
+  barplot(rep(1, length(cell_colors)),
+          col = cell_colors,
+          horiz = TRUE,
+          axes = FALSE,
+          names.arg = names(cell_colors)
+  )
+}
+
+png(here(plot_dir, "gene_markers_color_pal.png"))
+preview_colors(color_official_markers)
+dev.off()
+
+png(here(plot_dir, "clusters_color_pal.png"))
+preview_colors(sn_colors)
+dev.off()
+
+
+# Pseudobulking to create compressed sce object
+## faking the pseudobulking function out by setting sample as all same sample
+sce_final$FakeSample <- "Br1011"
+sce_final$RealSample <- sce_final$Sample
+sce_final$Sample <- sce_final$FakeSample
+
+set.seed(20220907) 
+sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
+
+
+####### PLOTTING ###############################################################
+# Plotting ComplexHeatmap
+sce = sce_simple_pb_snAnno3
+clusterMethod = "final_Annotations"
+markerList = official_markers
+
+# Replacing genes with symbols for heatmap (remember, this is pseudobulked data)
+rownames(sce) <- rowData(sce)$Symbol
+
+# renaming rownnames of colData(sce) based on row annotations
+rownames(colData(sce)) <- paste(colData(sce)[, clusterMethod])
+
+# reordering sce object for plottability
+sce_reorder <- sce[unlist(markerList) , row_namers]
+
+# Making data frame of genes we are interested in annd their general classification
+markTable <- as.data.frame(unlist(markerList)) |> 
+  rownames_to_column("cellType") |>
+  rename(gene = `unlist(markerList)`) |>
+  mutate(cellType = gsub("\\d+", "", cellType)) |>
+  filter(gene %in% rowData(sce_reorder)$Symbol)
+
+# getting z scores
+marker_z_score <- scale(t(logcounts(sce_reorder)))
+# corner(marker_z_score)
+
+# heatmap columns annotation
+column_ha <- HeatmapAnnotation(
+  Gene_Marker = markTable$cellType,
+  col = list(Gene_Marker = color_official_markers),
+  annotation_legend_param = list(
+    Gene_Marker = list(
+      title = "Gene_Marker" 
+    )
+  ))
+
+# grabbing the annotations per cluster from the sce_reorder object
+clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
+names(clusterData) <- "cellType"
+
+# prepping the colors we want
+# for cell type
+# num_pal <- length(unique(clusterData$cellType))
+# col_pal_ct <- grabColors(num_pal, start = 4)
+# names(col_pal_ct) = unique(clusterData$cellType)
+
+# heatmap row annotationn
+row_ha <- rowAnnotation(
+  Clusters = clusterData$cellType,
+  col = list(Clusters = sn_colors)
+)
+
+heatmapped <- Heatmap(marker_z_score,
+                      cluster_rows = FALSE,
+                      cluster_columns = FALSE,
+                      right_annotation = row_ha,
+                      top_annotation = column_ha,
+                      column_split = factor(markTable$cellType),
+                      heatmap_legend_param = list(
+                        title = c("Z_Score"),
+                        border = "black"
+                      ),
+                      row_names_gp = grid::gpar(fontsize = 12),
+                      column_names_gp = grid::gpar(fontsize = 12))
+
+
+
+# printing 
+pdf(here(plot_dir, "mainFigure_Hb_Markers_Heatmap.pdf"), width = 20, height = 6)
+  heatmapped
+dev.off()
+
+
+
+### The code below is supposed to do the same thing as above (giving a longer 
+# list of gene markers for each cluster) but for all clusters not just the habenula 
+# ones.
+
+
+# PLEASE IGNORE FROM THIS POINT ON:
+# making duplicate for later use
+sce_final2 <- sce_final
+rownames(sce_final2) <- rowData(sce_final2)$Symbol
+
+# making separated Hb (2)
+sce_final$longerAnno[sce_final$longerAnno %in% grep("^LHb\\.", unique(sce_final$longerAnno), value = TRUE)] <-  'LHb'
+sce_final$longerAnno[sce_final$longerAnno %in% grep("^MHb\\.", unique(sce_final$longerAnno), value = TRUE)] <-  'MHb'
+sce_final$longerAnno[sce_final$longerAnno %in% grep("Thal*", unique(sce_final$longerAnno), value = TRUE)] <- "Thalamus"
+
+table(sce_final$longerAnno)
+
+
 # messing with columns for registration pseudobulk
   table(sce_final$RealSample)
     # Br1092 Br1204 Br1469 Br1735 Br5555 Br5558 Br5639 
@@ -41,15 +235,6 @@ source(file = here("code", "99_paper_figs", "source_colors.R"))
     # Br1011 
     # 17031
 
-table(sce_final$final_Annotations)
-  # grabbing the resolution we need
-sce_final$longerAnno <- sce_final$final_Annotations
-# making separated Hb (2)
-sce_final$longerAnno[sce_final$longerAnno %in% grep("^LHb\\.", unique(sce_final$longerAnno), value = TRUE)] <-  'LHb'
-sce_final$longerAnno[sce_final$longerAnno %in% grep("^MHb\\.", unique(sce_final$longerAnno), value = TRUE)] <-  'MHb'
-sce_final$longerAnno[sce_final$longerAnno %in% grep("Thal*", unique(sce_final$longerAnno), value = TRUE)] <- "Thalamus"
-
-table(sce_final$longerAnno)
     # Astrocyte      Endo       LHb       MHb Microglia     Oligo       OPC  Thalamus 
     # 538        38      2214       710       145      2178      1796      9412 
 # finding necessary gene markers 
