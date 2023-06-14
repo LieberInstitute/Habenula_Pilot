@@ -3,15 +3,14 @@
 
 #### 01_bulk_speaqeasy ####
 
-|       Files     |
-| --------------- |
-| prep_manifest.R |
+||       Files     |
+|---| --------------- |
+|1| prep_manifest.R |
 
 
 #### Description ####
 
-- **prep_manifest.R** 
-
+- **prep_manifest.R**   
 This folder was grandfathered in from the legacy code. 
 It grabs information from the FastQ files (the rawest form of snRNASeq data 
 possible) and writes them into their respective tables in prepartion for later

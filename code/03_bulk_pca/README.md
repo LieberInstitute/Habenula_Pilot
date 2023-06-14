@@ -3,12 +3,11 @@
 
 #### 03_bulk_pca #### 
 
-|       Files     |
-| --------------- |
-| 01_pc_explore_Bukola.R |
+||       Files     |
+|---| --------------- |
+|1| 01_pc_explore_Bukola.R |
 
 #### Description #### 
 
-- **01_pc_explore_Bukola.R**
-
+- **01_pc_explore_Bukola.R**        
 Calculated PCA data and plotted against different qc metrics and phenotypic information.
