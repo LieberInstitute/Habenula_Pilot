@@ -151,6 +151,27 @@ qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
 ###############################################################################
 
 
+
+##################### Explore differences between types #######################
+
+rse_cellcomp <- getDegTx(rse_tx, type = "cell_component")
+dim(rse_cellcomp)
+# [1] 2938   69
+
+rse_stand <- getDegTx(rse_tx, type = "standard")
+dim(rse_stand)
+# [1] 1772   69
+
+## Aparently the standard just has less genes
+length(intersect(rownames(rse_stand), rownames(rse_cellcomp)))
+# [1] 1772
+length(union(rownames(rse_stand), rownames(rse_cellcomp)))
+# [1] 2938
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
