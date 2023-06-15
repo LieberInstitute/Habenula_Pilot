@@ -1,25 +1,3 @@
-<<<<<<< HEAD
-June 12th, 2023 - Bukola Ajanaku
-
-Folder: 04_snRNA-seq
-Files: only listing main R files
-(1/14) 00_Color_Scheme_ct.R
-(2/14) 00_Gene_Marker_List.R
-(3/14) 01_get_droplet_scores.R
-(4/14) 02_build_basic_sce.R
-(5/14) 03_qc_metter.R
-(6/14) 04_GLM_PCA.R
-(7/14) 05_GLM_Harmony.R
-(8/14) 06_Clustering.R
-(9/14) 07_Gene_Marking.R
-(10/14) 07b_Marking_Clusters.R
-(11/14) 07c_Pseudobulking.R
-(12/14) 07d_Pseudo_Heatmap.R
-(13/14) 08_Hierarchical_Clustering.R
-
-Description:
-This is the full snRNA-seq analysis journey that I went through during most of my time with LIBD. This was my take on the snRNA-seq data, similar to how Josh Stolz and Erik Nelson have done (in the Legacy folder). Please note that a great deal of this work was exploratory. All finalized pathways are in the 99_paper_figs folder.
-=======
 **June 12th, 2023**     
 *Bukola Ajanaku* 
 
@@ -48,7 +26,6 @@ This is the full snRNA-seq analysis journey that I went through during most of m
 #### Description ####
 
 This is the full snRNA-seq analysis journey that I went through during most of my time with LIBD. This was my take on the snRNA-seq data, similar to how Josh Stolz and Erik Nelson have done (in the Legacy folder). Please note that a great deal of this work was exploratory. All finialized pathways are in the 99_paper_figs folder.
->>>>>>> 6ff343210a2a81dfb78e2c6e86047d71db905923
 
 - **00_Color_Scheme_ct.R**     
 Unofficial unspecified color palette used for exploratory work.
