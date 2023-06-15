@@ -146,7 +146,7 @@ mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell,
     data = colData(rse_tx)
 )
 
-qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
+qsva_pcs <- qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
 
 ###############################################################################
 
@@ -167,6 +167,22 @@ length(intersect(rownames(rse_stand), rownames(rse_cellcomp)))
 # [1] 1772
 length(union(rownames(rse_stand), rownames(rse_cellcomp)))
 # [1] 2938
+
+###############################################################################
+
+
+
+######################## Save rse object with qsva data #######################
+
+colData(rse_gene) <- cbind(colData(rse_gene), qsva_pcs)
+
+save(rse_gene,
+    file = here(
+        "processed-data",
+        "rse_objects",
+        "rse_gene_filt_DEA_n69.rda"
+    )
+)
 
 ###############################################################################
 
