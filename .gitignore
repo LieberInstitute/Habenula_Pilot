@@ -1,4 +1,4 @@
-preprocessed-data/
+preprocessed_data/
 processed-data/02_bulk_qc/*
 processed-data/04_snRNA-seq/*
 processed-data/05_explore_sce/*
