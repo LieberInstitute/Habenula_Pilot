@@ -139,6 +139,18 @@ names(colData(rse_tx))
 ###############################################################################
 
 
+
+########################### Set model and run qSVA ############################
+
+mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell,
+    data = colData(rse_tx)
+)
+
+qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
+
+###############################################################################
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
