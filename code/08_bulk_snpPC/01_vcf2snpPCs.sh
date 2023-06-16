@@ -18,7 +18,7 @@ echo "Task id: ${SGE_TASK_ID}"
 
 ## Load the R module (absent since the JHPCE upgrade to CentOS v7)
 module load conda_R/4.3
-module load plink
+module load plink/1.90b6.6
 
 ## List current modules for reproducibility
 module list
