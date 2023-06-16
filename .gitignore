@@ -6,6 +6,7 @@ processed-data/04_snRNA-seq/*
 processed-data/05_explore_sce/*
 processed-data/06_deconvolution/*
 processed-data/07_cellranger/*
+processed-data/08_bulk_snpPC/*
 processed-data/99_paper_figs/*
 processed-data/09_trans_special_analysis/*
 processed-data/10_DEA/*
