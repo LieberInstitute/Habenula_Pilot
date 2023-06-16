@@ -59,7 +59,7 @@ mds <- read.table(paste0(bedout, ".mds"), header = TRUE, as.is = TRUE)
 # rownames(mds) = ifelse(grepl("^Br", mds$FID),  mds$FID, mds$IID)
 rmds <- mds[, -(1:3)] # remove FID, IID and SOL columns 1-3
 colnames(rmds) <- paste0("snpPC", 1:ncol(rmds))
-rmds$BrNum <- rownames(rmds)
+rmds$BrNum <- mds[,1]
 data.table::setcolorder(rmds, "BrNum")
 
 ## write snpPCs file:
