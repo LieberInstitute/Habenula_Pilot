@@ -13,7 +13,7 @@ qcflt <- "--geno 0.1 --maf 0.05 --hwe 0.000001 --out"
 
 ## convert to plink BED:
 cmd <- paste(
-    "plink --make-bed --output-chr chrM --keep-allele-order --vcf",
+    "plink2 --make-bed --output-chr chrM --keep-allele-order --vcf",
     vcf, "--out", bedout
 )
 ## or we can directly apply the QC filter during conversion
@@ -31,19 +31,19 @@ indfile <- paste0(bedout, "_indep")
 ##          a window size in variant count or kilobase (if the 'kb' modifier is present) units,
 ##          a variant count to shift the window at the end of each step,
 ##          a variance inflation factor (VIF) threshold
-cmd <- paste("plink --bfile ", bedout, "--indep 100 10 1.25 --out", bedout)
+cmd <- paste("plink2 --bfile ", bedout, "--indep 100 10 1.25 --out", bedout)
 system(cmd)
 
 ## MDS components
 # outmds=paste0(bedout, '_clmds')
 cmd <- paste0(
-    "plink --bfile ", bedout,
+    "plink2 --bfile ", bedout,
     " --cluster --mds-plot 10 --extract ", bedout, ".prune.in --out ", bedout
 )
 system(cmd)
 
 # ## A transpose
-cmd <- paste("plink --bfile", bedout, "--recode A-transpose --out", bedout)
+cmd <- paste("plink2 --bfile", bedout, "--recode A-transpose --out", bedout)
 system(cmd)
 
 ## read in genotypes
