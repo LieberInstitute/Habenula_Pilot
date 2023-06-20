@@ -124,6 +124,39 @@ pca_samplevars <- function(sample_var) {
 
 lapply(sample_variables, pca_samplevars)
 
+## Matrix of PCs
+
+qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "log10_library_size", "detected_num_genes", "RIN", "abs_ERCCsumLogErr")
+
+pca_qcmetrics <- function(qc_metric) {
+    pair_pc <- ggpairs(cols_rse,
+        columns = 1:4, aes_string(color = qc_metric, alpha = 0.5),
+        upper = list(continuous = wrap("points", size = 2))
+    )
+
+    for (i in 1:4) {
+        for (j in 1:4) {
+            if (j != i) {
+                plot <- ggplot(cols_rse, aes_string(x = paste0("snpPC", i), y = paste0("snpPC", j), color = qc_metric, label = "BrNum")) +
+                    geom_point() +
+                    scale_color_gradient(low = "yellow", high = "darkblue") +
+                    geom_text() +
+                    theme_bw()
+                pair_pc[i, j] <- plot
+            }
+        }
+    }
+
+    ggsave(
+        paste(output_path, "/PCA_", qc_metric, ".pdf", sep = ""),
+        pair_pc,
+        width = 30,
+        height = 34,
+        units = "cm"
+    )
+}
+
+lapply(qc_metrics, pca_qcmetrics)
 
 ###############################################################################
 
