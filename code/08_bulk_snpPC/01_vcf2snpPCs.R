@@ -40,28 +40,41 @@ system(cmd)
 ###############################################################################
 
 
+########################### Independent and cluster ###########################
+
 ## --indep <window size>['kb'] <step size (variant ct)> <VIF threshold>
 ## produce a pruned subset of markers that are in approximate linkage equilibrium with each other
 ## --indep requires three parameters:
 ##          a window size in variant count or kilobase (if the 'kb' modifier is present) units,
 ##          a variant count to shift the window at the end of each step,
 ##          a variance inflation factor (VIF) threshold
-cmd <- paste("plink --bfile ", bedout, "--indep 100 10 1.25 --out", bedout)
+
+cmd <- paste("plink --bfile ", bedout_filt, "--indep 100 10 1.25 --out", bedout_filt)
 system(cmd)
 
-## MDS components
+###############################################################################
+
+
+
+################################ MDS components ###############################
+
 # outmds=paste0(bedout, '_clmds')
 cmd <- paste0(
-    "plink --bfile ", bedout,
-    " --cluster --mds-plot 10 --extract ", bedout, ".prune.in --out ", bedout
+    "plink --bfile ", bedout_filt,
+    " --cluster --mds-plot 10 --extract ", bedout_filt, ".prune.in --out ", bedout_filt
 )
 system(cmd)
 
 # ## A transpose
-cmd <- paste("plink --bfile", bedout, "--recode A-transpose --out", bedout)
+cmd <- paste("plink --bfile", bedout_filt, "--recode A-transpose --out", bedout_filt)
 system(cmd)
 
-## read in genotypes
+###############################################################################
+
+
+
+############################### Extract SNP PCs ###############################
+
 # genotypes  = read_delim(paste0(newbfile, ".traw"), delim="\t")
 # snp = as.data.frame(genotypes[,-(1:6)])
 # colnames(snp) = ifelse(grepl("^Br", ss(colnames(snp), "_")),
@@ -69,13 +82,28 @@ system(cmd)
 # snp = as.matrix(snp[,unique(BrNums)])
 
 #### read in MDS
-mds <- read.table(paste0(bedout, ".mds"), header = TRUE, as.is = TRUE)
+mds <- read.table(paste0(bedout_filt, ".mds"), header = TRUE, as.is = TRUE)
 
 # rownames(mds) = ifelse(grepl("^Br", mds$FID),  mds$FID, mds$IID)
 rmds <- mds[, -(1:3)] # remove FID, IID and SOL columns 1-3
 colnames(rmds) <- paste0("snpPC", 1:ncol(rmds))
-rmds$BrNum <- mds[,1]
+rmds$BrNum <- mds[, 1]
 data.table::setcolorder(rmds, "BrNum")
 
 ## write snpPCs file:
-data.table::fwrite(rmds, file = paste0(bedout, ".snpPCs.tab"), sep = "\t")
+data.table::fwrite(rmds, file = paste0(bedout_filt, ".snpPCs.tab"), sep = "\t")
+
+###############################################################################
+
+
+
+######################### Reproducibility information #########################
+
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
+
+###############################################################################
