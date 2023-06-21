@@ -3,28 +3,30 @@
 ## module plink must be loaded (or plink available in PATH)!
 library(here)
 
-vcf <- here("processed-data/08_bulk_snpPC/habenula_genotypes_n69.vcf.gz")
+
+################################ Set up paths #################################
+
+vcf <- here("processed-data/08_bulk_snpPC/habenula_genotypes.vcf.gz")
 
 bedout <- sub(".vcf.gz", "", vcf, fixed = T)
+bedout_filt <- sub(".vcf.gz", "_filt", vcf, fixed = T)
 
-## basic QC filter:
-qcflt <- "--geno 0.1 --maf 0.05 --hwe 0.000001 --out"
-## should not be applied for an already extracted VCF with samples of interest
+###############################################################################
 
-## convert to plink BED:
+
+
+############################ Convert to plink BED #############################
+
 cmd <- paste(
     "plink --make-bed --output-chr chrM --keep-allele-order --vcf",
     vcf, "--out", bedout
 )
-## or we can directly apply the QC filter during conversion
-# cmd=paste("plink --make-bed --output-chr chrM --keep-allele-order --vcf",
-#         vcf,  ,   bedout)
-## for a file with 68 genotypes, this eliminates over half of the variants!
 system(cmd)
 
 indfile <- paste0(bedout, "_indep")
 
-### independent and cluster
+###############################################################################
+
 
 
 ############################ Delete sample Br5572 #############################
