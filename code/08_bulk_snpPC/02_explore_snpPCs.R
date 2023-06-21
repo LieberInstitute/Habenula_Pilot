@@ -33,7 +33,7 @@ snpPCs <- read.table(
     here(
         "processed-data",
         "08_bulk_snpPC",
-        "habenula_genotypes_n69.snpPCs.tab"
+        "habenula_genotypes_filt.snpPCs.tab"
     ),
     header = TRUE
 )
