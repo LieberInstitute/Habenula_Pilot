@@ -1,7 +1,9 @@
 #!/bin/env Rscript
 ## script to get MDS and snpPCs for a set of genotypes in a VCF.gz input data
 ## module plink must be loaded (or plink available in PATH)!
-library(here)
+library("here")
+library("sessioninfo")
+
 
 
 ################################ Set up paths #################################
@@ -33,7 +35,7 @@ indfile <- paste0(bedout, "_indep")
 
 cmd <- paste(
     "plink --bfile", bedout,
-    "--drop samples_to_drop.txt --make-bed --out", bedout_filt
+    "--remove samples_to_drop.txt --make-bed --out", bedout_filt
 )
 system(cmd)
 
