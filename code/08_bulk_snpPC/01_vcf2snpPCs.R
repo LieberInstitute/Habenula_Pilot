@@ -25,6 +25,19 @@ system(cmd)
 indfile <- paste0(bedout, "_indep")
 
 ### independent and cluster
+
+
+############################ Delete sample Br5572 #############################
+
+cmd <- paste(
+    "plink --bfile", bedout,
+    "--drop samples_to_drop.txt --make-bed --out", bedout_filt
+)
+system(cmd)
+
+###############################################################################
+
+
 ## --indep <window size>['kb'] <step size (variant ct)> <VIF threshold>
 ## produce a pruned subset of markers that are in approximate linkage equilibrium with each other
 ## --indep requires three parameters:
