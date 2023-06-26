@@ -1,4 +1,5 @@
 library("here")
+library("SummarizedExperiment")
 library("qsvaR")
 library("sessioninfo")
 
@@ -136,17 +137,66 @@ names(colData(rse_tx))
 # [65] "gene_Unassigned_Duplicate"      "rRNA_rate"
 # [67] "Flowcell"                       "hasGenotype"
 
+
+colData(rse_gene)$library_size <- apply(assay(rse_gene), 2, sum)
+colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
+colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
+    length(x[which(x > 0)])
+})
+colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
+
+
 ###############################################################################
 
 
 
-########################### Set model and run qSVA ############################
+################################## Set model ##################################
 
-mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell,
-    data = colData(rse_tx)
+rse_tx_sub <- rse_tx[, rse_tx$BrNum != "Br5572"]
+rse_gene_sub <- rse_gene[, rse_gene$BrNum != "Br5572"]
+colData(rse_tx_sub) <- colData(rse_gene_sub)
+
+mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + detected_num_genes,
+    data = colData(rse_tx_sub)
 )
 
+###############################################################################
+
+
+
+################################### Run qSVA ##################################
+
 qsva_pcs <- qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
+
+
+set.seed(20230626)
+qsva_pcs_standard <- qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
+dim(qsva_pcs_standard)
+
+set.seed(20230626)
+qsva_pcs_cc <- qSVA(rse_tx, type = "cell_component", mod = mod, assayname = "tpm")
+dim(qsva_pcs_cc)
+
+set.seed(20230626)
+DegTx <- getDegTx(rse_tx_sub, type = "standard")
+PCs <- getPCs(DegTx, "tpm")
+k <- k_qsvs_test(DegTx, mod = mod, assayname = "tpm")
+
+
+k_qsvs_test <- function (rse_tx, mod, assayname)
+{
+    if (qr(mod)$rank != ncol(mod)) {
+        stop("The 'mod' matrix is not full rank.", call. = FALSE)
+    }
+    expr <- log2(assays(rse_tx)[[assayname]] + 1)
+    k <- num.sv(expr, mod)
+    return(k)
+}
+
+qSV <- get_qsvs(PCs, k)
+return(qSV)
+
+select_tr
 
 ###############################################################################
 
