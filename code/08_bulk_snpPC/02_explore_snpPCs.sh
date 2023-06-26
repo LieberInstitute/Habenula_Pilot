@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd
 #$ -l mem_free=10G,h_vmem=10G,h_fsize=100G
-#$ -N 02_explore_snpPCs
+#$ -N explore_snpPCs
 #$ -o logs/02_explore_snpPCs.txt
 #$ -e logs/02_explore_snpPCs.txt
 #$ -m e
@@ -17,7 +17,7 @@ echo "Hostname: ${HOSTNAME}"
 echo "Task id: ${SGE_TASK_ID}"
 
 ## Load the R module (absent since the JHPCE upgrade to CentOS v7)
-module load conda_R
+module load conda_R/4.3
 
 ## List current modules for reproducibility
 module list
