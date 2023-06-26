@@ -64,6 +64,36 @@ colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
 
 ###############################################################################
 
+
+
+########### Add deconvolution, SNP PCs and qSVa results to colData ############
+
+## Identify sample to delete
+colnames(rse_gene[, rse_gene$BrNum == "Br5572"])
+# R18424
+
+## Delete samples from deconvolution and rse_gene
+est_prop <- t(est_prop$bulk.props)
+est_prop <- est_prop[rownames(est_prop) != "R18424",]
+
+rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
+
+dim(est_prop)
+# [1] 68  9
+dim(rse_gene)
+# [1] 22756    68
+
+# rownames(est_prop) == rownames(colData(rse_gene))
+
+## Add est_prop and snpPCs to colData(rse_gene)
+colData(rse_gene) <- cbind(colData(rse_gene), est_prop)
+colData(rse_gene) <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum")
+dim(colData(rse_gene))
+# [1] 68 99
+
+###############################################################################
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
