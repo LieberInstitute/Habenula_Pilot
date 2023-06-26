@@ -1,0 +1,257 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.10
+Loading LIBD module for ruby/3.1.2
+Loading conda_R/4.3
+**** Job starts ****
+Mon Jun 26 10:50:09 EDT 2023
+**** JHPCE info ****
+User: freneega
+Job id: 3585833
+Job name: explore_snpPCs
+Hostname: compute-122.cm.cluster
+Task id: undefined
+Unloading conda_R/4.3
+Loading conda_R/4.3
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/3.1.2
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.10
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.3
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2
+Loading objects:
+  rse_gene
+30.17 MB
+[1] "RangedSummarizedExperiment"
+attr(,"package")
+[1] "SummarizedExperiment"
+11.80 kB
+[1] "data.frame"
+[[1]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_PrimaryDx.pdf"
+
+[[2]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_Flowcell.pdf"
+
+[[3]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_AgeDeath.pdf"
+
+Warning messages:
+1: `aes_string()` was deprecated in ggplot2 3.0.0.
+ℹ Please use tidy evaluation idioms with `aes()`.
+ℹ See also `vignette("ggplot2-in-packages")` for more information. 
+2: The following aesthetics were dropped during statistical transformation: fill
+ℹ This can happen when ggplot fails to infer the correct grouping structure in
+  the data.
+ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+  variable into a factor? 
+3: The following aesthetics were dropped during statistical transformation: fill
+ℹ This can happen when ggplot fails to infer the correct grouping structure in
+  the data.
+ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+  variable into a factor? 
+4: The following aesthetics were dropped during statistical transformation: fill
+ℹ This can happen when ggplot fails to infer the correct grouping structure in
+  the data.
+ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+  variable into a factor? 
+5: The following aesthetics were dropped during statistical transformation: fill
+ℹ This can happen when ggplot fails to infer the correct grouping structure in
+  the data.
+ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+  variable into a factor? 
+[[1]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_mitoRate.pdf"
+
+[[2]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_rRNA_rate.pdf"
+
+[[3]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_overallMapRate.pdf"
+
+[[4]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_totalAssignedGene.pdf"
+
+[[5]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_concordMapRate.pdf"
+
+[[6]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_log10_library_size.pdf"
+
+[[7]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_detected_num_genes.pdf"
+
+[[8]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_RIN.pdf"
+
+[[9]]
+[1] "/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/plots/08_bulk_snpPC/02_explore_snpPCs/PCA_abs_ERCCsumLogErr.pdf"
+
+There were 36 warnings (use warnings() to see them)
+[1] "Reproducibility information:"
+[1] "2023-06-26 10:50:43 EDT"
+   user  system elapsed 
+ 28.142   0.723  32.527 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.3.1 Patched (2023-06-26 r84601)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2023-06-26
+ pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package              * version   date (UTC) lib source
+ Biobase              * 2.60.0    2023-04-25 [2] Bioconductor
+ BiocGenerics         * 0.46.0    2023-04-25 [2] Bioconductor
+ bitops                 1.0-7     2021-04-24 [2] CRAN (R 4.3.0)
+ cli                    3.6.1     2023-03-23 [2] CRAN (R 4.3.0)
+ colorspace             2.1-0     2023-01-23 [2] CRAN (R 4.3.0)
+ cowplot              * 1.1.1     2020-12-30 [1] CRAN (R 4.3.1)
+ crayon                 1.5.2     2022-09-29 [2] CRAN (R 4.3.0)
+ DelayedArray           0.26.3    2023-05-22 [2] Bioconductor
+ dplyr                  1.1.2     2023-04-20 [2] CRAN (R 4.3.0)
+ fansi                  1.0.4     2023-01-22 [2] CRAN (R 4.3.0)
+ farver                 2.1.1     2022-07-06 [2] CRAN (R 4.3.0)
+ generics               0.1.3     2022-07-05 [2] CRAN (R 4.3.0)
+ GenomeInfoDb         * 1.36.1    2023-06-21 [2] Bioconductor
+ GenomeInfoDbData       1.2.10    2023-04-11 [2] Bioconductor
+ GenomicRanges        * 1.52.0    2023-04-25 [2] Bioconductor
+ GGally               * 2.1.2     2021-06-21 [1] CRAN (R 4.3.1)
+ ggplot2              * 3.4.2     2023-04-03 [1] CRAN (R 4.3.1)
+ glue                   1.6.2     2022-02-24 [2] CRAN (R 4.3.0)
+ gtable                 0.3.3     2023-03-21 [2] CRAN (R 4.3.0)
+ here                 * 1.0.1     2020-12-13 [1] CRAN (R 4.3.1)
+ IRanges              * 2.34.1    2023-06-22 [2] Bioconductor
+ labeling               0.4.2     2020-10-20 [2] CRAN (R 4.3.0)
+ lattice                0.21-8    2023-04-05 [3] CRAN (R 4.3.1)
+ lifecycle              1.0.3     2022-10-07 [2] CRAN (R 4.3.0)
+ lobstr                 1.1.2     2022-06-22 [2] CRAN (R 4.3.0)
+ magrittr               2.0.3     2022-03-30 [2] CRAN (R 4.3.0)
+ Matrix                 1.5-4.1   2023-05-18 [3] CRAN (R 4.3.1)
+ MatrixGenerics       * 1.12.2    2023-06-09 [2] Bioconductor
+ matrixStats          * 1.0.0     2023-06-02 [2] CRAN (R 4.3.0)
+ munsell                0.5.0     2018-06-12 [2] CRAN (R 4.3.0)
+ pillar                 1.9.0     2023-03-22 [2] CRAN (R 4.3.0)
+ pkgconfig              2.0.3     2019-09-22 [2] CRAN (R 4.3.0)
+ plyr                   1.8.8     2022-11-11 [2] CRAN (R 4.3.0)
+ prettyunits            1.1.1     2020-01-24 [2] CRAN (R 4.3.0)
+ R6                     2.5.1     2021-08-19 [2] CRAN (R 4.3.0)
+ ragg                   1.2.5     2023-01-12 [2] CRAN (R 4.3.0)
+ RColorBrewer           1.1-3     2022-04-03 [2] CRAN (R 4.3.0)
+ Rcpp                   1.0.10    2023-01-22 [2] CRAN (R 4.3.0)
+ RCurl                  1.98-1.12 2023-03-27 [2] CRAN (R 4.3.0)
+ reshape                0.8.9     2022-04-12 [2] CRAN (R 4.3.0)
+ rlang                  1.1.1     2023-04-28 [2] CRAN (R 4.3.0)
+ rprojroot              2.0.3     2022-04-02 [2] CRAN (R 4.3.0)
+ S4Arrays               1.0.4     2023-05-14 [2] Bioconductor
+ S4Vectors            * 0.38.1    2023-05-02 [2] Bioconductor
+ scales                 1.2.1     2022-08-20 [2] CRAN (R 4.3.0)
+ sessioninfo          * 1.2.2     2021-12-06 [1] CRAN (R 4.3.1)
+ SummarizedExperiment * 1.30.2    2023-06-06 [2] Bioconductor
+ systemfonts            1.0.4     2022-02-11 [2] CRAN (R 4.3.0)
+ textshaping            0.3.6     2021-10-13 [2] CRAN (R 4.3.0)
+ tibble                 3.2.1     2023-03-20 [2] CRAN (R 4.3.0)
+ tidyselect             1.2.0     2022-10-10 [2] CRAN (R 4.3.0)
+ utf8                   1.2.3     2023-01-31 [2] CRAN (R 4.3.0)
+ vctrs                  0.6.3     2023-06-14 [1] CRAN (R 4.3.1)
+ withr                  2.5.0     2022-03-03 [2] CRAN (R 4.3.0)
+ XVector                0.40.0    2023-04-25 [2] Bioconductor
+ zlibbioc               1.46.0    2023-04-25 [2] Bioconductor
+
+ [1] /users/freneega/R/4.3
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/R/4.3/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/R/4.3/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Mon Jun 26 10:50:45 EDT 2023
