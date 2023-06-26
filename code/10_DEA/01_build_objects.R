@@ -94,6 +94,21 @@ dim(colData(rse_gene))
 ###############################################################################
 
 
+
+######################## Save rse object with qsva data #######################
+
+save(rse_gene,
+    file = here(
+        "processed-data",
+        "rse_objects",
+        "rse_gene_filt_DEA.rda"
+    )
+)
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
