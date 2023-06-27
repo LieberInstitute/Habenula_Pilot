@@ -53,7 +53,7 @@ qSVAs <- read.table(
     here(
         "processed-data",
         "11_bulk_qSVA",
-        "qSVA.txt"
+        "qSVA.tsv"
     ),
     header = TRUE
 )
