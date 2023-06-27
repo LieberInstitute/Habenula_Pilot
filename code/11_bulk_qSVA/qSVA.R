@@ -195,16 +195,16 @@ length(union(rownames(rse_stand), rownames(rse_cellcomp)))
 
 
 
-######################## Save rse object with qsva data #######################
+########################## Write table with qsva data #########################
 
-colData(rse_gene) <- cbind(colData(rse_gene), qsva_pcs)
-
-save(rse_gene,
-    file = here(
+write.table(qsva_pcs_standard,
+    here(
         "processed-data",
-        "rse_objects",
-        "rse_gene_filt_DEA_n69.rda"
-    )
+        "11_bulk_qSVA",
+        "qSVA.txt"
+    ),
+    sep = "\t",
+    quote = FALSE
 )
 
 ###############################################################################
