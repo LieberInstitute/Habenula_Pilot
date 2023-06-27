@@ -150,12 +150,12 @@ colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
 
 ################################## Set model ##################################
 
-rse_tx_sub <- rse_tx[, rse_tx$BrNum != "Br5572"]
-rse_gene_sub <- rse_gene[, rse_gene$BrNum != "Br5572"]
-colData(rse_tx_sub) <- colData(rse_gene_sub)
+rse_tx <- rse_tx[, rse_tx$BrNum != "Br5572"]
+rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
+colData(rse_tx) <- colData(rse_gene)
 
-mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + detected_num_genes,
-    data = colData(rse_tx_sub)
+mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr,
+    data = colData(rse_tx)
 )
 
 ###############################################################################
@@ -164,37 +164,12 @@ mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + t
 
 ################################### Run qSVA ##################################
 
-qsva_pcs <- qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
+set.seed(20230627)
+qsva_pcs_standard <- qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
 
-
-set.seed(20230626)
-qsva_pcs_standard <- qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
-dim(qsva_pcs_standard)
-
-set.seed(20230626)
+set.seed(20230627)
 qsva_pcs_cc <- qSVA(rse_tx, type = "cell_component", mod = mod, assayname = "tpm")
 dim(qsva_pcs_cc)
-
-set.seed(20230626)
-DegTx <- getDegTx(rse_tx_sub, type = "standard")
-PCs <- getPCs(DegTx, "tpm")
-k <- k_qsvs_test(DegTx, mod = mod, assayname = "tpm")
-
-
-k_qsvs_test <- function (rse_tx, mod, assayname)
-{
-    if (qr(mod)$rank != ncol(mod)) {
-        stop("The 'mod' matrix is not full rank.", call. = FALSE)
-    }
-    expr <- log2(assays(rse_tx)[[assayname]] + 1)
-    k <- num.sv(expr, mod)
-    return(k)
-}
-
-qSV <- get_qsvs(PCs, k)
-return(qSV)
-
-select_tr
 
 ###############################################################################
 
@@ -204,11 +179,11 @@ select_tr
 
 rse_cellcomp <- getDegTx(rse_tx, type = "cell_component")
 dim(rse_cellcomp)
-# [1] 2938   69
+# [1] 2938   68
 
 rse_stand <- getDegTx(rse_tx, type = "standard")
 dim(rse_stand)
-# [1] 1772   69
+# [1] 1772   68
 
 ## Aparently the standard just has less genes
 length(intersect(rownames(rse_stand), rownames(rse_cellcomp)))
