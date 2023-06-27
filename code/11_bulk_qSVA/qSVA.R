@@ -216,7 +216,7 @@ write.table(qsva_pcs_standard,
     here(
         "processed-data",
         "11_bulk_qSVA",
-        "qSVA.txt"
+        "qSVA.tsv"
     ),
     sep = "\t",
     quote = FALSE
