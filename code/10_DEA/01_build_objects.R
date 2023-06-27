@@ -9,7 +9,8 @@ library("sessioninfo")
 load(
     here(
         "processed-data",
-        "rse_objects",
+        "02_bulk_qc",
+        "count_data_bukola",
         "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"
     ),
     verbose = TRUE
@@ -48,6 +49,14 @@ snpPCs <- read.table(
 )
 
 ## Load qSVa
+qSVAs <- read.table(
+    here(
+        "processed-data",
+        "11_bulk_qSVA",
+        "qSVA.txt"
+    ),
+    header = TRUE
+)
 
 ###############################################################################
 
@@ -82,14 +91,17 @@ dim(est_prop)
 # [1] 68  9
 dim(rse_gene)
 # [1] 22756    68
+rownames(est_prop) == rownames(colData(rse_gene))
 
-# rownames(est_prop) == rownames(colData(rse_gene))
+dim(qSVAs)
+# [1] 68  8
+rownames(qSVAs) == rownames(colData(rse_gene))
 
 ## Add est_prop and snpPCs to colData(rse_gene)
-colData(rse_gene) <- cbind(colData(rse_gene), est_prop)
+colData(rse_gene) <- cbind(colData(rse_gene), est_prop, qSVAs)
 colData(rse_gene) <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum")
 dim(colData(rse_gene))
-# [1] 68 99
+# [1]  68 107
 
 ###############################################################################
 
@@ -101,7 +113,7 @@ save(rse_gene,
     file = here(
         "processed-data",
         "rse_objects",
-        "rse_gene_filt_DEA.rda"
+        "rse_gene_Habenula_Pilot.rda"
     )
 )
 
