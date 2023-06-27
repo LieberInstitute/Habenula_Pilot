@@ -10,7 +10,8 @@ library("sessioninfo")
 load(
     here(
         "processed-data",
-        "rse_objects",
+        "02_bulk_qc",
+        "count_data_bukola",
         "rse_gene_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"
     ),
     verbose = TRUE
@@ -21,7 +22,8 @@ load(
 load(
     here(
         "processed-data",
-        "rse_objects",
+        "02_bulk_qc",
+        "count_data_bukola",
         "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"
     ),
     verbose = TRUE
@@ -143,6 +145,15 @@ colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
 })
 colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
 
+## Load SNP PCs
+snpPCs <- read.table(
+    here(
+        "processed-data",
+        "08_bulk_snpPC",
+        "habenula_genotypes_filt.snpPCs.tab"
+    ),
+    header = TRUE
+)
 
 ###############################################################################
 
@@ -152,9 +163,13 @@ colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
 
 rse_tx <- rse_tx[, rse_tx$BrNum != "Br5572"]
 rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
+
+colData(rse_gene) <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum")
+colnames(rse_gene) <- colData(rse_gene)$RNum
+
 colData(rse_tx) <- colData(rse_gene)
 
-mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr,
+mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5,
     data = colData(rse_tx)
 )
 
