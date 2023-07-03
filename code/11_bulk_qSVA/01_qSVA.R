@@ -5,7 +5,7 @@ library("sessioninfo")
 
 
 
-############################ Load rse gene objects ############################
+############################### Load rse objects ##############################
 
 load(
     here(
@@ -137,13 +137,11 @@ names(colData(rse_tx))
 # [65] "gene_Unassigned_Duplicate"      "rRNA_rate"
 # [67] "Flowcell"                       "hasGenotype"
 
+###############################################################################
 
-colData(rse_gene)$library_size <- apply(assay(rse_gene), 2, sum)
-colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
-colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
-    length(x[which(x > 0)])
-})
-colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
+
+
+##################### Load deconvolution and SNP PCs data #####################
 
 ## Load SNP PCs
 snpPCs <- read.table(
@@ -155,21 +153,68 @@ snpPCs <- read.table(
     header = TRUE
 )
 
+## Load deconvolution results
+load(
+    here(
+        "processed-data",
+        "06_deconvolution",
+        "run_Bisque",
+        "est_prop_split_Hb_annotations.RDATA"
+    ),
+    verbose = TRUE
+)
+
+###############################################################################
+
+
+
+####################### Prepare data to add to the model ######################
+
+## Add some metrics to colData
+colData(rse_gene)$library_size <- apply(assay(rse_gene), 2, sum)
+colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
+colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
+    length(x[which(x > 0)])
+})
+colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
+
+## Add total proportion of Hb (LHb + MHb) and total Thal (Excit.Thal + Inhib.Thal)
+est_prop <- t(est_prop$bulk.props)
+
+est_prop <- cbind(est_prop, est_prop[, colnames(est_prop) == "LHb"] + est_prop[, colnames(est_prop) == "MHb"])
+est_prop <- cbind(est_prop, est_prop[, colnames(est_prop) == "Excit.Thal"] + est_prop[, colnames(est_prop) == "Inhib.Thal"])
+
+colnames(est_prop)[10:11] <- c("tot.Hb", "tot.Thal")
+
+## Delete sample Br5572/R18424
+rse_tx <- rse_tx[, rse_tx$BrNum != "Br5572"]
+rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
+est_prop <- est_prop[rownames(est_prop) != "R18424", ]
+
+###############################################################################
+
+
+
+############## Add cell proportions and SNP PCs data to colData ###############
+
+## Add cell proportions
+rownames(est_prop) == rownames(colData(rse_gene)) ## I'm checking if samples are in the same order
+colData(rse_gene) <- cbind(colData(rse_gene), est_prop)
+
+## Add SNP PCs
+colData(rse_gene) <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum")
+colnames(rse_gene) <- colData(rse_gene)$RNum
+
+## Copy colData() from rse_gene to rse_tx
+colData(rse_tx) <- colData(rse_gene)
+
 ###############################################################################
 
 
 
 ################################## Set model ##################################
 
-rse_tx <- rse_tx[, rse_tx$BrNum != "Br5572"]
-rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
-
-colData(rse_gene) <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum")
-colnames(rse_gene) <- colData(rse_gene)$RNum
-
-colData(rse_tx) <- colData(rse_gene)
-
-mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5,
+mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 + tot.Hb + tot.Thal,
     data = colData(rse_tx)
 )
 
@@ -179,12 +224,15 @@ mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + t
 
 ################################### Run qSVA ##################################
 
-set.seed(20230627)
+set.seed(20230703)
 qsva_pcs_standard <- qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
+dim(qsva_pcs_standard)
+# [1] 68  5
 
-set.seed(20230627)
+set.seed(20230703)
 qsva_pcs_cc <- qSVA(rse_tx, type = "cell_component", mod = mod, assayname = "tpm")
 dim(qsva_pcs_cc)
+# [1] 68  8
 
 ###############################################################################
 
