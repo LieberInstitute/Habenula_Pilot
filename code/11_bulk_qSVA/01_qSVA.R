@@ -228,11 +228,13 @@ set.seed(20230703)
 qsva_pcs_standard <- qsvaR::qSVA(rse_tx, type = "standard", mod = mod, assayname = "tpm")
 dim(qsva_pcs_standard)
 # [1] 68  5
+qsva_pcs_standard <-  qsva_pcs_standard[order(rownames(qsva_pcs_standard)),] ## With the merge in line 205 order was lost (based on RNum) so I'm reordering
 
 set.seed(20230703)
 qsva_pcs_cc <- qSVA(rse_tx, type = "cell_component", mod = mod, assayname = "tpm")
 dim(qsva_pcs_cc)
 # [1] 68  8
+qsva_pcs_cc <-  qsva_pcs_cc[order(rownames(qsva_pcs_cc)),]
 
 ###############################################################################
 
