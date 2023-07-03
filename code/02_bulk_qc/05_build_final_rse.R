@@ -62,8 +62,9 @@ qSVAs <- read.table(
 
 
 
-########################## Add qc metrics to colData ##########################
+####################### Prepare data to add to the model ######################
 
+## Add some metrics to colData
 colData(rse_gene)$library_size <- apply(assay(rse_gene), 2, sum)
 colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
 colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
@@ -71,37 +72,33 @@ colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
 })
 colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
 
+## Add total proportion of Hb (LHb + MHb) and total Thal (Excit.Thal + Inhib.Thal)
+est_prop <- t(est_prop$bulk.props)
+
+est_prop <- cbind(est_prop, est_prop[, colnames(est_prop) == "LHb"] + est_prop[, colnames(est_prop) == "MHb"])
+est_prop <- cbind(est_prop, est_prop[, colnames(est_prop) == "Excit.Thal"] + est_prop[, colnames(est_prop) == "Inhib.Thal"])
+
+colnames(est_prop)[10:11] <- c("tot.Hb", "tot.Thal")
+
+## Delete sample Br5572/R18424
+rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
+est_prop <- est_prop[rownames(est_prop) != "R18424", ]
+
 ###############################################################################
 
 
 
 ########### Add deconvolution, SNP PCs and qSVa results to colData ############
 
-## Identify sample to delete
-colnames(rse_gene[, rse_gene$BrNum == "Br5572"])
-# R18424
-
-## Delete samples from deconvolution and rse_gene
-est_prop <- t(est_prop$bulk.props)
-est_prop <- est_prop[rownames(est_prop) != "R18424",]
-
-rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
-
-dim(est_prop)
-# [1] 68  9
-dim(rse_gene)
-# [1] 22756    68
-rownames(est_prop) == rownames(colData(rse_gene))
-
-dim(qSVAs)
-# [1] 68  8
+## Add cell proportions and qSVAs
+rownames(est_prop) == rownames(colData(rse_gene)) ## I'm checking if samples are in the same order
 rownames(qSVAs) == rownames(colData(rse_gene))
 
-## Add est_prop and snpPCs to colData(rse_gene)
 colData(rse_gene) <- cbind(colData(rse_gene), est_prop, qSVAs)
+
+## Add SNP PCs
 colData(rse_gene) <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum")
-dim(colData(rse_gene))
-# [1]  68 107
+colnames(rse_gene) <- colData(rse_gene)$RNum ## The merge deletes the colnames so I'm adding them back
 
 ###############################################################################
 
