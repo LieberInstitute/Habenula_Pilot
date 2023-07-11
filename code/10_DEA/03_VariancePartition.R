@@ -42,10 +42,10 @@ dim(rse_gene)
 ############################## Variance explained #############################
 
 ## Set up qc_metrics and colors for the plot
-qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "library_size", "detected_num_genes", "RIN", "abs_ERCCsumLogErr", "PrimaryDx", "Flowcell", "AgeDeath")
-colors <- c("mitoRate" = "turquoise4", "rRNA_rate" = "bisque2", "overallMapRate" = "indianred1", "totalAssignedGene" = "blueviolet", "concordMapRate" = "lightsalmon", "library_size" = "palegreen3", "detected_num_genes" = "skyblue2", "RIN" = "blue3", "abs_ERCCsumLogErr" = "#06d6a0", "PrimaryDx" = "#a14a76", "Flowcell" = "#fdc500", "AgeDeath" = "#dda15e")
+qc_metrics <- c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "snpPC1", "snpPC2", "snpPC3", "snpPC4", "snpPC5", "tot.Hb", "tot.Thal", "qSV1", "qSV2", "qSV3", "qSV4", "qSV5")
+colors <- c("PrimaryDx" = "#e2ef70", "AgeDeath" = "#8093f1", "Flowcell" = "#ddfff7", "mitoRate" = "turquoise4", "rRNA_rate" = "bisque2", "totalAssignedGene" = "blueviolet",  "RIN" = "blue3", "abs_ERCCsumLogErr" = "#06d6a0", "snpPC1" = "#cc5803" , "snpPC2" = "#e2711d", "snpPC3" = "#ff9505", "snpPC4" = "#ffb627", "snpPC5" = "#ffc971", "tot.Hb" = "palegreen3", "tot.Thal" = "skyblue2", "qSV1" = "#800f2f", "qSV2" = "#a4133c", "qSV3" = "#c9184a", "qSV4" = "#ff4d6d", "qSV5" = "#ff758f")
 
-exp_vars <- getVarianceExplained(rse_gene_filt, variables = qc_metrics, exprs_values = "logcounts")
+exp_vars <- getVarianceExplained(rse_gene, variables = qc_metrics, exprs_values = "logcounts")
 
 ## Plot density graph for each variable
 varience_plot <- plotExplanatoryVariables(exp_vars, theme_size = 12, nvars_to_plot = Inf)
