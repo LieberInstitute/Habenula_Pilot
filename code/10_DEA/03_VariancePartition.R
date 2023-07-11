@@ -70,15 +70,12 @@ formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssig
 
 corpairs <- canCorPairs(formula, colData(rse_gene))
 
-pheatmap(
+pdf(paste(output_path, "/", "CCA_heatmap.pdf", sep = ""), width = 10, height = 10)
+Heatmap(
     corpairs,
-    color = hcl.colors(50, "YlOrRd", rev = TRUE),
-    fontsize = 8,
-    border_color = "black",
-    height = 6,
-    width = 6.5,
-    filename = paste(output_path, "/", "CCA_heatmap.pdf", sep = "")
+    col = colorRamp2(c(0, 1), c("#faf0ca", "#3f37c9"))
 )
+dev.off()
 
 ###############################################################################
 
