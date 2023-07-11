@@ -83,10 +83,10 @@ dev.off()
 
 ############################## Variance partition #############################
 
-formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN + abs_ERCCsumLogErr
+formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 + qSV1 + qSV2 + qSV3 + qSV4 + qSV5 +  tot.Hb + tot.Thal
 
 ## Loop over each gene to fit model and extract variance explained by each variable
-varPart <- fitExtractVarPartModel(assays(rse_gene_filt)$logcounts, formula, colData(rse_gene_filt))
+varPart <- fitExtractVarPartModel(assays(rse_gene)$logcounts, formula, colData(rse_gene))
 # Warning messages:
 # 1: Some predictor variables are on very different scales: consider rescaling
 
