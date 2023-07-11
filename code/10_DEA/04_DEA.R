@@ -132,11 +132,17 @@ plot_volc <- function(top_genes, FDR_cut, model_name) {
 
 
 
-## Top-ranked genes for PrimaryDx (Schizo vs Control)
-top_genes <- topTable(eBGene, coef = "PrimaryDxSchizo", p.value = 1, number = nrow(rse_gene_filt), sort.by = "none")
+##################################### DEA #####################################
 
-## Histogram of adjusted p values
-hist(top_genes$adj.P.Val, xlab = "FDR", main = "")
+## Model without totalAssignedGene, no qSVs and no tot.Tha
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 + tot.Hb
+res_formula_1 <- DE_analysis(rse_gene = rse_gene, formula = formula, coef = "PrimaryDxSchizo", model_name = "qc-snpPCs-Hb")
+plot_volc(res_formula_1, FDR_cut = 5e-02, model_name = "qc-snpPCs-Hb")
+
+## Model without totalAssignedGene and no tot.Tha, but with qSVs
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 + qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + tot.Hb
+res_formula_1 <- DE_analysis(rse_gene = rse_gene, formula = formula, coef = "PrimaryDxSchizo", model_name = "qc-snpPCs-Hb-qSVs")
+plot_volc(res_formula_1, FDR_cut = 5e-02, model_name = "qc-snpPCs-Hb-qSVs")
 
 ###############################################################################
 
