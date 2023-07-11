@@ -6,7 +6,8 @@ library("dplyr")
 library("EnhancedVolcano")
 library("sessioninfo")
 
-output_path <- here("plots", "10_DEA", "04_DEA")
+out_plot <- here("plots", "10_DEA", "04_DEA")
+out_data <- here("processed-data", "10_DEA", "04_DEA")
 
 
 
@@ -55,7 +56,7 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
     stopifnot(all(!is.na(match_samples)))
     factors <- samples_factors[match_samples, ]
 
-    pdf(file = paste0(output_path, "/DEAplots_", model_name, ".pdf"))
+    pdf(file = paste0(out_plot, "/DEAplots_", model_name, ".pdf"))
     par(mfrow = c(2, 2))
 
     ## Model matrix
@@ -94,6 +95,8 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
 
     dev.off()
 
+    write.table(top_genes, file = paste0(out_data, "/DEA_AllGenes_", model_name, ".tsv"), sep = "\t", quote = FALSE)
+
     return(top_genes)
 }
 
@@ -120,7 +123,7 @@ plot_volc <- function(top_genes, FDR_cut, model_name) {
         colCustom = keyvals
     ) + ylim(c(0, 5))
 
-    pdf(paste0(output_path, "/VolcanoPlot_", model_name, ".pdf"),
+    pdf(paste0(out_plot, "/VolcanoPlot_", model_name, ".pdf"),
         height = 10,
         width = 8
     )
@@ -273,7 +276,7 @@ plot_volc(res_formula,
 
 summary(res_formula$adj.P.Val)
 #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.4664  0.4664  0.4664  0.5008  0.4720  0.9993
+# 0.6917  0.6917  0.6917  0.7142  0.6917  0.9998
 
 ###############################################################################
 
