@@ -49,18 +49,53 @@ samples_factors <- data.frame(
 )
 
 
+## Function to do all the DEA analysis with limma
+DE_analysis <- function(rse_gene, formula, coef, model_name) {
+    match_samples <- match(rse_gene$RNum, samples_factors$RNum)
+    stopifnot(all(!is.na(match_samples)))
+    factors <- samples_factors[match_samples, ]
 
-## Use previous norm factors to scale the raw library sizes
-rse_gene_filt_scaled <- calcNormFactors(rse_gene_filt)
-rse_gene_filt_scaled$samples$library_size <- factors$library_size
-rse_gene_filt_scaled$samples$norm.factors <- factors$norm.factors
+    pdf(file = paste0(output_path, "/DEAplots_", model_name, ".pdf"))
+    par(mfrow = c(2, 2))
 
-## Transform counts to log2(CPM)
-## Estimate mean-variance relationship for each gene
-vGene <- voom(rse_gene_filt_scaled, design = model, plot = TRUE)
+    ## Model matrix
+    model <- model.matrix(formula, data = colData(rse_gene))
 
-## Fit linear model for each gene
-fitGene <- lmFit(vGene)
+    ## Use previous norm factors to scale the raw library sizes
+    RSE_scaled <- calcNormFactors(rse_gene)
+    RSE_scaled$samples$lib.size <- factors$lib.size
+    RSE_scaled$samples$norm.factors <- factors$norm.factors
+
+    ## Transform counts to log2(CPM): estimate mean-variance relationship for
+    ## each gene
+    vGene <- voom(RSE_scaled, design = model, plot = TRUE)
+
+    ## Fit linear model for each gene
+    fitGene <- lmFit(vGene)
+
+    ## Empirical Bayesian calculation to obtain our significant genes: compute
+    ## moderated F and t-statistics, and log-odds of DE
+    eBGene <- eBayes(fitGene)
+
+    ## Plot average log expression vs logFC
+    limma::plotMA(eBGene,
+        coef = coef, xlab = "Mean of normalized counts",
+        ylab = "logFC"
+    )
+
+    ## Plot -log(p-value) vs logFC
+    volcanoplot(eBGene, coef = coef)
+
+    ## Select top-ranked genes
+    top_genes <- topTable(eBGene, coef = coef, p.value = 1, number = nrow(rse_gene), sort.by = "none")
+
+    ## Histogram of adjusted p values
+    hist(top_genes$adj.P.Val, xlab = "FDR", main = "")
+
+    dev.off()
+
+    return(top_genes)
+}
 
 ## Empirical Bayesian calculation to obtain the significant genes:
 ## compute moderated F and t-statistics, and log-odds of DE
