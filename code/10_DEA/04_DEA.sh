@@ -1,9 +1,9 @@
 #!/bin/bash
 #$ -cwd
-#$ -l mem_free=20G,h_vmem=20G,h_fsize=100G
-#$ -N code/10_DEA/04_DEA
-#$ -o logs/code/10_DEA/04_DEA.txt
-#$ -e logs/code/10_DEA/04_DEA.txt
+#$ -l mem_free=10G,h_vmem=10G,h_fsize=100G
+#$ -N DEA
+#$ -o logs/04_DEA.txt
+#$ -e logs/04_DEA.txt
 #$ -m e
 
 echo "**** Job starts ****"
@@ -17,7 +17,7 @@ echo "Hostname: ${HOSTNAME}"
 echo "Task id: ${SGE_TASK_ID}"
 
 ## Load the R module (absent since the JHPCE upgrade to CentOS v7)
-module load conda_R
+module load conda_R/4.3
 
 ## List current modules for reproducibility
 module list
