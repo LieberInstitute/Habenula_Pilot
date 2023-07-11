@@ -37,6 +37,18 @@ dim(rse_gene)
 ###############################################################################
 
 
+
+
+################## PCA and heatmap with colData() variables ###################
+
+## NOTE: This section is done with filtered and normalized counts
+
+## PCA
+pca_df <- pca(assays(rse_gene)$logcounts, metadata = colData(rse_gene))
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
