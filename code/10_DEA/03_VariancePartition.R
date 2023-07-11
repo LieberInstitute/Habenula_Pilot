@@ -83,6 +83,7 @@ dev.off()
 
 ############################## Variance partition #############################
 
+## with qSVs
 formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 + qSV1 + qSV2 + qSV3 + qSV4 + qSV5 +  tot.Hb + tot.Thal
 
 ## Loop over each gene to fit model and extract variance explained by each variable
@@ -95,23 +96,19 @@ vp <- sortCols(varPart)
 
 p <- plotVarPart(vp)
 ggsave(
-    filename = paste(output_path, "/", "VarPartition.pdf", sep = ""),
+    filename = paste(output_path, "/", "VarPartition_qSVs.pdf", sep = ""),
     p,
     width = 40,
     height = 20,
     units = "cm"
 )
 
-###############################################################################
 
+## Whitout qSVs
+formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +  tot.Hb + tot.Thal
 
-
-######################## Variance partition - filtered ########################
-
-## Plots without overallMapRate, concordMapRate, detected_num_genes
-formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + library_size
-
-varPart <- fitExtractVarPartModel(assays(rse_gene_filt)$logcounts, formula, colData(rse_gene_filt))
+## Loop over each gene to fit model and extract variance explained by each variable
+varPart <- fitExtractVarPartModel(assays(rse_gene)$logcounts, formula, colData(rse_gene))
 # Warning messages:
 # 1: Some predictor variables are on very different scales: consider rescaling
 
@@ -120,12 +117,13 @@ vp <- sortCols(varPart)
 
 p <- plotVarPart(vp)
 ggsave(
-    filename = paste(output_path, "/", "VarPartition_filtered.pdf", sep = ""),
+    filename = paste(output_path, "/", "VarPartition_noqSVs.pdf", sep = ""),
     p,
     width = 40,
     height = 20,
     units = "cm"
 )
+
 
 ###############################################################################
 
