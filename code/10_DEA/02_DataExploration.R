@@ -1,9 +1,12 @@
 library("here")
 library("SummarizedExperiment")
+library("PCAtools")
 library("stringr")
 library("ggplot2")
 library("cowplot")
-library("GGally")
+#library("GGally")
+library("ComplexHeatmap")
+library("circlize")
 library("sessioninfo")
 
 output_path <- here("plots", "10_DEA", "02_DataExploration")
@@ -14,15 +17,17 @@ output_path <- here("plots", "10_DEA", "02_DataExploration")
 
 load(
     here(
-        "preprocessed_data",
-        "count_data_bukola",
-        "rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata"
+        "processed-data",
+        "rse_objects",
+        "rse_gene_Habenula_Pilot.rda"
     ),
     verbose = TRUE
 )
+# Loading objects:
+#   rse_gene
 
 lobstr::obj_size(rse_gene)
-# 40.63 MB
+# 29.92 MB
 
 class(rse_gene)
 # [1] "RangedSummarizedExperiment"
@@ -31,83 +36,91 @@ class(rse_gene)
 
 rse_gene
 # class: RangedSummarizedExperiment
-# dim: 58037 69
+# dim: 22756 68
 # metadata(0):
-# assays(1): counts
-# rownames(58037): ENSG00000223972.5 ENSG00000227232.5 ...
+# assays(2): counts logcounts
+# rownames(22756): ENSG00000227232.5 ENSG00000278267.1 ...
 #   ENSG00000210195.2 ENSG00000210196.2
-# rowData names(10): Length gencodeID ... NumTx gencodeTx
-# colnames: NULL
-# colData names(68): RNum RIN ... Flowcell hasGenotype
+# rowData names(11): Length gencodeID ... gencodeTx MGI_Symbol
+# colnames(68): R18347 R18397 ... R18419 R18351
+# colData names(106): BrNum RNum ... snpPC9 snpPC10
 
 dim(colData(rse_gene))
-# [1] 69 68
+# [1] 68 106
 
 names(colData(rse_gene))
-#  [1] "RNum"                           "RIN"
-#  [3] "Brain.Region"                   "BrNum"
-#  [5] "AgeDeath"                       "Sex"
-#  [7] "Race"                           "PrimaryDx"
-#  [9] "FQCbasicStats"                  "perBaseQual"
-# [11] "perTileQual"                    "perSeqQual"
-# [13] "perBaseContent"                 "GCcontent"
-# [15] "Ncontent"                       "SeqLengthDist"
-# [17] "SeqDuplication"                 "OverrepSeqs"
-# [19] "AdapterContent"                 "KmerContent"
-# [21] "SeqLength_R1"                   "percentGC_R1"
-# [23] "phred20.21_R1"                  "phred48.49_R1"
-# [25] "phred76.77_R1"                  "phred100.101_R1"
-# [27] "phredGT30_R1"                   "phredGT35_R1"
-# [29] "Adapter50.51_R1"                "Adapter70.71_R1"
-# [31] "Adapter88.89_R1"                "SeqLength_R2"
-# [33] "percentGC_R2"                   "phred20.21_R2"
-# [35] "phred48.49_R2"                  "phred76.77_R2"
-# [37] "phred100.101_R2"                "phredGT30_R2"
-# [39] "phredGT35_R2"                   "Adapter50.51_R2"
-# [41] "Adapter70.71_R2"                "Adapter88.89_R2"
-# [43] "ERCCsumLogErr"                  "bamFile"
-# [45] "trimmed"                        "numReads"
-# [47] "numMapped"                      "numUnmapped"
-# [49] "overallMapRate"                 "concordMapRate"
-# [51] "totalMapped"                    "mitoMapped"
-# [53] "mitoRate"                       "totalAssignedGene"
-# [55] "gene_Assigned"                  "gene_Unassigned_Ambiguity"
-# [57] "gene_Unassigned_MultiMapping"   "gene_Unassigned_NoFeatures"
-# [59] "gene_Unassigned_Unmapped"       "gene_Unassigned_MappingQuality"
-# [61] "gene_Unassigned_FragmentLength" "gene_Unassigned_Chimera"
-# [63] "gene_Unassigned_Secondary"      "gene_Unassigned_Nonjunction"
-# [65] "gene_Unassigned_Duplicate"      "rRNA_rate"
-# [67] "Flowcell"                       "hasGenotype"
+#   [1] "BrNum"                          "RNum"
+#   [3] "RIN"                            "Brain.Region"
+#   [5] "AgeDeath"                       "Sex"
+#   [7] "Race"                           "PrimaryDx"
+#   [9] "FQCbasicStats"                  "perBaseQual"
+#  [11] "perTileQual"                    "perSeqQual"
+#  [13] "perBaseContent"                 "GCcontent"
+#  [15] "Ncontent"                       "SeqLengthDist"
+#  [17] "SeqDuplication"                 "OverrepSeqs"
+#  [19] "AdapterContent"                 "KmerContent"
+#  [21] "SeqLength_R1"                   "percentGC_R1"
+#  [23] "phred20.21_R1"                  "phred48.49_R1"
+#  [25] "phred76.77_R1"                  "phred100.101_R1"
+#  [27] "phredGT30_R1"                   "phredGT35_R1"
+#  [29] "Adapter50.51_R1"                "Adapter70.71_R1"
+#  [31] "Adapter88.89_R1"                "SeqLength_R2"
+#  [33] "percentGC_R2"                   "phred20.21_R2"
+#  [35] "phred48.49_R2"                  "phred76.77_R2"
+#  [37] "phred100.101_R2"                "phredGT30_R2"
+#  [39] "phredGT35_R2"                   "Adapter50.51_R2"
+#  [41] "Adapter70.71_R2"                "Adapter88.89_R2"
+#  [43] "ERCCsumLogErr"                  "bamFile"
+#  [45] "trimmed"                        "numReads"
+#  [47] "numMapped"                      "numUnmapped"
+#  [49] "overallMapRate"                 "concordMapRate"
+#  [51] "totalMapped"                    "mitoMapped"
+#  [53] "mitoRate"                       "totalAssignedGene"
+#  [55] "gene_Assigned"                  "gene_Unassigned_Ambiguity"
+#  [57] "gene_Unassigned_MultiMapping"   "gene_Unassigned_NoFeatures"
+#  [59] "gene_Unassigned_Unmapped"       "gene_Unassigned_MappingQuality"
+#  [61] "gene_Unassigned_FragmentLength" "gene_Unassigned_Chimera"
+#  [63] "gene_Unassigned_Secondary"      "gene_Unassigned_Nonjunction"
+#  [65] "gene_Unassigned_Duplicate"      "rRNA_rate"
+#  [67] "Flowcell"                       "hasGenotype"
+#  [69] "sum"                            "detected"
+#  [71] "subsets_Mito_sum"               "subsets_Mito_detected"
+#  [73] "subsets_Mito_percent"           "subsets_Ribo_sum"
+#  [75] "subsets_Ribo_detected"          "subsets_Ribo_percent"
+#  [77] "library_size"                   "log10_library_size"
+#  [79] "detected_num_genes"             "abs_ERCCsumLogErr"
+#  [81] "Astrocyte"                      "Endo"
+#  [83] "Excit.Thal"                     "Inhib.Thal"
+#  [85] "LHb"                            "MHb"
+#  [87] "Microglia"                      "Oligo"
+#  [89] "OPC"                            "tot.Hb"
+#  [91] "tot.Thal"                       "qSV1"
+#  [93] "qSV2"                           "qSV3"
+#  [95] "qSV4"                           "qSV5"
+#  [97] "snpPC1"                         "snpPC2"
+#  [99] "snpPC3"                         "snpPC4"
+# [101] "snpPC5"                         "snpPC6"
+# [103] "snpPC7"                         "snpPC8"
+# [105] "snpPC9"                         "snpPC10"
 
 unique(colData(rse_gene)$PrimaryDx)
 # [1] "Schizo"  "Control"
 
 table(colData(rse_gene)$PrimaryDx)
 # Control  Schizo
-#      34      35
+#      33      35
 
 table(colData(rse_gene)$Sex)
 #  M
-# 69
+# 68
 
 table(colData(rse_gene)$Race)
 # CAUC
-#   69
+#   68
 
 table(colData(rse_gene)$Flowcell)
 # HVYTYBBXX HW252BBXX
-#        34        35
-
-load(
-    here(
-        "processed-data",
-        "10_DEA",
-        "rse_gene_filt.Rdata"
-    ),
-    verbose = TRUE
-)
-# Loading objects:
-#   rse_gene_filt
+#        34        34
 
 ###############################################################################
 
@@ -117,16 +130,8 @@ load(
 
 ## NOTE: This section is done with unfiltered and not normalized counts
 
-colData(rse_gene)$library_size <- apply(assay(rse_gene), 2, sum)
-colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
-colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
-    length(x[which(x > 0)])
-})
-colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
-
 qc_metrics <- c("mitoRate", "rRNA_rate", "overallMapRate", "totalAssignedGene", "concordMapRate", "log10_library_size", "detected_num_genes", "RIN", "abs_ERCCsumLogErr")
 sample_variables <- c("PrimaryDx", "Flowcell")
-
 
 ## Function to create boxplots of QC metrics for groups of samples
 QC_boxplots <- function(qc_metric, sample_var) {
@@ -157,6 +162,7 @@ QC_boxplots <- function(qc_metric, sample_var) {
 
     return(plot)
 }
+
 
 for (sample_var in sample_variables) {
     i <- 1
