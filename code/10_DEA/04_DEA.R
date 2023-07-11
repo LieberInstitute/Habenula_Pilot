@@ -39,24 +39,16 @@ load(
 
 
 
-####################### Differential Expression Analysis ######################
+####################E### Functions for DEA and plotting #######################
 
-## Extract calcNormFactors for all samples
-norm_factors <- calcNormFactors(rse_gene, method = "TMM")
-
+norm_factors <- calcNormFactors(rse_gene_raw, method = "TMM")
 samples_factors <- data.frame(
-    BrNum = norm_factors$samples$BrNum,
+    RNum = norm_factors$samples$RNum,
     norm.factors = norm_factors$samples$norm.factors,
-    library_size = norm_factors$samples$library_size
+    lib.size = norm_factors$samples$lib.size
 )
 
-## Previous lib sizes of each sample
-match_samples <- match(rse_gene_filt$BrNum, samples_factors$BrNum)
-factors <- samples_factors[match_samples, ]
 
-## Formula and model
-formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + library_size
-model <- model.matrix(formula, data = colData(rse_gene_filt))
 
 ## Use previous norm factors to scale the raw library sizes
 rse_gene_filt_scaled <- calcNormFactors(rse_gene_filt)
