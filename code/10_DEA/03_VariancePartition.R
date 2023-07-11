@@ -66,9 +66,9 @@ ggsave(
 
 ######################### Correlation between variables #######################
 
-formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + overallMapRate + totalAssignedGene + concordMapRate + library_size + detected_num_genes + RIN + abs_ERCCsumLogErr
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 + qSV1 + qSV2 + qSV3 + qSV4 + qSV5 +  tot.Hb + tot.Thal
 
-corpairs <- canCorPairs(formula, colData(rse_gene_filt))
+corpairs <- canCorPairs(formula, colData(rse_gene))
 
 pheatmap(
     corpairs,
