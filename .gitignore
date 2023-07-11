@@ -7,9 +7,6 @@ processed-data/07_cellranger/*
 processed-data/08_bulk_snpPC/*
 processed-data/99_paper_figs/*
 processed-data/09_trans_special_analysis/*
-processed-data/10_DEA/*
-processed-data/sce_objects/*
-processed-data/rse_objects/*
 .Rhistory
 .Rproj.user
 .DS_Store
