@@ -97,19 +97,40 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
     return(top_genes)
 }
 
-## Empirical Bayesian calculation to obtain the significant genes:
-## compute moderated F and t-statistics, and log-odds of DE
-eBGene <- eBayes(fitGene)
+## Function to make volcano plot
+plot_volc <- function(top_genes, FDR_cut, model_name) {
+    outGenes_plot <- top_genes %>%
+        select(logFC, P.Value, adj.P.Val, ensemblID, Symbol)
 
-## Plot average log expression vs logFC
-limma::plotMA(eBGene,
-    coef = "PrimaryDxSchizo",
-    xlab = "Mean of normalized counts",
-    ylab = "logFC"
-)
+    keyvals <- ifelse(
+        outGenes_plot$P.Value > FDR_cut, "#f0e3d6", "#2a9d8f"
+    )
 
-## Plot -log(p-value) vs logFC
-volcanoplot(eBGene, coef = "PrimaryDxSchizo")
+    names(keyvals)[keyvals == "#2a9d8f"] <- paste0("pvalue < ", FDR_cut)
+    names(keyvals)[keyvals == "#f0e3d6"] <- "Not significant"
+
+
+    volcano_plot <- EnhancedVolcano(outGenes_plot,
+        x = "logFC",
+        y = "P.Value",
+        selectLab = c(""),
+        pCutoff = FDR_cut,
+        FCcutoff = 0,
+        lab = rownames(outGenes_plot),
+        colCustom = keyvals
+    ) + ylim(c(0, 5))
+
+    pdf(paste0(output_path, "/VolcanoPlot_", model_name, ".pdf"),
+        height = 10,
+        width = 8
+    )
+    print(volcano_plot)
+    dev.off()
+}
+
+###############################################################################
+
+
 
 ## Top-ranked genes for PrimaryDx (Schizo vs Control)
 top_genes <- topTable(eBGene, coef = "PrimaryDxSchizo", p.value = 1, number = nrow(rse_gene_filt), sort.by = "none")
