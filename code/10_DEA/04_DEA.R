@@ -1,8 +1,12 @@
-library(here)
-library(SummarizedExperiment)
-library(edgeR)
-library(limma)
-library(sessioninfo)
+library("here")
+library("SummarizedExperiment")
+library("edgeR")
+library("limma")
+library("dplyr")
+library("EnhancedVolcano")
+library("sessioninfo")
+
+output_path <- here("plots", "10_DEA", "04_DEA")
 
 
 
