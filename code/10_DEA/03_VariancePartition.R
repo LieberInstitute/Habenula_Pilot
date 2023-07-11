@@ -16,21 +16,24 @@ output_path <- here("plots", "10_DEA", "03_VariancePartition")
 load(
     here(
         "processed-data",
-        "10_DEA",
-        "rse_gene_filt.Rdata"
+        "rse_objects",
+        "rse_gene_Habenula_Pilot.rda"
     ),
     verbose = TRUE
 )
 # Loading objects:
-#   rse_gene_filt
+#   rse_gene
 
-lobstr::obj_size(rse_gene_filt)
-# 27.27 MB
+lobstr::obj_size(rse_gene)
+# 29.92 MB
 
-class(rse_gene_filt)
+class(rse_gene)
 # [1] "RangedSummarizedExperiment"
 # attr(,"package")
 # [1] "SummarizedExperiment"
+
+dim(rse_gene)
+# [1] 22756    68
 
 ###############################################################################
 
