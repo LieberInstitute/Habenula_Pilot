@@ -222,70 +222,21 @@ ggsave(
 
 
 
-######################## Principal component analysis #########################
+################## PCA and heatmap with colData() variables ###################
 
 ## NOTE: This section is done with filtered and normalized counts
 
-pca <- prcomp(t(assays(rse_gene_filt)$logcounts))
-pca_df <- cbind(as.data.frame(pca$x), colData(rse_gene_filt))
+## PCA
+pca_df <- pca(assays(rse_gene)$logcounts, metadata = colData(rse_gene))
 
-## % of the variance explained by each PC
-pca_vars <- (summary(pca))$importance[2, ] * 100
-pca_vars_labs <- paste0(
-    "PC", seq(along = pca_vars), ": ",
-    pca_vars, "%"
-)
+## Plot correlation between PCs and variables (with and without qSVs)
+pdf(paste(output_path, "/", "Corr_PCA-Vars-qSVs.pdf", sep = ""), width = 10, height = 10)
+eigencorplot(pca_df, metavars = c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "snpPC1", "snpPC2", "snpPC3", "snpPC4", "snpPC5", "tot.Hb", "tot.Thal", "qSV1", "qSV2", "qSV3", "qSV4", "qSV5"))
+dev.off()
 
-sample_variables <- c("PrimaryDx", "Flowcell", "AgeDeath")
-
-pca_samplevars <- function(sample_var) {
-    gg_plot <- ggpairs(pca_df,
-        columns = 1:10, aes_string(color = sample_var, alpha = 0.5),
-        upper = list(continuous = wrap("points", size = 2))
-    ) +
-        theme_bw()
-
-    if (sample_var == "Flowcell") {
-        gg_plot <- gg_plot +
-            scale_color_manual(values = c("HVYTYBBXX" = "darkmagenta", "HW252BBXX" = "yellow3"))
-    } else if (sample_var == "PrimaryDx") {
-        gg_plot <- gg_plot +
-            scale_color_manual(values = c("Schizo" = "darkgoldenrod3", "Control" = "turquoise3"))
-    } else if (sample_var == "AgeDeath") {
-        gg_plot <- gg_plot +
-            scale_color_gradient(low = "#F19E93", high = "#00433F")
-    }
-
-    ggsave(
-        paste(output_path, "/PCA_", sample_var, ".pdf", sep = ""),
-        gg_plot,
-        width = 30,
-        height = 34,
-        units = "cm"
-    )
-}
-
-lapply(sample_variables, pca_samplevars)
-
-pca_qcmetrics <- function(qc_metric) {
-    gg_plot <- ggpairs(pca_df,
-        columns = 1:10, aes_string(color = qc_metric, alpha = 0.5),
-        upper = list(continuous = wrap("points", size = 2))
-    ) +
-        theme_bw() +
-        scale_color_gradient(low = "yellow", high = "darkblue") +
-        theme(legend.position = "bottom")
-
-    ggsave(
-        paste(output_path, "/PCA_", qc_metric, ".pdf", sep = ""),
-        gg_plot,
-        width = 30,
-        height = 30,
-        units = "cm"
-    )
-}
-
-lapply(qc_metrics, pca_qcmetrics)
+pdf(paste(output_path, "/", "Corr_PCA-Vars-noqSVs.pdf", sep = ""), width = 10, height = 10)
+eigencorplot(pca_df, metavars = c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "snpPC1", "snpPC2", "snpPC3", "snpPC4", "snpPC5", "tot.Hb", "tot.Thal"))
+dev.off()
 
 ###############################################################################
 
