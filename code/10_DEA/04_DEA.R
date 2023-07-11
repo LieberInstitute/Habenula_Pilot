@@ -22,24 +22,18 @@ load(
 )
 # Loading objects:
 #   rse_gene
-
-colData(rse_gene)$library_size <- apply(assay(rse_gene), 2, sum)
-colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
-colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
-    length(x[which(x > 0)])
-})
-colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
+rse_gene_raw <- rse_gene
 
 load(
     here(
         "processed-data",
-        "10_DEA",
-        "rse_gene_filt.Rdata"
+        "rse_objects",
+        "rse_gene_Habenula_Pilot.rda"
     ),
     verbose = TRUE
 )
 # Loading objects:
-#   rse_gene_filt
+#   rse_gene
 
 ###############################################################################
 
