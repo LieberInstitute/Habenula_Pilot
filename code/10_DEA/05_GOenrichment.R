@@ -2,6 +2,7 @@ library("here")
 library("data.table")
 library("dplyr")
 library("clusterProfiler")
+library("org.Hs.eg.db")
 library("ggplot2")
 library("sessioninfo")
 
@@ -22,7 +23,6 @@ DE_qc_snpPCs_Hb <- fread(
         "04_DEA",
         "DEA_AllGenes_qc-snpPCs-Hb.tsv"
     ),
-    header = TRUE,
     sep = "\t",
     data.table = FALSE,
     stringsAsFactors = FALSE
@@ -35,7 +35,6 @@ DE_qc_totAssGene_snpPCs_Hb <- fread(
         "04_DEA",
         "DEA_AllGenes_qc-totAssGene-snpPCs-Hb.tsv"
     ),
-    header = TRUE,
     sep = "\t",
     data.table = FALSE,
     stringsAsFactors = FALSE
