@@ -138,6 +138,7 @@ plot_volc <- function(top_genes, FDR_cut, model_name) {
 ##################################### DEA #####################################
 
 ## Model qc-snpPCs-Hb
+## WITH -
 ## WITHOUT - totalAssignedGene, qSVs and tot.Thal
 formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + abs_ERCCsumLogErr +
     snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
@@ -206,8 +207,31 @@ summary(res_formula$adj.P.Val)
 # 0.2338  0.2338  0.2338  0.2725  0.2541  0.9992
 
 
+## Model qc-snpPCs-Hb-Thal
+## WITH - tot.Thal
+## WITHOUT - totalAssignedGene and qSVs
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + abs_ERCCsumLogErr +
+    snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
+    tot.Hb + tot.Thal
+
+res_formula <- DE_analysis(
+    rse_gene = rse_gene,
+    formula = formula, coef = "PrimaryDxSchizo",
+    model_name = "qc-snpPCs-Hb-Thal"
+)
+
+plot_volc(res_formula,
+    FDR_cut = 5e-02,
+    model_name = "qc-snpPCs-Hb-Thal"
+)
+
+summary(res_formula$adj.P.Val)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.2930  0.2930  0.2930  0.3270  0.3026  0.9982
+
+
 ## Model qc-totAssGene-snpPCs-Hb-qSVs
-## WITH - totalAssignedGene and qSVs
+## WITH - qSVs and totalAssignedGene
 ## WITHOUT - tot.Thal
 formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
     snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
@@ -228,6 +252,30 @@ plot_volc(res_formula,
 summary(res_formula$adj.P.Val)
 #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 # 0.4664  0.4664  0.4664  0.5008  0.4720  0.9993
+
+
+## Model qc-snpPCs-Hb-Thal-qSVs
+## WITH - qSVs and tot.Thal
+## WITHOUT - totalAssignedGene
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + abs_ERCCsumLogErr +
+    snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
+    qSV1 + qSV2 + qSV3 + qSV4 + qSV5 +
+    tot.Hb + tot.Thal
+
+res_formula <- DE_analysis(
+    rse_gene = rse_gene,
+    formula = formula, coef = "PrimaryDxSchizo",
+    model_name = "qc-snpPCs-Hb-Thal-qSVs"
+)
+
+plot_volc(res_formula,
+    FDR_cut = 5e-02,
+    model_name = "qc-snpPCs-Hb-Thal-qSVs"
+)
+
+summary(res_formula$adj.P.Val)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.5957  0.5957  0.5957  0.6236  0.5967  0.9999
 
 
 ## Model qc-totAssGene-snpPCs-Hb-Thal
