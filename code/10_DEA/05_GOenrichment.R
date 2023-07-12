@@ -28,17 +28,17 @@ DE_qc_snpPCs_Hb <- fread(
     stringsAsFactors = FALSE
 )
 
-DE_qc_totAssGene_snpPCs_Hb <- fread(
-    here(
-        "processed-data",
-        "10_DEA",
-        "04_DEA",
-        "DEA_AllGenes_qc-totAssGene-snpPCs-Hb.tsv"
-    ),
-    sep = "\t",
-    data.table = FALSE,
-    stringsAsFactors = FALSE
-)
+# DE_qc_totAssGene_snpPCs_Hb <- fread(
+#     here(
+#         "processed-data",
+#         "10_DEA",
+#         "04_DEA",
+#         "DEA_AllGenes_qc-totAssGene-snpPCs-Hb.tsv"
+#     ),
+#     sep = "\t",
+#     data.table = FALSE,
+#     stringsAsFactors = FALSE
+# )
 
 ###############################################################################
 
@@ -108,9 +108,9 @@ plot_go <- function(ont, title_p, path, filename, size) {
     ggsave(filename = filename, path = path, dotplot_1, height = size[1], width = size[2])
 }
 
-plot_go(ont = "BP", title_p = "Biological Process", filename = "GOenrichment_BP.pdf", path = out_plot, size = c(4, 8))
-plot_go(ont = "CC", title_p = "Cellular Component", filename = "GOenrichment_CC.pdf", path = out_plot, size = c(6, 5))
-plot_go(ont = "MF", title_p = "Molecular Function", filename = "GOenrichment_MF.pdf", path = out_plot, size = c(6, 6.5))
+plot_go(ont = "BP", title_p = "Biological Process", filename = "GOenrichment_BP_qc-snpPCs-Hb.pdf", path = out_plot, size = c(4, 8))
+plot_go(ont = "CC", title_p = "Cellular Component", filename = "GOenrichment_CC_qc-snpPCs-Hb.pdf", path = out_plot, size = c(6, 5))
+plot_go(ont = "MF", title_p = "Molecular Function", filename = "GOenrichment_MF_qc-snpPCs-Hb.pdf", path = out_plot, size = c(6, 6.5))
 
 ## Plot KEGG results
 dotplot_1 <- ggplot(kegg, aes(Cluster, Description)) +
@@ -126,7 +126,7 @@ dotplot_1 <- ggplot(kegg, aes(Cluster, Description)) +
     ylab("") +
     ggtitle("KEGG")
 
-ggsave(filename = "KEGGenrichment.pdf", path = out_plot, dotplot_1, height = 6, width = 5)
+ggsave(filename = "KEGGenrichment_qc-snpPCs-Hb.pdf", path = out_plot, dotplot_1, height = 6, width = 5)
 
 ###############################################################################
 
