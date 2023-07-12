@@ -43,6 +43,19 @@ DE_qc_totAssGene_snpPCs_Hb <- fread(
 ###############################################################################
 
 
+######################### Prepare data fo GO analysis #########################
+
+sigGene <- DE_qc_snpPCs_Hb %>% filter(adj.P.Val < 0.15 & abs(logFC) > 1)
+
+sigGene <- split(sigGene$EntrezID, sign(sigGene$logFC))
+sigGene <- lapply(sigGene, function(x) x[!is.na(x)])
+
+geneUniverse <- as.character(DE_qc_snpPCs_Hb$EntrezID)
+geneUniverse <- geneUniverse[!is.na(geneUniverse)]
+
+###############################################################################
+
+
 
 ######################### Reproducibility information #########################
 
