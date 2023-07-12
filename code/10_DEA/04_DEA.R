@@ -3,6 +3,7 @@ library("SummarizedExperiment")
 library("edgeR")
 library("limma")
 library("dplyr")
+library("gplots")
 library("EnhancedVolcano")
 library("sessioninfo")
 
@@ -57,7 +58,8 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
     factors <- samples_factors[match_samples, ]
 
     pdf(file = paste0(out_plot, "/DEAplots_", model_name, ".pdf"))
-    par(mfrow = c(2, 2))
+    # par(mfrow = c(3, 2))
+    par(cex = 0.7, mai = c(0.1, 0.1, 0.1, 0.1))
 
     ## Model matrix
     model <- model.matrix(formula, data = colData(rse_gene))
@@ -67,6 +69,7 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
     RSE_scaled$samples$lib.size <- factors$lib.size
     RSE_scaled$samples$norm.factors <- factors$norm.factors
 
+    par(fig = c(0.05, 0.5, 0.55, 0.95))
     ## Transform counts to log2(CPM): estimate mean-variance relationship for
     ## each gene
     vGene <- voom(RSE_scaled, design = model, plot = TRUE)
@@ -78,12 +81,14 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
     ## moderated F and t-statistics, and log-odds of DE
     eBGene <- eBayes(fitGene)
 
+    par(fig = c(0.55, 1, 0.55, 0.95), new = TRUE)
     ## Plot average log expression vs logFC
     limma::plotMA(eBGene,
         coef = coef, xlab = "Mean of normalized counts",
         ylab = "logFC"
     )
 
+    par(fig = c(0.05, 0.5, 0.1, 0.5), new = TRUE)
     ## Plot -log(p-value) vs logFC
     volcanoplot(eBGene, coef = coef)
 
@@ -91,7 +96,11 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
     top_genes <- topTable(eBGene, coef = coef, p.value = 1, number = nrow(rse_gene), sort.by = "none")
 
     ## Histogram of adjusted p values
+    par(fig = c(0.55, 1, 0.1, 0.5), new = TRUE)
     hist(top_genes$adj.P.Val, xlab = "FDR", main = "")
+
+    par(fig = c(0.25, 0.75, 0, 0.1), new = TRUE)
+    textplot(capture.output(summary(top_genes$adj.P.Val)))
 
     dev.off()
 
