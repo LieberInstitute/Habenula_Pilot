@@ -86,7 +86,7 @@ kegg <- compareCluster(sigGene,
 ########################### Plot GO and KEGG results ##########################
 
 ## Function to plot GO results
-plot_go <- function(ont, title_p, path, filename) {
+plot_go <- function(ont, title_p, path, filename, size) {
     leng_ont <- dim(filter(go, ONTOLOGY == ont))[1]
     ifelse(leng_ont >= 10,
         go_mat <- filter(go, ONTOLOGY == ont)[1:10],
@@ -105,12 +105,12 @@ plot_go <- function(ont, title_p, path, filename) {
         ylab("") +
         ggtitle(title_p)
 
-    ggsave(filename = filename, path = path, dotplot_1, height = 6, width = 10)
+    ggsave(filename = filename, path = path, dotplot_1, height = size[1], width = size[2])
 }
 
-plot_go(ont = "BP", title_p = "Biological Process", filename = "GOenrichment_BP.pdf", path = out_plot)
-plot_go(ont = "CC", title_p = "Cellular Component", filename = "GOenrichment_CC.pdf", path = out_plot)
-plot_go(ont = "MF", title_p = "Molecular Function", filename = "GOenrichment_MF.pdf", path = out_plot)
+plot_go(ont = "BP", title_p = "Biological Process", filename = "GOenrichment_BP.pdf", path = out_plot, size = c(4, 8))
+plot_go(ont = "CC", title_p = "Cellular Component", filename = "GOenrichment_CC.pdf", path = out_plot, size = c(6, 5))
+plot_go(ont = "MF", title_p = "Molecular Function", filename = "GOenrichment_MF.pdf", path = out_plot, size = c(6, 6.5))
 
 ## Plot KEGG results
 dotplot_1 <- ggplot(kegg, aes(Cluster, Description)) +
