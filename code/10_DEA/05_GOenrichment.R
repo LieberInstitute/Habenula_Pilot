@@ -57,6 +57,33 @@ geneUniverse <- geneUniverse[!is.na(geneUniverse)]
 
 
 
+######################### Run GO and KEGG enrichment analysis #########################
+
+go <- compareCluster(sigGene,
+    fun = "enrichGO",
+    universe = geneUniverse,
+    OrgDb = org.Hs.eg.db,
+    ont = "ALL",
+    pAdjustMethod = "BH",
+    pvalueCutoff = 0.1,
+    qvalueCutoff = 0.05,
+    readable = TRUE
+)
+
+kegg <- compareCluster(sigGene,
+    fun = "enrichKEGG",
+    universe = geneUniverse,
+    organism = "human",
+    pvalueCutoff = 0.1,
+    qvalueCutoff = 0.05
+)
+
+
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
