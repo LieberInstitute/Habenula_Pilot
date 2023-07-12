@@ -101,6 +101,11 @@ plot_go <- function(ont, title_p, path, filename) {
     ggsave(filename = filename, path = path, dotplot_1, height = 6, width = 10)
 }
 
+plot_go(ont = "BP", title_p = "Biological Process", filename = "GOenrichment_BP.pdf", path = out_plot)
+
+plot_go(ont = "CC", title_p = "Cellular Component", filename = "GOenrichment_CC.pdf", path = out_plot)
+
+plot_go(ont = "MF", title_p = "Molecular Function", filename = "GOenrichment_MF.pdf", path = out_plot)
 
 ###############################################################################
 
