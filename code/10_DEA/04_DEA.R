@@ -119,7 +119,7 @@ plot_volc <- function(top_genes, FDR_cut, model_name) {
         select(logFC, P.Value, adj.P.Val, ensemblID, Symbol)
 
     keyvals <- ifelse(
-        outGenes_plot$P.Value > FDR_cut, "#f0e3d6", "#2a9d8f"
+        outGenes_plot$adj.P.Val > FDR_cut, "#f0e3d6", "#2a9d8f"
     )
 
     names(keyvals)[keyvals == "#2a9d8f"] <- paste0("pvalue < ", FDR_cut)
