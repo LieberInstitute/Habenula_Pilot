@@ -89,6 +89,7 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
     )
 
     par(fig = c(0.05, 0.5, 0.1, 0.5), new = TRUE)
+
     ## Plot -log(p-value) vs logFC
     volcanoplot(eBGene, coef = coef)
 
@@ -97,10 +98,13 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
 
     ## Histogram of adjusted p values
     par(fig = c(0.55, 1, 0.1, 0.5), new = TRUE)
-    hist(top_genes$adj.P.Val, xlab = "FDR", main = "")
+    hist(top_genes$P.Value, xlab = "p-value", main = "")
 
     par(fig = c(0.25, 0.75, 0, 0.1), new = TRUE)
     textplot(capture.output(summary(top_genes$adj.P.Val)))
+
+    par(fig = c(0.0, 0.25, 0, 0.1), new = TRUE)
+    textplot(capture.output(length(unique(top_genes$adj.P.Val))))
 
     dev.off()
 
