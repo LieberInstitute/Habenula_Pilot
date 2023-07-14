@@ -97,7 +97,10 @@ rownames(qSVAs) == rownames(colData(rse_gene))
 colData(rse_gene) <- cbind(colData(rse_gene), est_prop, qSVAs)
 
 ## Add SNP PCs
-colData(rse_gene) <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum")
+merged_col <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum")
+merged_col <- merged_col[match(rse_gene$RNum, merged_col$RNum), ]
+stopifnot(identical(rse_gene$RNum, merged_col$RNum))
+colData(rse_gene) <- merged_col
 colnames(rse_gene) <- colData(rse_gene)$RNum ## The merge deletes the colnames so I'm adding them back
 
 ###############################################################################
