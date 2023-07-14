@@ -150,6 +150,102 @@ plot_volc <- function(top_genes, FDR_cut, model_name) {
 
 ##################################### DEA #####################################
 
+## Model PrimaryDx
+## WITH -
+## WITHOUT - Everything
+formula <- ~ PrimaryDx
+
+res_formula <- DE_analysis(
+    rse_gene = rse_gene,
+    formula = formula,
+    coef = "PrimaryDxSchizo",
+    model_name = "PrimaryDx"
+)
+
+plot_volc(res_formula, FDR_cut = 5e-02, model_name = "PrimaryDx")
+
+summary(res_formula$adj.P.Val)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.8591  0.8591  0.8591  0.8690  0.8591  0.9999
+
+
+## Model PrimaryDx_Flow
+## WITH - Flowcell
+## WITHOUT - Almost Everything
+formula <- ~ PrimaryDx + Flowcell
+
+res_formula <- DE_analysis(
+    rse_gene = rse_gene,
+    formula = formula,
+    coef = "PrimaryDxSchizo",
+    model_name = "PrimaryDx_Flow"
+)
+
+plot_volc(res_formula, FDR_cut = 5e-02, model_name = "PrimaryDx_Flow")
+
+summary(res_formula$adj.P.Val)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.8740  0.8740  0.8740  0.8829  0.8740  0.9997
+
+
+## Model PrimaryDx_Flow_Age
+## WITH - Flowcell and AgeDeath
+## WITHOUT - Almost everything
+formula <- ~ PrimaryDx + AgeDeath + Flowcell
+
+res_formula <- DE_analysis(
+    rse_gene = rse_gene,
+    formula = formula,
+    coef = "PrimaryDxSchizo",
+    model_name = "PrimaryDx_Flow_Age"
+)
+
+plot_volc(res_formula, FDR_cut = 5e-02, model_name = "PrimaryDx_Flow_Age")
+
+summary(res_formula$adj.P.Val)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.8860  0.8860  0.8860  0.8937  0.8860  0.9999
+
+
+## Model qc
+## WITH - All QCs
+## WITHOUT - Almost everything
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + abs_ERCCsumLogErr
+
+res_formula <- DE_analysis(
+    rse_gene = rse_gene,
+    formula = formula,
+    coef = "PrimaryDxSchizo",
+    model_name = "qc"
+)
+
+plot_volc(res_formula, FDR_cut = 5e-02, model_name = "qc")
+
+summary(res_formula$adj.P.Val)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.2848  0.2848  0.2848  0.3228  0.3013  0.9995
+
+
+## Model qc
+## WITH - All QCs + 2 SNP PCs
+## WITHOUT - Almost everything
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + abs_ERCCsumLogErr +
+    snpPC1 + snpPC2
+
+res_formula <- DE_analysis(
+    rse_gene = rse_gene,
+    formula = formula,
+    coef = "PrimaryDxSchizo",
+    model_name = "qc-2snpPCs"
+)
+
+plot_volc(res_formula, FDR_cut = 5e-02, model_name = "qc-2snpPCs")
+
+summary(res_formula$adj.P.Val)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.2767  0.2767  0.2767  0.3158  0.2961  0.9991
+
+
 ## Model qc-snpPCs-Hb
 ## WITH -
 ## WITHOUT - totalAssignedGene, qSVs and tot.Thal
