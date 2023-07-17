@@ -152,6 +152,19 @@ formulas <- c(
         tot.Hb + tot.Thal
 )
 
+mapply(FUN = function(formula, model_name) {
+    res_formula <- DE_analysis(
+        rse_gene = rse_gene,
+        formula = formula,
+        coef = "PrimaryDxSchizo",
+        model_name = model_name
+    )
+
+    hval <- max((res_formula %>% dplyr::filter(adj.P.Val < 0.1 & adj.P.Val >= 0.09))$P.Value)
+    hval <- format(hval, scientific = TRUE)
+
+    plot_volc(res_formula, FDR_cut = 10e-02, model_name = model_name, hval = as.numeric(hval))
+}, formulas, models)
 
 ###############################################################################
 
