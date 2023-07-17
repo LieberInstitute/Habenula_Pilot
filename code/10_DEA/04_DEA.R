@@ -135,15 +135,23 @@ plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
 
 ##################################### DEA #####################################
 
-
-plot_volc(res_formula,
-    FDR_cut = 10e-02,
-    model_name = "qc-totAssGene-snpPCs-Hb-Thal-qSVs"
+## MODELS
+models <- c(
+    "qc-totAGene-qSVs-Hb-Thal",
+    "qc-totAGene-qSVs-snpPCs-Hb-Thal"
 )
 
-summary(res_formula$adj.P.Val)
-#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.07587 0.79389 0.90266 0.86291 0.96492 0.99996
+## FORMULAS
+formulas <- c(
+   ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
+        qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
+        tot.Hb + tot.Thal,
+    ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
+        qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
+        snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
+        tot.Hb + tot.Thal
+)
+
 
 ###############################################################################
 
