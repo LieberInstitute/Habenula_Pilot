@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.1.2
 Loading conda_R/4.3
 **** Job starts ****
-Tue Jul 11 14:53:28 EDT 2023
+Mon Jul 17 13:03:25 EDT 2023
 **** JHPCE info ****
 User: freneega
-Job id: 3617067
+Job id: 3631556
 Job name: VariancePartition
-Hostname: compute-121.cm.cluster
+Hostname: compute-127.cm.cluster
 Task id: undefined
 Unloading conda_R/4.3
 Loading conda_R/4.3
@@ -164,25 +164,30 @@ Loading objects:
 attr(,"package")
 [1] "SummarizedExperiment"
 [1] 22756    68
+[1]  68 109
 Scale for colour is already present.
 Adding another scale for colour, which will replace the existing scale.
 null device 
           1 
 Dividing work into 100 chunks...
 
-Total:1020 s
+Total:663 s
 There were 50 or more warnings (use warnings() to see the first 50)
 Dividing work into 100 chunks...
 
-Total:937 s
+Total:587 s
+There were 50 or more warnings (use warnings() to see the first 50)
+Dividing work into 100 chunks...
+
+Total:633 s
 There were 50 or more warnings (use warnings() to see the first 50)
 [1] "Reproducibility information:"
-[1] "2023-07-11 15:26:43 EDT"
+[1] "2023-07-17 13:35:17 EDT"
     user   system  elapsed 
-1978.010    6.030 1993.696 
+1897.499    4.711 1910.091 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
- version  R version 4.3.1 Patched (2023-07-10 r84677)
+ version  R version 4.3.1 Patched (2023-07-14 r84700)
  os       CentOS Linux 7 (Core)
  system   x86_64, linux-gnu
  ui       X11
@@ -190,330 +195,7 @@ There were 50 or more warnings (use warnings() to see the first 50)
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2023-07-11
- pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
-
-─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
- package              * version   date (UTC) lib source
- aod                    1.3.2     2022-04-02 [1] CRAN (R 4.3.1)
- backports              1.4.1     2021-12-13 [2] CRAN (R 4.3.0)
- beachmat               2.16.0    2023-04-25 [2] Bioconductor
- beeswarm               0.4.0     2021-06-01 [2] CRAN (R 4.3.0)
- Biobase              * 2.60.0    2023-04-25 [2] Bioconductor
- BiocGenerics         * 0.46.0    2023-04-25 [2] Bioconductor
- BiocNeighbors          1.18.0    2023-04-25 [2] Bioconductor
- BiocParallel         * 1.34.2    2023-05-22 [2] Bioconductor
- BiocSingular           1.16.0    2023-04-25 [2] Bioconductor
- bitops                 1.0-7     2021-04-24 [2] CRAN (R 4.3.0)
- boot                   1.3-28.1  2022-11-22 [3] CRAN (R 4.3.1)
- broom                  1.0.5     2023-06-09 [2] CRAN (R 4.3.1)
- Cairo                  1.6-0     2022-07-05 [2] CRAN (R 4.3.0)
- caTools                1.18.2    2021-03-28 [2] CRAN (R 4.3.0)
- circlize             * 0.4.15    2022-05-10 [2] CRAN (R 4.3.0)
- cli                    3.6.1     2023-03-23 [2] CRAN (R 4.3.0)
- clue                   0.3-64    2023-01-31 [2] CRAN (R 4.3.0)
- cluster                2.1.4     2022-08-22 [3] CRAN (R 4.3.1)
- codetools              0.2-19    2023-02-01 [3] CRAN (R 4.3.1)
- colorspace             2.1-0     2023-01-23 [2] CRAN (R 4.3.0)
- ComplexHeatmap       * 2.16.0    2023-04-25 [2] Bioconductor
- cowplot                1.1.1     2020-12-30 [1] CRAN (R 4.3.1)
- crayon                 1.5.2     2022-09-29 [2] CRAN (R 4.3.0)
- DelayedArray           0.26.6    2023-07-02 [2] Bioconductor
- DelayedMatrixStats     1.22.1    2023-06-09 [2] Bioconductor
- digest                 0.6.33    2023-07-07 [2] CRAN (R 4.3.1)
- doParallel             1.0.17    2022-02-07 [2] CRAN (R 4.3.0)
- dplyr                  1.1.2     2023-04-20 [2] CRAN (R 4.3.0)
- EnvStats               2.8.0     2023-07-08 [1] CRAN (R 4.3.1)
- fansi                  1.0.4     2023-01-22 [2] CRAN (R 4.3.0)
- farver                 2.1.1     2022-07-06 [2] CRAN (R 4.3.0)
- foreach                1.5.2     2022-02-02 [2] CRAN (R 4.3.0)
- generics               0.1.3     2022-07-05 [2] CRAN (R 4.3.0)
- GenomeInfoDb         * 1.36.1    2023-06-21 [2] Bioconductor
- GenomeInfoDbData       1.2.10    2023-04-11 [2] Bioconductor
- GenomicRanges        * 1.52.0    2023-04-25 [2] Bioconductor
- GetoptLong             1.0.5     2020-12-15 [2] CRAN (R 4.3.0)
- ggbeeswarm             0.7.2     2023-04-29 [2] CRAN (R 4.3.0)
- ggplot2              * 3.4.2     2023-04-03 [1] CRAN (R 4.3.1)
- ggrepel                0.9.3     2023-02-03 [2] CRAN (R 4.3.0)
- GlobalOptions          0.1.2     2020-06-10 [2] CRAN (R 4.3.0)
- glue                   1.6.2     2022-02-24 [2] CRAN (R 4.3.0)
- gplots                 3.1.3     2022-04-25 [2] CRAN (R 4.3.0)
- gridExtra              2.3       2017-09-09 [2] CRAN (R 4.3.0)
- gtable                 0.3.3     2023-03-21 [2] CRAN (R 4.3.0)
- gtools                 3.9.4     2022-11-27 [2] CRAN (R 4.3.0)
- here                 * 1.0.1     2020-12-13 [1] CRAN (R 4.3.1)
- hms                    1.1.3     2023-03-21 [2] CRAN (R 4.3.0)
- IRanges              * 2.34.1    2023-06-22 [2] Bioconductor
- irlba                  2.3.5.1   2022-10-03 [2] CRAN (R 4.3.0)
- iterators              1.0.14    2022-02-05 [2] CRAN (R 4.3.0)
- KernSmooth             2.23-22   2023-07-10 [3] CRAN (R 4.3.1)
- labeling               0.4.2     2020-10-20 [2] CRAN (R 4.3.0)
- lattice                0.21-8    2023-04-05 [3] CRAN (R 4.3.1)
- lifecycle              1.0.3     2022-10-07 [2] CRAN (R 4.3.0)
- limma                * 3.56.2    2023-06-04 [2] Bioconductor
- lme4                   1.1-34    2023-07-04 [2] CRAN (R 4.3.1)
- lobstr                 1.1.2     2022-06-22 [2] CRAN (R 4.3.0)
- magick                 2.7.4     2023-03-09 [2] CRAN (R 4.3.0)
- magrittr               2.0.3     2022-03-30 [2] CRAN (R 4.3.0)
- MASS                   7.3-60    2023-05-04 [3] CRAN (R 4.3.1)
- Matrix                 1.6-0     2023-07-08 [3] CRAN (R 4.3.1)
- MatrixGenerics       * 1.12.2    2023-06-09 [2] Bioconductor
- matrixStats          * 1.0.0     2023-06-02 [2] CRAN (R 4.3.0)
- minqa                  1.2.5     2022-10-19 [2] CRAN (R 4.3.0)
- munsell                0.5.0     2018-06-12 [2] CRAN (R 4.3.0)
- mvtnorm                1.2-2     2023-06-08 [2] CRAN (R 4.3.1)
- nlme                   3.1-162   2023-01-31 [3] CRAN (R 4.3.1)
- nloptr                 2.0.3     2022-05-26 [2] CRAN (R 4.3.0)
- pbkrtest               0.5.2     2023-01-19 [2] CRAN (R 4.3.0)
- pillar                 1.9.0     2023-03-22 [2] CRAN (R 4.3.0)
- pkgconfig              2.0.3     2019-09-22 [2] CRAN (R 4.3.0)
- plyr                   1.8.8     2022-11-11 [2] CRAN (R 4.3.0)
- png                    0.1-8     2022-11-29 [2] CRAN (R 4.3.0)
- prettyunits            1.1.1     2020-01-24 [2] CRAN (R 4.3.0)
- progress               1.2.2     2019-05-16 [2] CRAN (R 4.3.0)
- purrr                  1.0.1     2023-01-10 [2] CRAN (R 4.3.0)
- R6                     2.5.1     2021-08-19 [2] CRAN (R 4.3.0)
- ragg                   1.2.5     2023-01-12 [2] CRAN (R 4.3.0)
- rbibutils              2.2.13    2023-01-13 [2] CRAN (R 4.3.0)
- RColorBrewer           1.1-3     2022-04-03 [2] CRAN (R 4.3.0)
- Rcpp                   1.0.11    2023-07-06 [2] CRAN (R 4.3.1)
- RCurl                  1.98-1.12 2023-03-27 [2] CRAN (R 4.3.0)
- Rdpack                 2.4       2022-07-20 [2] CRAN (R 4.3.0)
- remaCor                0.0.16    2023-06-21 [1] CRAN (R 4.3.1)
- reshape2               1.4.4     2020-04-09 [2] CRAN (R 4.3.0)
- RhpcBLASctl            0.23-42   2023-02-11 [1] CRAN (R 4.3.1)
- rjson                  0.2.21    2022-01-09 [2] CRAN (R 4.3.0)
- rlang                  1.1.1     2023-04-28 [2] CRAN (R 4.3.0)
- rprojroot              2.0.3     2022-04-02 [2] CRAN (R 4.3.0)
- rsvd                   1.0.5     2021-04-16 [2] CRAN (R 4.3.0)
- S4Arrays               1.0.4     2023-05-14 [2] Bioconductor
- S4Vectors            * 0.38.1    2023-05-02 [2] Bioconductor
- ScaledMatrix           1.8.1     2023-05-03 [2] Bioconductor
- scales                 1.2.1     2022-08-20 [2] CRAN (R 4.3.0)
- scater               * 1.28.0    2023-04-25 [2] Bioconductor
- scuttle              * 1.10.1    2023-05-02 [2] Bioconductor
- sessioninfo          * 1.2.2     2021-12-06 [1] CRAN (R 4.3.1)
- shape                  1.4.6     2021-05-19 [2] CRAN (R 4.3.0)
- SingleCellExperiment * 1.22.0    2023-04-25 [2] Bioconductor
- sparseMatrixStats      1.12.2    2023-07-02 [2] Bioconductor
- stringi                1.7.12    2023-01-11 [2] CRAN (R 4.3.0)
- stringr                1.5.0     2022-12-02 [1] CRAN (R 4.3.1)
- SummarizedExperiment * 1.30.2    2023-06-06 [2] Bioconductor
- systemfonts            1.0.4     2022-02-11 [2] CRAN (R 4.3.0)
- textshaping            0.3.6     2021-10-13 [2] CRAN (R 4.3.0)
- tibble                 3.2.1     2023-03-20 [2] CRAN (R 4.3.0)
- tidyr                  1.3.0     2023-01-24 [2] CRAN (R 4.3.0)
- tidyselect             1.2.0     2022-10-10 [2] CRAN (R 4.3.0)
- utf8                   1.2.3     2023-01-31 [2] CRAN (R 4.3.0)
- variancePartition    * 1.30.2    2023-06-07 [1] Bioconductor
- vctrs                  0.6.3     2023-06-14 [1] CRAN (R 4.3.1)
- vipor                  0.4.5     2017-03-22 [2] CRAN (R 4.3.0)
- viridis                0.6.3     2023-05-03 [2] CRAN (R 4.3.0)
- viridisLite            0.4.2     2023-05-02 [2] CRAN (R 4.3.0)
- withr                  2.5.0     2022-03-03 [2] CRAN (R 4.3.0)
- XVector                0.40.0    2023-04-25 [2] Bioconductor
- zlibbioc               1.46.0    2023-04-25 [2] Bioconductor
-
- [1] /users/freneega/R/4.3
- [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/R/4.3/lib64/R/site-library
- [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/R/4.3/lib64/R/library
-
-──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-**** Job ends ****
-Tue Jul 11 15:26:47 EDT 2023
-Adding LIBD modules
-Loading git
-Loading LIBD module for git-status-size/github
-Loading LIBD module for git-lfs/2.8.0
-Loading LIBD module for rmate/1.5.10
-Loading LIBD module for ruby/3.1.2
-Loading conda_R/4.3
-**** Job starts ****
-Fri Jul 14 15:59:55 EDT 2023
-**** JHPCE info ****
-User: freneega
-Job id: 3628644
-Job name: VariancePartition
-Hostname: compute-146.cm.cluster
-Task id: undefined
-Unloading conda_R/4.3
-Loading conda_R/4.3
-
-Currently Loaded Modules:
-  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/3.1.2
-  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.10
-  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
-  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.3
-  5) gcc/4.4.7        10) git-lfs/2.8.0
-
- 
-
-here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
-Loading required package: MatrixGenerics
-Loading required package: matrixStats
-
-Attaching package: ‘MatrixGenerics’
-
-The following objects are masked from ‘package:matrixStats’:
-
-    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
-    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
-    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
-    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
-    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
-    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
-    colWeightedMeans, colWeightedMedians, colWeightedSds,
-    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
-    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
-    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
-    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
-    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
-    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
-    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
-    rowWeightedSds, rowWeightedVars
-
-Loading required package: GenomicRanges
-Loading required package: stats4
-Loading required package: BiocGenerics
-
-Attaching package: ‘BiocGenerics’
-
-The following objects are masked from ‘package:stats’:
-
-    IQR, mad, sd, var, xtabs
-
-The following objects are masked from ‘package:base’:
-
-    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
-    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
-    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
-    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
-    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
-    table, tapply, union, unique, unsplit, which.max, which.min
-
-Loading required package: S4Vectors
-
-Attaching package: ‘S4Vectors’
-
-The following object is masked from ‘package:utils’:
-
-    findMatches
-
-The following objects are masked from ‘package:base’:
-
-    expand.grid, I, unname
-
-Loading required package: IRanges
-Loading required package: GenomeInfoDb
-Loading required package: Biobase
-Welcome to Bioconductor
-
-    Vignettes contain introductory material; view with
-    'browseVignettes()'. To cite Bioconductor, see
-    'citation("Biobase")', and for packages 'citation("pkgname")'.
-
-
-Attaching package: ‘Biobase’
-
-The following object is masked from ‘package:MatrixGenerics’:
-
-    rowMedians
-
-The following objects are masked from ‘package:matrixStats’:
-
-    anyMissing, rowMedians
-
-Loading required package: SingleCellExperiment
-Loading required package: scuttle
-Loading required package: ggplot2
-Loading required package: limma
-
-Attaching package: ‘limma’
-
-The following object is masked from ‘package:scater’:
-
-    plotMDS
-
-The following object is masked from ‘package:BiocGenerics’:
-
-    plotMA
-
-Loading required package: BiocParallel
-
-Attaching package: ‘variancePartition’
-
-The following object is masked from ‘package:limma’:
-
-    topTable
-
-Loading required package: grid
-========================================
-ComplexHeatmap version 2.16.0
-Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/
-Github page: https://github.com/jokergoo/ComplexHeatmap
-Documentation: http://jokergoo.github.io/ComplexHeatmap-reference
-
-If you use it in published research, please cite either one:
-- Gu, Z. Complex Heatmap Visualization. iMeta 2022.
-- Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional 
-    genomic data. Bioinformatics 2016.
-
-
-The new InteractiveComplexHeatmap package can directly export static 
-complex heatmaps into an interactive Shiny app with zero effort. Have a try!
-
-This message can be suppressed by:
-  suppressPackageStartupMessages(library(ComplexHeatmap))
-========================================
-
-========================================
-circlize version 0.4.15
-CRAN page: https://cran.r-project.org/package=circlize
-Github page: https://github.com/jokergoo/circlize
-Documentation: https://jokergoo.github.io/circlize_book/book/
-
-If you use it in published research, please cite:
-Gu, Z. circlize implements and enhances circular visualization
-  in R. Bioinformatics 2014.
-
-This message can be suppressed by:
-  suppressPackageStartupMessages(library(circlize))
-========================================
-
-Loading objects:
-  rse_gene
-29.92 MB
-[1] "RangedSummarizedExperiment"
-attr(,"package")
-[1] "SummarizedExperiment"
-[1] 22756    68
-Scale for colour is already present.
-Adding another scale for colour, which will replace the existing scale.
-null device 
-          1 
-Dividing work into 100 chunks...
-
-Total:676 s
-There were 50 or more warnings (use warnings() to see the first 50)
-Dividing work into 100 chunks...
-
-Total:624 s
-There were 50 or more warnings (use warnings() to see the first 50)
-[1] "Reproducibility information:"
-[1] "2023-07-14 16:22:15 EDT"
-    user   system  elapsed 
-1312.576    3.989 1336.906 
-─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
- setting  value
- version  R version 4.3.1 Patched (2023-07-14 r84691)
- os       CentOS Linux 7 (Core)
- system   x86_64, linux-gnu
- ui       X11
- language (EN)
- collate  en_US.UTF-8
- ctype    en_US.UTF-8
- tz       US/Eastern
- date     2023-07-14
+ date     2023-07-17
  pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -643,4 +325,4 @@ There were 50 or more warnings (use warnings() to see the first 50)
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Fri Jul 14 16:22:20 EDT 2023
+Mon Jul 17 13:35:18 EDT 2023
