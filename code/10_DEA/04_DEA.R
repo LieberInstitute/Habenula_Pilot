@@ -110,19 +110,19 @@ plot_volc <- function(top_genes, FDR_cut, model_name) {
         outGenes_plot$adj.P.Val > FDR_cut, "#f0e3d6", "#2a9d8f"
     )
 
-    names(keyvals)[keyvals == "#2a9d8f"] <- paste0("pvalue < ", FDR_cut)
+    names(keyvals)[keyvals == "#2a9d8f"] <- paste0("FDR < ", FDR_cut)
     names(keyvals)[keyvals == "#f0e3d6"] <- "Not significant"
 
 
     volcano_plot <- EnhancedVolcano(outGenes_plot,
         x = "logFC",
-        y = "P.Value",
+        y = "adj.P.Val",
         selectLab = c(""),
         pCutoff = FDR_cut,
         FCcutoff = 0,
         lab = rownames(outGenes_plot),
         colCustom = keyvals
-    ) + ylim(c(0, 5))
+    ) + ylim(c(0, 2))
 
     pdf(paste0(out_plot, "/VolcanoPlot_", model_name, ".pdf"),
         height = 10,
