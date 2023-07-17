@@ -16,18 +16,6 @@ out_data <- here("processed-data", "10_DEA", "04_DEA")
 
 load(
     here(
-        "preprocessed_data",
-        "count_data_bukola",
-        "rse_gene_Roche_Habenula_qcAndAnnotated_n69.Rdata"
-    ),
-    verbose = TRUE
-)
-# Loading objects:
-#   rse_gene
-rse_gene_raw <- rse_gene
-
-load(
-    here(
         "processed-data",
         "rse_objects",
         "rse_gene_Habenula_Pilot.rda"
