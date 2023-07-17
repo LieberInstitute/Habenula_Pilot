@@ -41,11 +41,11 @@ rse_gene
 # rownames(22756): ENSG00000227232.5 ENSG00000278267.1 ...
 #   ENSG00000210195.2 ENSG00000210196.2
 # rowData names(11): Length gencodeID ... gencodeTx MGI_Symbol
-# colnames(68): R18347 R18397 ... R18419 R18351
-# colData names(106): BrNum RNum ... snpPC9 snpPC10
+# colnames(68): R18346 R18347 ... R18422 R18423
+# colData names(109): BrNum RNum ... snpPC9 snpPC10
 
 dim(colData(rse_gene))
-# [1] 68 106
+# [1] 68 109
 
 names(colData(rse_gene))
 #   [1] "BrNum"                          "RNum"
