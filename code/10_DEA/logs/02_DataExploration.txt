@@ -1,0 +1,370 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.10
+Loading LIBD module for ruby/3.1.2
+Loading conda_R/4.3
+**** Job starts ****
+Mon Jul 17 16:39:44 EDT 2023
+**** JHPCE info ****
+User: freneega
+Job id: 3632207
+Job name: DataExploration
+Hostname: compute-129.cm.cluster
+Task id: undefined
+Unloading conda_R/4.3
+Loading conda_R/4.3
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/3.1.2
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.10
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.3
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+Loading required package: ggplot2
+Loading required package: ggrepel
+
+Attaching package: ‘PCAtools’
+
+The following objects are masked from ‘package:stats’:
+
+    biplot, screeplot
+
+Loading required package: grid
+========================================
+ComplexHeatmap version 2.16.0
+Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/
+Github page: https://github.com/jokergoo/ComplexHeatmap
+Documentation: http://jokergoo.github.io/ComplexHeatmap-reference
+
+If you use it in published research, please cite either one:
+- Gu, Z. Complex Heatmap Visualization. iMeta 2022.
+- Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional 
+    genomic data. Bioinformatics 2016.
+
+
+The new InteractiveComplexHeatmap package can directly export static 
+complex heatmaps into an interactive Shiny app with zero effort. Have a try!
+
+This message can be suppressed by:
+  suppressPackageStartupMessages(library(ComplexHeatmap))
+========================================
+
+========================================
+circlize version 0.4.15
+CRAN page: https://cran.r-project.org/package=circlize
+Github page: https://github.com/jokergoo/circlize
+Documentation: https://jokergoo.github.io/circlize_book/book/
+
+If you use it in published research, please cite:
+Gu, Z. circlize implements and enhances circular visualization
+  in R. Bioinformatics 2014.
+
+This message can be suppressed by:
+  suppressPackageStartupMessages(library(circlize))
+========================================
+
+Loading objects:
+  rse_gene
+29.92 MB
+[1] "RangedSummarizedExperiment"
+attr(,"package")
+[1] "SummarizedExperiment"
+class: RangedSummarizedExperiment 
+dim: 22756 68 
+metadata(0):
+assays(2): counts logcounts
+rownames(22756): ENSG00000227232.5 ENSG00000278267.1 ...
+  ENSG00000210195.2 ENSG00000210196.2
+rowData names(11): Length gencodeID ... gencodeTx MGI_Symbol
+colnames(68): R18346 R18347 ... R18422 R18423
+colData names(109): BrNum RNum ... snpPC9 snpPC10
+[1]  68 109
+  [1] "BrNum"                          "RNum"                          
+  [3] "RIN"                            "Brain.Region"                  
+  [5] "AgeDeath"                       "Sex"                           
+  [7] "Race"                           "PrimaryDx"                     
+  [9] "FQCbasicStats"                  "perBaseQual"                   
+ [11] "perTileQual"                    "perSeqQual"                    
+ [13] "perBaseContent"                 "GCcontent"                     
+ [15] "Ncontent"                       "SeqLengthDist"                 
+ [17] "SeqDuplication"                 "OverrepSeqs"                   
+ [19] "AdapterContent"                 "KmerContent"                   
+ [21] "SeqLength_R1"                   "percentGC_R1"                  
+ [23] "phred20.21_R1"                  "phred48.49_R1"                 
+ [25] "phred76.77_R1"                  "phred100.101_R1"               
+ [27] "phredGT30_R1"                   "phredGT35_R1"                  
+ [29] "Adapter50.51_R1"                "Adapter70.71_R1"               
+ [31] "Adapter88.89_R1"                "SeqLength_R2"                  
+ [33] "percentGC_R2"                   "phred20.21_R2"                 
+ [35] "phred48.49_R2"                  "phred76.77_R2"                 
+ [37] "phred100.101_R2"                "phredGT30_R2"                  
+ [39] "phredGT35_R2"                   "Adapter50.51_R2"               
+ [41] "Adapter70.71_R2"                "Adapter88.89_R2"               
+ [43] "ERCCsumLogErr"                  "bamFile"                       
+ [45] "trimmed"                        "numReads"                      
+ [47] "numMapped"                      "numUnmapped"                   
+ [49] "overallMapRate"                 "concordMapRate"                
+ [51] "totalMapped"                    "mitoMapped"                    
+ [53] "mitoRate"                       "totalAssignedGene"             
+ [55] "gene_Assigned"                  "gene_Unassigned_Ambiguity"     
+ [57] "gene_Unassigned_MultiMapping"   "gene_Unassigned_NoFeatures"    
+ [59] "gene_Unassigned_Unmapped"       "gene_Unassigned_MappingQuality"
+ [61] "gene_Unassigned_FragmentLength" "gene_Unassigned_Chimera"       
+ [63] "gene_Unassigned_Secondary"      "gene_Unassigned_Nonjunction"   
+ [65] "gene_Unassigned_Duplicate"      "rRNA_rate"                     
+ [67] "Flowcell"                       "hasGenotype"                   
+ [69] "sum"                            "detected"                      
+ [71] "subsets_Mito_sum"               "subsets_Mito_detected"         
+ [73] "subsets_Mito_percent"           "subsets_Ribo_sum"              
+ [75] "subsets_Ribo_detected"          "subsets_Ribo_percent"          
+ [77] "library_size"                   "log10_library_size"            
+ [79] "detected_num_genes"             "abs_ERCCsumLogErr"             
+ [81] "Astrocyte"                      "Endo"                          
+ [83] "Excit.Thal"                     "Inhib.Thal"                    
+ [85] "LHb"                            "MHb"                           
+ [87] "Microglia"                      "Oligo"                         
+ [89] "OPC"                            "tot.Hb"                        
+ [91] "tot.Thal"                       "qSV1"                          
+ [93] "qSV2"                           "qSV3"                          
+ [95] "qSV4"                           "qSV5"                          
+ [97] "qSV6"                           "qSV7"                          
+ [99] "qSV8"                           "snpPC1"                        
+[101] "snpPC2"                         "snpPC3"                        
+[103] "snpPC4"                         "snpPC5"                        
+[105] "snpPC6"                         "snpPC7"                        
+[107] "snpPC8"                         "snpPC9"                        
+[109] "snpPC10"                       
+[1] "Schizo"  "Control"
+
+Control  Schizo 
+     33      35 
+
+ M 
+68 
+
+CAUC 
+  68 
+
+HVYTYBBXX HW252BBXX 
+       34        34 
+Warning message:
+Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead. 
+Warning message:
+`aes_string()` was deprecated in ggplot2 3.0.0.
+ℹ Please use tidy evaluation idioms with `aes()`.
+ℹ See also `vignette("ggplot2-in-packages")` for more information. 
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+Warning messages:
+1: In eigencorplot(pca_df, metavars = c("PrimaryDx", "AgeDeath", "Flowcell",  :
+  PrimaryDx is not numeric - please check the source data as non-numeric variables will be coerced to numeric
+2: In eigencorplot(pca_df, metavars = c("PrimaryDx", "AgeDeath", "Flowcell",  :
+  Flowcell is not numeric - please check the source data as non-numeric variables will be coerced to numeric
+null device 
+          1 
+Warning messages:
+1: In eigencorplot(pca_df, metavars = c("PrimaryDx", "AgeDeath", "Flowcell",  :
+  PrimaryDx is not numeric - please check the source data as non-numeric variables will be coerced to numeric
+2: In eigencorplot(pca_df, metavars = c("PrimaryDx", "AgeDeath", "Flowcell",  :
+  Flowcell is not numeric - please check the source data as non-numeric variables will be coerced to numeric
+null device 
+          1 
+[1] "Reproducibility information:"
+[1] "2023-07-17 16:40:09 EDT"
+   user  system elapsed 
+ 14.114   0.641  22.578 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.3.1 Patched (2023-07-14 r84700)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2023-07-17
+ pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package              * version   date (UTC) lib source
+ beachmat               2.16.0    2023-04-25 [2] Bioconductor
+ Biobase              * 2.60.0    2023-04-25 [2] Bioconductor
+ BiocGenerics         * 0.46.0    2023-04-25 [2] Bioconductor
+ BiocParallel           1.34.2    2023-05-22 [2] Bioconductor
+ BiocSingular           1.16.0    2023-04-25 [2] Bioconductor
+ bitops                 1.0-7     2021-04-24 [2] CRAN (R 4.3.0)
+ circlize             * 0.4.15    2022-05-10 [2] CRAN (R 4.3.0)
+ cli                    3.6.1     2023-03-23 [2] CRAN (R 4.3.0)
+ clue                   0.3-64    2023-01-31 [2] CRAN (R 4.3.0)
+ cluster                2.1.4     2022-08-22 [3] CRAN (R 4.3.1)
+ codetools              0.2-19    2023-02-01 [3] CRAN (R 4.3.1)
+ colorspace             2.1-0     2023-01-23 [2] CRAN (R 4.3.0)
+ ComplexHeatmap       * 2.16.0    2023-04-25 [2] Bioconductor
+ cowplot              * 1.1.1     2020-12-30 [1] CRAN (R 4.3.1)
+ crayon                 1.5.2     2022-09-29 [2] CRAN (R 4.3.0)
+ DelayedArray           0.26.6    2023-07-02 [2] Bioconductor
+ DelayedMatrixStats     1.22.1    2023-06-09 [2] Bioconductor
+ digest                 0.6.33    2023-07-07 [2] CRAN (R 4.3.1)
+ doParallel             1.0.17    2022-02-07 [2] CRAN (R 4.3.0)
+ dplyr                  1.1.2     2023-04-20 [2] CRAN (R 4.3.0)
+ dqrng                  0.3.0     2021-05-01 [2] CRAN (R 4.3.0)
+ fansi                  1.0.4     2023-01-22 [2] CRAN (R 4.3.0)
+ farver                 2.1.1     2022-07-06 [2] CRAN (R 4.3.0)
+ foreach                1.5.2     2022-02-02 [2] CRAN (R 4.3.0)
+ generics               0.1.3     2022-07-05 [2] CRAN (R 4.3.0)
+ GenomeInfoDb         * 1.36.1    2023-06-21 [2] Bioconductor
+ GenomeInfoDbData       1.2.10    2023-04-11 [2] Bioconductor
+ GenomicRanges        * 1.52.0    2023-04-25 [2] Bioconductor
+ GetoptLong             1.0.5     2020-12-15 [2] CRAN (R 4.3.0)
+ ggplot2              * 3.4.2     2023-04-03 [1] CRAN (R 4.3.1)
+ ggrepel              * 0.9.3     2023-02-03 [2] CRAN (R 4.3.0)
+ GlobalOptions          0.1.2     2020-06-10 [2] CRAN (R 4.3.0)
+ glue                   1.6.2     2022-02-24 [2] CRAN (R 4.3.0)
+ gtable                 0.3.3     2023-03-21 [2] CRAN (R 4.3.0)
+ here                 * 1.0.1     2020-12-13 [1] CRAN (R 4.3.1)
+ IRanges              * 2.34.1    2023-06-22 [2] Bioconductor
+ irlba                  2.3.5.1   2022-10-03 [2] CRAN (R 4.3.0)
+ iterators              1.0.14    2022-02-05 [2] CRAN (R 4.3.0)
+ labeling               0.4.2     2020-10-20 [2] CRAN (R 4.3.0)
+ lattice                0.21-8    2023-04-05 [3] CRAN (R 4.3.1)
+ lifecycle              1.0.3     2022-10-07 [2] CRAN (R 4.3.0)
+ lobstr                 1.1.2     2022-06-22 [2] CRAN (R 4.3.0)
+ magrittr               2.0.3     2022-03-30 [2] CRAN (R 4.3.0)
+ Matrix                 1.6-0     2023-07-08 [3] CRAN (R 4.3.1)
+ MatrixGenerics       * 1.12.2    2023-06-09 [2] Bioconductor
+ matrixStats          * 1.0.0     2023-06-02 [2] CRAN (R 4.3.0)
+ mgcv                   1.9-0     2023-07-11 [3] CRAN (R 4.3.1)
+ munsell                0.5.0     2018-06-12 [2] CRAN (R 4.3.0)
+ nlme                   3.1-162   2023-01-31 [3] CRAN (R 4.3.1)
+ PCAtools             * 2.12.0    2023-04-25 [1] Bioconductor
+ pillar                 1.9.0     2023-03-22 [2] CRAN (R 4.3.0)
+ pkgconfig              2.0.3     2019-09-22 [2] CRAN (R 4.3.0)
+ plyr                   1.8.8     2022-11-11 [2] CRAN (R 4.3.0)
+ png                    0.1-8     2022-11-29 [2] CRAN (R 4.3.0)
+ prettyunits            1.1.1     2020-01-24 [2] CRAN (R 4.3.0)
+ R6                     2.5.1     2021-08-19 [2] CRAN (R 4.3.0)
+ ragg                   1.2.5     2023-01-12 [2] CRAN (R 4.3.0)
+ RColorBrewer           1.1-3     2022-04-03 [2] CRAN (R 4.3.0)
+ Rcpp                   1.0.11    2023-07-06 [2] CRAN (R 4.3.1)
+ RCurl                  1.98-1.12 2023-03-27 [2] CRAN (R 4.3.0)
+ reshape2               1.4.4     2020-04-09 [2] CRAN (R 4.3.0)
+ rjson                  0.2.21    2022-01-09 [2] CRAN (R 4.3.0)
+ rlang                  1.1.1     2023-04-28 [2] CRAN (R 4.3.0)
+ rprojroot              2.0.3     2022-04-02 [2] CRAN (R 4.3.0)
+ rsvd                   1.0.5     2021-04-16 [2] CRAN (R 4.3.0)
+ S4Arrays               1.0.4     2023-05-14 [2] Bioconductor
+ S4Vectors            * 0.38.1    2023-05-02 [2] Bioconductor
+ ScaledMatrix           1.8.1     2023-05-03 [2] Bioconductor
+ scales                 1.2.1     2022-08-20 [2] CRAN (R 4.3.0)
+ sessioninfo          * 1.2.2     2021-12-06 [1] CRAN (R 4.3.1)
+ shape                  1.4.6     2021-05-19 [2] CRAN (R 4.3.0)
+ sparseMatrixStats      1.12.2    2023-07-02 [2] Bioconductor
+ stringi                1.7.12    2023-01-11 [2] CRAN (R 4.3.0)
+ stringr              * 1.5.0     2022-12-02 [1] CRAN (R 4.3.1)
+ SummarizedExperiment * 1.30.2    2023-06-06 [2] Bioconductor
+ systemfonts            1.0.4     2022-02-11 [2] CRAN (R 4.3.0)
+ textshaping            0.3.6     2021-10-13 [2] CRAN (R 4.3.0)
+ tibble                 3.2.1     2023-03-20 [2] CRAN (R 4.3.0)
+ tidyselect             1.2.0     2022-10-10 [2] CRAN (R 4.3.0)
+ utf8                   1.2.3     2023-01-31 [2] CRAN (R 4.3.0)
+ vctrs                  0.6.3     2023-06-14 [1] CRAN (R 4.3.1)
+ withr                  2.5.0     2022-03-03 [2] CRAN (R 4.3.0)
+ XVector                0.40.0    2023-04-25 [2] Bioconductor
+ zlibbioc               1.46.0    2023-04-25 [2] Bioconductor
+
+ [1] /users/freneega/R/4.3
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/R/4.3/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/R/4.3/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Mon Jul 17 16:40:11 EDT 2023
