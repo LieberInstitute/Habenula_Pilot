@@ -34,7 +34,6 @@ load(
 
 ## Function to do all the DEA analysis with limma
 DE_analysis <- function(rse_gene, formula, coef, model_name) {
-
     pdf(file = paste0(out_plot, "/DEAplots_", model_name, ".pdf"))
     # par(mfrow = c(3, 2))
     par(cex = 0.7, mai = c(0.1, 0.1, 0.1, 0.1))
@@ -90,27 +89,37 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
 }
 
 ## Function to make volcano plot
-plot_volc <- function(top_genes, FDR_cut, model_name) {
+plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
     outGenes_plot <- top_genes %>%
         select(logFC, P.Value, adj.P.Val, ensemblID, Symbol)
 
     keyvals <- ifelse(
-        outGenes_plot$adj.P.Val > FDR_cut, "#f0e3d6", "#2a9d8f"
+        outGenes_plot$adj.P.Val > FDR_cut, "#f2e8cf", "#a7c957"
     )
 
-    names(keyvals)[keyvals == "#2a9d8f"] <- paste0("FDR < ", FDR_cut)
-    names(keyvals)[keyvals == "#f0e3d6"] <- "Not significant"
+    names(keyvals)[keyvals == "#a7c957"] <- paste0("FDR < ", FDR_cut)
+    names(keyvals)[keyvals == "#f2e8cf"] <- "Not significant"
 
+    select <- outGenes_plot %>% filter(adj.P.Val < FDR_cut & abs(logFC) > 1)
 
     volcano_plot <- EnhancedVolcano(outGenes_plot,
         x = "logFC",
-        y = "adj.P.Val",
-        selectLab = c(""),
-        pCutoff = FDR_cut,
-        FCcutoff = 0,
+        y = "P.Value",
+        selectLab = select$Symbol,
+        labSize = 6.0,
+        drawConnectors = TRUE,
+        arrowheads = FALSE,
+        max.overlaps = Inf,
+        labCol = "black",
+        pCutoff = hval,
+        FCcutoff = 1,
         lab = rownames(outGenes_plot),
-        colCustom = keyvals
-    ) + ylim(c(0, 2))
+        colCustom = keyvals,
+        caption = paste0("total = ", nrow(outGenes_plot), " genes"),
+        title = "",
+        subtitle = ""
+    ) + ylim(c(0, 6)) +
+        xlim(c(-3, 3))
 
     pdf(paste0(out_plot, "/VolcanoPlot_", model_name, ".pdf"),
         height = 10,
