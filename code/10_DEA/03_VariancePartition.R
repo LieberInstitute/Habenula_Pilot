@@ -7,7 +7,7 @@ library("circlize")
 library("ggplot2")
 library("sessioninfo")
 
-output_path <- here("plots", "10_DEA", "03_VariancePartition")
+out_plot <- here("plots", "10_DEA", "03_VariancePartition")
 
 
 
@@ -53,7 +53,7 @@ varience_plot <- varience_plot + scale_colour_manual(values = colors) +
     labs(color = "Variables")
 
 ggsave(
-    paste(output_path, "/", "ExplanatoryVars.pdf", sep = ""),
+    paste(out_plot, "/", "ExplanatoryVars.pdf", sep = ""),
     varience_plot,
     width = 35,
     height = 25,
@@ -70,7 +70,7 @@ formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssig
 
 corpairs <- canCorPairs(formula, colData(rse_gene))
 
-pdf(paste(output_path, "/", "CCA_heatmap.pdf", sep = ""), width = 10, height = 10)
+pdf(paste(out_plot, "/", "CCA_heatmap.pdf", sep = ""), width = 10, height = 10)
 Heatmap(
     corpairs,
     col = colorRamp2(c(0, 1), c("#faf0ca", "#3f37c9"))
@@ -96,7 +96,7 @@ vp <- sortCols(varPart)
 
 p <- plotVarPart(vp)
 ggsave(
-    filename = paste(output_path, "/", "VarPartition_qSVs.pdf", sep = ""),
+    filename = paste(out_plot, "/", "VarPartition_qSVs.pdf", sep = ""),
     p,
     width = 40,
     height = 20,
@@ -117,7 +117,7 @@ vp <- sortCols(varPart)
 
 p <- plotVarPart(vp)
 ggsave(
-    filename = paste(output_path, "/", "VarPartition_noqSVs.pdf", sep = ""),
+    filename = paste(out_plot, "/", "VarPartition_noqSVs.pdf", sep = ""),
     p,
     width = 40,
     height = 20,
