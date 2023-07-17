@@ -43,19 +43,9 @@ load(
 
 #################### E### Functions for DEA and plotting #######################
 
-norm_factors <- calcNormFactors(rse_gene_raw, method = "TMM")
-samples_factors <- data.frame(
-    RNum = norm_factors$samples$RNum,
-    norm.factors = norm_factors$samples$norm.factors,
-    lib.size = norm_factors$samples$lib.size
-)
-
 
 ## Function to do all the DEA analysis with limma
 DE_analysis <- function(rse_gene, formula, coef, model_name) {
-    match_samples <- match(rse_gene$RNum, samples_factors$RNum)
-    stopifnot(all(!is.na(match_samples)))
-    factors <- samples_factors[match_samples, ]
 
     pdf(file = paste0(out_plot, "/DEAplots_", model_name, ".pdf"))
     # par(mfrow = c(3, 2))
@@ -66,8 +56,6 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
 
     ## Use previous norm factors to scale the raw library sizes
     RSE_scaled <- calcNormFactors(rse_gene)
-    RSE_scaled$samples$lib.size <- factors$lib.size
-    RSE_scaled$samples$norm.factors <- factors$norm.factors
 
     par(fig = c(0.05, 0.5, 0.55, 0.95))
     ## Transform counts to log2(CPM): estimate mean-variance relationship for
