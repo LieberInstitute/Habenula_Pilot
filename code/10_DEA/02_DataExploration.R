@@ -8,7 +8,7 @@ library("ComplexHeatmap")
 library("circlize")
 library("sessioninfo")
 
-output_path <- here("plots", "10_DEA", "02_DataExploration")
+out_plot <- here("plots", "10_DEA", "02_DataExploration")
 
 
 
@@ -173,7 +173,7 @@ for (sample_var in sample_variables) {
     plot_grid(plotlist = plots, nrow = 3)
 
     ggsave(
-        paste(output_path, "/QC_boxplots_", sample_var, ".pdf", sep = ""),
+        paste(out_plot, "/QC_boxplots_", sample_var, ".pdf", sep = ""),
         width = 35,
         height = 30,
         units = "cm"
@@ -214,7 +214,7 @@ plot_correlations <- function(qc_metric) {
 
 corr_plots <- lapply(qc_metrics, plot_correlations)
 ggsave(
-    paste(output_path, "/Corr_AgeDeath_vs_QCmetrics.pdf", sep = ""),
+    paste(out_plot, "/Corr_AgeDeath_vs_QCmetrics.pdf", sep = ""),
     plot_grid(plotlist = corr_plots, nrow = 3),
     width = 40,
     height = 30,
@@ -233,7 +233,7 @@ ggsave(
 pca_df <- pca(assays(rse_gene)$logcounts, metadata = colData(rse_gene))
 
 ## Plot correlation between PCs and variables (with and without qSVs)
-pdf(paste(output_path, "/", "Corr_PCA-Vars-qSVs.pdf", sep = ""), width = 10, height = 10)
+pdf(paste(out_plot, "/", "Corr_PCA-Vars-qSVs.pdf", sep = ""), width = 10, height = 10)
 eigencorplot(
     pca_df,
     metavars = c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "snpPC1", "snpPC2", "snpPC3", "snpPC4", "snpPC5", "tot.Hb", "tot.Thal", "qSV1", "qSV2", "qSV3", "qSV4", "qSV5"),
@@ -241,7 +241,7 @@ eigencorplot(
 )
 dev.off()
 
-pdf(paste(output_path, "/", "Corr_PCA-Vars-noqSVs.pdf", sep = ""), width = 10, height = 10)
+pdf(paste(out_plot, "/", "Corr_PCA-Vars-noqSVs.pdf", sep = ""), width = 10, height = 10)
 eigencorplot(
     pca_df,
     metavars = c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "snpPC1", "snpPC2", "snpPC3", "snpPC4", "snpPC5", "tot.Hb", "tot.Thal"),
