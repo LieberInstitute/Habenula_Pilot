@@ -110,7 +110,7 @@ vp <- sortCols(varPart)
 
 p <- plotVarPart(vp)
 ggsave(
-    filename = paste(out_plot, "/", "VarPartition_qSVs.pdf", sep = ""),
+    filename = paste(out_plot, "/", "VarPartition.pdf", sep = ""),
     p,
     width = 40,
     height = 20,
@@ -140,6 +140,28 @@ ggsave(
     units = "cm"
 )
 
+
+## Whitout SNP PCs
+formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr +
+    qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
+    tot.Hb + tot.Thal
+
+## Loop over each gene to fit model and extract variance explained by each variable
+varPart <- fitExtractVarPartModel(assays(rse_gene)$logcounts, formula, colData(rse_gene))
+# Warning messages:
+# 1: Some predictor variables are on very different scales: consider rescaling
+
+# Sort variables by median fraction of variance explained
+vp <- sortCols(varPart)
+
+p <- plotVarPart(vp)
+ggsave(
+    filename = paste(out_plot, "/", "VarPartition_nosnpPCs.pdf", sep = ""),
+    p,
+    width = 40,
+    height = 20,
+    units = "cm"
+)
 
 ###############################################################################
 
