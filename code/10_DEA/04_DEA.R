@@ -150,11 +150,11 @@ res_formula <- DE_analysis(
     model_name = "PrimaryDx"
 )
 
-plot_volc(res_formula, FDR_cut = 5e-02, model_name = "PrimaryDx")
+plot_volc(res_formula, FDR_cut = 10e-02, model_name = "PrimaryDx")
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.8591  0.8591  0.8591  0.8690  0.8591  0.9999
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.04559 0.72070 0.84753 0.81183 0.94172 0.99994
 
 
 ## Model PrimaryDx_Flow
@@ -169,11 +169,11 @@ res_formula <- DE_analysis(
     model_name = "PrimaryDx_Flow"
 )
 
-plot_volc(res_formula, FDR_cut = 5e-02, model_name = "PrimaryDx_Flow")
+plot_volc(res_formula, FDR_cut = 10e-02, model_name = "PrimaryDx_Flow")
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.8740  0.8740  0.8740  0.8829  0.8740  0.9997
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.05414 0.72771 0.85266 0.81553 0.94332 1.00000
 
 
 ## Model PrimaryDx_Flow_Age
@@ -188,11 +188,11 @@ res_formula <- DE_analysis(
     model_name = "PrimaryDx_Flow_Age"
 )
 
-plot_volc(res_formula, FDR_cut = 5e-02, model_name = "PrimaryDx_Flow_Age")
+plot_volc(res_formula, FDR_cut = 10e-02, model_name = "PrimaryDx_Flow_Age")
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.8860  0.8860  0.8860  0.8937  0.8860  0.9999
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.04104 0.73602 0.86147 0.81994 0.94316 0.99999
 
 
 ## Model qc
@@ -207,11 +207,11 @@ res_formula <- DE_analysis(
     model_name = "qc"
 )
 
-plot_volc(res_formula, FDR_cut = 5e-02, model_name = "qc")
+plot_volc(res_formula, FDR_cut = 10e-02, model_name = "qc")
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.2848  0.2848  0.2848  0.3228  0.3013  0.9995
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.01055 0.31640 0.56593 0.55644 0.80130 0.99998
 
 
 ## Model qc
@@ -227,11 +227,11 @@ res_formula <- DE_analysis(
     model_name = "qc-2snpPCs"
 )
 
-plot_volc(res_formula, FDR_cut = 5e-02, model_name = "qc-2snpPCs")
+plot_volc(res_formula, FDR_cut = 10e-02, model_name = "qc-2snpPCs")
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.2767  0.2767  0.2767  0.3158  0.2961  0.9991
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.01243 0.31284 0.56165 0.55427 0.79952 0.99998
 
 
 ## Model qc-snpPCs-Hb
@@ -248,11 +248,11 @@ res_formula <- DE_analysis(
     model_name = "qc-snpPCs-Hb"
 )
 
-plot_volc(res_formula, FDR_cut = 5e-02, model_name = "qc-snpPCs-Hb")
+plot_volc(res_formula, FDR_cut = 10e-02, model_name = "qc-snpPCs-Hb")
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.1267  0.1267  0.1267  0.1568  0.1408  0.9996
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.01578 0.32924 0.57105 0.57022 0.81831 0.99998
 
 
 ## Model qc-snpPCs-Hb-qSVs
@@ -272,13 +272,13 @@ res_formula <- DE_analysis(
 
 plot_volc(
     res_formula,
-    FDR_cut = 5e-02,
+    FDR_cut = 10e-02,
     model_name = "qc-snpPCs-Hb-qSVs"
 )
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.3325  0.3325  0.3325  0.3704  0.3417  1.0000
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.04399 0.45380 0.66999 0.65079 0.85941 0.99992
 
 
 ## Model qc-totAssGene-snpPCs-Hb
@@ -295,13 +295,13 @@ res_formula <- DE_analysis(
 )
 
 plot_volc(res_formula,
-    FDR_cut = 5e-02,
+    FDR_cut = 10e-02,
     model_name = "qc-totAssGene-snpPCs-Hb"
 )
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.2338  0.2338  0.2338  0.2725  0.2541  0.9992
+#     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.
+# 0.009171 0.481927 0.697310 0.666823 0.870947 0.999976
 
 
 ## Model qc-snpPCs-Hb-Thal
@@ -318,13 +318,13 @@ res_formula <- DE_analysis(
 )
 
 plot_volc(res_formula,
-    FDR_cut = 5e-02,
+    FDR_cut = 10e-02,
     model_name = "qc-snpPCs-Hb-Thal"
 )
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.2930  0.2930  0.2930  0.3270  0.3026  0.9982
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.03448 0.57053 0.76840 0.72697 0.90941 0.99994
 
 
 ## Model qc-totAssGene-snpPCs-Hb-qSVs
@@ -342,13 +342,13 @@ res_formula <- DE_analysis(
 )
 
 plot_volc(res_formula,
-    FDR_cut = 5e-02,
+    FDR_cut = 10e-02,
     model_name = "qc-totAssGene-snpPCs-Hb-qSVs"
 )
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.4664  0.4664  0.4664  0.5008  0.4720  0.9993
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.04834 0.56225 0.75461 0.72241 0.89503 0.99975
 
 
 ## Model qc-snpPCs-Hb-Thal-qSVs
@@ -366,13 +366,14 @@ res_formula <- DE_analysis(
 )
 
 plot_volc(res_formula,
-    FDR_cut = 5e-02,
+    FDR_cut = 10e-02,
     model_name = "qc-snpPCs-Hb-Thal-qSVs"
 )
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.5957  0.5957  0.5957  0.6236  0.5967  0.9999
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.08682 0.76559 0.88306 0.84057 0.95633 1.00000
+
 
 
 ## Model qc-totAssGene-snpPCs-Hb-Thal
@@ -390,13 +391,13 @@ res_formula <- DE_analysis(
 )
 
 plot_volc(res_formula,
-    FDR_cut = 5e-02,
+    FDR_cut = 10e-02,
     model_name = "qc-totAssGene-snpPCs-Hb-Thal"
 )
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.3990  0.3990  0.3990  0.4345  0.4090  0.9997
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.01887 0.67658 0.83063 0.78162 0.92944 1.00000
 
 
 ## Model qc-totAssGene-snpPCs-Hb-Thal-qSVs
@@ -415,13 +416,13 @@ res_formula <- DE_analysis(
 )
 
 plot_volc(res_formula,
-    FDR_cut = 5e-02,
+    FDR_cut = 10e-02,
     model_name = "qc-totAssGene-snpPCs-Hb-Thal-qSVs"
 )
 
 summary(res_formula$adj.P.Val)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.6917  0.6917  0.6917  0.7142  0.6917  0.9998
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.07587 0.79389 0.90266 0.86291 0.96492 0.99996
 
 ###############################################################################
 
