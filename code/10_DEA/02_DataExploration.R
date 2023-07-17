@@ -96,11 +96,13 @@ names(colData(rse_gene))
 #  [91] "tot.Thal"                       "qSV1"
 #  [93] "qSV2"                           "qSV3"
 #  [95] "qSV4"                           "qSV5"
-#  [97] "snpPC1"                         "snpPC2"
-#  [99] "snpPC3"                         "snpPC4"
-# [101] "snpPC5"                         "snpPC6"
-# [103] "snpPC7"                         "snpPC8"
-# [105] "snpPC9"                         "snpPC10"
+#  [97] "qSV6"                           "qSV7"
+#  [99] "qSV8"                           "snpPC1"
+# [101] "snpPC2"                         "snpPC3"
+# [103] "snpPC4"                         "snpPC5"
+# [105] "snpPC6"                         "snpPC7"
+# [107] "snpPC8"                         "snpPC9"
+# [109] "snpPC10"
 
 unique(colData(rse_gene)$PrimaryDx)
 # [1] "Schizo"  "Control"
