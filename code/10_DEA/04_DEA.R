@@ -4,6 +4,7 @@ library("edgeR")
 library("limma")
 library("dplyr")
 library("gplots")
+library("scater")
 library("EnhancedVolcano")
 library("sessioninfo")
 
@@ -90,16 +91,23 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
 
 ## Function to make volcano plot
 plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
+
+    ## Format data
     outGenes_plot <- top_genes %>%
         select(logFC, P.Value, adj.P.Val, ensemblID, Symbol)
+    rownames(outGenes_plot) <- uniquifyFeatureNames(
+        outGenes_plot$ensemblID,
+        outGenes_plot$Symbol
+    )
 
+    ## Select colors
     keyvals <- ifelse(
         outGenes_plot$adj.P.Val > FDR_cut, "#f2e8cf", "#a7c957"
     )
-
     names(keyvals)[keyvals == "#a7c957"] <- paste0("FDR < ", FDR_cut)
     names(keyvals)[keyvals == "#f2e8cf"] <- "Not significant"
 
+    ## Genes to highlight
     select <- outGenes_plot %>% filter(adj.P.Val < FDR_cut & abs(logFC) > 1)
 
     volcano_plot <- EnhancedVolcano(outGenes_plot,
@@ -143,7 +151,7 @@ models <- c(
 
 ## FORMULAS
 formulas <- c(
-   ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
+    ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
         qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
         tot.Hb + tot.Thal,
     ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
