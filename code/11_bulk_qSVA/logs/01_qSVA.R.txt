@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.1.2
 Loading conda_R/4.3
 **** Job starts ****
-Tue Jun 27 12:38:11 EDT 2023
+Thu Jul 20 15:32:23 EDT 2023
 **** JHPCE info ****
 User: freneega
-Job id: 3592568
+Job id: 3636643
 Job name: qSVA.R
-Hostname: compute-114.cm.cluster
+Hostname: compute-122.cm.cluster
 Task id: undefined
 Unloading conda_R/4.3
 Loading conda_R/4.3
@@ -197,18 +197,26 @@ colData names(68): RNum RIN ... Flowcell hasGenotype
 [63] "gene_Unassigned_Secondary"      "gene_Unassigned_Nonjunction"   
 [65] "gene_Unassigned_Duplicate"      "rRNA_rate"                     
 [67] "Flowcell"                       "hasGenotype"                   
+Loading objects:
+  est_prop
+ [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[16] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[31] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[46] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[61] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
 [1] 68  8
+[1] 68 12
 [1] 2938   68
 [1] 1772   68
 [1] 1772
 [1] 2938
 [1] "Reproducibility information:"
-[1] "2023-06-27 12:38:35 EDT"
+[1] "2023-07-20 15:32:42 EDT"
    user  system elapsed 
- 19.960   1.036  23.411 
+ 13.935   0.671  17.220 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
- version  R version 4.3.1 Patched (2023-06-26 r84605)
+ version  R version 4.3.1 Patched (2023-07-19 r84711)
  os       CentOS Linux 7 (Core)
  system   x86_64, linux-gnu
  ui       X11
@@ -216,13 +224,13 @@ colData names(68): RNum RIN ... Flowcell hasGenotype
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2023-06-27
+ date     2023-07-20
  pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
  package              * version   date (UTC) lib source
  annotate               1.78.0    2023-04-25 [2] Bioconductor
- AnnotationDbi          1.62.1    2023-05-02 [2] Bioconductor
+ AnnotationDbi          1.62.2    2023-07-02 [2] Bioconductor
  Biobase              * 2.60.0    2023-04-25 [2] Bioconductor
  BiocGenerics         * 0.46.0    2023-04-25 [2] Bioconductor
  BiocParallel           1.34.2    2023-05-22 [2] Bioconductor
@@ -237,7 +245,7 @@ colData names(68): RNum RIN ... Flowcell hasGenotype
  colorspace             2.1-0     2023-01-23 [2] CRAN (R 4.3.0)
  crayon                 1.5.2     2022-09-29 [2] CRAN (R 4.3.0)
  DBI                    1.1.3     2022-06-18 [2] CRAN (R 4.3.0)
- DelayedArray           0.26.3    2023-05-22 [2] Bioconductor
+ DelayedArray           0.26.6    2023-07-02 [2] Bioconductor
  dplyr                  1.1.2     2023-04-20 [2] CRAN (R 4.3.0)
  edgeR                  3.42.4    2023-05-31 [2] Bioconductor
  fansi                  1.0.4     2023-01-22 [2] CRAN (R 4.3.0)
@@ -259,11 +267,11 @@ colData names(68): RNum RIN ... Flowcell hasGenotype
  limma                  3.56.2    2023-06-04 [2] Bioconductor
  locfit                 1.5-9.8   2023-06-11 [2] CRAN (R 4.3.1)
  magrittr               2.0.3     2022-03-30 [2] CRAN (R 4.3.0)
- Matrix                 1.5-4.1   2023-05-18 [3] CRAN (R 4.3.1)
+ Matrix                 1.6-0     2023-07-08 [3] CRAN (R 4.3.1)
  MatrixGenerics       * 1.12.2    2023-06-09 [2] Bioconductor
  matrixStats          * 1.0.0     2023-06-02 [2] CRAN (R 4.3.0)
  memoise                2.0.1     2021-11-26 [2] CRAN (R 4.3.0)
- mgcv                   1.8-42    2023-03-02 [3] CRAN (R 4.3.1)
+ mgcv                   1.9-0     2023-07-11 [3] CRAN (R 4.3.1)
  munsell                0.5.0     2018-06-12 [2] CRAN (R 4.3.0)
  nlme                   3.1-162   2023-01-31 [3] CRAN (R 4.3.1)
  pillar                 1.9.0     2023-03-22 [2] CRAN (R 4.3.0)
@@ -271,7 +279,7 @@ colData names(68): RNum RIN ... Flowcell hasGenotype
  png                    0.1-8     2022-11-29 [2] CRAN (R 4.3.0)
  qsvaR                * 1.5.3     2023-06-27 [1] Github (LieberInstitute/qsvaR@feb9a9e)
  R6                     2.5.1     2021-08-19 [2] CRAN (R 4.3.0)
- Rcpp                   1.0.10    2023-01-22 [2] CRAN (R 4.3.0)
+ Rcpp                   1.0.11    2023-07-06 [2] CRAN (R 4.3.1)
  RCurl                  1.98-1.12 2023-03-27 [2] CRAN (R 4.3.0)
  rlang                  1.1.1     2023-04-28 [2] CRAN (R 4.3.0)
  rprojroot              2.0.3     2022-04-02 [2] CRAN (R 4.3.0)
@@ -298,4 +306,4 @@ colData names(68): RNum RIN ... Flowcell hasGenotype
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Tue Jun 27 12:38:38 EDT 2023
+Thu Jul 20 15:32:44 EDT 2023
