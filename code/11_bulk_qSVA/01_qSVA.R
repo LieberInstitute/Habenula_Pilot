@@ -202,10 +202,10 @@ rownames(est_prop) == rownames(colData(rse_gene)) ## I'm checking if samples are
 colData(rse_gene) <- cbind(colData(rse_gene), est_prop)
 
 ## Add SNP PCs
-merged_col <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum", sort = FALSE)
-stopifnot(identical(rse_gene$RNum, merged_col$RNum))
-colData(rse_gene) <- merged_col
-colnames(rse_gene) <- colData(rse_gene)$RNum
+# merged_col <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum", sort = FALSE)
+# stopifnot(identical(rse_gene$RNum, merged_col$RNum))
+# colData(rse_gene) <- merged_col
+# colnames(rse_gene) <- colData(rse_gene)$RNum
 
 ## Copy colData() from rse_gene to rse_tx
 colData(rse_tx) <- colData(rse_gene)
@@ -216,7 +216,7 @@ colData(rse_tx) <- colData(rse_gene)
 
 ################################## Set model ##################################
 
-mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 + tot.Hb + tot.Thal,
+mod <- model.matrix(~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr + tot.Hb + tot.Thal,
     data = colData(rse_tx)
 )
 
