@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.1.2
 Loading conda_R/4.3
 **** Job starts ****
-Mon Jul 17 16:39:44 EDT 2023
+Fri Jul 21 11:57:46 EDT 2023
 **** JHPCE info ****
 User: freneega
-Job id: 3632207
+Job id: 3639019
 Job name: DataExploration
-Hostname: compute-129.cm.cluster
+Hostname: compute-091.cm.cluster
 Task id: undefined
 Unloading conda_R/4.3
 Loading conda_R/4.3
@@ -250,20 +250,13 @@ Warning messages:
   Flowcell is not numeric - please check the source data as non-numeric variables will be coerced to numeric
 null device 
           1 
-Warning messages:
-1: In eigencorplot(pca_df, metavars = c("PrimaryDx", "AgeDeath", "Flowcell",  :
-  PrimaryDx is not numeric - please check the source data as non-numeric variables will be coerced to numeric
-2: In eigencorplot(pca_df, metavars = c("PrimaryDx", "AgeDeath", "Flowcell",  :
-  Flowcell is not numeric - please check the source data as non-numeric variables will be coerced to numeric
-null device 
-          1 
 [1] "Reproducibility information:"
-[1] "2023-07-17 16:40:09 EDT"
+[1] "2023-07-21 11:58:21 EDT"
    user  system elapsed 
- 14.114   0.641  22.578 
+ 26.373   1.240  32.893 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
- version  R version 4.3.1 Patched (2023-07-14 r84700)
+ version  R version 4.3.1 Patched (2023-07-21 r84719)
  os       CentOS Linux 7 (Core)
  system   x86_64, linux-gnu
  ui       X11
@@ -271,7 +264,7 @@ null device
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2023-07-17
+ date     2023-07-21
  pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -367,4 +360,4 @@ null device
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Mon Jul 17 16:40:11 EDT 2023
+Fri Jul 21 11:58:22 EDT 2023
