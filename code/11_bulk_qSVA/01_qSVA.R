@@ -201,12 +201,6 @@ est_prop <- est_prop[rownames(est_prop) != "R18424", ]
 rownames(est_prop) == rownames(colData(rse_gene)) ## I'm checking if samples are in the same order
 colData(rse_gene) <- cbind(colData(rse_gene), est_prop)
 
-## Add SNP PCs
-# merged_col <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum", sort = FALSE)
-# stopifnot(identical(rse_gene$RNum, merged_col$RNum))
-# colData(rse_gene) <- merged_col
-# colnames(rse_gene) <- colData(rse_gene)$RNum
-
 ## Copy colData() from rse_gene to rse_tx
 colData(rse_tx) <- colData(rse_gene)
 
