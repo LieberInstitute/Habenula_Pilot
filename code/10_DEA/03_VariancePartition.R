@@ -112,8 +112,7 @@ varPart <- fitExtractVarPartModel(assays(rse_gene)$logcounts, formula, colData(r
 # Sort variables by median fraction of variance explained
 vp <- sortCols(varPart)
 
-p <- plotVarPart(vp) +
-    scale_fill_manual(values = colors) +
+p <- plotVarPart(vp, col = colors) +
     theme(element_text(size = 15))
 ggsave(
     filename = paste(out_plot, "/", "VarPartition.pdf", sep = ""),
