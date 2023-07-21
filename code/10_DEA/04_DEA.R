@@ -110,17 +110,19 @@ plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
 
     ## Select colors
     keyvals <- ifelse(
-        outGenes_plot$adj.P.Val > FDR_cut, "#f2e8cf", "#a7c957"
+        outGenes_plot$adj.P.Val >= FDR_cut, "#081c15", ifelse(
+            outGenes_plot$logFC < 0, "#2a9d8f", "#f77f00")
     )
-    names(keyvals)[keyvals == "#a7c957"] <- paste0("FDR < ", FDR_cut)
-    names(keyvals)[keyvals == "#f2e8cf"] <- "Not significant"
+    names(keyvals)[keyvals == "#2a9d8f"] <- paste0("Down - FDR < ", FDR_cut)
+    names(keyvals)[keyvals == "#081c15"] <- "Not significant"
+    names(keyvals)[keyvals == "#f77f00"] <- paste0("Up - FDR < ", FDR_cut)
 
     ## Genes to highlight
     select <- outGenes_plot %>% filter(adj.P.Val < FDR_cut & abs(logFC) > 1)
 
     volcano_plot <- EnhancedVolcano(outGenes_plot,
-        x = "logFC",
-        y = "P.Value",
+        x = "log2FC (SCZD vs Control)",
+        y = "p-value",
         selectLab = select$Symbol,
         labSize = 6.0,
         drawConnectors = TRUE,
@@ -131,7 +133,7 @@ plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
         FCcutoff = 1,
         lab = rownames(outGenes_plot),
         colCustom = keyvals,
-        caption = paste0("total = ", nrow(outGenes_plot), " genes"),
+        caption = paste0("total = ", nrow(outGenes_plot), " genes", sum(outGenes_plot$adj.P.Val < FDR_cut), "FDR <", FDR_cut),
         title = "",
         subtitle = ""
     ) + ylim(c(0, 6)) +
