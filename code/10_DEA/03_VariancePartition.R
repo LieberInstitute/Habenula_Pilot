@@ -45,10 +45,9 @@ dim(colData(rse_gene))
 ############################## Variance explained #############################
 
 ## Set up qc_metrics and colors for the plot
-qc_metrics <- c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "snpPC1", "snpPC2", "snpPC3", "snpPC4", "snpPC5", "tot.Hb", "tot.Thal", "qSV1", "qSV2", "qSV3", "qSV4", "qSV5", "qSV6", "qSV7", "qSV8")
+qc_metrics <- c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "tot.Hb", "tot.Thal", "qSV1", "qSV2", "qSV3", "qSV4", "qSV5", "qSV6", "qSV7", "qSV8")
 colors <- c(
     "PrimaryDx" = "#e2ef70", "AgeDeath" = "#8093f1", "Flowcell" = "#ddfff7", "mitoRate" = "turquoise4", "rRNA_rate" = "bisque2", "totalAssignedGene" = "blueviolet", "RIN" = "blue3", "abs_ERCCsumLogErr" = "#06d6a0",
-    "snpPC1" = "#cc5803", "snpPC2" = "#e2711d", "snpPC3" = "#ff9505", "snpPC4" = "#ffb627", "snpPC5" = "#ffc971",
     "tot.Hb" = "palegreen3", "tot.Thal" = "skyblue2",
     "qSV1" = "#800f2f", "qSV2" = "#a4133c", "qSV3" = "#c9184a", "qSV4" = "#ff4d6d", "qSV5" = "#ff758f", "qSV6" = "#FF8FA3", "qSV7" = "#FFB3C1", "qSV8" = "#FFCCD5"
 )
@@ -75,7 +74,6 @@ ggsave(
 ######################### Correlation between variables #######################
 
 formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr +
-    snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
     qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
     tot.Hb + tot.Thal
 
@@ -96,7 +94,6 @@ dev.off()
 
 ## with qSVs
 formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr +
-    snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
     qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
     tot.Hb + tot.Thal
 
@@ -111,52 +108,6 @@ vp <- sortCols(varPart)
 p <- plotVarPart(vp)
 ggsave(
     filename = paste(out_plot, "/", "VarPartition.pdf", sep = ""),
-    p,
-    width = 40,
-    height = 20,
-    units = "cm"
-)
-
-
-## Whitout qSVs
-formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr +
-    snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
-    tot.Hb + tot.Thal
-
-## Loop over each gene to fit model and extract variance explained by each variable
-varPart <- fitExtractVarPartModel(assays(rse_gene)$logcounts, formula, colData(rse_gene))
-# Warning messages:
-# 1: Some predictor variables are on very different scales: consider rescaling
-
-# Sort variables by median fraction of variance explained
-vp <- sortCols(varPart)
-
-p <- plotVarPart(vp)
-ggsave(
-    filename = paste(out_plot, "/", "VarPartition_noqSVs.pdf", sep = ""),
-    p,
-    width = 40,
-    height = 20,
-    units = "cm"
-)
-
-
-## Whitout SNP PCs
-formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr +
-    qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
-    tot.Hb + tot.Thal
-
-## Loop over each gene to fit model and extract variance explained by each variable
-varPart <- fitExtractVarPartModel(assays(rse_gene)$logcounts, formula, colData(rse_gene))
-# Warning messages:
-# 1: Some predictor variables are on very different scales: consider rescaling
-
-# Sort variables by median fraction of variance explained
-vp <- sortCols(varPart)
-
-p <- plotVarPart(vp)
-ggsave(
-    filename = paste(out_plot, "/", "VarPartition_nosnpPCs.pdf", sep = ""),
     p,
     width = 40,
     height = 20,
