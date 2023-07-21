@@ -52,6 +52,8 @@ colors <- c(
     "qSV1" = "#800f2f", "qSV2" = "#a4133c", "qSV3" = "#c9184a", "qSV4" = "#ff4d6d", "qSV5" = "#ff758f", "qSV6" = "#FF8FA3", "qSV7" = "#FFB3C1", "qSV8" = "#FFCCD5"
 )
 
+message(Sys.time(), " - running getVarianceExplained()")
+
 exp_vars <- getVarianceExplained(rse_gene, variables = qc_metrics, exprs_values = "logcounts")
 
 ## Plot density graph for each variable
@@ -78,6 +80,8 @@ formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + totalAssig
     qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
     tot.Hb + tot.Thal
 
+message(Sys.time(), " - running canCorPairs()")
+
 corpairs <- canCorPairs(formula, colData(rse_gene))
 
 pdf(paste(out_plot, "/", "CCA_heatmap.pdf", sep = ""), width = 10, height = 10)
@@ -97,6 +101,8 @@ dev.off()
 formula <- ~ (1 | PrimaryDx) + AgeDeath + (1 | Flowcell) + mitoRate + rRNA_rate + totalAssignedGene + RIN + abs_ERCCsumLogErr +
     qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
     tot.Hb + tot.Thal
+
+message(Sys.time(), " - running fitExtractVarPartModel()")
 
 ## Loop over each gene to fit model and extract variance explained by each variable
 varPart <- fitExtractVarPartModel(assays(rse_gene)$logcounts, formula, colData(rse_gene))
