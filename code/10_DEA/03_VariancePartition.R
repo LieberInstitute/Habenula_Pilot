@@ -55,9 +55,10 @@ colors <- c(
 exp_vars <- getVarianceExplained(rse_gene, variables = qc_metrics, exprs_values = "logcounts")
 
 ## Plot density graph for each variable
-varience_plot <- plotExplanatoryVariables(exp_vars, theme_size = 12, nvars_to_plot = Inf)
+varience_plot <- plotExplanatoryVariables(exp_vars, nvars_to_plot = Inf)
 varience_plot <- varience_plot + scale_colour_manual(values = colors) +
-    labs(color = "Variables")
+    labs(color = "Variables") +
+    theme(element_text(size = 15))
 
 ggsave(
     paste(out_plot, "/", "ExplanatoryVars.pdf", sep = ""),
@@ -105,7 +106,9 @@ varPart <- fitExtractVarPartModel(assays(rse_gene)$logcounts, formula, colData(r
 # Sort variables by median fraction of variance explained
 vp <- sortCols(varPart)
 
-p <- plotVarPart(vp)
+p <- plotVarPart(vp) +
+    scale_fill_manual(values = colors) +
+    theme(element_text(size = 15))
 ggsave(
     filename = paste(out_plot, "/", "VarPartition.pdf", sep = ""),
     p,
