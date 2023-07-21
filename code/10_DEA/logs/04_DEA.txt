@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.1.2
 Loading conda_R/4.3
 **** Job starts ****
-Fri Jul 21 12:07:26 EDT 2023
+Fri Jul 21 16:31:19 EDT 2023
 **** JHPCE info ****
 User: freneega
-Job id: 3639031
+Job id: 3639426
 Job name: DEA
-Hostname: compute-122.cm.cluster
+Hostname: compute-097.cm.cluster
 Task id: undefined
 Unloading conda_R/4.3
 Loading conda_R/4.3
@@ -189,9 +189,9 @@ Adding another scale for x, which will replace the existing scale.
 null device 
           1 
 [1] "Reproducibility information:"
-[1] "2023-07-21 12:07:48 EDT"
+[1] "2023-07-21 16:32:04 EDT"
    user  system elapsed 
- 17.580   0.706  20.481 
+ 32.058   1.234  41.097 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.1 Patched (2023-07-21 r84719)
@@ -288,4 +288,4 @@ null device
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Fri Jul 21 12:07:51 EDT 2023
+Fri Jul 21 16:32:05 EDT 2023
