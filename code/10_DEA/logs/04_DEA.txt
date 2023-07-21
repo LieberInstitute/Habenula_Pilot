@@ -6,10 +6,10 @@ Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.1.2
 Loading conda_R/4.3
 **** Job starts ****
-Tue Jul 18 11:43:24 EDT 2023
+Fri Jul 21 12:07:26 EDT 2023
 **** JHPCE info ****
 User: freneega
-Job id: 3632544
+Job id: 3639031
 Job name: DEA
 Hostname: compute-122.cm.cluster
 Task id: undefined
@@ -186,19 +186,15 @@ Scale for y is already present.
 Adding another scale for y, which will replace the existing scale.
 Scale for x is already present.
 Adding another scale for x, which will replace the existing scale.
-Scale for y is already present.
-Adding another scale for y, which will replace the existing scale.
-Scale for x is already present.
-Adding another scale for x, which will replace the existing scale.
-null device null device 
-          1           1 
+null device 
+          1 
 [1] "Reproducibility information:"
-[1] "2023-07-18 11:43:57 EDT"
+[1] "2023-07-21 12:07:48 EDT"
    user  system elapsed 
- 26.218   0.728  32.325 
+ 17.580   0.706  20.481 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
- version  R version 4.3.1 Patched (2023-07-17 r84702)
+ version  R version 4.3.1 Patched (2023-07-21 r84719)
  os       CentOS Linux 7 (Core)
  system   x86_64, linux-gnu
  ui       X11
@@ -206,7 +202,7 @@ null device null device
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2023-07-18
+ date     2023-07-21
  pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -292,4 +288,4 @@ null device null device
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Tue Jul 18 11:43:59 EDT 2023
+Fri Jul 21 12:07:51 EDT 2023
