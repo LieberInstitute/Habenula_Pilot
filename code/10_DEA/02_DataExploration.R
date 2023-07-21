@@ -236,15 +236,7 @@ pca_df <- pca(assays(rse_gene)$logcounts, metadata = colData(rse_gene))
 pdf(paste(out_plot, "/", "Corr_PCA-Vars-qSVs.pdf", sep = ""), width = 10, height = 10)
 eigencorplot(
     pca_df,
-    metavars = c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "snpPC1", "snpPC2", "snpPC3", "snpPC4", "snpPC5", "tot.Hb", "tot.Thal", "qSV1", "qSV2", "qSV3", "qSV4", "qSV5", "qSV6", "qSV7", "qSV8"),
-    col = c("#005f73", "#0a9396", "#94d2bd", "#e9d8a6", "#ee9b00", "#ca6702", "#bb3e03")
-)
-dev.off()
-
-pdf(paste(out_plot, "/", "Corr_PCA-Vars-noqSVs.pdf", sep = ""), width = 10, height = 10)
-eigencorplot(
-    pca_df,
-    metavars = c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "snpPC1", "snpPC2", "snpPC3", "snpPC4", "snpPC5", "tot.Hb", "tot.Thal"),
+    metavars = c("PrimaryDx", "AgeDeath", "Flowcell", "mitoRate", "rRNA_rate", "totalAssignedGene", "RIN", "abs_ERCCsumLogErr", "tot.Hb", "tot.Thal", "qSV1", "qSV2", "qSV3", "qSV4", "qSV5", "qSV6", "qSV7", "qSV8"),
     col = c("#005f73", "#0a9396", "#94d2bd", "#e9d8a6", "#ee9b00", "#ca6702", "#bb3e03")
 )
 dev.off()
