@@ -84,7 +84,10 @@ DE_analysis <- function(rse_gene, formula, coef, model_name) {
 
     dev.off()
 
-    write.table(top_genes, file = paste0(out_data, "/DEA_AllGenes_", model_name, ".tsv"), sep = "\t", quote = FALSE)
+    all_df <- top_genes
+    all_df$ensemblID <- NULL
+    all_df <- tibble::rownames_to_column(all_df, "ensemblID")
+    write.table(all_df, file = paste0(out_data, "/DEA_AllGenes_", model_name, ".tsv"), sep = "\t", quote = FALSE)
 
     return(top_genes)
 }
