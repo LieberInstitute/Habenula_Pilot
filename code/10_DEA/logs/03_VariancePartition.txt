@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.1.2
 Loading conda_R/4.3
 **** Job starts ****
-Mon Jul 17 16:39:59 EDT 2023
+Fri Jul 21 16:31:19 EDT 2023
 **** JHPCE info ****
 User: freneega
-Job id: 3632208
+Job id: 3639424
 Job name: VariancePartition
-Hostname: compute-124.cm.cluster
+Hostname: compute-097.cm.cluster
 Task id: undefined
 Unloading conda_R/4.3
 Loading conda_R/4.3
@@ -165,29 +165,24 @@ attr(,"package")
 [1] "SummarizedExperiment"
 [1] 22756    68
 [1]  68 109
+2023-07-21 16:31:45.411751 - running getVarianceExplained()
 Scale for colour is already present.
 Adding another scale for colour, which will replace the existing scale.
+2023-07-21 16:31:56.918181 - running canCorPairs()
 null device 
           1 
+2023-07-21 16:32:02.364049 - running fitExtractVarPartModel()
 Dividing work into 100 chunks...
 
-Total:642 s
-There were 50 or more warnings (use warnings() to see the first 50)
-Dividing work into 100 chunks...
-
-Total:567 s
-There were 50 or more warnings (use warnings() to see the first 50)
-Dividing work into 100 chunks...
-
-Total:597 s
+Total:1203 s
 There were 50 or more warnings (use warnings() to see the first 50)
 [1] "Reproducibility information:"
-[1] "2023-07-17 17:10:35 EDT"
+[1] "2023-07-21 16:52:12 EDT"
     user   system  elapsed 
-1821.843    4.710 1832.686 
+1223.196    5.221 1248.906 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
- version  R version 4.3.1 Patched (2023-07-14 r84700)
+ version  R version 4.3.1 Patched (2023-07-21 r84719)
  os       CentOS Linux 7 (Core)
  system   x86_64, linux-gnu
  ui       X11
@@ -195,7 +190,7 @@ There were 50 or more warnings (use warnings() to see the first 50)
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2023-07-17
+ date     2023-07-21
  pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -325,4 +320,4 @@ There were 50 or more warnings (use warnings() to see the first 50)
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Mon Jul 17 17:10:37 EDT 2023
+Fri Jul 21 16:52:18 EDT 2023
