@@ -98,7 +98,7 @@ plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
     sig_df$ensemblID <- NULL
     sig_df <- tibble::rownames_to_column(sig_df, "ensemblID")
 
-    write.table(top_genes %>% filter(adj.P.Val < FDR_cut), file = paste0(out_data, "/DEA_SigGenes_FDR", gsub(as.character(FDR_cut), pattern = "0\\.", replacement = ""), "_", model_name, ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(sig_df %>% filter(adj.P.Val < FDR_cut), file = paste0(out_data, "/DEA_SigGenes_FDR", gsub(as.character(FDR_cut), pattern = "0\\.", replacement = ""), "_", model_name, ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
 
     ## Format data
     outGenes_plot <- top_genes %>%
