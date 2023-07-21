@@ -148,36 +148,21 @@ plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
 
 ##################################### DEA #####################################
 
-## MODELS
-models <- c(
-    "qc-totAGene-qSVs-Hb-Thal",
-    "qc-totAGene-qSVs-snpPCs-Hb-Thal"
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
+    qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
+    tot.Hb + tot.Thal
+
+res_formula <- DE_analysis(
+    rse_gene = rse_gene,
+    formula = formula,
+    coef = "PrimaryDxSchizo",
+    model_name = "qc-totAGene-qSVs-Hb-Thal"
 )
 
-## FORMULAS
-formulas <- c(
-    ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
-        qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
-        tot.Hb + tot.Thal,
-    ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
-        qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
-        snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5 +
-        tot.Hb + tot.Thal
-)
+hval <- max((res_formula %>% dplyr::filter(adj.P.Val < 0.1 & adj.P.Val >= 0.09))$P.Value)
+hval <- format(hval, scientific = TRUE)
 
-mapply(FUN = function(formula, model_name) {
-    res_formula <- DE_analysis(
-        rse_gene = rse_gene,
-        formula = formula,
-        coef = "PrimaryDxSchizo",
-        model_name = model_name
-    )
-
-    hval <- max((res_formula %>% dplyr::filter(adj.P.Val < 0.1 & adj.P.Val >= 0.09))$P.Value)
-    hval <- format(hval, scientific = TRUE)
-
-    plot_volc(res_formula, FDR_cut = 10e-02, model_name = model_name, hval = as.numeric(hval))
-}, formulas, models)
+plot_volc(res_formula, FDR_cut = 10e-02, model_name = "qc-totAGene-qSVs-Hb-Thal", hval = as.numeric(hval))
 
 ###############################################################################
 
