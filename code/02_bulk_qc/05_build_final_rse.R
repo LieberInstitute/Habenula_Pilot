@@ -160,15 +160,21 @@ rse_jx <- add_vars(rse_jx)
 
 
 
-######################## Save rse object with qsva data #######################
+################# Save rse objects with qsva and SNP PCs data #################
 
-save(rse_gene,
-    file = here(
-        "processed-data",
-        "rse_objects",
-        "rse_gene_Habenula_Pilot.rda"
+save_rse <- function(rse, rse_name) {
+    save(rse,
+        file = paste0(here(
+            "processed-data",
+            "rse_objects"
+        ), "/", rse_name, "_Habenula_Pilot.rda")
     )
-)
+}
+
+save_rse(rse_gene, "rse_gene")
+save_rse(rse_tx, "rse_tx")
+save_rse(rse_exon, "rse_exon")
+save_rse(rse_jx, "rse_jx")
 
 ###############################################################################
 
