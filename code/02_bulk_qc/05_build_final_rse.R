@@ -134,17 +134,27 @@ est_prop <- est_prop[rownames(est_prop) != "R18424", ]
 
 ########### Add deconvolution, SNP PCs and qSVa results to colData ############
 
-## Add cell proportions and qSVAs
-rownames(est_prop) == rownames(colData(rse_gene)) ## I'm checking if samples are in the same order
-rownames(qSVAs) == rownames(colData(rse_gene))
+add_vars <- function(rse) {
+    ## Add cell proportions and qSVAs
+    stopifnot(identical(rownames(est_prop), rownames(colData(rse)))) ## Check if samples are in the same order
+    stopifnot(identical(rownames(qSVAs), rownames(colData(rse))))
 
-colData(rse_gene) <- cbind(colData(rse_gene), est_prop, qSVAs)
+    colData(rse) <- cbind(colData(rse), est_prop, qSVAs)
 
-## Add SNP PCs
-merged_col <- merge(colData(rse_gene), as.data.frame(snpPCs), by = "BrNum", sort = FALSE)
-stopifnot(identical(rse_gene$RNum, merged_col$RNum))
-colData(rse_gene) <- merged_col
-colnames(rse_gene) <- colData(rse_gene)$RNum ## The merge deletes the colnames so I'm adding them back
+    ## Add SNP PCs
+    merged_col <- merge(colData(rse), as.data.frame(snpPCs), by = "BrNum", sort = FALSE)
+    stopifnot(identical(rse$RNum, merged_col$RNum))
+    colData(rse) <- merged_col
+    colnames(rse) <- colData(rse)$RNum ## The merge deletes the colnames so I'm adding them back
+
+    return(rse)
+}
+
+rse_gene <- add_vars(rse_gene)
+colnames(rse_tx) <- colData(rse_tx)$RNum
+rse_tx <- add_vars(rse_tx)
+rse_exon <- add_vars(rse_exon)
+rse_jx <- add_vars(rse_jx)
 
 ###############################################################################
 
