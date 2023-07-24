@@ -13,8 +13,6 @@ load(here("processed-data", "sce_objects", "sce_Habenula_Pilot.Rdata"), verbose 
 dim(sce)
 # [1] 33848 16437
 
-colnames(colData(sce))
-
 table(sce$final_Annotations)
 # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3      LHb.4      LHb.5      LHb.6 
 #       538         38       1800       7612        201        266        134        477         83         39 
@@ -23,6 +21,8 @@ table(sce$final_Annotations)
 
 table(sce$final_Annotations)
 
+rownames(sce) <- rowData(sce)$ID
+
 message(Sys.time(), "- Run registration_wrapper")
 
 sce_modeling_results <- registration_wrapper(
@@ -30,8 +30,8 @@ sce_modeling_results <- registration_wrapper(
   var_registration = "final_Annotations",
   var_sample_id = "Sample",
   covars = NULL,
-  gene_ensembl = NULL,
-  gene_name = NULL,
+  gene_ensembl = "ID",
+  gene_name = "Symbol",
   suffix = "",
   min_ncells = 10,
   pseudobulk_rds_file = here(data.dir, "sce_pseudo_final_Annotations.rds")
