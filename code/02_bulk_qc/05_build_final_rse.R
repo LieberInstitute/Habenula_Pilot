@@ -163,11 +163,11 @@ rse_jx <- add_vars(rse_jx)
 ################# Save rse objects with qsva and SNP PCs data #################
 
 save_rse <- function(rse, rse_name) {
-    save(rse,
-        file = paste0(here(
-            "processed-data",
-            "rse_objects"
-        ), "/", rse_name, "_Habenula_Pilot.rda")
+    rse_orName <- deparse(substitute(rse))
+    assign(rse_orName, rse)
+    save(
+        list = rse_orName,
+        file = paste0(rse_orName, ".rda")
     )
 }
 
@@ -190,4 +190,3 @@ options(width = 120)
 session_info()
 
 ###############################################################################
-
