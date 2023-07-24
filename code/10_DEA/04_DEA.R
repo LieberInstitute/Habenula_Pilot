@@ -130,14 +130,33 @@ DE_analysis <- function(rse_gene, formula, coef, model_name, FDR_cut = 10e-02) {
 
 
 
+
 ##################################### DEA #####################################
 
+## rse_gene
 formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
     qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
     tot.Hb + tot.Thal
 
 res_formula <- DE_analysis(
     rse_gene = rse_gene,
+    formula = formula,
+    coef = "PrimaryDxSchizo",
+    model_name = "qc-totAGene-qSVs-Hb-Thal"
+)
+
+hval <- max((res_formula %>% dplyr::filter(adj.P.Val < 0.1 & adj.P.Val >= 0.09))$P.Value)
+hval <- format(hval, scientific = TRUE)
+
+plot_volc(res_formula, FDR_cut = 10e-02, model_name = "qc-totAGene-qSVs-Hb-Thal", hval = as.numeric(hval))
+
+## rse_tx
+formula <- ~ PrimaryDx + AgeDeath + Flowcell + mitoRate + rRNA_rate + RIN + totalAssignedGene + abs_ERCCsumLogErr +
+    qSV1 + qSV2 + qSV3 + qSV4 + qSV5 + qSV6 + qSV7 + qSV8 +
+    tot.Hb + tot.Thal
+
+res_formula <- DE_analysis(
+    rse_gene = rse_tx,
     formula = formula,
     coef = "PrimaryDxSchizo",
     model_name = "qc-totAGene-qSVs-Hb-Thal"
