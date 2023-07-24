@@ -13,7 +13,7 @@ out_data <- here("processed-data", "10_DEA", "04_DEA")
 
 
 
-###################### Load rse and rse filtered objects ######################
+############################## Load rse objects ###############################
 
 load(
     here(
@@ -30,8 +30,7 @@ load(
 
 
 
-#################### E### Functions for DEA and plotting #######################
-
+######################## Functions for DEA and plotting #######################
 
 ## Function to do all the DEA analysis with limma
 DE_analysis <- function(rse_gene, formula, coef, model_name) {
@@ -138,7 +137,7 @@ plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
         subtitle = NULL
     ) + ylim(c(0, 6)) +
         xlim(c(-3, 3)) +
-        ylab("p-value") +
+        ylab("-log10(p-value)") +
         xlab("log2FC (SCZD vs Control)")
 
     pdf(paste0(out_plot, "/VolcanoPlot_", model_name, ".pdf"),
