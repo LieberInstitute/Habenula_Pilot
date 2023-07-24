@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
 Loading conda_R/4.3
 **** Job starts ****
-Mon Jul 24 15:40:28 EDT 2023
+Mon Jul 24 16:01:51 EDT 2023
 **** JHPCE info ****
 User: lhuuki
-Job id: 3646719
+Job id: 3646753
 Job name: sce_1vALL_modeling
-Hostname: compute-072.cm.cluster
+Hostname: compute-124.cm.cluster
 Task id: undefined
 Unloading conda_R/4.3
 Loading conda_R/4.3
@@ -119,20 +119,20 @@ Loading objects:
        477         83         39       1014        152        540         18 
  Microglia      Oligo        OPC 
        145       2178       1202 
-2023-07-24 15:42:22.271182- Run registration_wrapper
-2023-07-24 15:42:22.290331 make pseudobulk object
-2023-07-24 15:42:35.16734 dropping 22 pseudo-bulked samples that are below 'min_ncells'.
-2023-07-24 15:42:35.31574 drop lowly expressed genes
-2023-07-24 15:42:35.966962 normalize expression
-2023-07-24 15:42:40.25699 saving sce_pseudo to /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/05_explore_sce/04_sce_1vALL_modeling/sce_pseudo_final_Annotations.rds
-2023-07-24 15:42:42.459204 create model matrix
-2023-07-24 15:42:42.559408 run duplicateCorrelation()
-2023-07-24 15:43:58.814805 The estimated correlation is: 0.143537858217276
-2023-07-24 15:43:58.82969 computing enrichment statistics
-2023-07-24 15:44:07.296636 extract and reformat enrichment results
-2023-07-24 15:44:07.763151 running the baseline pairwise model
-2023-07-24 15:44:08.823289 computing pairwise statistics
-2023-07-24 15:44:19.084572 computing F-statistics
+2023-07-24 16:02:45.351682- Run registration_wrapper
+2023-07-24 16:02:45.358999 make pseudobulk object
+2023-07-24 16:02:48.713227 dropping 22 pseudo-bulked samples that are below 'min_ncells'.
+2023-07-24 16:02:48.75629 drop lowly expressed genes
+2023-07-24 16:02:48.967642 normalize expression
+2023-07-24 16:02:50.803456 saving sce_pseudo to /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/05_explore_sce/04_sce_1vALL_modeling/sce_pseudo_final_Annotations.rds
+2023-07-24 16:02:51.842566 create model matrix
+2023-07-24 16:02:51.874672 run duplicateCorrelation()
+2023-07-24 16:03:15.841886 The estimated correlation is: 0.143537858217276
+2023-07-24 16:03:15.846645 computing enrichment statistics
+2023-07-24 16:03:18.235569 extract and reformat enrichment results
+2023-07-24 16:03:18.35786 running the baseline pairwise model
+2023-07-24 16:03:18.700889 computing pairwise statistics
+2023-07-24 16:03:21.641258 computing F-statistics
 [1] "Reproducibility information:"
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
@@ -303,4 +303,4 @@ Loading objects:
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Mon Jul 24 15:44:35 EDT 2023
+Mon Jul 24 16:03:28 EDT 2023
