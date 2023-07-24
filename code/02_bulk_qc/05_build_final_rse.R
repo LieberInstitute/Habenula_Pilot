@@ -100,24 +100,32 @@ qSVAs <- read.table(
 
 ####################### Prepare data to add to the model ######################
 
-## Add some metrics to colData
+## Add some metrics only to the rse_gene colData
 colData(rse_gene)$library_size <- apply(assay(rse_gene), 2, sum)
 colData(rse_gene)$log10_library_size <- log10(colData(rse_gene)$library_size)
 colData(rse_gene)$detected_num_genes <- apply(assay(rse_gene), 2, function(x) {
     length(x[which(x > 0)])
 })
+
+## Add the absolute value of ERCCsumLogErr to all the rses
 colData(rse_gene)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
+colData(rse_tx)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
+colData(rse_exon)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
+colData(rse_jx)$abs_ERCCsumLogErr <- abs(colData(rse_gene)$ERCCsumLogErr)
 
 ## Add total proportion of Hb (LHb + MHb) and total Thal (Excit.Thal + Inhib.Thal)
 est_prop <- t(est_prop$bulk.props)
-
 est_prop <- cbind(est_prop, est_prop[, colnames(est_prop) == "LHb"] + est_prop[, colnames(est_prop) == "MHb"])
 est_prop <- cbind(est_prop, est_prop[, colnames(est_prop) == "Excit.Thal"] + est_prop[, colnames(est_prop) == "Inhib.Thal"])
 
 colnames(est_prop)[10:11] <- c("tot.Hb", "tot.Thal")
 
-## Delete sample Br5572/R18424
+## Delete sample Br5572/R18424 from all rse objects and deconvolution data
 rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
+rse_tx <- rse_tx[, rse_tx$BrNum != "Br5572"]
+rse_exon <- rse_exon[, rse_exon$BrNum != "Br5572"]
+rse_jx <- rse_jx[, rse_jx$BrNum != "Br5572"]
+
 est_prop <- est_prop[rownames(est_prop) != "R18424", ]
 
 ###############################################################################
