@@ -110,69 +110,20 @@ DE_analysis <- function(rse_gene, formula, coef, model_name, FDR_cut = 10e-02) {
 
     dev.off()
 
+    ## Save
     all_df <- top_genes
     all_df$ensemblID <- NULL
     all_df <- tibble::rownames_to_column(all_df, "ensemblID")
     write.table(all_df, file = paste0(out_data, "/DEA_AllGenes_", model_name, ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
 
-    return(top_genes)
-}
 
-## Function to make volcano plot
-plot_volc <- function(top_genes, FDR_cut, model_name, hval) {
     sig_df <- top_genes %>% filter(adj.P.Val < FDR_cut)
     sig_df$ensemblID <- NULL
     sig_df <- tibble::rownames_to_column(sig_df, "ensemblID")
 
     write.table(sig_df %>% filter(adj.P.Val < FDR_cut), file = paste0(out_data, "/DEA_SigGenes_FDR", gsub(as.character(FDR_cut), pattern = "0\\.", replacement = ""), "_", model_name, ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
 
-    ## Format data
-    outGenes_plot <- top_genes %>%
-        select(logFC, P.Value, adj.P.Val, ensemblID, Symbol)
-    rownames(outGenes_plot) <- uniquifyFeatureNames(
-        outGenes_plot$ensemblID,
-        outGenes_plot$Symbol
-    )
-
-    ## Select colors
-    keyvals <- ifelse(
-        outGenes_plot$adj.P.Val >= FDR_cut, "#6c757d", ifelse(
-            outGenes_plot$logFC < 0, "#2a9d8f", "#f77f00")
-    )
-    names(keyvals)[keyvals == "#2a9d8f"] <- paste0("Down - FDR < ", FDR_cut)
-    names(keyvals)[keyvals == "#6c757d"] <- "Not significant"
-    names(keyvals)[keyvals == "#f77f00"] <- paste0("Up - FDR < ", FDR_cut)
-
-    ## Genes to highlight
-    select <- outGenes_plot %>% filter(adj.P.Val < FDR_cut & abs(logFC) > 1)
-
-    volcano_plot <- EnhancedVolcano(outGenes_plot,
-        x = "logFC",
-        y = "P.Value",
-        selectLab = select$Symbol,
-        labSize = 6.0,
-        drawConnectors = TRUE,
-        arrowheads = FALSE,
-        max.overlaps = Inf,
-        labCol = "black",
-        pCutoff = hval,
-        FCcutoff = 1,
-        lab = rownames(outGenes_plot),
-        colCustom = keyvals,
-        caption = paste0(nrow(outGenes_plot), " total genes\n", sum(outGenes_plot$adj.P.Val < FDR_cut), " significant genes"),
-        title = NULL,
-        subtitle = NULL
-    ) + ylim(c(0, 6)) +
-        xlim(c(-3, 3)) +
-        ylab("-log10(p-value)") +
-        xlab("log2FC (SCZD vs Control)")
-
-    pdf(paste0(out_plot, "/VolcanoPlot_", model_name, ".pdf"),
-        height = 10,
-        width = 8
-    )
-    print(volcano_plot)
-    dev.off()
+    return(top_genes)
 }
 
 ###############################################################################
