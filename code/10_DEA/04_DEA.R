@@ -26,6 +26,33 @@ load(
 # Loading objects:
 #   rse_gene
 
+load(
+    here(
+        "processed-data",
+        "rse_objects",
+        "rse_tx_Habenula_Pilot.rda"
+    ),
+    verbose = TRUE
+)
+
+load(
+    here(
+        "processed-data",
+        "rse_objects",
+        "rse_jx_Habenula_Pilot.rda"
+    ),
+    verbose = TRUE
+)
+
+load(
+    here(
+        "processed-data",
+        "rse_objects",
+        "rse_tx_Habenula_Pilot.rda"
+    ),
+    verbose = TRUE
+)
+
 ###############################################################################
 
 
