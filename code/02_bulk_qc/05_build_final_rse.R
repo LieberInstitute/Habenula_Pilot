@@ -4,7 +4,7 @@ library("sessioninfo")
 
 
 
-############################# Load rse gene object ############################
+#################### Load rse gene, tx, jx and exon objects ###################
 
 load(
     here(
@@ -17,6 +17,42 @@ load(
 )
 # Loading objects:
 #   rse_gene
+
+load(
+    here(
+        "processed-data",
+        "02_bulk_qc",
+        "count_data_bukola",
+        "rse_tx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"
+    ),
+    verbose = TRUE
+)
+# Loading objects:
+#   rse_tx
+
+load(
+    here(
+        "processed-data",
+        "02_bulk_qc",
+        "count_data_bukola",
+        "rse_jx_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"
+    ),
+    verbose = TRUE
+)
+# Loading objects:
+#   rse_jx
+
+load(
+    here(
+        "processed-data",
+        "02_bulk_qc",
+        "count_data_bukola",
+        "rse_exon_filt_Roche_Habenula_qcAndAnnotated_n69.Rdata"
+    ),
+    verbose = TRUE
+)
+# Loading objects:
+#   rse_exon
 
 ###############################################################################
 
