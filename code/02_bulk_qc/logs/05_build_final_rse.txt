@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.1.2
 Loading conda_R/4.3
 **** Job starts ****
-Mon Jul 24 15:32:18 EDT 2023
+Mon Jul 24 16:31:56 EDT 2023
 **** JHPCE info ****
 User: freneega
-Job id: 3646721
+Job id: 3646769
 Job name: build_final_rse
-Hostname: compute-099.cm.cluster
+Hostname: compute-129.cm.cluster
 Task id: undefined
 Unloading conda_R/4.3
 Loading conda_R/4.3
@@ -110,10 +110,14 @@ Loading objects:
   rse_exon
 Loading objects:
   est_prop
+[1] "rse_gene"
+[1] "rse_tx"
+[1] "rse_exon"
+[1] "rse_jx"
 [1] "Reproducibility information:"
-[1] "2023-07-24 15:34:52 EDT"
+[1] "2023-07-24 16:33:11 EDT"
    user  system elapsed 
- 145.25    3.43  151.61 
+ 63.963   1.386  74.029 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.1 Patched (2023-07-22 r84743)
@@ -159,4 +163,4 @@ Loading objects:
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Mon Jul 24 15:34:54 EDT 2023
+Mon Jul 24 16:33:12 EDT 2023
