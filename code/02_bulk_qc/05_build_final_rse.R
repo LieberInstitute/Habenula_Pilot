@@ -2,6 +2,8 @@ library("here")
 library("SummarizedExperiment")
 library("sessioninfo")
 
+out_data <- here("processed-data", "rse_objects")
+
 
 
 #################### Load rse gene, tx, jx and exon objects ###################
@@ -164,10 +166,11 @@ rse_jx <- add_vars(rse_jx)
 
 save_rse <- function(rse, rse_name) {
     rse_orName <- deparse(substitute(rse))
+    print(rse_orName)
     assign(rse_orName, rse)
     save(
         list = rse_orName,
-        file = paste0(rse_orName, ".rda")
+        file = paste0(out_data, "/", rse_orName, "_Habenula_Pilot.rda")
     )
 }
 
