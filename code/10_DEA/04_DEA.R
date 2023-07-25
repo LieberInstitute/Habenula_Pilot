@@ -90,24 +90,23 @@ DE_analysis <- function(rse, formula, coef, model_name, FDR_cut = 10e-02, rse_ty
 
     dev.off()
 
-    ## Save
     df_class <- sapply(top_genes,class) == "list"
     if(sum(df_class) > 0){
         for(i in which(df_class)){
             top_genes[,i] <- unlist(lapply(top_genes[,i], paste, collapse=","))
         }
     }
-    all_df <- top_genes
-    all_df$ensemblID <- NULL
-    all_df <- tibble::rownames_to_column(all_df, "ensemblID")
-    write.table(all_df, file = paste0(out_data, "/DEA_AllGenes_", model_name, ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
 
+    ## Save all genes/tx/jx/exons and then only the significant ones
+    all_df <- top_genes
+    all_df <- tibble::rownames_to_column(all_df, "r.name")
+
+    write.table(all_df, file = paste0(out_data, "/DEA_All-", rse_type, "_", model_name, ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
 
     sig_df <- top_genes %>% filter(adj.P.Val < FDR_cut)
-    sig_df$ensemblID <- NULL
-    sig_df <- tibble::rownames_to_column(sig_df, "ensemblID")
+    sig_df <- tibble::rownames_to_column(sig_df, "r.name")
 
-    write.table(sig_df %>% filter(adj.P.Val < FDR_cut), file = paste0(out_data, "/DEA_SigGenes_FDR", gsub(as.character(FDR_cut), pattern = "0\\.", replacement = ""), "_", model_name, ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(sig_df %>% filter(adj.P.Val < FDR_cut), file = paste0(out_data, "/DEA_Sig-", rse_type, "_FDR", gsub(as.character(FDR_cut), pattern = "0\\.", replacement = ""), "_", model_name, ".tsv"), sep = "\t", quote = FALSE, row.names = FALSE)
 
     return(top_genes)
 }
