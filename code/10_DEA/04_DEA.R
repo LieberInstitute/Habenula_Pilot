@@ -46,26 +46,26 @@ DE_analysis <- function(rse, formula, coef, model_name, FDR_cut = 10e-02, rse_ty
     par(cex = 0.7, mai = c(0.1, 0.1, 0.1, 0.1))
 
     ## Model matrix
-    model <- model.matrix(formula, data = colData(rse_gene))
+    model <- model.matrix(formula, data = colData(rse))
 
     ## Use previous norm factors to scale the raw library sizes
-    RSE_scaled <- calcNormFactors(rse_gene)
+    rse_scaled <- calcNormFactors(rse)
 
     par(fig = c(0.05, 0.5, 0.55, 0.95))
     ## Transform counts to log2(CPM): estimate mean-variance relationship for
     ## each gene
-    vGene <- voom(RSE_scaled, design = model, plot = TRUE)
+    vFeat <- voom(rse_scaled, design = model, plot = TRUE)
 
     ## Fit linear model for each gene
-    fitGene <- lmFit(vGene)
+    fitFeat <- lmFit(vFeat)
 
     ## Empirical Bayesian calculation to obtain our significant genes: compute
     ## moderated F and t-statistics, and log-odds of DE
-    eBGene <- eBayes(fitGene)
+    eBFeat <- eBayes(fitFeat)
 
     par(fig = c(0.55, 1, 0.55, 0.95), new = TRUE)
     ## Plot average log expression vs logFC
-    limma::plotMA(eBGene,
+    limma::plotMA(eBFeat,
         coef = coef, xlab = "Mean of normalized counts",
         ylab = "logFC"
     )
@@ -73,10 +73,10 @@ DE_analysis <- function(rse, formula, coef, model_name, FDR_cut = 10e-02, rse_ty
     par(fig = c(0.05, 0.5, 0.1, 0.5), new = TRUE)
 
     ## Plot -log(p-value) vs logFC
-    volcanoplot(eBGene, coef = coef)
+    volcanoplot(eBFeat, coef = coef)
 
     ## Select top-ranked genes
-    top_genes <- topTable(eBGene, coef = coef, p.value = 1, number = nrow(rse_gene), sort.by = "none")
+    top_genes <- topTable(eBFeat, coef = coef, p.value = 1, number = nrow(rse), sort.by = "none")
 
     ## Histogram of adjusted p values
     par(fig = c(0.55, 1, 0.1, 0.5), new = TRUE)
