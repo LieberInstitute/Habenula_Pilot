@@ -15,43 +15,23 @@ out_data <- here("processed-data", "10_DEA", "04_DEA")
 
 ############################## Load rse objects ###############################
 
-load(
+rse_objects <- list.files(
     here(
         "processed-data",
-        "rse_objects",
-        "rse_gene_Habenula_Pilot.rda"
+        "rse_objects"
     ),
-    verbose = TRUE
+    full.names = TRUE
 )
+
+lapply(rse_objects, load, verbose = TRUE, .GlobalEnv)
+# Loading objects:
+#   rse_exon
 # Loading objects:
 #   rse_gene
-
-load(
-    here(
-        "processed-data",
-        "rse_objects",
-        "rse_tx_Habenula_Pilot.rda"
-    ),
-    verbose = TRUE
-)
-
-load(
-    here(
-        "processed-data",
-        "rse_objects",
-        "rse_jx_Habenula_Pilot.rda"
-    ),
-    verbose = TRUE
-)
-
-load(
-    here(
-        "processed-data",
-        "rse_objects",
-        "rse_tx_Habenula_Pilot.rda"
-    ),
-    verbose = TRUE
-)
+# Loading objects:
+#   rse_jx
+# Loading objects:
+#   rse_tx
 
 ###############################################################################
 
