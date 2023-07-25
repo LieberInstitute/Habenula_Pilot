@@ -48,16 +48,20 @@ DE_analysis <- function(rse, formula, coef, model_name, FDR_cut = 10e-02, rse_ty
     ## Model matrix
     model <- model.matrix(formula, data = colData(rse))
 
-    ## Use previous norm factors to scale the raw library sizes
-    rse_scaled <- calcNormFactors(rse)
+    if (rse_type != "tx") {
+        ## Use previous norm factors to scale the raw library sizes
+        rse_scaled <- calcNormFactors(rse)
 
-    par(fig = c(0.05, 0.5, 0.55, 0.95))
-    ## Transform counts to log2(CPM): estimate mean-variance relationship for
-    ## each gene
-    vFeat <- voom(rse_scaled, design = model, plot = TRUE)
+        par(fig = c(0.05, 0.5, 0.55, 0.95))
+        ## Transform counts to log2(CPM): estimate mean-variance relationship for
+        ## each gene
+        vFeat <- voom(rse_scaled, design = model, plot = TRUE)
 
-    ## Fit linear model for each gene
-    fitFeat <- lmFit(vFeat)
+        ## Fit linear model for each gene
+        fitFeat <- lmFit(vFeat)
+    } else {
+        fitFeat <- lmFit(assays(rse)$logcounts, design = model)
+    }
 
     ## Empirical Bayesian calculation to obtain our significant genes: compute
     ## moderated F and t-statistics, and log-odds of DE
