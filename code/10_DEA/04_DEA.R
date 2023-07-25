@@ -40,8 +40,8 @@ lapply(rse_objects, load, verbose = TRUE, .GlobalEnv)
 ######################## Functions for DEA and plotting #######################
 
 ## Function to do all the DEA analysis with limma
-DE_analysis <- function(rse_gene, formula, coef, model_name, FDR_cut = 10e-02) {
-    pdf(file = paste0(out_plot, "/DEAplots_", model_name, ".pdf"))
+DE_analysis <- function(rse, formula, coef, model_name, FDR_cut = 10e-02, rse_type) {
+    pdf(file = paste0(out_plot, "/summary-", rse_type, "_", model_name, ".pdf"))
     # par(mfrow = c(3, 2))
     par(cex = 0.7, mai = c(0.1, 0.1, 0.1, 0.1))
 
