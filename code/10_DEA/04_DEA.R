@@ -94,10 +94,10 @@ DE_analysis <- function(rse, formula, coef, model_name, FDR_cut = 10e-02, rse_ty
 
     dev.off()
 
-    df_class <- sapply(top_genes,class) == "list"
-    if(sum(df_class) > 0){
-        for(i in which(df_class)){
-            top_genes[,i] <- unlist(lapply(top_genes[,i], paste, collapse=","))
+    df_class <- sapply(top_genes, class) == "list"
+    if (sum(df_class) > 0) {
+        for (i in which(df_class)) {
+            top_genes[, i] <- unlist(lapply(top_genes[, i], paste, collapse = ","))
         }
     }
 
