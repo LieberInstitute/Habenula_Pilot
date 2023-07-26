@@ -2,8 +2,8 @@
 #$ -cwd
 #$ -l mem_free=10G,h_vmem=10G,h_fsize=100G
 #$ -N GOenrichment
-#$ -o logs/05_GOenrichment.txt
-#$ -e logs/05_GOenrichment.txt
+#$ -o logs/06_GOenrichment.txt
+#$ -e logs/06_GOenrichment.txt
 #$ -m e
 
 echo "**** Job starts ****"
@@ -23,7 +23,7 @@ module load conda_R/4.3
 module list
 
 ## Edit with your job command
-Rscript 05_GOenrichment.R
+Rscript 06_GOenrichment.R
 
 echo "**** Job ends ****"
 date
