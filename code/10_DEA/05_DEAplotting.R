@@ -96,6 +96,20 @@ rownames(outFeat_plot) <- uniquifyFeatureNames(
 ###############################################################################
 
 
+
+############################## Plot volcano plots #############################
+
+mapply(function(dea_feat_res, rse_type) {
+    hval <- max((dea_feat_res %>% dplyr::filter(adj.P.Val < 0.1 & adj.P.Val >= 0.09))$P.Value)
+    hval <- format(hval, scientific = TRUE)
+
+    plot_volc(dea_feat_res, model_name = "qc-totAGene-qSVs-Hb-Thal", hval = as.numeric(hval), rse_type = rse_type)
+}, dea_res, c("exon", "gene", "jx", "tx"))
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
