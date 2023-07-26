@@ -72,6 +72,30 @@ use_gsepc <- function(modeling_results, model_type, gene_list, enrichTab, plot_n
 
 ###############################################################################
 
+
+
+################################# Plot results ################################
+
+use_gsepc(
+    modeling_results = sce_modeling_results,
+    model_type = "enrichment",
+    gene_list = gene_list,
+    enrichTab = enrichTab_FDR05,
+    plot_name = "GSEA-1vsAll_FDR05.pdf"
+)
+
+use_gsepc(
+    modeling_results = sce_modeling_results,
+    model_type = "enrichment",
+    gene_list = gene_list,
+    enrichTab = enrichTab_FDR1,
+    plot_name = "GSEA-1vsAll_FDR1.pdf"
+)
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 print("Reproducibility information:")
