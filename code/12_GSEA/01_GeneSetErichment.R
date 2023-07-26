@@ -77,6 +77,21 @@ enrichTab_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = 
 
 
 
+################### Save gene_set_enrichment results to rda ###################
+
+save(enrichTab_FDR05,
+    enrichTab_FDR1,
+    file = here(
+        "processed_data",
+        "12_GSEA",
+        "gene_set_enrichment_1vsAll_result_tables.rda"
+    )
+)
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
