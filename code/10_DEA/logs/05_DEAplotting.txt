@@ -1,0 +1,215 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.10
+Loading LIBD module for ruby/3.1.2
+Loading conda_R/4.3
+**** Job starts ****
+Wed Jul 26 15:06:46 EDT 2023
+**** JHPCE info ****
+User: freneega
+Job id: 3649573
+Job name: DEAplotting
+Hostname: compute-122.cm.cluster
+Task id: undefined
+Unloading conda_R/4.3
+Loading conda_R/4.3
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/3.1.2
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.10
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.3
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:data.table’:
+
+    between, first, last
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+
+Attaching package: ‘gplots’
+
+The following object is masked from ‘package:stats’:
+
+    lowess
+
+Loading required package: SingleCellExperiment
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘matrixStats’
+
+The following object is masked from ‘package:dplyr’:
+
+    count
+
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:dplyr’:
+
+    combine, intersect, setdiff, union
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following object is masked from ‘package:gplots’:
+
+    space
+
+The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+The following objects are masked from ‘package:data.table’:
+
+    first, second
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+The following object is masked from ‘package:data.table’:
+
+    shift
+
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+Loading required package: scuttle
+Loading required package: ggplot2
+Loading required package: ggrepel
+Scale for y is already present.
+Adding another scale for y, which will replace the existing scale.
+Scale for x is already present.
+Adding another scale for x, which will replace the existing scale.
+Scale for y is already present.
+Adding another scale for y, which will replace the existing scale.
+Scale for x is already present.
+Adding another scale for x, which will replace the existing scale.
+Scale for y is already present.
+Adding another scale for y, which will replace the existing scale.
+Scale for x is already present.
+Adding another scale for x, which will replace the existing scale.
+Error in `select()`:
+! Can't subset columns that don't exist.
+✖ Column `Symbol` doesn't exist.
+Backtrace:
+     ▆
+  1. ├─BiocGenerics::mapply(...)
+  2. │ ├─BiocGenerics (local) standardGeneric("mapply")
+  3. │ │ ├─BiocGenerics::eval(mc, env)
+  4. │ │ └─base::eval(mc, env)
+  5. │ │   └─base::eval(mc, env)
+  6. │ └─base::mapply(FUN = FUN, ...)
+  7. │   └─global `<fn>`(dots[[1L]][[4L]], dots[[2L]][[4L]])
+  8. │     └─global plot_volc(...)
+  9. │       └─dea_feat_res %>% ...
+ 10. ├─dplyr::select(., logFC, P.Value, adj.P.Val, r.name, Symbol)
+ 11. ├─dplyr:::select.data.frame(., logFC, P.Value, adj.P.Val, r.name, Symbol)
+ 12. │ └─tidyselect::eval_select(expr(c(...)), data = .data, error_call = error_call)
+ 13. │   └─tidyselect:::eval_select_impl(...)
+ 14. │     ├─tidyselect:::with_subscript_errors(...)
+ 15. │     │ └─rlang::try_fetch(...)
+ 16. │     │   └─base::withCallingHandlers(...)
+ 17. │     └─tidyselect:::vars_select_eval(...)
+ 18. │       └─tidyselect:::walk_data_tree(expr, data_mask, context_mask)
+ 19. │         └─tidyselect:::eval_c(expr, data_mask, context_mask)
+ 20. │           └─tidyselect:::reduce_sels(node, data_mask, context_mask, init = init)
+ 21. │             └─tidyselect:::walk_data_tree(new, data_mask, context_mask)
+ 22. │               └─tidyselect:::as_indices_sel_impl(...)
+ 23. │                 └─tidyselect:::as_indices_impl(...)
+ 24. │                   └─tidyselect:::chr_as_locations(x, vars, call = call, arg = arg)
+ 25. │                     └─vctrs::vec_as_location(...)
+ 26. └─vctrs (local) `<fn>`()
+ 27.   └─vctrs:::stop_subscript_oob(...)
+ 28.     └─vctrs:::stop_subscript(...)
+ 29.       └─rlang::abort(...)
+Warning message:
+In max((dea_feat_res %>% dplyr::filter(adj.P.Val < 0.1 & adj.P.Val >=  :
+  no non-missing arguments to max; returning -Inf
+Execution halted
+**** Job ends ****
+Wed Jul 26 15:07:23 EDT 2023
