@@ -65,6 +65,18 @@ lapply(gene_list, length)
 
 ###############################################################################
 
+
+
+########################### Run gene_set_enrichment ###########################
+
+enrichTab_FDR05 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_results, model_type = "enrichment", fdr_cut = 0.05)
+
+enrichTab_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_results, model_type = "enrichment", fdr_cut = 0.1)
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
