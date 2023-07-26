@@ -81,6 +81,7 @@ enrichTab_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = 
 
 save(enrichTab_FDR05,
     enrichTab_FDR1,
+    gene_list,
     file = here(
         "processed-data",
         "12_GSEA",
