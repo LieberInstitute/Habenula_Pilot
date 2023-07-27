@@ -64,9 +64,18 @@ sce[, sce$Rows %in% RowNos]$OPC_clean <- "No"
 # check
 table(sce$Sample, sce$OPC_clean)
 
+## Add a broad cell type col -Louise added 7/27/2023
+sce$broad_Annotations <- gsub("\\.\\d", "", sce$final_Annotations)
+table(sce$broad_Annotations)
+# Astrocyte       Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia      Oligo        OPC 
+#       538         38       1800       7612       2214        710        145       2178       1202
+
 # save
 save(sce, file = here("processed-data", "99_paper_figs", "sce_objects", 
-                      "official_final_sce.RDATA"))
+                      "sce_Habenula_Pilot.Rdata"))
+
+## Originally saved as 'official_final_sce.RDATA' by Bukola
+## still linked to this filename 
 
 sessioninfo::session_info()
 
