@@ -19,13 +19,16 @@ table(sce$final_Annotations)
 # LHb.7      MHb.1      MHb.2      MHb.3  Microglia      Oligo        OPC 
 # 1014        152        540         18        145       2178       1202 
 
-table(sce$final_Annotations)
+table(sce$broad_Annotations)
+# Astrocyte       Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia      Oligo        OPC 
+# 538         38       1800       7612       2214        710        145       2178       1202 
 
+## Use ENSEMBL IDs as rownames
 rownames(sce) <- rowData(sce)$ID
 
-message(Sys.time(), "- Run registration_wrapper")
-
-sce_modeling_results <- registration_wrapper(
+## run for final_Annotations
+message(Sys.time(), "- Run registration_wrapper final_Annotations")
+sce_modeling_final_Annotations <- registration_wrapper(
   sce,
   var_registration = "final_Annotations",
   var_sample_id = "Sample",
@@ -37,7 +40,25 @@ sce_modeling_results <- registration_wrapper(
   pseudobulk_rds_file = here(data.dir, "sce_pseudo_final_Annotations.rds")
 )
 
-save(sce_modeling_results, file = here(data.dir, "sce_modeling_results.Rdata"))
+save(sce_modeling_results, file = here(data.dir, "sce_modeling_final_Annotations.Rdata"))
+
+
+## run for broad_Annotations
+message(Sys.time(), "- Run registration_wrapper final_Annotations")
+sce_modeling_broad_Annotations <- registration_wrapper(
+  sce,
+  var_registration = "final_Annotations",
+  var_sample_id = "Sample",
+  covars = NULL,
+  gene_ensembl = "ID",
+  gene_name = "Symbol",
+  suffix = "",
+  min_ncells = 10,
+  pseudobulk_rds_file = here(data.dir, "sce_pseudo_broad_Annotations.rds")
+)
+
+save(sce_modeling_results, file = here(data.dir, "sce_modeling_broad_Annotations.Rdata"))
+
 
 # sgejobs::job_single('04_sce_1vALL_modeling', create_shell = TRUE, memory = '30G', command = "Rscript 04_sce_1vALL_modeling.R")
 
