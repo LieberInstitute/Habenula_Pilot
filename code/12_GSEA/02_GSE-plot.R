@@ -26,18 +26,18 @@ load(
 #   enrichTab_FDR1
 #   gene_list
 
-## Load sce_modeling_results.Rdata
+## Load sce_modeling_final_Annotations.Rdata
 load(
     here(
         "processed-data",
         "05_explore_sce",
         "04_sce_1vALL_modeling",
-        "sce_modeling_results.Rdata"
+        "sce_modeling_final_Annotations.Rdata"
     ),
     verbose = TRUE
 )
 # Loading objects:
-#   sce_modeling_results
+#   sce_modeling_final_Annotations
 
 ###############################################################################
 
@@ -59,9 +59,9 @@ use_gsepc <- function(modeling_results, model_type, gene_list, enrichTab, plot_n
 
     gse_plot <- gene_set_enrichment_plot_complex(
         enrichment = enrichTab,
-        gene_count_col = log10(gene_list_count),
+        gene_count_col = gene_list_count,
         gene_count_row = gene_enrichment_count,
-        anno_title_col = "DE Genes\n(log10)",
+        anno_title_col = "DE Genes",
         anno_title_row = "Cluster\nGenes"
     )
 
@@ -77,7 +77,7 @@ use_gsepc <- function(modeling_results, model_type, gene_list, enrichTab, plot_n
 ################################# Plot results ################################
 
 use_gsepc(
-    modeling_results = sce_modeling_results,
+    modeling_results = sce_modeling_final_Annotations,
     model_type = "enrichment",
     gene_list = gene_list,
     enrichTab = enrichTab_FDR05,
@@ -85,7 +85,7 @@ use_gsepc(
 )
 
 use_gsepc(
-    modeling_results = sce_modeling_results,
+    modeling_results = sce_modeling_final_Annotations,
     model_type = "enrichment",
     gene_list = gene_list,
     enrichTab = enrichTab_FDR1,
