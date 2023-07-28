@@ -14,20 +14,20 @@ load(
         "processed-data",
         "05_explore_sce",
         "04_sce_1vALL_modeling",
-        "sce_modeling_results.Rdata"
+        "sce_modeling_final_Annotations.Rdata"
     ),
     verbose = TRUE
 )
 # Loading objects:
-#   sce_modeling_results
+#   sce_modeling_final_Annotations
 
-lobstr::obj_size(sce_modeling_results)
+lobstr::obj_size(sce_modeling_final_Annotations)
 # 101.34 MB
-class(sce_modeling_results)
+class(sce_modeling_final_Annotations)
 # [1] "list"
-names(sce_modeling_results)
+names(sce_modeling_final_Annotations)
 # [1] "anova"      "enrichment" "pairwise"
-dim(sce_modeling_results$enrichment)
+dim(sce_modeling_final_Annotations$enrichment)
 # [1] 19799    70
 
 ## Load gene list
@@ -43,6 +43,7 @@ de_genes <- fread (
 )
 
 gene_list <- list(
+    all = de_genes$ensemblID,
     positive = (de_genes %>%
             filter(logFC > 0) %>%
             select(ensemblID) %>%
@@ -54,10 +55,12 @@ gene_list <- list(
 )
 
 length(gene_list)
-# [1] 2
+# [1] 3
 names(gene_list)
-# [1] "positive" "negative"
+# [1] "all"      "positive" "negative"
 lapply(gene_list, length)
+# $all
+# [1] 173
 # $positive
 # [1] 105
 # $negative
@@ -69,9 +72,9 @@ lapply(gene_list, length)
 
 ########################### Run gene_set_enrichment ###########################
 
-enrichTab_FDR05 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_results, model_type = "enrichment", fdr_cut = 0.05)
+enrichTab_FDR05 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_final_Annotations, model_type = "enrichment", fdr_cut = 0.05)
 
-enrichTab_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_results, model_type = "enrichment", fdr_cut = 0.1)
+enrichTab_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_final_Annotations, model_type = "enrichment", fdr_cut = 0.1)
 
 ###############################################################################
 
