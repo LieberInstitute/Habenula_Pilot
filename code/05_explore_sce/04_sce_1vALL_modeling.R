@@ -47,7 +47,7 @@ save(sce_modeling_final_Annotations, file = here(data.dir, "sce_modeling_final_A
 message(Sys.time(), "- Run registration_wrapper final_Annotations")
 sce_modeling_broad_Annotations <- registration_wrapper(
   sce,
-  var_registration = "final_Annotations",
+  var_registration = "broad_Annotations",
   var_sample_id = "Sample",
   covars = NULL,
   gene_ensembl = "ID",
