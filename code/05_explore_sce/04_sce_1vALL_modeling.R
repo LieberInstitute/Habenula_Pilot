@@ -40,7 +40,7 @@ sce_modeling_final_Annotations <- registration_wrapper(
   pseudobulk_rds_file = here(data.dir, "sce_pseudo_final_Annotations.rds")
 )
 
-save(sce_modeling_results, file = here(data.dir, "sce_modeling_final_Annotations.Rdata"))
+save(sce_modeling_final_Annotations, file = here(data.dir, "sce_modeling_final_Annotations.Rdata"))
 
 
 ## run for broad_Annotations
@@ -57,7 +57,7 @@ sce_modeling_broad_Annotations <- registration_wrapper(
   pseudobulk_rds_file = here(data.dir, "sce_pseudo_broad_Annotations.rds")
 )
 
-save(sce_modeling_results, file = here(data.dir, "sce_modeling_broad_Annotations.Rdata"))
+save(sce_modeling_broad_Annotations, file = here(data.dir, "sce_modeling_broad_Annotations.Rdata"))
 
 
 # sgejobs::job_single('04_sce_1vALL_modeling', create_shell = TRUE, memory = '30G', command = "Rscript 04_sce_1vALL_modeling.R")
