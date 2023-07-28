@@ -8,7 +8,7 @@ library("sessioninfo")
 
 ##################### Load objects for gene_set_enrichment ####################
 
-## Load sce_modeling_results.Rdata
+## Load sce_modeling_final_Annotations.Rdata
 load(
     here(
         "processed-data",
@@ -29,6 +29,29 @@ names(sce_modeling_final_Annotations)
 # [1] "anova"      "enrichment" "pairwise"
 dim(sce_modeling_final_Annotations$enrichment)
 # [1] 19799    70
+
+## Load sce_modeling_broad_Annotations.Rdata
+load(
+    here(
+        "processed-data",
+        "05_explore_sce",
+        "04_sce_1vALL_modeling",
+        "sce_modeling_broad_Annotations.Rdata"
+    ),
+    verbose = TRUE
+)
+# Loading objects:
+#   sce_modeling_broad_Annotations
+
+lobstr::obj_size(sce_modeling_broad_Annotations)
+# 32.07 MB
+class(sce_modeling_broad_Annotations)
+# [1] "list"
+names(sce_modeling_broad_Annotations)
+# [1] "anova"      "enrichment" "pairwise"
+dim(sce_modeling_broad_Annotations$enrichment)
+# [1] 19324    38
+
 
 ## Load gene list
 de_genes <- fread (
@@ -76,6 +99,10 @@ enrichTab_FDR05 <- gene_set_enrichment(gene_list = gene_list, modeling_results =
 
 enrichTab_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_final_Annotations, model_type = "enrichment", fdr_cut = 0.1)
 
+enrichTab_br_FDR05 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_broad_Annotations, model_type = "enrichment", fdr_cut = 0.05)
+
+enrichTab_br_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_broad_Annotations, model_type = "enrichment", fdr_cut = 0.1)
+
 ###############################################################################
 
 
@@ -89,6 +116,16 @@ save(enrichTab_FDR05,
         "processed-data",
         "12_GSEA",
         "gene_set_enrichment_1vsAll_result_tables.rda"
+    )
+)
+
+save(enrichTab_br_FDR05,
+    enrichTab_br_FDR1,
+    gene_list,
+    file = here(
+        "processed-data",
+        "12_GSEA",
+        "gene_set_enrichment_1vsAll_broad_result_tables.rda"
     )
 )
 
