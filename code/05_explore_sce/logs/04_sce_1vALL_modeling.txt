@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
 Loading conda_R/4.3
 **** Job starts ****
-Mon Jul 24 16:01:51 EDT 2023
+Fri Jul 28 10:11:39 EDT 2023
 **** JHPCE info ****
 User: lhuuki
-Job id: 3646753
+Job id: 3651026
 Job name: sce_1vALL_modeling
-Hostname: compute-124.cm.cluster
+Hostname: compute-122.cm.cluster
 Task id: undefined
 Unloading conda_R/4.3
 Loading conda_R/4.3
@@ -113,30 +113,42 @@ Loading objects:
  Microglia      Oligo        OPC 
        145       2178       1202 
 
- Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
-       538         38       1800       7612        201        266        134 
-     LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
-       477         83         39       1014        152        540         18 
- Microglia      Oligo        OPC 
-       145       2178       1202 
-2023-07-24 16:02:45.351682- Run registration_wrapper
-2023-07-24 16:02:45.358999 make pseudobulk object
-2023-07-24 16:02:48.713227 dropping 22 pseudo-bulked samples that are below 'min_ncells'.
-2023-07-24 16:02:48.75629 drop lowly expressed genes
-2023-07-24 16:02:48.967642 normalize expression
-2023-07-24 16:02:50.803456 saving sce_pseudo to /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/05_explore_sce/04_sce_1vALL_modeling/sce_pseudo_final_Annotations.rds
-2023-07-24 16:02:51.842566 create model matrix
-2023-07-24 16:02:51.874672 run duplicateCorrelation()
-2023-07-24 16:03:15.841886 The estimated correlation is: 0.143537858217276
-2023-07-24 16:03:15.846645 computing enrichment statistics
-2023-07-24 16:03:18.235569 extract and reformat enrichment results
-2023-07-24 16:03:18.35786 running the baseline pairwise model
-2023-07-24 16:03:18.700889 computing pairwise statistics
-2023-07-24 16:03:21.641258 computing F-statistics
+ Astrocyte       Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia 
+       538         38       1800       7612       2214        710        145 
+     Oligo        OPC 
+      2178       1202 
+2023-07-28 10:12:45.582569- Run registration_wrapper final_Annotations
+2023-07-28 10:12:45.593704 make pseudobulk object
+2023-07-28 10:12:50.480587 dropping 22 pseudo-bulked samples that are below 'min_ncells'.
+2023-07-28 10:12:50.551549 drop lowly expressed genes
+2023-07-28 10:12:50.851127 normalize expression
+2023-07-28 10:12:53.678159 saving sce_pseudo to /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/05_explore_sce/04_sce_1vALL_modeling/sce_pseudo_final_Annotations.rds
+2023-07-28 10:12:54.882502 create model matrix
+2023-07-28 10:12:54.933851 run duplicateCorrelation()
+2023-07-28 10:13:32.029164 The estimated correlation is: 0.143537858217276
+2023-07-28 10:13:32.035163 computing enrichment statistics
+2023-07-28 10:13:35.465171 extract and reformat enrichment results
+2023-07-28 10:13:35.665384 running the baseline pairwise model
+2023-07-28 10:13:36.141115 computing pairwise statistics
+2023-07-28 10:13:40.351412 computing F-statistics
+2023-07-28 10:13:45.560097- Run registration_wrapper final_Annotations
+2023-07-28 10:13:45.564519 make pseudobulk object
+2023-07-28 10:13:50.083586 dropping 22 pseudo-bulked samples that are below 'min_ncells'.
+2023-07-28 10:13:50.128584 drop lowly expressed genes
+2023-07-28 10:13:50.316824 normalize expression
+2023-07-28 10:13:51.532704 saving sce_pseudo to /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/05_explore_sce/04_sce_1vALL_modeling/sce_pseudo_broad_Annotations.rds
+2023-07-28 10:13:52.734688 create model matrix
+2023-07-28 10:13:52.782933 run duplicateCorrelation()
+2023-07-28 10:14:28.278568 The estimated correlation is: 0.143537858217276
+2023-07-28 10:14:28.282612 computing enrichment statistics
+2023-07-28 10:14:31.422011 extract and reformat enrichment results
+2023-07-28 10:14:31.559315 running the baseline pairwise model
+2023-07-28 10:14:31.955723 computing pairwise statistics
+2023-07-28 10:14:36.696728 computing F-statistics
 [1] "Reproducibility information:"
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
- version  R version 4.3.1 Patched (2023-07-22 r84743)
+ version  R version 4.3.1 Patched (2023-07-27 r84774)
  os       CentOS Linux 7 (Core)
  system   x86_64, linux-gnu
  ui       X11
@@ -144,11 +156,12 @@ Loading objects:
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2023-07-24
+ date     2023-07-28
  pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
  package                * version   date (UTC) lib source
+ abind                    1.4-5     2016-07-21 [2] CRAN (R 4.3.0)
  AnnotationDbi            1.62.2    2023-07-02 [2] Bioconductor
  AnnotationHub            3.8.0     2023-04-25 [2] Bioconductor
  attempt                  0.3.1     2020-05-03 [2] CRAN (R 4.3.0)
@@ -266,7 +279,7 @@ Loading objects:
  RSQLite                  2.3.1     2023-04-03 [2] CRAN (R 4.3.0)
  rsvd                     1.0.5     2021-04-16 [2] CRAN (R 4.3.0)
  rtracklayer              1.60.0    2023-04-25 [2] Bioconductor
- S4Arrays                 1.0.4     2023-05-14 [2] Bioconductor
+ S4Arrays                 1.0.5     2023-07-24 [2] Bioconductor
  S4Vectors              * 0.38.1    2023-05-02 [2] Bioconductor
  sass                     0.4.7     2023-07-15 [2] CRAN (R 4.3.1)
  ScaledMatrix             1.8.1     2023-05-03 [2] Bioconductor
@@ -303,4 +316,4 @@ Loading objects:
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Mon Jul 24 16:03:28 EDT 2023
+Fri Jul 28 10:14:46 EDT 2023
