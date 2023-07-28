@@ -39,6 +39,34 @@ load(
 # Loading objects:
 #   sce_modeling_final_Annotations
 
+
+## Load gene_set_enrichment_1vsAll_result_tables.rda
+load(
+    here(
+        "processed-data",
+        "12_GSEA",
+        "gene_set_enrichment_1vsAll_broad_result_tables.rda"
+    ),
+    verbose = TRUE
+)
+# Loading objects:
+#   enrichTab_br_FDR05
+#   enrichTab_br_FDR1
+#   gene_list
+
+## Load sce_modeling_broad_Annotations.Rdata
+load(
+    here(
+        "processed-data",
+        "05_explore_sce",
+        "04_sce_1vALL_modeling",
+        "sce_modeling_broad_Annotations.Rdata"
+    ),
+    verbose = TRUE
+)
+# Loading objects:
+#   sce_modeling_broad_Annotations
+
 ###############################################################################
 
 
@@ -90,6 +118,22 @@ use_gsepc(
     gene_list = gene_list,
     enrichTab = enrichTab_FDR1,
     plot_name = "GSEA-1vsAll_FDR1.pdf"
+)
+
+use_gsepc(
+    modeling_results = sce_modeling_broad_Annotations,
+    model_type = "enrichment",
+    gene_list = gene_list,
+    enrichTab = enrichTab_br_FDR05,
+    plot_name = "GSEA-1vsAll_br_FDR05.pdf"
+)
+
+use_gsepc(
+    modeling_results = sce_modeling_broad_Annotations,
+    model_type = "enrichment",
+    gene_list = gene_list,
+    enrichTab = enrichTab_br_FDR1,
+    plot_name = "GSEA-1vsAll_br_FDR1.pdf"
 )
 
 ###############################################################################
