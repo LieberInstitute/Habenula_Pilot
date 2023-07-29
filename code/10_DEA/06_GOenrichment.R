@@ -13,29 +13,31 @@ out_data <- here("processed-data", "10_DEA", "05_GOenrichment")
 
 ####################### Load tsv with all genes from DEA ######################
 
-DEG_all <- fread(
+DE_all_files <- list.files(
     here(
         "processed-data",
         "10_DEA",
-        "04_DEA",
-        "DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv"
+        "04_DEA"
     ),
-    sep = "\t",
-    data.table = FALSE,
-    stringsAsFactors = FALSE
+    pattern = "DEA_All*",
+    full.names = TRUE
 )
+DE_all_files <- DE_all_files[1:3]
 
-DEG_sig <- fread(
+DE_all <- lapply(DE_all_files, fread, data.table = FALSE)
+
+DE_sig_files <- list.files(
     here(
         "processed-data",
         "10_DEA",
-        "04_DEA",
-        "DEA_Sig-gene_FDR1_qc-totAGene-qSVs-Hb-Thal.tsv"
+        "04_DEA"
     ),
-    sep = "\t",
-    data.table = FALSE,
-    stringsAsFactors = FALSE
+    pattern = "DEA_Sig*",
+    full.names = TRUE
 )
+DE_sig_files <- DE_sig_files[1:3]
+
+DE_sig <- lapply(DE_sig_files, fread, data.table = FALSE)
 
 ###############################################################################
 
