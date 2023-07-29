@@ -43,8 +43,9 @@ DEG_sig <- fread(
 
 ######################### Prepare data fo GO analysis #########################
 
-sigGene <- split(DEG_sig$EntrezID, sign(DEG_sig$logFC))
+sigGene <- c(list(DEG_sig$EntrezID), split(DEG_sig$EntrezID, sign(DEG_sig$logFC)))
 sigGene <- lapply(sigGene, function(x) x[!is.na(x)])
+names(sigGene) <- c("all", "down", "up")
 
 geneUniverse <- as.character(DEG_all$EntrezID)
 geneUniverse <- geneUniverse[!is.na(geneUniverse)]
