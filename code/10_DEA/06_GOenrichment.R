@@ -62,6 +62,22 @@ DE_sig <- lapply(DE_sig, function(x) {
     return(x)
 })
 
+## Split in: all, down, up and using just unique EntrezIDs
+sigFeat <- lapply(DE_sig, function(x) {
+    sigGene <- c(list(x$EntrezID), split(x$EntrezID, sign(x$logFC)))
+    sigGene <- lapply(sigGene, function(x) x[!is.na(x)])
+    sigGene <- lapply(sigGene, unique)
+    names(sigGene) <- c("all", "down", "up")
+    return(sigGene)
+})
+
+## Using just unique EntrezIDs
+allFeat <- lapply(DE_all, function(x) {
+    allGene <- as.character(x$EntrezID)
+    allGene <- allGene[!is.na(allGene)]
+    allGene <- unique(allGene)
+    return(allGene)
+})
 
 ###############################################################################
 
