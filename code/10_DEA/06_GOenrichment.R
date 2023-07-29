@@ -85,26 +85,30 @@ allFeat <- lapply(DE_all, function(x) {
 
 ##################### Run GO and KEGG enrichment analysis #####################
 
-go <- compareCluster(sigGene,
-    fun = "enrichGO",
-    universe = geneUniverse,
-    OrgDb = org.Hs.eg.db,
-    ont = "ALL",
-    pAdjustMethod = "BH",
-    pvalueCutoff = 0.15,
-    #qvalueCutoff = 0.05,
-    readable = TRUE
-)
-
-kegg <- compareCluster(sigGene,
-    fun = "enrichKEGG",
-    universe = geneUniverse,
-    organism = "human",
-    pvalueCutoff = 0.15,
-    qvalueCutoff = 0.05
-)
-
+go <- mapply(compareCluster,
+    geneClusters = sigFeat,
+    universe = allFeat,
+    MoreArgs = list(
+        fun = "enrichGO",
+        OrgDb = org.Hs.eg.db,
+        ont = "ALL",
+        pAdjustMethod = "BH",
+        pvalueCutoff = 1,
+        qvalueCutoff = 1,
+        readable = TRUE
     )
+)
+
+kegg <- mapply(compareCluster,
+    geneClusters = sigFeat,
+    universe = allFeat,
+    MoreArgs = list(
+        fun = "enrichKEGG",
+        organism = "human",
+        pvalueCutoff = 1,
+        qvalueCutoff = 1
+    )
+)
 
 ###############################################################################
 
