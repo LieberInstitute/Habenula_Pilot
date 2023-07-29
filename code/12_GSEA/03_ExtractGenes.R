@@ -88,6 +88,26 @@ extract_sig_genes <- function(gsea_sep_tissue, list_set, modeling_results, gene_
     })
 }
 
+## Save csv
+create_df <- function(list_tiss, csv_name) {
+    list_tiss <- Map(cbind, list_tiss, new_clumn = names(list_tiss))
+    list_tiss <- bind_rows(list_tiss)
+    colnames(list_tiss)[3] <- "cell_type"
+
+    write.table(
+         x = list_tiss,
+         file = csv_name,
+         quote = FALSE,
+         row.names = FALSE
+     )
+
+    return(list_tiss)
+}
+
+###############################################################################
+
+
+
 ########################## Extract significant genes ##########################
 
 ## Broad annotation data
