@@ -45,12 +45,23 @@ DE_sig <- lapply(DE_sig_files, fread, data.table = FALSE)
 
 ######################### Prepare data fo GO analysis #########################
 
-sigGene <- c(list(DEG_sig$EntrezID), split(DEG_sig$EntrezID, sign(DEG_sig$logFC)))
-sigGene <- lapply(sigGene, function(x) x[!is.na(x)])
-names(sigGene) <- c("all", "down", "up")
+## Converting ensembl IDs to Entrez IDs in case some of my data.frames does not include that column
+DE_all <- lapply(DE_all, function(x) {
+    entrez <- mapIds(org.Hs.eg.db, keys = x$ensemblID, keytype = "ENSEMBL", column = "ENTREZID")
+    entrez[is.na(names(entrez))] <- NA
+    entrez <- unlist(entrez)
+    x$EntrezID <- entrez
+    return(x)
+})
 
-geneUniverse <- as.character(DEG_all$EntrezID)
-geneUniverse <- geneUniverse[!is.na(geneUniverse)]
+DE_sig <- lapply(DE_sig, function(x) {
+    entrez <- mapIds(org.Hs.eg.db, keys = x$ensemblID, keytype = "ENSEMBL", column = "ENTREZID")
+    entrez[is.na(names(entrez))] <- NA
+    entrez <- unlist(entrez)
+    x$EntrezID <- entrez
+    return(x)
+})
+
 
 ###############################################################################
 
