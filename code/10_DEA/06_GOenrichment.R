@@ -18,7 +18,7 @@ DEG_all <- fread(
         "processed-data",
         "10_DEA",
         "04_DEA",
-        "DEA_AllGenes_qc-totAGene-qSVs-Hb-Thal.tsv"
+        "DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv"
     ),
     sep = "\t",
     data.table = FALSE,
@@ -30,7 +30,7 @@ DEG_sig <- fread(
         "processed-data",
         "10_DEA",
         "04_DEA",
-        "DEA_SigGenes_FDR1_qc-totAGene-qSVs-Hb-Thal.tsv"
+        "DEA_Sig-gene_FDR1_qc-totAGene-qSVs-Hb-Thal.tsv"
     ),
     sep = "\t",
     data.table = FALSE,
