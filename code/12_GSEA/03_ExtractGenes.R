@@ -66,6 +66,32 @@ load(
 
 ###############################################################################
 
+
+
+############# Function to extract significant intersection genes ##############
+
+## Extract genes
+extract_sig_genes <- function(gsea_sep_tissue, list_set, modeling_results, gene_list, fdr_cut) {
+    dims <- dim(modeling_results)[2]
+    lapply(gsea_sep_tissue, function(gsea_sep_tissue) {
+        gsea_sep_tissue <- cbind(gsea_sep_tissue, modeling_results[, (dims - 1):dims])
+        genes <- gsea_sep_tissue %>%
+            filter(.[, 3] < fdr_cut & .[, 1] > 0) %>%
+            select(ensembl, gene)
+        if (list_set == "positive") {
+            inter_genes <- intersect(as.vector(genes$ensembl), gene_list$positive)
+        } else {
+            inter_genes <- intersect(as.vector(genes$ensembl), gene_list$negative)
+        }
+        genes <- genes %>% filter(ensembl %in% inter_genes)
+        return(genes)
+    })
+}
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
