@@ -95,11 +95,11 @@ create_df <- function(list_tiss, csv_name) {
     colnames(list_tiss)[3] <- "cell_type"
 
     write.table(
-         x = list_tiss,
-         file = csv_name,
-         quote = FALSE,
-         row.names = FALSE
-     )
+        x = list_tiss,
+        file = csv_name,
+        quote = FALSE,
+        row.names = FALSE
+    )
 
     return(list_tiss)
 }
@@ -142,6 +142,3 @@ options(width = 120)
 session_info()
 
 ###############################################################################
-
-
-
