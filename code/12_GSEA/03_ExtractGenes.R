@@ -133,7 +133,31 @@ ct_names <- unique(gsub(names(sce_modeling_final_Annotations$enrichment)[-(69:70
 
 final_result <- mapply(extract_sig_genes, list_set = c("negative", "positive", "negative", "positive"), fdr_cut = c(0.05, 0.05, 0.1, 0.1), MoreArgs = list(gsea_sep_tissue = list_sep, modeling_results = sce_modeling_final_Annotations$enrichment, gene_list = gene_list, cellType_name = ct_names), SIMPLIFY = FALSE)
 
-colnames(final_result) <- paste(c("negative", "positive", "negative", "positive"), c("05", "05", "1", "1"), sep = "_FDR")
+names(final_result) <- paste(c("negative", "positive", "negative", "positive"), c("05", "05", "1", "1"), sep = "_FDR")
+
+###############################################################################
+
+
+
+############################ Save significant genes ###########################
+
+mapply(
+    function(results, test_name) {
+        write.csv(results,
+            file = here(out_data, paste0("GSE-broad_intersect-genes_", gsub("_", "-", test_name), ".csv")))
+    },
+    broad_result,
+    names(broad_result)
+)
+
+mapply(
+    function(results, test_name) {
+        write.csv(results,
+            file = here(out_data, paste0("GSE-final_intersect-genes_", gsub("_", "-", test_name), ".csv")))
+    },
+    final_result,
+    names(final_result)
+)
 
 ###############################################################################
 
