@@ -121,20 +121,18 @@ create_df <- function(list_tiss, csv_name) {
 
 ## Broad annotation data
 broad_list_sep <- split.default(sce_modeling_broad_Annotations$enrichment[, 1:36], rep(1:9, times = 4))
-ct_names <- unique(gsub(names(sce_modeling_broad_Annotations$enrichment)[-(37:38)], pattern = ".+\\_", replacement = ""))
+broad_ct_names <- unique(gsub(names(sce_modeling_broad_Annotations$enrichment)[-(37:38)], pattern = ".+\\_", replacement = ""))
 
-broad_result <- mapply(extract_sig_genes, list_set = c("negative", "positive", "negative", "positive"), fdr_cut = c(0.05, 0.05, 0.1, 0.1), MoreArgs = list(gsea_sep_tissue = broad_list_sep, modeling_results = sce_modeling_broad_Annotations$enrichment, gene_list = gene_list))
+broad_result <- mapply(extract_sig_genes, list_set = c("negative", "positive", "negative", "positive"), fdr_cut = c(0.05, 0.05, 0.1, 0.1), MoreArgs = list(gsea_sep_tissue = broad_list_sep, modeling_results = sce_modeling_broad_Annotations$enrichment, gene_list = gene_list, cellType_name = broad_ct_names), SIMPLIFY = FALSE)
 
-rownames(broad_result) <- ct_names
-colnames(broad_result) <- paste(c("negative", "positive", "negative", "positive"), c("05", "05", "1", "1"), sep = "_FDR")
+names(broad_result) <- paste(c("negative", "positive", "negative", "positive"), c("05", "05", "1", "1"), sep = "_FDR")
 
 ## Final annotation data
 list_sep <- split.default(sce_modeling_final_Annotations$enrichment[, 1:68], rep(1:17, times = 4))
 ct_names <- unique(gsub(names(sce_modeling_final_Annotations$enrichment)[-(69:70)], pattern = ".+\\_", replacement = ""))
 
-final_result <- mapply(extract_sig_genes, list_set = c("negative", "positive", "negative", "positive"), fdr_cut = c(0.05, 0.05, 0.1, 0.1), MoreArgs = list(gsea_sep_tissue = list_sep, modeling_results = sce_modeling_final_Annotations$enrichment, gene_list = gene_list))
+final_result <- mapply(extract_sig_genes, list_set = c("negative", "positive", "negative", "positive"), fdr_cut = c(0.05, 0.05, 0.1, 0.1), MoreArgs = list(gsea_sep_tissue = list_sep, modeling_results = sce_modeling_final_Annotations$enrichment, gene_list = gene_list, cellType_name = ct_names), SIMPLIFY = FALSE)
 
-rownames(final_result) <- ct_names
 colnames(final_result) <- paste(c("negative", "positive", "negative", "positive"), c("05", "05", "1", "1"), sep = "_FDR")
 
 ###############################################################################
