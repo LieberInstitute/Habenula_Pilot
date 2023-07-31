@@ -1,0 +1,122 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.10
+Loading LIBD module for ruby/3.1.2
+Loading conda_R/4.3
+**** Job starts ****
+Mon Jul 31 15:25:44 EDT 2023
+**** JHPCE info ****
+User: freneega
+Job id: 3662198
+Job name: ExtractGenes
+Hostname: compute-093.cm.cluster
+Task id: undefined
+Unloading conda_R/4.3
+Loading conda_R/4.3
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/3.1.2
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.10
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.3
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading objects:
+  enrichTab_FDR05
+  enrichTab_FDR1
+  gene_list
+Loading objects:
+  sce_modeling_final_Annotations
+Loading objects:
+  enrichTab_br_FDR05
+  enrichTab_br_FDR1
+  gene_list
+Loading objects:
+  sce_modeling_broad_Annotations
+$negative_FDR05
+NULL
+
+$positive_FDR05
+NULL
+
+$negative_FDR1
+NULL
+
+$positive_FDR1
+NULL
+
+$negative_FDR05
+NULL
+
+$positive_FDR05
+NULL
+
+$negative_FDR1
+NULL
+
+$positive_FDR1
+NULL
+
+[1] "Reproducibility information:"
+[1] "2023-07-31 15:25:52 EDT"
+   user  system elapsed 
+  3.777   0.345   6.012 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.3.1 Patched (2023-07-31 r84797)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2023-07-31
+ pandoc   3.1.1 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package     * version date (UTC) lib source
+ cli           3.6.1   2023-03-23 [2] CRAN (R 4.3.0)
+ dplyr       * 1.1.2   2023-04-20 [2] CRAN (R 4.3.0)
+ fansi         1.0.4   2023-01-22 [2] CRAN (R 4.3.0)
+ generics      0.1.3   2022-07-05 [2] CRAN (R 4.3.0)
+ glue          1.6.2   2022-02-24 [2] CRAN (R 4.3.0)
+ here        * 1.0.1   2020-12-13 [1] CRAN (R 4.3.1)
+ lifecycle     1.0.3   2022-10-07 [2] CRAN (R 4.3.0)
+ magrittr      2.0.3   2022-03-30 [2] CRAN (R 4.3.0)
+ pillar        1.9.0   2023-03-22 [2] CRAN (R 4.3.0)
+ pkgconfig     2.0.3   2019-09-22 [2] CRAN (R 4.3.0)
+ purrr       * 1.0.1   2023-01-10 [2] CRAN (R 4.3.0)
+ R6            2.5.1   2021-08-19 [2] CRAN (R 4.3.0)
+ rlang         1.1.1   2023-04-28 [2] CRAN (R 4.3.0)
+ rprojroot     2.0.3   2022-04-02 [2] CRAN (R 4.3.0)
+ sessioninfo * 1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+ tibble        3.2.1   2023-03-20 [2] CRAN (R 4.3.0)
+ tidyselect    1.2.0   2022-10-10 [2] CRAN (R 4.3.0)
+ utf8          1.2.3   2023-01-31 [2] CRAN (R 4.3.0)
+ vctrs         0.6.3   2023-06-14 [1] CRAN (R 4.3.1)
+ withr         2.5.0   2022-03-03 [2] CRAN (R 4.3.0)
+
+ [1] /users/freneega/R/4.3
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/R/4.3/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.3/R/4.3/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Mon Jul 31 15:25:54 EDT 2023
