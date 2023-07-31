@@ -8,7 +8,7 @@ library("sessioninfo")
 
 out_plot <- here("plots", "10_DEA", "05_GOenrichment")
 out_data <- here("processed-data", "10_DEA", "05_GOenrichment")
-
+if (!dir.exists(out_data)) dir.create(out_data)
 
 
 ####################### Load tsv with all genes from DEA ######################
