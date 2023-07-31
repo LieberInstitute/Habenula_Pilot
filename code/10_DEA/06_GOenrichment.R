@@ -98,6 +98,7 @@ go <- mapply(compareCluster,
         readable = TRUE
     )
 )
+names(go) <- c("exon", "gene", "jx")
 
 kegg <- mapply(compareCluster,
     geneClusters = sigFeat,
@@ -109,6 +110,11 @@ kegg <- mapply(compareCluster,
         qvalueCutoff = 1
     )
 )
+names(kegg) <- c("exon", "gene", "jx")
+
+###############################################################################
+
+
 
 ###############################################################################
 
