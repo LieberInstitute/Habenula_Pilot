@@ -116,6 +116,34 @@ names(kegg) <- c("exon", "gene", "jx")
 
 
 
+################################# Save results ################################
+
+## Save go rda and tables (csv)
+save(
+    go,
+    file = here(out_data, "go_results.Rdata")
+)
+mapply(
+    function(g, feat_name) {
+        write.csv(g@compareClusterResult, file = here(out_data, paste0("go_Habenula_", feat_name, ".csv")))
+    },
+    go,
+    names(go)
+)
+
+## Save kegg rda and tables (csv)
+save(
+    kegg,
+    file = here(out_data, "kegg_results.Rdata")
+)
+mapply(
+    function(k, feat_name) {
+        write.csv(k@compareClusterResult, file = here(out_data, paste0("kegg_Habenula_", feat_name, ".csv")))
+    },
+    kegg,
+    names(kegg)
+)
+
 ###############################################################################
 
 
