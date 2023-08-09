@@ -141,7 +141,8 @@ dev.off()
 
 
 #### Saving
-save(marker_stats, file = here(save_dir, "marker_stats_top_25_genes.csv"))
+write.csv(marker_stats, file = here(save_dir, "marker_stats_top_25_genes.csv"), row.names = FALSE)
+save(marker_stats, file = here(save_dir, "marker_stats_top_25_genes.Rdata"))
 
 save(est_prop, file = here(save_dir, "est_prop_split_Hb_annotations.RDATA"))
 
