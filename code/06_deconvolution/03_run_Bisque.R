@@ -2,14 +2,13 @@
 # Working on bulkRNA-seq deconvolution using Bisque.
 # qrsh -l mem_free=50G,h_vmem=50G
 
-library(SummarizedExperiment)
-library(here)
-library(DeconvoBuddies)
-library(SingleCellExperiment)
-library(jaffelab)
-library(dplyr)
-library(BisqueRNA)
-library(ggplot2)
+library("here")
+library("DeconvoBuddies")
+library("SingleCellExperiment")
+library("jaffelab")
+library("dplyr")
+library("BisqueRNA")
+library("ggplot2")
 library("sessioninfo")
 
 # loading sce object (sn data) post drop of Hb cluster! 
@@ -57,15 +56,15 @@ rownames(rse_gene) <- rowData(rse_gene)$Symbol
 ######## Pre-Bisque ############################################################
 ## remember, this is the broad analyses meaning that these annotations are solely
 # for bulk deconvo
-
+rownames(sce) <- rowData(sce)$ID
 # Creating mean_ratios based on our specified annotations
-ratios <- get_mean_ratio2(sym_sce,
+ratios <- get_mean_ratio2(sce,
                           cellType_col = "bulkTypeSepHb",
                           assay_name = "logcounts",
                           add_symbol = TRUE)
 
 # Using the 1 vs All standard fold change for each gene x cell type
-fc <- findMarkers_1vAll(sym_sce,
+fc <- findMarkers_1vAll(sce,
                         assay_name = "counts",
                         cellType_col = "bulkTypeSepHb",
                         add_symbol = FALSE,
@@ -94,8 +93,8 @@ plot_marker_express_ALL(sym_sce,
 # OPC is pretty messy. Only taking top markers 1-6! 
 ## creating marker_list of top 25 genes
 marker_genes <- marker_stats |>
-  filter(rank_ratio <= 25, gene %in% rownames(rse_gene)) |>
-  pull(gene)
+  filter(rank_ratio <= 25, Symbol %in% rownames(rse_gene)) |>
+  pull(Symbol)
 
 length(marker_genes)
 # [1] 170
@@ -130,6 +129,10 @@ est_prop <- ReferenceBasedDecomposition(bulk.eset = exp_set_bulk,
 # adding color group
 marker_stats$Top25 <- "No"
 marker_stats[which(marker_stats$rank_ratio <= 25), "Top25"] <- "Yes"
+
+# Annotate 170 markers
+marker_stats <- marker_stats |>
+  mutate(Marker = (rank_ratio <= 25 & Symbol %in% rownames(rse_gene)))
 
 # plotting
 # this is the hockey stick plot for the split up snAnno
