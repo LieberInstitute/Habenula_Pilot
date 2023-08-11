@@ -169,6 +169,15 @@ save(enrichTab_br_FDR05,
     )
 )
 
+save(enrichTab_mrk,
+    gene_list,
+    file = here(
+        "processed-data",
+        "12_GSEA",
+        "gene_set_enrichment_1vsAll_25mrkr_result_tables.rda"
+    )
+)
+
 ###############################################################################
 
 
