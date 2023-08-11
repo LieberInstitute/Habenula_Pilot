@@ -36,19 +36,19 @@
 #'
 #' ## Explore the results
 #' asd_sfari_enrichment
-#' 
-marker_gene_set_enrichment <- function(gene_list, 
+#'
+marker_gene_set_enrichment <- function(gene_list,
                                        n_marker_gene = 25,
                                        marker_stats){
-  
+
   geneList_present <- lapply(gene_list, function(x) {
     x <- x[!is.na(x)]
     x[x %in% marker_stats$gene]
   })
-  
+
   ## warn about low power for small geneLists
   geneList_length <- sapply(geneList_present, length)
-  
+
   min_genes <- 25
   if (any(geneList_length < min_genes)) {
     warning(
@@ -58,23 +58,23 @@ marker_gene_set_enrichment <- function(gene_list,
       paste(names(geneList_length)[geneList_length < 200], collapse = " ,")
     )
   }
-  
-  
+
+
   enrichTab <-
-    do.call(rbind, lapply(unique(marker_stats$cellType.target), function(i) {
-      
+    do.call(rbind, lapply(unique(marker_stats$cellType.target), function(ct) {
+
       marker_stats_ct <- marker_stats |> filter(cellType.target == ct)
-      
-      
+
+
       tabList <- lapply(geneList_present, function(g) {
         table(
           Set = factor(marker_stats_ct$gene %in% g, c(FALSE, TRUE)),
-          Marker = factor(marker_stats_ct$rank_ratio <= n_marker_genes, c(FALSE, TRUE))
+          Marker = factor(marker_stats_ct$rank_ratio <= n_marker_gene, c(FALSE, TRUE))
         )
       })
-      
+
       enrichList <- lapply(tabList, fisher.test, alternative = "greater")
-      
+
       o <- data.frame(
         OR = vapply(enrichList, "[[", numeric(1), "estimate"),
         Pval = vapply(enrichList, "[[", numeric(1), "p.value"),
@@ -88,6 +88,6 @@ marker_gene_set_enrichment <- function(gene_list,
       o$ID <- gsub(".odds ratio", "", rownames(o))
       rownames(o) <- NULL
       return(o)
-      
+
     }))
 }
