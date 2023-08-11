@@ -89,6 +89,26 @@ plot_venn(list_2plot = list(exon_ensid, jx_ensid), category.names = c("Exon", "J
 plot_venn(list_2plot = list(exon_ensid, jx_ensid, genes_ensid), category.names = c("Exon", "Jx", "Gene"), filename = here(out_plot, "Venn_exon-jx-gene.png"), fill = c("#b4e1ff", "#eccbd9", "#f1e7dd"))
 
 ###############################################################################
+
+
+
+########################## Save intersect ensembl IDs #########################
+
+message(Sys.time(), " - saving files with intersection genes")
+
+save_inter <- function(inter_ids, file_name) {
+    inter_df <- sig_jx %>%
+        select(ensemblID, Symbol) %>%
+        filter(ensemblID %in% inter_ids) %>%
+        unique()
+
+    write.table(x = inter_df, file = here(out_data, file_name), sep = "\t", col.names = TRUE, row.names = FALSE, quote = FALSE)
+}
+
+###############################################################################
+
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
