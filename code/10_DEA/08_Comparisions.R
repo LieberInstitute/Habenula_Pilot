@@ -35,6 +35,28 @@ sig_exons <- fread(
 )
 
 ###############################################################################
+
+
+
+############################# Extract ensembl IDs #############################
+
+message(Sys.time(), " - extracting ensemblIDs")
+
+genes_ensid <- na.omit(unique(sig_genes$ensemblID))
+length(genes_ensid)
+# [1] 173
+
+jx_ensid <- na.omit(unique(sig_jx$ensemblID))
+length(jx_ensid)
+# [1] 4592
+
+exon_ensid <- na.omit(unique(sig_exons$ensemblID))
+length(exon_ensid)
+# [1] 509
+
+###############################################################################
+
+
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
