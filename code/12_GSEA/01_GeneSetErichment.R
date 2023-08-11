@@ -53,8 +53,28 @@ dim(sce_modeling_broad_Annotations$enrichment)
 # [1] 19324    38
 
 
+## Load marker_stats_top_25_genes.Rdata
+load(
+    here(
+        "processed-data",
+        "06_deconvolution",
+        "run_Bisque",
+        "marker_stats_top_25_genes.Rdata"
+    ),
+    verbose = TRUE
+)
+# Loading objects:
+#   marker_stats
+
+lobstr::obj_size(marker_stats)
+# 5.23 MB
+class(marker_stats)
+# [1] "tbl_df"     "tbl"        "data.frame"
+dim(marker_stats)
+# [1] 23082    18
+
 ## Load gene list
-de_genes <- fread (
+de_genes <- fread(
     here(
         "processed-data",
         "10_DEA",
@@ -68,13 +88,13 @@ de_genes <- fread (
 gene_list <- list(
     all = de_genes$ensemblID,
     positive = (de_genes %>%
-            filter(logFC > 0) %>%
-            select(ensemblID) %>%
-            as.vector())$ensemblID,
+        filter(logFC > 0) %>%
+        select(ensemblID) %>%
+        as.vector())$ensemblID,
     negative = (de_genes %>%
-            filter(logFC < 0) %>%
-            select(ensemblID) %>%
-            as.vector())$ensemblID
+        filter(logFC < 0) %>%
+        select(ensemblID) %>%
+        as.vector())$ensemblID
 )
 
 length(gene_list)
@@ -143,4 +163,3 @@ options(width = 120)
 session_info()
 
 ###############################################################################
-
