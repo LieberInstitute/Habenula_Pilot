@@ -8,6 +8,8 @@ library("sessioninfo")
 
 ##################### Load objects for gene_set_enrichment ####################
 
+message(Sys.time(), " - loading objects")
+
 ## Load sce_modeling_final_Annotations.Rdata
 load(
     here(
@@ -115,6 +117,8 @@ lapply(gene_list, length)
 
 ################## Run gene_set_enrichment (broad and final) ##################
 
+message(Sys.time(), " - running gene_set_enrichment() for broad and final annotations")
+
 enrichTab_FDR05 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_final_Annotations, model_type = "enrichment", fdr_cut = 0.05)
 
 enrichTab_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_final_Annotations, model_type = "enrichment", fdr_cut = 0.1)
@@ -133,6 +137,8 @@ enrichTab_br_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results
 ## modelig_results object, I'm using other function to run it.Which was created
 ## by Louise Huuki
 
+message(Sys.time(), " - running marker_gene_set_enrichment() for top 25 marker genes")
+
 source(
     here(
         "code",
@@ -148,6 +154,8 @@ enrichTab_mrk <- marker_gene_set_enrichment(gene_list = gene_list, marker_stats 
 
 
 ################### Save gene_set_enrichment results to rda ###################
+
+message(Sys.time(), " - saving all results")
 
 save(enrichTab_FDR05,
     enrichTab_FDR1,
