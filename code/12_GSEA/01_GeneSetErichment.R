@@ -163,22 +163,25 @@ message(Sys.time(), " - saving all results")
 save(enrichTab_FDR05,
     enrichTab_FDR1,
     gene_list,
-    file = paste0(here(out_data), "gene_set_enrichment_1vsAll_result_tables.rda")
+    file = here(
+        out_data,
+        "gene_set_enrichment_1vsAll_result_tables.rda"
+    )
 )
 
 save(enrichTab_br_FDR05,
     enrichTab_br_FDR1,
     gene_list,
-    file = paste0(
-        here(out_data),
+    file = here(
+        out_data,
         "gene_set_enrichment_1vsAll_broad_result_tables.rda"
     )
 )
 
 save(enrichTab_mrk,
     gene_list,
-    file = paste0(
-        here(out_data),
+    file = here(
+        out_data,
         "gene_set_enrichment_1vsAll_25mrkr_result_tables.rda"
     )
 )
