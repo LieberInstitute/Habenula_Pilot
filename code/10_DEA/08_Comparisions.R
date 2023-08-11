@@ -105,6 +105,15 @@ save_inter <- function(inter_ids, file_name) {
     write.table(x = inter_df, file = here(out_data, file_name), sep = "\t", col.names = TRUE, row.names = FALSE, quote = FALSE)
 }
 
+save_inter(inter_ids = intersect(genes_ensid, jx_ensid),
+    file_name = "InterIDs_gene-jx.tsv")
+save_inter(inter_ids = intersect(genes_ensid, exon_ensid),
+    file_name = "InterIDs_gene-exon.tsv")
+save_inter(inter_ids = intersect(exon_ensid, jx_ensid),
+    file_name = "InterIDs_exon-jx.tsv")
+save_inter(inter_ids = intersect(exon_ensid, intersect(jx_ensid, genes_ensid)),
+    file_name = "InterIDs_exon-jx-gene.tsv")
+
 ###############################################################################
 
 
