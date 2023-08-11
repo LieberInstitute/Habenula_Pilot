@@ -57,6 +57,30 @@ length(exon_ensid)
 ###############################################################################
 
 
+
+############################# Plot Venn diagrams ##############################
+
+message(Sys.time(), " - plotting Venn diagrams")
+
+plot_venn <- function(list_2plot, category.names, filename, fill) {
+    venn.diagram(
+        x = list_2plot,
+        category.names = category.names,
+        filename = filename,
+        fill = fill,
+        disable.logging = TRUE,
+        imagetype = "png",
+        units = "in",
+        height = 6,
+        width = 6,
+        total.population = TRUE,
+        cat.fontface = "bold",
+        cat.default.pos = "outer",
+        cex = 1.2,
+    )
+}
+
+###############################################################################
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
