@@ -80,6 +80,14 @@ plot_venn <- function(list_2plot, category.names, filename, fill) {
     )
 }
 
+plot_venn(list_2plot = list(genes_ensid, jx_ensid), category.names = c("Gene", "Jx"), filename = here(out_plot, "Venn_gene-jx.png"), fill = c("#f1e7dd", "#eccbd9"))
+
+plot_venn(list_2plot = list(genes_ensid, exon_ensid), category.names = c("Gene", "Exon"), filename = here(out_plot, "Venn_gene-exon.png"), fill = c("#f1e7dd", "#b4e1ff"))
+
+plot_venn(list_2plot = list(exon_ensid, jx_ensid), category.names = c("Exon", "Jx"), filename = here(out_plot, "Venn_exon-jx.png"), fill = c("#b4e1ff", "#eccbd9"))
+
+plot_venn(list_2plot = list(exon_ensid, jx_ensid, genes_ensid), category.names = c("Exon", "Jx", "Gene"), filename = here(out_plot, "Venn_exon-jx-gene.png"), fill = c("#b4e1ff", "#eccbd9", "#f1e7dd"))
+
 ###############################################################################
 ######################### Reproducibility information #########################
 
