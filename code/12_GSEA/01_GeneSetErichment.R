@@ -113,7 +113,7 @@ lapply(gene_list, length)
 
 
 
-########################### Run gene_set_enrichment ###########################
+################## Run gene_set_enrichment (broad and final) ##################
 
 enrichTab_FDR05 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_final_Annotations, model_type = "enrichment", fdr_cut = 0.05)
 
@@ -122,6 +122,26 @@ enrichTab_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = 
 enrichTab_br_FDR05 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_broad_Annotations, model_type = "enrichment", fdr_cut = 0.05)
 
 enrichTab_br_FDR1 <- gene_set_enrichment(gene_list = gene_list, modeling_results = sce_modeling_broad_Annotations, model_type = "enrichment", fdr_cut = 0.1)
+
+###############################################################################
+
+
+
+################# Run gene_set_enrichment for 25 marker genes #################
+
+## Since the object marker_stats doesn't have the same structure as a normal
+## modelig_results object, I'm using other function to run it.Which was created
+## by Louise Huuki
+
+source(
+    here(
+        "code",
+        "12_GSEA",
+        "marker_gene_set_enrichment.R"
+    )
+)
+
+enrichTab_mrk <- marker_gene_set_enrichment(gene_list = gene_list, marker_stats = marker_stats)
 
 ###############################################################################
 
