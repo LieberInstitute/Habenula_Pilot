@@ -6,6 +6,9 @@ library("org.Hs.eg.db")
 library("ggplot2")
 library("sessioninfo")
 
+out_plot <- here("plots", "10_DEA", "07_GOplot")
+if (!dir.exists(out_plot)) dir.create(out_plot)
+
 
 
 ########################### Plot GO and KEGG results ##########################
@@ -67,6 +70,4 @@ options(width = 120)
 session_info()
 
 ###############################################################################
-
-
 
