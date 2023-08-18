@@ -1,0 +1,53 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/4.3
+**** Job starts ****
+Fri Aug 18 16:33:42 EDT 2023
+**** JHPCE info ****
+User: lhuuki
+Job id: 3686769
+Job name: MAGMA_gene
+Hostname: compute-101.cm.cluster
+Task id: undefined
+Loading LIBD module for magma/1.10
+
+Currently Loaded Modules:
+  1) matlab/R2019a      7) gcc/4.4.7                      13) ruby/2.6.4p104
+  2) stata/17           8) COMMUNITY_CENTOS7_DEFAULT_ENV  14) rmate/1.5.9
+  3) sas/9.4            9) JHPCE_CENTOS7_DEFAULT_ENV      15) conda/3-4.11.0
+  4) mathematica/11.3  10) git-status-size/github         16) conda_R/4.3
+  5) JHPCE_tools/1.0   11) git/2.28.0                     17) magma/1.10
+  6) sge/8.1.9         12) git-lfs/2.8.0
+
+ 
+
+Welcome to MAGMA v1.10 (linux/s)
+Using flags:
+	--bfile /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur
+	--gene-annot /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/MAGMA_output/Habenula_MAGMA.genes.annot
+	--out /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/MAGMA_output/Habenula_MAGMA_gene
+
+Start time is 16:33:44, Friday 18 Aug 2023
+
+Loading PLINK-format data...
+Reading file /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur.fam... 503 individuals read
+	phenotype is binary, values of -9 and 0 will be considered missing values
+Reading file /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur.bim... 22665064 SNPs read
+Preparing file /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur.bed... 
+
+Reading SNP synonyms from file /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur.synonyms (auto-detected)
+	read 6016767 mapped synonyms from file, mapping to 3921040 SNPs in the data
+	WARNING: detected 133 synonymous SNP pairs in the data
+	         skipped all synonym entries involved, synonymous SNPs are kept in analysis
+	         writing list of detected synonyms in data to supplementary log file
+Filtering phenotype/covariate missing values... 0 individuals remaining
+
+ERROR - processing individuals: remaining sample is too small (minimum = 50 individuals)
+
+Terminating program.
+**** Job ends ****
+Fri Aug 18 16:34:15 EDT 2023

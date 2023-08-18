@@ -1,0 +1,97 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/4.3
+**** Job starts ****
+Fri Aug 18 15:39:09 EDT 2023
+**** JHPCE info ****
+User: lhuuki
+Job id: 3686734
+Job name: MAGMA_annotate
+Hostname: compute-059.cm.cluster
+Task id: undefined
+Loading LIBD module for magma/1.10
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.3
+  5) gcc/4.4.7        10) git-lfs/2.8.0                  15) magma/1.10
+
+ 
+
+Welcome to MAGMA v1.10 (linux/s)
+Using flags:
+	--annotate
+	--snp-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/habenula_genotypes.snploc
+	--gene-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/NCBI38/NCBI38.gene.loc
+	--out /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/MAGMA_output/Habenula_MAGMA
+
+Start time is 15:39:09, Friday 18 Aug 2023
+
+Starting annotation...
+Reading gene locations from file /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/NCBI38/NCBI38.gene.loc... 
+	20137 gene locations read from file
+	chromosome  1: 2097 genes
+	chromosome  2: 1285 genes
+	chromosome  3: 1078 genes
+	chromosome  4: 765 genes
+	chromosome  5: 886 genes
+	chromosome  6: 1053 genes
+	chromosome  7: 942 genes
+	chromosome  8: 691 genes
+	chromosome  9: 803 genes
+	chromosome 10: 748 genes
+	chromosome 11: 1299 genes
+	chromosome 12: 1032 genes
+	chromosome 13: 341 genes
+	chromosome 14: 613 genes
+	chromosome 15: 616 genes
+	chromosome 16: 865 genes
+	chromosome 17: 1197 genes
+	chromosome 18: 283 genes
+	chromosome 19: 1423 genes
+	chromosome 20: 540 genes
+	chromosome 21: 246 genes
+	chromosome 22: 461 genes
+	chromosome  X: 825 genes
+	chromosome  Y: 48 genes
+Reading SNP locations from file /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/habenula_genotypes.snploc... 
+	WARNING: on line 1, chromosome code 'CHR' not recognised; skipping SNP (ID = SNP)
+	SNPs mapped so far: 259981	SNPs mapped so far: 489278	SNPs mapped so far: 714135	SNPs mapped so far: 950759	SNPs mapped so far: 1155108	SNPs mapped so far: 1344918	SNPs mapped so far: 1514208	SNPs mapped so far: 1717162	SNPs mapped so far: 1920808	SNPs mapped so far: 2165086	SNPs mapped so far: 2427248	SNPs mapped so far: 2647809	SNPs mapped so far: 2899405	SNPs mapped so far: 3156496	SNPs mapped so far: 3390318	SNPs mapped so far: 3627385	SNPs mapped so far: 3813049	SNPs mapped so far: 4093435	SNPs mapped so far: 4385287	SNPs mapped so far: 4634566	SNPs mapped so far: 4867949	SNPs mapped so far: 5083383                                                                                                 	12393872 SNP locations read from file
+	of those, 5095955 (41.12%) mapped to at least one gene
+Writing annotation to file /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/MAGMA_output/Habenula_MAGMA.genes.annot
+	for chromosome  1, 42 genes are empty (out of 2097)
+	for chromosome  2, 6 genes are empty (out of 1285)
+	for chromosome  3, 1 gene is empty (out of 1078)
+	for chromosome  4, 20 genes are empty (out of 765)
+	for chromosome  5, 9 genes are empty (out of 886)
+	for chromosome  6, 16 genes are empty (out of 1053)
+	for chromosome  7, 9 genes are empty (out of 942)
+	for chromosome  8, 25 genes are empty (out of 691)
+	for chromosome  9, 20 genes are empty (out of 803)
+	for chromosome 10, 4 genes are empty (out of 748)
+	for chromosome 11, 12 genes are empty (out of 1299)
+	for chromosome 12, 2 genes are empty (out of 1032)
+	for chromosome 13, 5 genes are empty (out of 341)
+	for chromosome 14, 7 genes are empty (out of 613)
+	for chromosome 15, 16 genes are empty (out of 616)
+	for chromosome 16, 17 genes are empty (out of 865)
+	for chromosome 17, 8 genes are empty (out of 1197)
+	for chromosome 18, 1 gene is empty (out of 283)
+	for chromosome 19, 3 genes are empty (out of 1423)
+	for chromosome 20, 3 genes are empty (out of 540)
+	for chromosome 21, 32 genes are empty (out of 246)
+	for chromosome 22, 14 genes are empty (out of 461)
+	for chromosome  X, 55 genes are empty (out of 825)
+	for chromosome  Y, 48 genes are empty (out of 48)
+	at least one SNP mapped to each of a total of 19762 genes (out of 20137)
+
+
+End time is 15:39:33, Friday 18 Aug 2023 (elapsed: 00:00:24)
+**** Job ends ****
+Fri Aug 18 15:39:33 EDT 2023
