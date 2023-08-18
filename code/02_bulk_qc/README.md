@@ -1,5 +1,5 @@
-**June 12th, 2022**     
-*Bukola Ajanaku*
+Original by *Bukola Ajanaku*
+Updated by *Renee Garcia-Flores*
 
 #### 02_bulk_qc ####
 
@@ -8,6 +8,8 @@
 | 1 | 01_qc_data_Bukola.R |
 | 2 | 02_build_objects_Bukola.R | 
 | 3 | 03_qc_plotter_Bukola.R | 
+| 4 | 04_export_bulk_data_info.R |
+| 5 | 05_build_final_rse.R |
 
 #### Description ####
 
@@ -23,8 +25,11 @@ All quality controlled RSE objects are in  `~processed-data/02_bulk_qc/count_dat
 - **03_qc_plotter_Bukola.R**        
 Made a series of plots to further investigate if any metrics where driving trends in the rse data post qc and filtration.
 
+- **04_export_bulk_data_info.R**  
+Export phenotype data subset as csv for quick refrence
 
-
+- **05_build_final_rse.R**  
+Creates a rse object with deconvolution, SNP PCs and qSVa results. Needed for DEA analysis
 
 
 
