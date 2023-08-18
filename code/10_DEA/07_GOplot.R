@@ -39,6 +39,42 @@ names(kegg_results) <- c("exon", "gene", "jx")
 
 ###############################################################################
 
+
+
+################################ Filter results ###############################
+
+go_results_filt <- lapply(go_results, function(feature) {
+    feature_filt <- feature %>%
+        filter(qvalue < 0.2) %>%
+        arrange(qvalue)
+    return(feature_filt)
+})
+lapply(go_results_filt, dim)
+# $exon
+# [1] 115  12
+# $gene
+# [1] 36 12
+# $jx
+# [1] 1617   12
+
+kegg_results_filt <- lapply(kegg_results, function(feature) {
+    feature_filt <- feature %>%
+        filter(qvalue < 0.2) %>%
+        arrange(qvalue)
+    return(feature_filt)
+})
+lapply(kegg_results_filt, dim)
+# $exon
+# [1]  1 11
+# $gene
+# [1]  0 11
+# $jx
+# [1] 96 11
+
+###############################################################################
+
+
+
 ########################### Plot GO and KEGG results ##########################
 
 ## Function to plot GO results
