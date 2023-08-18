@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l bluejay,mem_free=25G,h_vmem=25G,h_fsize=100G
+#$ -l mem_free=25G,h_vmem=25G,h_fsize=100G
 #$ -N MAGMA_annotate
 #$ -o logs/01_MAGMA_annotate.txt
 #$ -e logs/01_MAGMA_annotate.txt
@@ -23,7 +23,10 @@ module load magma/1.10
 module list
 
 ## Edit with your job command
-magma --annotate --snp-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/08_bulk_snpPC/habenula_genotypes.bim --gene-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/NCBI38/NCBI38.gene.loc --out /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/01_MAGMA_annotate/Habenula_MAGMA
+magma --annotate\
+	--snp-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/habenula_genotypes.snploc\
+	--gene-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/NCBI38/NCBI38.gene.loc\
+	--out /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/MAGMA_output/Habenula_MAGMA
 echo "**** Job ends ****"
 date
 
