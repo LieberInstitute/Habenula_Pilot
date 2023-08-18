@@ -76,14 +76,17 @@ lapply(kegg_results_filt, dim)
 
 
 ########################### Plot GO and KEGG results ##########################
+go = go_results_filt$exon
+ont = "BP"
 
 ## Function to plot GO results
-plot_go <- function(ont, title_p, path, filename, size) {
+plot_go <- function(go, ont, title_p, path, filename, size) {
     leng_ont <- dim(filter(go, ONTOLOGY == ont))[1]
-    ifelse(leng_ont >= 10,
-        go_mat <- filter(go, ONTOLOGY == ont)[1:10],
-        go_mat <- filter(go, ONTOLOGY == ont)[1:leng_ont]
-    )
+     ifelse(leng_ont >= 10,
+         go_mat <- filter(go, ONTOLOGY == ont)[1:10,],
+         go_mat <- filter(go, ONTOLOGY == ont)[1:leng_ont,]
+     )
+    #go_mat <- filter(go, ONTOLOGY == ont)[1:leng_ont,]
     dotplot_1 <- ggplot(go_mat, aes(Cluster, Description)) +
         theme_bw() +
         geom_point(aes(color = p.adjust, size = Count)) +
@@ -100,12 +103,24 @@ plot_go <- function(ont, title_p, path, filename, size) {
     ggsave(filename = filename, path = path, dotplot_1, height = size[1], width = size[2])
 }
 
-plot_go(ont = "BP", title_p = "Biological Process", filename = "GOenrichment_BP_qc-snpPCs-Hb.pdf", path = out_plot, size = c(4, 8))
-plot_go(ont = "CC", title_p = "Cellular Component", filename = "GOenrichment_CC_qc-snpPCs-Hb.pdf", path = out_plot, size = c(6, 5))
-plot_go(ont = "MF", title_p = "Molecular Function", filename = "GOenrichment_MF_qc-snpPCs-Hb.pdf", path = out_plot, size = c(6, 6.5))
+## Exon
+plot_go(go = go_results_filt$exon, ont = "BP", title_p = "Biological Process", filename = "GO-BP_exon.pdf", path = out_plot, size = c(4, 6))
+plot_go(go = go_results_filt$exon, ont = "CC", title_p = "Cellular Component", filename = "GO-CC_exon.pdf", path = out_plot, size = c(6, 5))
+plot_go(go = go_results_filt$exon, ont = "MF", title_p = "Molecular Function", filename = "GO-MF_exon.pdf", path = out_plot, size = c(6, 10))
+
+## Gene
+plot_go(go = go_results_filt$gene, ont = "BP", title_p = "Biological Process", filename = "GO-BP_gene.pdf", path = out_plot, size = c(4, 6))
+plot_go(go = go_results_filt$gene, ont = "CC", title_p = "Cellular Component", filename = "GO-CC_gene.pdf", path = out_plot, size = c(5, 8))
+# plot_go(go = go_results_filt$gene, ont = "MF", title_p = "Molecular Function", filename = "GO-MF_gene.pdf", path = out_plot, size = c(6, 10))
+
+## Jx
+plot_go(go = go_results_filt$jx, ont = "BP", title_p = "Biological Process", filename = "GO-BP_jx.pdf", path = out_plot, size = c(4, 6))
+plot_go(go = go_results_filt$jx, ont = "CC", title_p = "Cellular Component", filename = "GO-CC_jx.pdf", path = out_plot, size = c(6, 5))
+plot_go(go = go_results_filt$jx, ont = "MF", title_p = "Molecular Function", filename = "GO-MF_jx.pdf", path = out_plot, size = c(6, 10))
+
 
 ## Plot KEGG results
-dotplot_1 <- ggplot(kegg, aes(Cluster, Description)) +
+dotplot_1 <- ggplot(kegg_results_filt$jx, aes(Cluster, Description)) +
     theme_bw() +
     geom_point(aes(color = p.adjust, size = Count)) +
     scale_color_gradientn(
@@ -118,7 +133,7 @@ dotplot_1 <- ggplot(kegg, aes(Cluster, Description)) +
     ylab("") +
     ggtitle("KEGG")
 
-ggsave(filename = "KEGGenrichment_qc-snpPCs-Hb.pdf", path = out_plot, dotplot_1, height = 6, width = 5)
+ggsave(filename = "KEGG_jx.pdf", path = out_plot, dotplot_1, height = 10, width = 8)
 
 ###############################################################################
 
