@@ -11,6 +11,34 @@ if (!dir.exists(out_plot)) dir.create(out_plot)
 
 
 
+########################### Load GO and KEGG results ##########################
+
+go_results_files <- list.files(
+    here(
+        "processed-data",
+        "10_DEA",
+        "05_GOenrichment"
+    ),
+    pattern = "go_.+.csv",
+    full.names = TRUE
+)
+go_results <- lapply(go_results_files, fread, data.table = FALSE)
+names(go_results) <- c("exon", "gene", "jx")
+
+kegg_results_files <- list.files(
+    here(
+        "processed-data",
+        "10_DEA",
+        "05_GOenrichment"
+    ),
+    pattern = "kegg_.+.csv",
+    full.names = TRUE
+)
+kegg_results <- lapply(kegg_results_files, fread, data.table = FALSE)
+names(kegg_results) <- c("exon", "gene", "jx")
+
+###############################################################################
+
 ########################### Plot GO and KEGG results ##########################
 
 ## Function to plot GO results
