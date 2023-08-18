@@ -23,8 +23,7 @@ module load magma/1.10
 module list
 
 ## Edit with your job command
-magma --annotate --snp-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/NCBI38/NCBI38.gene.loc --gene-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/08_bulk_snpPC/habenula_genotypes.bim --out /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/01_MAGMA_annotate
-
+magma --annotate --snp-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/08_bulk_snpPC/habenula_genotypes.bim --gene-loc /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/NCBI38/NCBI38.gene.loc --out /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/13_MAGMA/01_MAGMA_annotate/Habenula_MAGMA
 echo "**** Job ends ****"
 date
 
