@@ -300,10 +300,30 @@ hsap_modeling_results <- registration_wrapper(
                              "sce_habenula_pb.rds")
 )
 
+##subset hsap to just Habenula neurons
+
+sce_hsap_sub <- sce_hsap_sub[,grep("Hb", sce_hsap_sub$final_Annotations)]
+ncol(sce_hsap_sub)
+
+hsap_modeling_results_neuron <- registration_wrapper(
+  sce_hsap_sub,
+  var_registration = "final_Annotations",
+  var_sample_id = "Sample",
+  covars = NULL,
+  gene_ensembl = "JAX.geneID",
+  gene_name = "Symbol",
+  suffix = "",
+  min_ncells = 10)
+
+
+hsap_modeling_results = list(all = hsap_modeling_results, neuron = hsap_modeling_results_neuron)
 
 save(hsap_modeling_results, mouse_modeling_results, file = here("processed-data", 
                                                                     "09_cross_species_analysis",
                                                                     "Hashikawa_homolog_modeling_results.Rdata"))
+
+# sgejobs::job_single('04_sce_1vALL_modeling', create_shell = TRUE, memory = '30G', command = "Rscript 04_sce_1vALL_modeling.R")
+
 
 ## Reproducibility information
 print("Reproducibility information:")
