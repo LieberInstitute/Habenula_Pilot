@@ -10,24 +10,6 @@ library("spatialLIBD")
 library("Matrix")
 library("purrr")
 
-
-mouse_pd <- read.csv(here("processed-data", 
-                          "09_cross_species_analysis",
-                          "Hashikawa_data",
-                          "meta.csv"
-                          ), row.names = 1)
-
-head(mouse_pd)
-
-counts <- Matrix(read.csv(here("processed-data", 
-                                "09_cross_species_analysis",
-                                "Hashikawa_data",
-                                "count.csv"), row.names = 1), 
-                 sparse = TRUE)
-
-ncol(counts) == nrow(mouse_pd)
-all(colnames(counts) == rownames(mouse_pd))
-
 #### load mouse data ####
 count_files <- map_chr(c(all = "count.csv", neuron = "count_neuron.csv"), ~here("processed-data", 
                                                                               "09_cross_species_analysis",
@@ -171,11 +153,15 @@ map(sce_mouse_sub, nrow) # [1] 14476
 length(sce_hsap_sub) # 14766
 ## Many are duplicated...
 
+message("Duplicates mm")
 length(rowData(sce_mouse_sub$all)$Symbol[duplicated(rowData(sce_mouse_sub$all)$JAX.geneID)])
 # 3
+rowData(sce_mouse_sub$all)$Symbol[duplicated(rowData(sce_mouse_sub$all)$JAX.geneID)]
 
+message("Duplicates hsap")
 length(rowData(sce_hsap_sub)$Symbol[duplicated(rowData(sce_hsap_sub)$JAX.geneID)])
 # 293
+rowData(sce_hsap_sub)$Symbol[duplicated(rowData(sce_hsap_sub)$JAX.geneID)]
 
 ## getting rid of the duplicates
 # first changing the rownames to EnsemblIDs
@@ -265,10 +251,6 @@ save(sce_mouse_sub, file = here("processed-data",
 
 ## pseudobulk + register data
 
-colData(sce_mouse_sub$all)
-
-counts(sce_mouse_sub)
-
 mouse_modeling_results <- map2(sce_mouse_sub, names(sce_mouse_sub), 
                               ~registration_wrapper( .x,
                                                      var_registration = "celltype",
@@ -322,7 +304,7 @@ save(hsap_modeling_results, mouse_modeling_results, file = here("processed-data"
                                                                     "09_cross_species_analysis",
                                                                     "Hashikawa_homolog_modeling_results.Rdata"))
 
-# sgejobs::job_single('04_sce_1vALL_modeling', create_shell = TRUE, memory = '30G', command = "Rscript 04_sce_1vALL_modeling.R")
+# sgejobs::job_single('03_Hashikawa_data_prep', create_shell = TRUE, memory = '30G', command = "Rscript 03_Hashikawa_data_prep.R")
 
 
 ## Reproducibility information
