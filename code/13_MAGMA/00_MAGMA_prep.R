@@ -5,6 +5,7 @@ library("tidyverse")
 library("data.table")
 library("here")
 library("sessioninfo")
+library("org.Hs.eg.db")
 
 #### GWAS SZC Data ####
 gwas_scz = fread(here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"))
@@ -50,9 +51,17 @@ write.table(snp_pval_scz,
 load(here("processed-data","05_explore_sce","04_sce_1vALL_modeling","sce_modeling_broad_Annotations.Rdata"), verbose = TRUE)
 head(sce_modeling_broad_Annotations$enrichment)
 
+## convert to gene IDs
+entrez <- select(org.Hs.eg.db, sce_modeling_broad_Annotations$enrichment$ensembl, 
+       columns="ENTREZID", keytype="ENSEMBL") |>
+  group_by(ENSEMBL) |>
+  dplyr::slice(1) |> # not perfect 1:1...
+  dplyr::rename(ensembl = ENSEMBL)
+
 enrichment_long <- sce_modeling_broad_Annotations$enrichment |>
-  select(ensembl, starts_with("fdr")) |>
-  pivot_longer(!ensembl, names_to = "Set", values_to = 'FDR', names_prefix = "fdr_") |>
+  left_join(entrez) |>
+  dplyr::select(gene, ENTREZID, ensembl, starts_with("fdr")) |>
+  pivot_longer(!c(gene, ensembl, ENTREZID), names_to = "Set", values_to = 'FDR', names_prefix = "fdr_") |>
   filter(FDR < 0.05) 
 
 enrichment_long |> count(Set)
@@ -68,8 +77,11 @@ enrichment_long |> count(Set)
 # 8 OPC          196
 # 9 Oligo        269
 
+enrichment_long |> count(ensembl) |> count(n)
+
 enrichment_long |>
-  select(Set, Gene = ensembl) |>
+  arrange(Set) |>
+  select(Set, Gene = ENSEMBL) |>
   write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad_FDR05.txt"),
               sep = "\t", col.names = T, row.names = F, quote = F
   )
