@@ -20,7 +20,7 @@ module load conda_R/4.3
 # list modules
 module list
 
-R 05_Hashikawa_export_markers.R
+Rscript 05_Hashikawa_export_markers.R
 
 echo "**** Job ends ****"
 date
