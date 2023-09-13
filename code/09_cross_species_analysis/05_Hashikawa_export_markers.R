@@ -41,7 +41,7 @@ export_enrich <- function(enrich_df = enrich$mouse_all,
       mutate(cell_type = ct) |>
       arrange(fdr) |>
       mutate(rank = row_number()) |>
-      filter(rank <= 100)
+      filter(fdr <= 0.05)
   })
   
   walk2(ct_enrich, names(ct_enrich), ~write.xlsx(.x,
@@ -56,5 +56,8 @@ export_enrich <- function(enrich_df = enrich$mouse_all,
 
 walk2(enrich, names(enrich), ~export_enrich(.x, .y))
 
-
+## Reproducibility information
+print("Reproducibility information:")
+options(width = 120)
+session_info()
 
