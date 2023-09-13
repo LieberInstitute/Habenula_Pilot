@@ -45,14 +45,32 @@ write.table(snp_pval_scz,
 )
 
 #### Step 3 Gene-set Analysis ####
-GS_PREFIX
 
-"magma --bfile [REFDATA] --pval [PVAL_FILE] N=[N] --gene-annot [ANNOT_PREFIX].genes.annot \ --out [GENE_PREFIX]" 
-## create SET_FILE with each row corresponding to a gene set: name of the gene set followed by the gene IDs, separated by whitespace).
+## 1vAll genes from snRNA-seq
+load(here("processed-data","05_explore_sce","04_sce_1vALL_modeling","sce_modeling_broad_Annotations.Rdata"), verbose = TRUE)
+head(sce_modeling_broad_Annotations$enrichment)
 
+enrichment_long <- sce_modeling_broad_Annotations$enrichment |>
+  select(ensembl, starts_with("fdr")) |>
+  pivot_longer(!ensembl, names_to = "Set", values_to = 'FDR', names_prefix = "fdr_") |>
+  filter(FDR < 0.05) 
 
+enrichment_long |> count(Set)
+# Set            n
+# <chr>      <int>
+#   1 Astrocyte    763
+# 2 Endo        5125
+# 3 Excit.Thal   322
+# 4 Inhib.Thal   512
+# 5 LHb           25
+# 6 MHb          127
+# 7 Microglia   5959
+# 8 OPC          196
+# 9 Oligo        269
 
-# sgejobs::job_single('08_explore_proportions', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript 08_explore_proportions.R")
-
-
+enrichment_long |>
+  select(Set, Gene = ensembl) |>
+  write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad_FDR05.txt"),
+              sep = "\t", col.names = T, row.names = F, quote = F
+  )
 
