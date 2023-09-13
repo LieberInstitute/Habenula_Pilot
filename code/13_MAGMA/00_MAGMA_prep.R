@@ -81,7 +81,7 @@ enrichment_long |> count(ensembl) |> count(n)
 
 enrichment_long |>
   arrange(Set) |>
-  select(Set, Gene = ENSEMBL) |>
+  dplyr::select(Set, Gene = ENTREZID) |>
   write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad_FDR05.txt"),
               sep = "\t", col.names = T, row.names = F, quote = F
   )
