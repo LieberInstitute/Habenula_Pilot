@@ -3,7 +3,7 @@ library("spatialLIBD")
 library("here")
 library("sessioninfo")
 library("tidyverse")
-library("xlsx")
+library("writexl")
 
 load(here("processed-data", 
           "09_cross_species_analysis",
@@ -20,8 +20,6 @@ names(enrich_hsap) <- paste0("hsap_",names(enrich_hsap))
 
 enrich <- c(enrich_mouse, enrich_hsap)
 map(enrich, dim)
-
-
 
 output_dir <- here("processed-data", "09_cross_species_analysis","Hashikawa_cross_species_enrichment")
 
@@ -44,12 +42,8 @@ export_enrich <- function(enrich_df = enrich$mouse_all,
       filter(fdr <= 0.05)
   })
   
-  walk2(ct_enrich, names(ct_enrich), ~write.xlsx(.x,
-                                          file = here(output_dir, paste0("Hashikawa_enrichment-",tag,".xlsx")),
-                                          sheetName= .y, 
-                                          col.names=TRUE, 
-                                          row.names=FALSE, 
-                                          append=TRUE))
+  write_xlsx(ct_enrich, path = here(output_dir, paste0("Hashikawa_enrichment-",tag,".xlsx")))
+  
   }
 
 
