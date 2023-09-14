@@ -1,6 +1,4 @@
 
-# library("GenomicRanges")
-# library("rtracklayer")
 library("tidyverse")
 library("data.table")
 library("here")
@@ -8,7 +6,7 @@ library("sessioninfo")
 library("org.Hs.eg.db")
 
 #### GWAS SZC Data ####
-gwas_scz = fread(here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"))
+gwas_scz = fread(here("processed-data", "13_MAGMA","GWAS", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"))
 dim(gwas_scz)
 # [1] 7659767      14
 head(gwas_scz)
@@ -42,6 +40,51 @@ head(snp_pval_scz)
 
 write.table(snp_pval_scz,
             file = here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.pval"),
+            sep = "\t", col.names = T, row.names = F, quote = F
+)
+
+#### GWAS MDD Data ####
+gwas_mdd = fread(here("processed-data", "13_MAGMA","GWAS", 'MDD', "MDD.phs001672.pha005122.txt"), skip=21)
+dim(gwas_mdd)
+# [1] 11700    22
+head(gwas_mdd)
+# ID Analysis ID     SNP ID   P-value  Rank Plot data Chr ID Chr Position Submitted SNP ID ss2rs rs2genome
+# 1: 516388416        5122 rs12137092 4.145e-05  7897         5      1      4666965               ss    NA         +
+#   2: 516387459        5122  rs3003457 6.309e-05  9777         5      1     17181435               ss    NA         +
+#   3: 516387255        5122   rs754171 8.449e-05 10909         5      1     17196325               ss    NA         +
+#   4: 516387447        5122  rs2501818 4.033e-05  7766         5      1     17192406               ss    NA         +
+#   5: 516387457        5122  rs2977232 5.965e-05  9552         5      1     17183742               ss    NA         +
+#   6: 516387461        5122  rs3104441 5.213e-05  9036         5      1     17191335               ss    NA         -
+#   Allele1 Allele2 Minor allele pHWE Call Rate &beta;     SE R-Squared Coded Allele Sample size Bin ID
+# 1:       A       G            A   NA        NA 0.0234 0.0057        NA            A          NA      3
+# 2:       T       C            T   NA        NA 0.0249 0.0062        NA            T          NA      9
+# 3:       T       C            T   NA        NA 0.0244 0.0062        NA            T          NA      9
+# 4:       C       G            C   NA        NA 0.0248 0.0060        NA            C          NA      9
+# 5:       A       G            G   NA        NA 0.0246 0.0061        NA            A          NA      9
+# 6:       A       C            C   NA        NA 0.0245 0.0060        NA            A          NA      9
+
+## snploc
+snploc_mdd <- gwas_mdd |>
+  dplyr::select(SNP = `SNP ID`, CHR = `Chr ID`, BP = `Chr Position`)
+
+# only autosomes
+snploc_mdd |> count(CHR)
+
+write.table(snploc_mdd,
+            file = here("processed-data", "13_MAGMA", "GWAS", "MDD", "MDD.phs001672.pha005122.snploc"),
+            sep = "\t", col.names = T, row.names = F, quote = F
+)
+
+## SNP p-vals
+gwas_mdd |> count(`Sample size`)
+
+snp_pval_mdd <- gwas_mdd |>
+  dplyr::select(SNP = `SNP ID`, P=`P-value`)
+
+head(snp_pval_mdd)
+
+write.table(snp_pval_mdd,
+            file = here("processed-data", "13_MAGMA", 'GWAS',"MDD", "MDD.phs001672.pha005122.pval"),
             sep = "\t", col.names = T, row.names = F, quote = F
 )
 
