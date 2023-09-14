@@ -107,25 +107,31 @@ enrichment_long <- sce_modeling_broad_Annotations$enrichment |>
   pivot_longer(!c(gene, ensembl, ENTREZID), names_to = "Set", values_to = 'FDR', names_prefix = "fdr_") |>
   filter(FDR < 0.05) 
 
-enrichment_long |> count(Set)
-# Set            n
-# <chr>      <int>
-#   1 Astrocyte    763
-# 2 Endo        5125
-# 3 Excit.Thal   322
-# 4 Inhib.Thal   512
-# 5 LHb           25
-# 6 MHb          127
-# 7 Microglia   5959
-# 8 OPC          196
-# 9 Oligo        269
+enrichment_long |> group_by(Set) |> summarize(n = n(), entrez = sum(is.na(ENTREZID)))
+# Set            n entrez
+# <chr>      <int>  <int>
+# 1 Astrocyte    763    143
+# 2 Endo        5125    630
+# 3 Excit.Thal   322     98
+# 4 Inhib.Thal   512    140
+# 5 LHb           25      9
+# 6 MHb          127     37
+# 7 Microglia   5959    712
+# 8 OPC          196     45
+# 9 Oligo        269     56
 
-enrichment_long |> count(ensembl) |> count(n)
 
 enrichment_long |>
   arrange(Set) |>
   dplyr::select(Set, Gene = ENTREZID) |>
-  write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad_FDR05.txt"),
+  write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad_ENTREZID_FDR05.txt"),
+              sep = "\t", col.names = T, row.names = F, quote = F
+  )
+
+enrichment_long |>
+  arrange(Set) |>
+  dplyr::select(Set, Gene = ensembl) |>
+  write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad_ENSEMBL_FDR05.txt"),
               sep = "\t", col.names = T, row.names = F, quote = F
   )
 
