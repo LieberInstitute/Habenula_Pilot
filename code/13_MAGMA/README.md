@@ -14,3 +14,11 @@
     * [dbGaP phs001672](https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=phs001672.v1.p1)
     * Genome Build GRCh38
     
+3. OUD
+    * Deak et al., Mol Psych, 2022 ([10.1038/s41380-022-01709-1](https://doi.org/10.1038/s41380-022-01709-1))
+    * [dbGaP phs001672](https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=phs001672.v1.p1)
+    * Genome Build GRCh38
+
+4. SUD 
+    * Hatoum et al. Natu Mental Health, 2023 ([10.1038/s44220-023-00034-y](https://doi.org/10.1038/s44220-023-00034-y))
+    
