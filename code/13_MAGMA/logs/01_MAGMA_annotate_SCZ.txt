@@ -13,99 +13,117 @@ Refreshing rmate/1.5.10
     In '/jhpce/shared/libd/modulefiles/rmate/1.5.10.lua'
     Please contact <root@localhost>
 
-Refreshing magma/1.10
+Refreshing conda/3-23.3.1
   Module ERROR: Magic cookie '#%Module' missing
-    In '/jhpce/shared/libd/modulefiles/magma/1.10.lua'
+    In '/jhpce/shared/jhpce/modulefiles/conda/3-23.3.1.lua'
+    Please contact <root@localhost>
+
+Refreshing conda_R/4.3
+  Module ERROR: Magic cookie '#%Module' missing
+    In '/jhpce/shared/community/modulefiles/conda_R/4.3.lua'
     Please contact <root@localhost>
 Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.2.2
 Loading LIBD module for rmate/1.5.10
 Loading LIBD module for ruby/3.2.2
 **** Job starts ****
-Wed Sep 13 12:28:00 PM EDT 2023
+Fri Sep 15 03:33:37 PM EDT 2023
 **** JHPCE info ****
 User: lhuuki
 Job id: 
 Job name: 
-Hostname: compute-090.cm.cluster
+Hostname: compute-148.cm.cluster
 Task id: 
-Unloading LIBD module for magma/1.10
 Loading LIBD module for magma/1.10
 
 Currently Loaded Modules:
-  1) JHPCE_ROCKY9_DEFAULT_ENV   3) ruby/3.2.2     5) magma/1.10
-  2) JHPCE_tools/3.0            4) rmate/1.5.10
+  1) conda/3-23.3.1             4) JHPCE_tools/3.0   7) magma/1.10
+  2) conda_R/4.3                5) ruby/3.2.2
+  3) JHPCE_ROCKY9_DEFAULT_ENV   6) rmate/1.5.10
 
  
 
 Welcome to MAGMA v1.10 (linux/s)
 Using flags:
 	--annotate
-	--snp-loc ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.snploc
-	--gene-loc ../../processed-data/13_MAGMA/NCBI37.3/NCBI37.3.gene.loc
-	--out ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3
+	--snp-loc ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.snploc
+	--gene-loc ../../processed-data/13_MAGMA/geneloc/GRCh38-ensembl93_to_hg19-lifted_30k-expressing-GENES.gene.loc
+	--out ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.ensembl
 
-Start time is 12:28:00, Wednesday 13 Sep 2023
+Start time is 15:33:37, Friday 15 Sep 2023
 
 Starting annotation...
-Reading gene locations from file ../../processed-data/13_MAGMA/NCBI37.3/NCBI37.3.gene.loc... 
-	19427 gene locations read from file
-	chromosome  1: 2016 genes
-	chromosome  2: 1226 genes
-	chromosome  3: 1050 genes
-	chromosome  4: 745 genes
-	chromosome  5: 856 genes
-	chromosome  6: 1016 genes
-	chromosome  7: 906 genes
-	chromosome  8: 669 genes
-	chromosome  9: 775 genes
-	chromosome 10: 723 genes
-	chromosome 11: 1275 genes
-	chromosome 12: 1009 genes
-	chromosome 13: 320 genes
-	chromosome 14: 595 genes
-	chromosome 15: 586 genes
-	chromosome 16: 817 genes
-	chromosome 17: 1147 genes
-	chromosome 18: 271 genes
-	chromosome 19: 1389 genes
-	chromosome 20: 527 genes
-	chromosome 21: 215 genes
-	chromosome 22: 442 genes
-	chromosome  X: 805 genes
-	chromosome  Y: 47 genes
-Reading SNP locations from file ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.snploc... 
+Reading gene locations from file ../../processed-data/13_MAGMA/geneloc/GRCh38-ensembl93_to_hg19-lifted_30k-expressing-GENES.gene.loc... 
+	WARNING: on line 30092, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198888)
+	WARNING: on line 30093, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198763)
+	WARNING: on line 30094, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198804)
+	WARNING: on line 30095, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198712)
+	WARNING: on line 30096, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000228253)
+	WARNING: on line 30097, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198899)
+	WARNING: on line 30098, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198938)
+	WARNING: on line 30099, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198840)
+	WARNING: on line 30100, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000212907)
+	WARNING: on line 30101, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198886)
+	WARNING: on line 30102, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198786)
+	WARNING: on line 30103, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198695)
+	WARNING: on line 30104, chromosome code 'M' not recognised; skipping gene (ID = ENSG00000198727)
+	30091 gene locations read from file
+	chromosome  1: 2881 genes
+	chromosome  2: 2053 genes
+	chromosome  3: 1612 genes
+	chromosome  4: 1239 genes
+	chromosome  5: 1490 genes
+	chromosome  6: 1533 genes
+	chromosome  7: 1372 genes
+	chromosome  8: 1221 genes
+	chromosome  9: 1130 genes
+	chromosome 10: 1150 genes
+	chromosome 11: 1685 genes
+	chromosome 12: 1619 genes
+	chromosome 13: 609 genes
+	chromosome 14: 1035 genes
+	chromosome 15: 1020 genes
+	chromosome 16: 1386 genes
+	chromosome 17: 1721 genes
+	chromosome 18: 611 genes
+	chromosome 19: 1854 genes
+	chromosome 20: 810 genes
+	chromosome 21: 391 genes
+	chromosome 22: 686 genes
+	chromosome  X: 931 genes
+	chromosome  Y: 52 genes
+Reading SNP locations from file ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.snploc... 
 	WARNING: on line 1, chromosome code 'CHR' not recognised; skipping SNP (ID = SNP)
-	SNPs mapped so far: 188283	SNPs mapped so far: 403265	SNPs mapped so far: 606490	SNPs mapped so far: 796511	SNPs mapped so far: 990760	SNPs mapped so far: 1185672	SNPs mapped so far: 1401980	SNPs mapped so far: 1606459	SNPs mapped so far: 1797695	SNPs mapped so far: 1979259	SNPs mapped so far: 2186708	SNPs mapped so far: 2362800	SNPs mapped so far: 2555377	SNPs mapped so far: 2757836	SNPs mapped so far: 2972834                                                                                                 	7659767 SNP locations read from file
-	of those, 3060409 (39.95%) mapped to at least one gene
-Writing annotation to file ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.genes.annot
-	for chromosome  1, 76 genes are empty (out of 2016)
-	for chromosome  2, 13 genes are empty (out of 1226)
-	for chromosome  3, 3 genes are empty (out of 1050)
-	for chromosome  4, 21 genes are empty (out of 745)
-	for chromosome  5, 10 genes are empty (out of 856)
-	for chromosome  6, 18 genes are empty (out of 1016)
-	for chromosome  7, 22 genes are empty (out of 906)
-	for chromosome  8, 31 genes are empty (out of 669)
-	for chromosome  9, 33 genes are empty (out of 775)
-	for chromosome 10, 10 genes are empty (out of 723)
-	for chromosome 11, 19 genes are empty (out of 1275)
-	for chromosome 12, 6 genes are empty (out of 1009)
-	for chromosome 13, 6 genes are empty (out of 320)
-	for chromosome 14, 7 genes are empty (out of 595)
-	for chromosome 15, 34 genes are empty (out of 586)
-	for chromosome 16, 34 genes are empty (out of 817)
-	for chromosome 17, 24 genes are empty (out of 1147)
-	for chromosome 18, 4 genes are empty (out of 271)
-	for chromosome 19, 16 genes are empty (out of 1389)
-	for chromosome 20, 4 genes are empty (out of 527)
-	for chromosome 21, 13 genes are empty (out of 215)
-	for chromosome 22, 11 genes are empty (out of 442)
-	for chromosome  X, 805 genes are empty (out of 805)
-	for chromosome  Y, 47 genes are empty (out of 47)
-	at least one SNP mapped to each of a total of 18160 genes (out of 19427)
+	SNPs mapped so far: 365253	SNPs mapped so far: 793968	SNPs mapped so far: 1166974	SNPs mapped so far: 1532091	SNPs mapped so far: 1950009	SNPs mapped so far: 2374049	SNPs mapped so far: 2754985	SNPs mapped so far: 3107487	SNPs mapped so far: 3523656	SNPs mapped so far: 3917747                                                                                                 	7659767 SNP locations read from file
+	of those, 4045822 (52.82%) mapped to at least one gene
+Writing annotation to file ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.ensembl.genes.annot
+	for chromosome  1, 108 genes are empty (out of 2881)
+	for chromosome  2, 69 genes are empty (out of 2053)
+	for chromosome  3, 25 genes are empty (out of 1612)
+	for chromosome  4, 15 genes are empty (out of 1239)
+	for chromosome  5, 40 genes are empty (out of 1490)
+	for chromosome  6, 45 genes are empty (out of 1533)
+	for chromosome  7, 41 genes are empty (out of 1372)
+	for chromosome  8, 35 genes are empty (out of 1221)
+	for chromosome  9, 57 genes are empty (out of 1130)
+	for chromosome 10, 38 genes are empty (out of 1150)
+	for chromosome 11, 30 genes are empty (out of 1685)
+	for chromosome 12, 35 genes are empty (out of 1619)
+	for chromosome 13, 10 genes are empty (out of 609)
+	for chromosome 14, 31 genes are empty (out of 1035)
+	for chromosome 15, 64 genes are empty (out of 1020)
+	for chromosome 16, 87 genes are empty (out of 1386)
+	for chromosome 17, 81 genes are empty (out of 1721)
+	for chromosome 18, 10 genes are empty (out of 611)
+	for chromosome 19, 43 genes are empty (out of 1854)
+	for chromosome 20, 14 genes are empty (out of 810)
+	for chromosome 21, 20 genes are empty (out of 391)
+	for chromosome 22, 21 genes are empty (out of 686)
+	for chromosome  X, 931 genes are empty (out of 931)
+	for chromosome  Y, 52 genes are empty (out of 52)
+	at least one SNP mapped to each of a total of 28189 genes (out of 30091)
 
 
-End time is 12:28:16, Wednesday 13 Sep 2023 (elapsed: 00:00:16)
+End time is 15:33:51, Friday 15 Sep 2023 (elapsed: 00:00:14)
 **** Job ends ****
-Wed Sep 13 12:28:16 PM EDT 2023
+Fri Sep 15 03:33:51 PM EDT 2023
