@@ -23,7 +23,7 @@ module list
 magma --annotate\
 	--snp-loc ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.snploc\
 	--gene-loc ../../processed-data/13_MAGMA/geneloc/GRCh38-ensembl93_to_hg19-lifted_30k-expressing-GENES.gene.loc\
-	--out ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3
+	--out ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.ensembl
 
 echo "**** Job ends ****"
 date

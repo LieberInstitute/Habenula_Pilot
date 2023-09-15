@@ -21,9 +21,9 @@ module load magma/1.10
 module list
 
 magma --bfile /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur\
-	--pval ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.pval ncol=N\
-	--gene-annot ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.genes.annot\
-	--out ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3
+	--pval ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.pval ncol=N\
+	--gene-annot ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.ensembl.genes.annot\
+	--out ../../processed-data/13_MAGMA/GWAS/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.ensembl
 
 echo "**** Job ends ****"
 date

@@ -20,8 +20,8 @@ module load magma/1.10
 # list modules
 module list
 
-magma --gene-results ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.genes.raw\
-	--set-annot ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_FDR05.txt gene-col=Gene set-col=Set\
+magma --gene-results ../../processed-data/13_MAGMA/SCZ/PGC3_SCZ_wave3.european.autosome.public.v3.ensembl.genes.raw\
+	--set-annot ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_ENSEMBL_FDR05.txt gene-col=Gene set-col=Set\
 	--out ../../processed-data/13_MAGMA/SCZ_broad
 
 echo "**** Job ends ****"
