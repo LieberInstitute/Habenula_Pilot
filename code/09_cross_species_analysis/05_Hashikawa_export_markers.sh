@@ -3,7 +3,7 @@
 #SBATCH --error=logs/05_Hashikawa_export_markers.txt
 #SBATCH --partition=shared
 #SBATCH --job-name=0Hashikawa_export_markers
-#SBATCH --mem=5GB
+#SBATCH --mem=20GB
 
 echo "**** Job starts ****"
 date
