@@ -23,7 +23,7 @@ ANNOT_PREFIX="../../processed-data/13_MAGMA/GWAS/MDD/MDD.phs001672.pha005122"
 
 ## Step 1 Annotate w/ HGCh38
 magma --annotate --snp-loc $ANNOT_PREFIX.snploc\
-	 --gene-loc ../../processed-data/13_MAGMA/geneloc/GRCh38-ensembl93_to_hg19-lifted_30k-expressing-GENES.gene.loc\
+	 --gene-loc ../../processed-data/13_MAGMA/geneloc/GRCh38_Ensembl-93_GENES_chr-x-y-mt.gene.loc\
 		 --out $ANNOT_PREFIX
 
 ## Step 2 Gene Analysis
