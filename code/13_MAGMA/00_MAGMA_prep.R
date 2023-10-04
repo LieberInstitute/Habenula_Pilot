@@ -5,11 +5,12 @@ library("here")
 library("sessioninfo")
 library("org.Hs.eg.db")
 
+
 #### GWAS SZC Data ####
-gwas_scz = fread(here("processed-data", "13_MAGMA","GWAS", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"))
-dim(gwas_scz)
+gwas = fread(here("processed-data", "13_MAGMA","GWAS", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"))
+dim(gwas)
 # [1] 7659767      14
-head(gwas_scz)
+head(gwas)
 #    CHROM         ID       POS A1 A2  FCAS  FCON IMPINFO         BETA     SE   PVAL  NCAS  NCON     NEFF
 # 1:     8 rs62513865 101592213  C  T 0.930 0.927   0.963  0.011997738 0.0171 0.4847 53386 77258 58749.13
 # 2:     8 rs79643588 106973048  G  A 0.907 0.906   0.997 -0.008596847 0.0148 0.5605 53386 77258 58749.13
@@ -19,29 +20,179 @@ head(gwas_scz)
 # 6:     8  rs7014597 104152280  G  C 0.841 0.838   0.994  0.007898723 0.0117 0.5034 53386 77258 58749.13
 
 ## snploc
-snploc_scz <- gwas_scz |>
+snploc <- gwas |>
   select(SNP = ID, CHR = CHROM, BP = POS)
 # only autosomes
-snploc_scz |> count(CHR)
+snploc |> count(CHR)
 
-write.table(snploc_scz,
+write.table(snploc,
             file = here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.snploc"),
             sep = "\t", col.names = T, row.names = F, quote = F
 )
 
-table(gwas_scz$NCAS)
+table(gwas$NCAS)
 
 ## SNP p-vals
-snp_pval_scz <- gwas_scz |>
+snp_pval <- gwas |>
   mutate(N = NCAS + NCON) |>
   select(SNP = ID, P=PVAL, N)
 
 head(snp_pval_scz)
 
-write.table(snp_pval_scz,
+write.table(snp_pval,
             file = here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.pval"),
             sep = "\t", col.names = T, row.names = F, quote = F
 )
+
+#### PGC mdd2019edinburgh Data ####
+gwas = fread(here("processed-data", "13_MAGMA","GWAS", "mdd2019edinburgh", "PGC_UKB_depression_genome-wide.txt"))
+dim(gwas)
+# [1] 8483301       7
+
+## no snp location info :( 
+test <- head(gwas) 
+#    MarkerName A1 A2   Freq   LogOR StdErrLogOR         P
+# 1:  rs2326918  a  g 0.8452  0.0106      0.0060 0.0756100
+# 2:  rs7929618  c  g 0.1314 -0.0224      0.0064 0.0004804
+# 3: rs66941928  t  c 0.8031  0.0003      0.0055 0.9502000
+# 4:  rs7190157  a  c 0.3517  0.0024      0.0045 0.5992000
+# 5: rs12364336  a  g 0.8685  0.0075      0.0064 0.2450000
+# 6:  rs6977693  t  c 0.8544  0.0089      0.0061 0.1442000
+
+test_loc <- ncbi_snp_query(test$MarkerName)
+
+## but 
+test_loc |> dplyr::select(query, chromosome, bp)
+# query      chromosome        bp
+# <chr>      <chr>          <dbl>
+# 1 rs2326918  6          130518946
+# 2 rs7929618  11         135027849
+# 3 rs66941928 3          176948961
+# 4 rs7190157  16           8550859
+# 5 rs12364336 11         100139244
+# 6 rs6977693  7          146074713
+
+## snploc
+snploc <- gwas |>
+  select(SNP = ID, CHR = CHROM, BP = POS)
+# only autosomes
+snploc |> count(CHR)
+
+write.table(snploc,
+            file = here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.snploc"),
+            sep = "\t", col.names = T, row.names = F, quote = F
+)
+
+table(gwas$NCAS)
+
+## SNP p-vals
+snp_pval <- gwas |>
+  mutate(N = NCAS + NCON) |>
+  select(SNP = ID, P=PVAL, N)
+
+head(snp_pval_scz)
+
+write.table(snp_pval,
+            file = here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.pval"),
+            sep = "\t", col.names = T, row.names = F, quote = F
+)
+
+#### PGC panic2019 ####
+gwas = fread(here("processed-data", "13_MAGMA","GWAS", "panic2019", "pgc-panic2019.vcf.tsv.gz"))
+dim(gwas)
+# [1] 10151624       16
+
+head(gwas) 
+#      #CHROM     POS              ID A1 A2        BETA     SE    PVAL NGT   FCAS   FCON IMPINFO NEFFDIV2 NCAS NCON   DIRE
+#   1:     10 1689546      rs11250701  A  G  0.02409731 0.0387 0.53280   0 0.6570 0.6530   0.945  3332.53 2147 7760 +-++++
+#   2:     10 2622752 chr10_2622752_D I2  D  0.13370013 0.1191 0.26150   0 0.9760 0.9710   0.944  3332.53 2147 7760 ---+-+
+#   3:     10  151476       rs7085086  A  G -0.04210407 0.0398 0.28970   0 0.3080 0.3120   0.949  3332.53 2147 7760 -+--+-
+#   4:     10 1593759     rs113494187  T  G  0.33939653 0.1741 0.05117   0 0.9870 0.9840   0.899  3332.53 2147 7760 +++++?
+#   5:     10 1708106     rs117915320  A  C -0.39580195 0.2409 0.10030   0 0.0111 0.0132   0.628  3332.53 2147 7760 ?--?--
+#   6:     10  790310     rs182753344  T  C -0.02470261 0.0769 0.74840   0 0.0971 0.0950   0.618  3332.53 2147 7760 ---++-
+
+## snploc
+snploc <- gwas |>
+  dplyr::select(SNP = ID, CHR = `#CHROM`, BP = POS)
+
+head(snploc)
+
+write.table(snploc,
+            file = here("processed-data", "13_MAGMA", "GWAS", "panic2019", "pgc-panic2019.snploc"),
+            sep = "\t", col.names = T, row.names = F, quote = F
+)
+
+## SNP p-vals
+snp_pval <- gwas |>
+  mutate(N = NCAS + NCON) |>
+  dplyr::select(SNP = ID, P=PVAL, N)
+
+#                 SNP       P    N
+# 1:       rs11250701 0.53280 9907
+# 2:  chr10_2622752_D 0.26150 9907
+# 3:        rs7085086 0.28970 9907
+# 4:      rs113494187 0.05117 9907
+# 5:      rs117915320 0.10030 9907
+
+write.table(snp_pval,
+            file = here("processed-data", "13_MAGMA", "GWAS", "panic2019", "pgc-panic2019.pval"),
+            sep = "\t", col.names = T, row.names = F, quote = F
+)
+
+#### PGC sud2020op ####
+# unzipped "OD_cases_vs._opioid-exposed_controls_in_European-ancestry_cohorts.gz"
+gwas <- fread(here("processed-data", "13_MAGMA","GWAS", "sud2020op", "opi.DEPvEXP_EUR.noAF.tbl"))
+dim(gwas)
+# [1] 4211587      14
+
+## no snploc data 
+head(gwas) 
+#          rsID Allele1 Allele2  Weight Zscore P-value HetISq HetChiSq HetDf HetPVal Total_N Total_NCase Total_NControl
+# 1: rs10868284       a       c 3340.40 -1.609  0.1075    0.0    3.923     7 0.78860    5709        3174           2535
+# 2: rs62291883       t       c 3483.72 -1.583  0.1134  -10.0    9.998     9 0.35060    6072        3218           2854
+# 3: rs61956327       t       c 3043.32 -1.455  0.1458    0.0    4.324     8 0.82680    5260        3081           2179
+# 4: rs60994383       a       c 3089.74  1.070  0.2846  -10.9    7.214     6 0.30150    5140        3104           2036
+# 5: rs12531896       t       g 3512.19  1.323  0.1857   40.5   20.155    10 0.02782    6115        3262           2853
+# 6: rs35515951       a       t 3488.59  1.191  0.2337    0.0    5.705     9 0.76910    6062        3213           2849
+#    ngt
+# 1:   0
+# 2:   0
+# 3:   0
+# 4:   1
+# 5:   1
+# 6:   0
+
+## snploc
+snploc <- gwas |>
+  dplyr::select(SNP = ID, CHR = `#CHROM`, BP = POS)
+
+head(snploc)
+
+write.table(snploc,
+            file = here("processed-data", "13_MAGMA", "GWAS", "panic2019", "pgc-panic2019.snploc"),
+            sep = "\t", col.names = T, row.names = F, quote = F
+)
+
+## SNP p-vals
+snp_pval <- gwas |>
+  dplyr::select(SNP = rsID, P=`P-value`, N = Total_N)
+
+#           SNP      P    N
+# 1: rs10868284 0.1075 5709
+# 2: rs62291883 0.1134 6072
+# 3: rs61956327 0.1458 5260
+# 4: rs60994383 0.2846 5140
+# 5: rs12531896 0.1857 6115
+
+summary(snp_pval$N)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 4137    5571    5876    5759    6050    6148
+
+write.table(snp_pval,
+            file = here("processed-data", "13_MAGMA", "GWAS", "sud2020op", "opi.DEPvEXP_EUR.noAF.pval"),
+            sep = "\t", col.names = T, row.names = F, quote = F
+)
+
 
 #### GWAS MDD Data ####
 gwas_mdd = fread(here("processed-data", "13_MAGMA","GWAS", 'MDD', "MDD.phs001672.pha005122.txt"), skip=21)
@@ -87,6 +238,35 @@ write.table(snp_pval_mdd,
             file = here("processed-data", "13_MAGMA", 'GWAS',"MDD", "MDD.phs001672.pha005122.pval"),
             sep = "\t", col.names = T, row.names = F, quote = F
 )
+
+
+prep_magma_files <- function(input_file, skip = 21){
+  #### GWAS MDD Data ####
+  gwas = fread(input_file, skip=21)
+  stopifnot(all(c("SNP", "Chr ID", "Chr Position", "P-value") %in% colnames(gwas)))
+  ## snploc
+  snploc <- gwas |>
+    dplyr::select(SNP = `SNP ID`, CHR = `Chr ID`, BP = `Chr Position`)
+  
+  write.table(snploc,
+              file = gsub(".txt$", ".snploc", input_file),
+              sep = "\t", col.names = T, row.names = F, quote = F
+  )
+  
+  snp_pval <- gwas |>
+    dplyr::select(SNP = `SNP ID`, P=`P-value`)
+  
+  head(snp_pval)
+  
+  write.table(snp_pval,
+              file = gsub(".txt$", "..pval", input_file),
+              sep = "\t", col.names = T, row.names = F, quote = F
+  )
+}
+
+###OUD data ####
+prep_magma_files(here("processed-data", "13_MAGMA", 'GWAS',"OUD", "OUD.phs001672.pha004954.txt"), skip = 17)
+
 
 #### Step 3 Gene-set Analysis ####
 
