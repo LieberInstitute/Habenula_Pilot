@@ -28,7 +28,7 @@ magma --annotate --snp-loc $ANNOT_PREFIX.snploc\
 
 ## Step 2 Gene Analysis
 magma --bfile /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur\
-	--pval $ANNOT_PREFIX.pval N=1154267\
+	--pval $ANNOT_PREFIX.pval  ncol=N\
 	--gene-annot $ANNOT_PREFIX.genes.annot\
 	--out $ANNOT_PREFIX
 
