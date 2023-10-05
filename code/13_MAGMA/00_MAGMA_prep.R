@@ -49,8 +49,8 @@ gwas = fread(here("processed-data", "13_MAGMA","GWAS", "mdd2019edinburgh", "PGC_
 dim(gwas)
 # [1] 8483301       7
 
-## no snp location info :( 
-test <- head(gwas) 
+## no snp location info - snploc created in 00_snp_lookup.R
+head(gwas) 
 #    MarkerName A1 A2   Freq   LogOR StdErrLogOR         P
 # 1:  rs2326918  a  g 0.8452  0.0106      0.0060 0.0756100
 # 2:  rs7929618  c  g 0.1314 -0.0224      0.0064 0.0004804
@@ -59,41 +59,12 @@ test <- head(gwas)
 # 5: rs12364336  a  g 0.8685  0.0075      0.0064 0.2450000
 # 6:  rs6977693  t  c 0.8544  0.0089      0.0061 0.1442000
 
-test_loc <- ncbi_snp_query(test$MarkerName)
-
-## but 
-test_loc |> dplyr::select(query, chromosome, bp)
-# query      chromosome        bp
-# <chr>      <chr>          <dbl>
-# 1 rs2326918  6          130518946
-# 2 rs7929618  11         135027849
-# 3 rs66941928 3          176948961
-# 4 rs7190157  16           8550859
-# 5 rs12364336 11         100139244
-# 6 rs6977693  7          146074713
-
-## snploc
-snploc <- gwas |>
-  select(SNP = ID, CHR = CHROM, BP = POS)
-# only autosomes
-snploc |> count(CHR)
-
-write.table(snploc,
-            file = here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.snploc"),
-            sep = "\t", col.names = T, row.names = F, quote = F
-)
-
-table(gwas$NCAS)
-
 ## SNP p-vals
 snp_pval <- gwas |>
-  mutate(N = NCAS + NCON) |>
-  select(SNP = ID, P=PVAL, N)
-
-head(snp_pval_scz)
+  dplyr::select(SNP =  MarkerName, P)
 
 write.table(snp_pval,
-            file = here("processed-data", "13_MAGMA", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.pval"),
+            file = here("processed-data", "13_MAGMA", "GWAS", "mdd2019edinburgh", "PGC_UKB_depression_genome-wide.pval"),
             sep = "\t", col.names = T, row.names = F, quote = F
 )
 
@@ -162,16 +133,6 @@ head(gwas)
 # 5:   1
 # 6:   0
 
-## snploc
-snploc <- gwas |>
-  dplyr::select(SNP = ID, CHR = `#CHROM`, BP = POS)
-
-head(snploc)
-
-write.table(snploc,
-            file = here("processed-data", "13_MAGMA", "GWAS", "panic2019", "pgc-panic2019.snploc"),
-            sep = "\t", col.names = T, row.names = F, quote = F
-)
 
 ## SNP p-vals
 snp_pval <- gwas |>
