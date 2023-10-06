@@ -1,5 +1,8 @@
-GWAS	citation	doi	genome_build
-SCZ	"Trubetskoy et al., Nature, 2022"	10.1038/s41586-022-04434-5	GRCh37
-MDD	"Levey et al., Nat Neurosci, 2021"	10.1038/s41593-021-00860-2	GRCh38
-OUD	"Deak et al., Mol Psych, 2022"	10.1038/s41380-022-01709-1	GRCh38
-SUD	"Hatoum et al. Natu Mental Health, 2023"	10.1038/s44220-023-00034-y	
+GWAS	citation	doi	genome_build	condition	nSNPs	n	note
+scz2022	"Trubetskoy et al., Nature, 2022"	10.1038/s41586-022-04434-5	GRCh37	SCZ	7659767		
+MDD	"Levey et al., Nat Neurosci, 2021"	10.1038/s41593-021-00860-2	GRCh38	MDD			
+OUD	"Deak et al., Mol Psych, 2022"	10.1038/s41380-022-01709-1	GRCh38	OUD			
+SUD	"Hatoum et al. Natu Mental Health, 2023"	10.1038/s44220-023-00034-y		SUD			
+mdd2019edinburgh	"Howard et al. Nat Neurosci, 2019"	10.1038/s41593-018-0326-7	GRCh37	MDD	8483301	807553	no snploc info
+panic2019	"Forster et al. Mol Psychistry, 2021"	10.1038/s41380-019-0590-2	GRCh37	Panic	10151624	10240	
+sud2020op	"Polimanti et al. Mol Psychistry, 2020"	10.1038/s41380-020-0677-9	?	OUD	4211587	6148	
