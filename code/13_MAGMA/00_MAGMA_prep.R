@@ -96,7 +96,8 @@ write.table(snploc,
 ## SNP p-vals
 snp_pval <- gwas |>
   mutate(N = NCAS + NCON) |>
-  dplyr::select(SNP = ID, P=PVAL, N)
+  dplyr::select(SNP = ID, P=PVAL, N) |>
+  filter(!is.na(P), !is.na(N))
 
 #                 SNP       P    N
 # 1:       rs11250701 0.53280 9907
