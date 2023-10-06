@@ -3,7 +3,7 @@
 #SBATCH --error=logs/07_MAGMA_panic2019.txt
 #SBATCH --partition=shared
 #SBATCH --job-name=07_MAGMA_panic2019
-#SBATCH --mem=25GB
+#SBATCH --mem=10GB
 
 echo "**** Job starts ****"
 date
@@ -22,9 +22,9 @@ module list
 ANNOT_PREFIX="../../processed-data/13_MAGMA/GWAS/panic2019/pgc-panic2019"
 
 ## Step 1 Annotate w/ HGCh38
-magma --annotate --snp-loc $ANNOT_PREFIX.snploc\
-	 --gene-loc ../../processed-data/13_MAGMA/geneloc/GRCh38-ensembl93_to_hg19-lifted_30k-expressing-GENES.gene.loc\
-		 --out $ANNOT_PREFIX
+# magma --annotate --snp-loc $ANNOT_PREFIX.snploc\
+#	 --gene-loc ../../processed-data/13_MAGMA/geneloc/GRCh38-ensembl93_to_hg19-lifted_30k-expressing-GENES.gene.loc\
+#		 --out $ANNOT_PREFIX
 
 ## Step 2 Gene Analysis
 magma --bfile /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur\

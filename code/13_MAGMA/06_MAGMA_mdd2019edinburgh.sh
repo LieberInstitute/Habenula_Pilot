@@ -22,20 +22,20 @@ module list
 ANNOT_PREFIX="../../processed-data/13_MAGMA/GWAS/mdd2019edinburgh/PGC_UKB_depression_genome-wide"
 
 ## Step 1 Annotate w/ HGCh38
-magma --annotate --snp-loc $ANNOT_PREFIX.snploc\
-	 --gene-loc ../../processed-data/13_MAGMA/geneloc/GRCh38-ensembl93_to_hg19-lifted_30k-expressing-GENES.gene.loc\
-		 --out $ANNOT_PREFIX
+#magma --annotate --snp-loc $ANNOT_PREFIX.snploc\
+#	 --gene-loc ../../processed-data/13_MAGMA/geneloc/GRCh38-ensembl93_to_hg19-lifted_30k-expressing-GENES.gene.loc\
+#		 --out $ANNOT_PREFIX
 
 ## Step 2 Gene Analysis
-magma --bfile /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur\
-	--pval $ANNOT_PREFIX.pval N=807553\
-	--gene-annot $ANNOT_PREFIX.genes.annot\
-	--out $ANNOT_PREFIX
+#magma --bfile /dcs04/lieber/lcolladotor/with10x_LIBD001/HumanPilot/Analysis/Layer_Guesses/MAGMA/g1000_eur\
+#	--pval $ANNOT_PREFIX.pval N=807553\
+#	--gene-annot $ANNOT_PREFIX.genes.annot\
+#	--out $ANNOT_PREFIX
 
 ## Step 3 Gene Set Analsysis
 magma --gene-results $ANNOT_PREFIX.genes.raw\
 	--set-annot ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_ENSEMBL_FDR05.txt gene-col=Gene set-col=Set\
-	--out ../../processed-data/13_MAGMA/MAGMA_output/MDD_broad/MDD_broad
+	--out ../../processed-data/13_MAGMA/MAGMA_output/mdd2019edinburgh/mdd2019edinburgh_broad
 
 echo "**** Job ends ****"
 date
