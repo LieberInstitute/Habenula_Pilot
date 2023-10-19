@@ -8,23 +8,29 @@ output_path <- here("processed-data", "13_MAGMA","MAGMA_output")
 datasets <- c("scz2022", "mdd2019edinburgh", "panic2019", "sud2020op")
 names(datasets) <- datasets
 
-magma_out_fn <- map_chr(datasets, ~list.files(path = here(output_path, .x), pattern = ".gsa.out", full.names = TRUE))
+magma_out_fn <- map(datasets, ~list.files(path = here(output_path, .x), pattern = "combo.gsa.out", full.names = TRUE))
 
-magama_out <- map_dfr(magma_out_fn, ~read.table(.x, header = TRUE))
+magma_out <- map_dfr(magma_out_fn[2:4], ~read.table(.x, header = TRUE))
 
-magama_out$dataset <- rep(datasets, each = 9)
+magma_out$dataset <- rep(datasets[2:4], each = length(unique(magma_out$VARIABLE)))
 
-head(magama_out)
+head(magma_out)
+
+magma_out |> filter(VARIABLE == "Hb")
 
 ## dirs
 plot_dir <- here("plots", "13_MAGMA")
 if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
-magama_p_matrix <- magama_out |>
+magama_p_matrix <- magma_out |>
   select(VARIABLE, dataset, P) |>
   pivot_wider(names_from = "dataset", values_from = "P") |>
   column_to_rownames("VARIABLE") |>
   as.matrix()
+
+roworder <- c("Astrocyte","Endo","Excit.Thal","Inhib.Thal","Hb", "LHb", "MHb","Microglia", "OPC","Oligo")
+
+magama_p_matrix <- magama_p_matrix[roworder,]
 
 #              scz2022 mdd2019edinburgh panic2019 sud2020op
 # Astrocyte  0.9935300         0.855180   0.44391 0.1784500
