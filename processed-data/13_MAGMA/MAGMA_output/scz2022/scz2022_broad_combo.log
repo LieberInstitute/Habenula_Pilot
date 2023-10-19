@@ -1,0 +1,31 @@
+Welcome to MAGMA v1.10 (linux/s)
+Using flags:
+	--gene-results ../../processed-data/13_MAGMA/GWAS/scz2022/PGC3_SCZ_wave3.european.autosome.public.v3.genes.raw
+	--set-annot ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_combo_ENSEMBL_FDR05.txt gene-col=Gene set-col=Set
+	--out ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo
+
+Start time is 11:52:49, Thursday 19 Oct 2023
+
+Reading file ../../processed-data/13_MAGMA/GWAS/scz2022/PGC3_SCZ_wave3.european.autosome.public.v3.genes.raw... 
+	18117 genes read from file
+Loading gene-set annotation...
+Reading file ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_combo_ENSEMBL_FDR05.txt... 
+	detected 2 variables in file
+	using variable: Gene (gene ID)
+	using variable: Set (set ID)
+	WARNING: gene set Astrocyte contains no genes defined in genotype data
+	WARNING: gene set Endo contains no genes defined in genotype data
+	WARNING: gene set Excit.Thal contains no genes defined in genotype data
+	WARNING: gene set Hb contains no genes defined in genotype data
+	WARNING: gene set Inhib.Thal contains no genes defined in genotype data
+	WARNING: gene set LHb contains no genes defined in genotype data
+	WARNING: gene set MHb contains no genes defined in genotype data
+	WARNING: gene set Microglia contains no genes defined in genotype data
+	WARNING: gene set OPC contains no genes defined in genotype data
+	WARNING: gene set Oligo contains no genes defined in genotype data
+	10 gene-set definitions read from file
+	found 0 gene sets containing genes defined in genotype data (containing a total of 0 unique genes)
+
+ERROR - loading gene-level data: no valid gene sets or covariates found in input files
+
+Terminating program.
