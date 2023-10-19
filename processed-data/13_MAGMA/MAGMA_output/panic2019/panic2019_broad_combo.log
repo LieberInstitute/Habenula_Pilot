@@ -1,0 +1,37 @@
+Welcome to MAGMA v1.10 (linux/s)
+Using flags:
+	--gene-results ../../processed-data/13_MAGMA/GWAS/panic2019/pgc-panic2019.genes.raw
+	--set-annot ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_combo_ENSEMBL_FDR05.txt gene-col=Gene set-col=Set
+	--out ../../processed-data/13_MAGMA/MAGMA_output/panic2019/panic2019_broad_combo
+
+Start time is 11:45:27, Thursday 19 Oct 2023
+
+Reading file ../../processed-data/13_MAGMA/GWAS/panic2019/pgc-panic2019.genes.raw... 
+	28384 genes read from file
+Loading gene-set annotation...
+Reading file ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_combo_ENSEMBL_FDR05.txt... 
+	detected 2 variables in file
+	using variable: Gene (gene ID)
+	using variable: Set (set ID)
+	10 gene-set definitions read from file
+	found 10 gene sets containing genes defined in genotype data (containing a total of 9995 unique genes)
+Preparing variables for analysis...
+	truncating Z-scores 3 points below zero or 6 standard deviations above the mean
+	truncating covariate values more than 5 standard deviations from the mean
+	total variables available for analysis: 10 gene sets
+
+Parsing model specifications...
+Inverting gene-gene correlation matrix...
+Performing regression analysis...
+	testing direction: one-sided, positive (sets), two-sided (covar)
+	conditioning on internal variables:
+		gene size, log(gene size)
+		gene density, log(gene density)
+		sample size, log(sample size)
+		inverse mac, log(inverse mac)
+	analysing individual variables
+
+	analysing single-variable models (number of models: 10)
+	writing results to file ../../processed-data/13_MAGMA/MAGMA_output/panic2019/panic2019_broad_combo.gsa.out
+
+End time is 11:47:08, Thursday 19 Oct 2023 (elapsed: 00:01:41)
