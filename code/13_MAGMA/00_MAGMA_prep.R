@@ -5,7 +5,6 @@ library("here")
 library("sessioninfo")
 library("org.Hs.eg.db")
 
-
 #### GWAS SZC Data ####
 gwas = fread(here("processed-data", "13_MAGMA","GWAS", "SCZ", "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"))
 dim(gwas)
@@ -231,6 +230,10 @@ prep_magma_files(here("processed-data", "13_MAGMA", 'GWAS',"OUD", "OUD.phs001672
 
 
 #### Step 3 Gene-set Analysis ####
+list.files(here("processed-data","05_explore_sce","04_sce_1vALL_modeling"))
+# [1] "sce_modeling_broad_Annotations.Rdata"  "sce_modeling_broad_Annotations2.Rdata"
+# [3] "sce_modeling_final_Annotations.Rdata"  "sce_pseudo_broad_Annotations.rds"     
+# [5] "sce_pseudo_broad_Annotations2.rds"     "sce_pseudo_final_Annotations.rds" 
 
 ## 1vAll genes from snRNA-seq
 load(here("processed-data","05_explore_sce","04_sce_1vALL_modeling","sce_modeling_broad_Annotations.Rdata"), verbose = TRUE)
@@ -276,4 +279,80 @@ enrichment_long |>
   write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad_ENSEMBL_FDR05.txt"),
               sep = "\t", col.names = T, row.names = F, quote = F
   )
+
+## 1vAll genes from snRNA-seq - broad2 combined habenula
+load(here("processed-data","05_explore_sce","04_sce_1vALL_modeling","sce_modeling_broad_Annotations2.Rdata"), verbose = TRUE)
+head(sce_modeling_broad_Annotations2$enrichment)
+
+## convert to gene IDs
+entrez2 <- select(org.Hs.eg.db, sce_modeling_broad_Annotations2$enrichment$ensembl, 
+                 columns="ENTREZID", keytype="ENSEMBL") |>
+  group_by(ENSEMBL) |>
+  dplyr::slice(1) |> # not perfect 1:1...
+  dplyr::rename(ensembl = ENSEMBL)
+
+enrichment_long2 <- sce_modeling_broad_Annotations2$enrichment |>
+  left_join(entrez2) |>
+  dplyr::select(gene, ENTREZID, ensembl, starts_with("fdr")) |>
+  pivot_longer(!c(gene, ensembl, ENTREZID), names_to = "Set", values_to = 'FDR', names_prefix = "fdr_") |>
+  filter(FDR < 0.05) 
+
+enrichment_long2 |> group_by(Set) |> summarize(n = n(), entrez = sum(is.na(ENTREZID)))
+# Set            n entrez
+# <chr>      <int>  <int>
+# 1 Astrocyte    763    143
+# 2 Endo        5125    630
+# 3 Excit.Thal   322     98
+# 4 Inhib.Thal   512    140
+# 5 LHb           25      9
+# 6 MHb          127     37
+# 7 Microglia   5959    712
+# 8 OPC          196     45
+# 9 Oligo        269     56
+
+
+enrichment_long2 |>
+  arrange(Set) |>
+  dplyr::select(Set, Gene = ENTREZID) |>
+  write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad2_ENTREZID_FDR05.txt"),
+              sep = "\t", col.names = T, row.names = F, quote = F
+  )
+
+enrichment_long2 |>
+  arrange(Set) |>
+  dplyr::select(Set, Gene = ensembl) |>
+  write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad2_ENSEMBL_FDR05.txt"),
+              sep = "\t", col.names = T, row.names = F, quote = F
+  )
+
+## combine habenula from broad2 with MHb + LHb
+
+enrichment_long2 |>
+  filter(Set == "Hb")
+
+enrichment_long_combo <- enrichment_long |>
+  bind_rows(enrichment_long2 |>
+            filter(Set == "Hb")) 
+
+enrichment_long_combo |> count(Set)
+# Set            n
+# <chr>      <int>
+#   1 Astrocyte    763
+# 2 Endo        5125
+# 3 Excit.Thal   322
+# 4 Hb            59
+# 5 Inhib.Thal   512
+# 6 LHb           25
+# 7 MHb          127
+# 8 Microglia   5959
+# 9 OPC          196
+# 10 Oligo        269
+
+enrichment_long_combo |>
+  arrange(Set) |>
+  dplyr::select(Set, Gene = ensembl) |>
+  write.table(file = here("processed-data", "13_MAGMA", "gene_sets", "markerSets_broad_combo_ENSEMBL_FDR05.txt"),
+              sep = "\t", col.names = T, row.names = F, quote = F
+  )
+
 
