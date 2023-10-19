@@ -1,0 +1,60 @@
+Loading LIBD module for rmate/1.5.10
+Loading LIBD module for ruby/3.2.2
+Loading LIBD module for rmate/1.5.10
+Loading LIBD module for ruby/3.2.2
+**** Job starts ****
+Thu Oct 19 01:32:56 PM EDT 2023
+**** JHPCE info ****
+User: lhuuki
+Job id: 539030
+Job name: 10_MAGMA_gene_set_combo
+Hostname: compute-147.cm.cluster
+Loading LIBD module for magma/1.10
+
+Currently Loaded Modules:
+  1) JHPCE_ROCKY9_DEFAULT_ENV   3) ruby/3.2.2     5) magma/1.10
+  2) JHPCE_tools/3.0            4) rmate/1.5.10
+
+ 
+
+Welcome to MAGMA v1.10 (linux/s)
+Using flags:
+	--gene-results ../../processed-data/13_MAGMA/GWAS/scz2022/PGC3_SCZ_wave3.european.autosome.public.v3.genes.raw
+	--set-annot ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_combo_ENSEMBL_FDR05.txt gene-col=Gene set-col=Set
+	--out ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo
+
+Start time is 13:32:57, Thursday 19 Oct 2023
+
+Reading file ../../processed-data/13_MAGMA/GWAS/scz2022/PGC3_SCZ_wave3.european.autosome.public.v3.genes.raw... 
+	28129 genes read from file
+Loading gene-set annotation...
+Reading file ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_combo_ENSEMBL_FDR05.txt... 
+	detected 2 variables in file
+	using variable: Gene (gene ID)
+	using variable: Set (set ID)
+	10 gene-set definitions read from file
+	found 10 gene sets containing genes defined in genotype data (containing a total of 9967 unique genes)
+Preparing variables for analysis...
+	truncating Z-scores 3 points below zero or 6 standard deviations above the mean
+	truncating covariate values more than 5 standard deviations from the mean
+	total variables available for analysis: 10 gene sets
+
+Parsing model specifications...
+Inverting gene-gene correlation matrix...
+	processing block 1 of 25	processing block 2 of 25	processing block 3 of 25	processing block 4 of 25	processing block 5 of 25	processing block 6 of 25	processing block 7 of 25	processing block 8 of 25	processing block 9 of 25	processing block 10 of 25	processing block 11 of 25	processing block 12 of 25	processing block 13 of 25	processing block 14 of 25	processing block 15 of 25	processing block 16 of 25	processing block 17 of 25	processing block 18 of 25	processing block 19 of 25	processing block 20 of 25	processing block 21 of 25	processing block 22 of 25	processing block 23 of 25	processing block 24 of 25	processing block 25 of 25                                                                                                                   Performing regression analysis...
+	testing direction: one-sided, positive (sets), two-sided (covar)
+	conditioning on internal variables:
+		gene size, log(gene size)
+		gene density, log(gene density)
+		sample size, log(sample size)
+		inverse mac, log(inverse mac)
+	analysing individual variables
+
+	analysing single-variable models (number of models: 10)
+                                                                                                                   	writing results to file ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo.gsa.out
+	writing gene information to file ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo.gsa.genes.out
+	writing gene analysis results per significant result (after multiple testing correction, at alpha = 0.05) to file ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo.gsa.sets.genes.out
+
+End time is 13:34:17, Thursday 19 Oct 2023 (elapsed: 00:01:20)
+**** Job ends ****
+Thu Oct 19 01:34:17 PM EDT 2023
