@@ -4,28 +4,36 @@ Using flags:
 	--set-annot ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_combo_ENSEMBL_FDR05.txt gene-col=Gene set-col=Set
 	--out ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo
 
-Start time is 11:52:49, Thursday 19 Oct 2023
+Start time is 13:32:57, Thursday 19 Oct 2023
 
 Reading file ../../processed-data/13_MAGMA/GWAS/scz2022/PGC3_SCZ_wave3.european.autosome.public.v3.genes.raw... 
-	18117 genes read from file
+	28129 genes read from file
 Loading gene-set annotation...
 Reading file ../../processed-data/13_MAGMA/gene_sets/markerSets_broad_combo_ENSEMBL_FDR05.txt... 
 	detected 2 variables in file
 	using variable: Gene (gene ID)
 	using variable: Set (set ID)
-	WARNING: gene set Astrocyte contains no genes defined in genotype data
-	WARNING: gene set Endo contains no genes defined in genotype data
-	WARNING: gene set Excit.Thal contains no genes defined in genotype data
-	WARNING: gene set Hb contains no genes defined in genotype data
-	WARNING: gene set Inhib.Thal contains no genes defined in genotype data
-	WARNING: gene set LHb contains no genes defined in genotype data
-	WARNING: gene set MHb contains no genes defined in genotype data
-	WARNING: gene set Microglia contains no genes defined in genotype data
-	WARNING: gene set OPC contains no genes defined in genotype data
-	WARNING: gene set Oligo contains no genes defined in genotype data
 	10 gene-set definitions read from file
-	found 0 gene sets containing genes defined in genotype data (containing a total of 0 unique genes)
+	found 10 gene sets containing genes defined in genotype data (containing a total of 9967 unique genes)
+Preparing variables for analysis...
+	truncating Z-scores 3 points below zero or 6 standard deviations above the mean
+	truncating covariate values more than 5 standard deviations from the mean
+	total variables available for analysis: 10 gene sets
 
-ERROR - loading gene-level data: no valid gene sets or covariates found in input files
+Parsing model specifications...
+Inverting gene-gene correlation matrix...
+Performing regression analysis...
+	testing direction: one-sided, positive (sets), two-sided (covar)
+	conditioning on internal variables:
+		gene size, log(gene size)
+		gene density, log(gene density)
+		sample size, log(sample size)
+		inverse mac, log(inverse mac)
+	analysing individual variables
 
-Terminating program.
+	analysing single-variable models (number of models: 10)
+	writing results to file ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo.gsa.out
+	writing gene information to file ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo.gsa.genes.out
+	writing gene analysis results per significant result (after multiple testing correction, at alpha = 0.05) to file ../../processed-data/13_MAGMA/MAGMA_output/scz2022/scz2022_broad_combo.gsa.sets.genes.out
+
+End time is 13:34:17, Thursday 19 Oct 2023 (elapsed: 00:01:20)
