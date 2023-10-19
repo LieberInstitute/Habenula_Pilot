@@ -20,7 +20,7 @@ table(sce$final_Annotations)
 # 1014        152        540         18        145       2178       1202 
 
 table(sce$broad_Annotations)
-# Astrocyte       Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia      Oligo        OPC 
+# Astrocyte Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia      Oligo        OPC 
 # 538         38       1800       7612       2214        710        145       2178       1202 
 
 ## Use ENSEMBL IDs as rownames
@@ -58,6 +58,28 @@ sce_modeling_broad_Annotations <- registration_wrapper(
 )
 
 save(sce_modeling_broad_Annotations, file = here(data.dir, "sce_modeling_broad_Annotations.Rdata"))
+
+#### Broad 2 - combine Habenula ####
+
+sce$broad_Annotations2 <- gsub("^.*Hb", "Hb",sce$broad_Annotations)
+table(sce$broad_Annotations2)
+# Astrocyte       Endo Excit.Thal         Hb Inhib.Thal  Microglia      Oligo        OPC 
+#       538         38       1800       2924       7612        145       2178       1202 
+
+message(Sys.time(), "- Run registration_wrapper broad_Annotations2")
+sce_modeling_broad_Annotations2 <- registration_wrapper(
+  sce,
+  var_registration = "broad_Annotations2",
+  var_sample_id = "Sample",
+  covars = NULL,
+  gene_ensembl = "ID",
+  gene_name = "Symbol",
+  suffix = "",
+  min_ncells = 10,
+  pseudobulk_rds_file = here(data.dir, "sce_pseudo_broad_Annotations2.rds")
+)
+
+save(sce_modeling_broad_Annotations2, file = here(data.dir, "sce_modeling_broad_Annotations2.Rdata"))
 
 
 # sgejobs::job_single('04_sce_1vALL_modeling', create_shell = TRUE, memory = '30G', command = "Rscript 04_sce_1vALL_modeling.R")
