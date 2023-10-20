@@ -2,13 +2,17 @@
 library("SummarizedExperiment")
 library("here")
 library("sessioninfo")
+library("recount")
+library("jaffelab")
+library("tidyverse")
+library("GGally")
 
 ## dirs
 data_dir <- here("processed-data", "03_bulk_pca", "02_multiregion_PCA")
 if(!dir.exists(data_dir)) dir.create(data_dir, recursive = TRUE)
 
-# plot_dir <- here("plots", "03_bulk_pca", "02_multiregion_PCA")
-# if(!dir.exists(plot_dir)) dir.create(plot, recursive = TRUE)
+plot_dir <- here("plots", "03_bulk_pca", "02_multiregion_PCA")
+if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
 #### load data ####
 ## retreiv colData final rse 
@@ -54,11 +58,119 @@ colnames(colData(rse_gene))
 
 colnames(colData(rse_gene_Hb))
 
-## Add missing cols to Hb data
-
-colnames(colData(rse_gene_Hb))[colnames(colData(rse_gene_Hb)) %in% colnames(colData(rse_gene))]
-
 colnames(colData(rse_gene))[!colnames(colData(rse_gene)) %in% colnames(colData(rse_gene_Hb))]
 # [1] "SAMPLE_ID" "Region"    "Dataset"   "Dx"        "Age"       "Protocol" 
 
+## Add missing cols
+rse_gene_Hb$SAMPLE_ID <- rse_gene_Hb$RNum
+rse_gene_Hb$Region <- "Hb"
+rse_gene_Hb$Dataset <- "Habenula_Pilot"
+rse_gene_Hb$Protocol <- "RiboZeroGold"
+
+colnames(colData(rse_gene_Hb))[which("AgeDeath" == colnames(colData(rse_gene_Hb)))] <- 'Age'
+colnames(colData(rse_gene_Hb))[which("PrimaryDx" == colnames(colData(rse_gene_Hb)))] <- 'Dx'
+
+## Add missing cols to Hb data
+common_cols <- intersect(colnames(colData(rse_gene_Hb)), colnames(colData(rse_gene)))
+
+colData(rse_gene_Hb) <- colData(rse_gene_Hb)[, common_cols]
+colData(rse_gene) <- colData(rse_gene)[, common_cols]
+
+## compare rowData
+rowData(rse_gene_Hb)
+rowData(rse_gene)
+
+rownames(rse_gene) <- rowData(rse_gene)$gencodeID
+## rowData is in same order
+identical(rownames(rse_gene), rownames(rse_gene_Hb))
+
+#### combine rse_gene 
+(rse_gene <- cbind(rse_gene, rse_gene_Hb))
+# class: RangedSummarizedExperiment 
+# dim: 58037 817 
+# metadata(0):
+#   assays(1): counts
+# rownames(58037): ENSG00000223972.5 ENSG00000227232.5 ... ENSG00000210195.2 ENSG00000210196.2
+# rowData names(10): Length gencodeID ... gencodeTx meanExprs
+# colnames(817): R10713_PilotRepeat R11449 ... R18422 R18423
+# colData names(22): BrNum RNum ... Dataset Protocol
+
+table(rse_gene$Region)
+
+#### Run PCA ####
+
+## get expression
+gene_rpkm <- getRPKM(rse_gene, "Length")
+gene_rpkm_filter <- gene_rpkm[rowMeans(gene_rpkm) > 0.1, ]
+
+geneExprs_filter <- log2(gene_rpkm_filter + 1)
+dim(geneExprs_filter)
+# [1] 29507   817
+pca <- prcomp(t(geneExprs_filter))
+pca_vars <- getPcaVars(pca)
+pca_vars_lab <- paste0(
+  "PC", seq(along = pca_vars), ": ",
+  pca_vars, "% Var Expl"
+)
+
+dim(pca$x)
+
+pca_tab <- as.data.frame(colData(rse_gene)) |> cbind(pca$x[, 1:10])
+colnames(pca_tab)
+
+
+#### PCA plots ####
+region_colors <- c("#ff9ccb",
+                  "#c10040",
+                  "#ff7168",
+                  "#9c2522",
+                  "#ff8032",
+                  "#00960e",
+                  "#0094fc",
+                  "#014abf",
+                  "#c495ff",
+                  "#8330b6",
+                  "#b9008b",
+                  "black")
+names(region_colors) <- levels(rse_gene$Region)
+
+
+## ggpairs for pca ##
+gg_pca <- ggpairs(pca_tab,
+                  mapping = aes(color = Region),
+                  columns = paste0("PC", 1:5)) +
+  scale_fill_manual(values = region_colors)+
+  scale_color_manual(values = region_colors)
+
+ggsave(gg_pca, filename = here(plot_dir, "ggpairs_pca.png"), height = 10, width = 10)
+
+
+pc_test <- pca_tab |>
+  ggplot(aes(x = PC1, y = PC2, color = Region)) +
+  geom_point() +
+  theme_bw() +
+  scale_color_manual(values = region_colors) +
+  labs(x = pca_vars_lab[[1]], y = pca_vars_lab[[2]]) 
+
+ggsave(pc_test, filename = here(plot_dir, "Bulk_PC1vPC2_Region.png"))
+
+
+## boxplots
+pca_vars_lab_tb <- tibble(PC = ss(pca_vars_lab,":"), var_expl = pca_vars_lab)
+
+pca_long <- pca_tab |> 
+  pivot_longer(!c(1:22), names_to = "PC", values_to = "PC_val") |>
+  left_join(pca_vars_lab_tb)
+  
+
+pca_boxplots <- pca_long |>
+  ggplot(aes(x = Region, y = PC_val, fill = Region)) +
+  geom_boxplot()  +
+  scale_fill_manual(values = region_colors) +
+  facet_wrap(~var_expl, ncol = 2) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "None")
+  
+ggsave(pca_boxplots, filename = here(plot_dir, "Bulk_PCA_boxplots.png"))
 
