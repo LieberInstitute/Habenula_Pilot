@@ -98,7 +98,6 @@ identical(rownames(rse_gene), rownames(rse_gene_Hb))
 table(rse_gene$Region)
 
 #### Run PCA ####
-
 ## get expression
 gene_rpkm <- getRPKM(rse_gene, "Length")
 gene_rpkm_filter <- gene_rpkm[rowMeans(gene_rpkm) > 0.1, ]
@@ -118,6 +117,18 @@ dim(pca$x)
 pca_tab <- as.data.frame(colData(rse_gene)) |> cbind(pca$x[, 1:10])
 colnames(pca_tab)
 
+## create long table
+pca_vars_lab_tb <- tibble(PC = ss(pca_vars_lab,":"), var_expl = pca_vars_lab) |>
+  mutate(var_expl = fct_reorder(var_expl, as.integer(gsub("PC","", PC))))
+
+levels(pca_vars_lab_tb$var_expl)[1:10]
+
+pca_long <- pca_tab |> 
+  pivot_longer(!c(1:22), names_to = "PC", values_to = "PC_val") |>
+  left_join(pca_vars_lab_tb)
+
+## save data 
+save(pca_tab, pca_long, file = here(data_dir, "Mulati_region_PCs.Rdata"))
 
 #### PCA plots ####
 region_colors <- c("#ff9ccb",
@@ -138,11 +149,11 @@ names(region_colors) <- levels(rse_gene$Region)
 ## ggpairs for pca ##
 gg_pca <- ggpairs(pca_tab,
                   mapping = aes(color = Region),
-                  columns = paste0("PC", 1:5)) +
+                  columns = paste0("PC", 1:6)) +
   scale_fill_manual(values = region_colors)+
   scale_color_manual(values = region_colors)
 
-ggsave(gg_pca, filename = here(plot_dir, "ggpairs_pca.png"), height = 10, width = 10)
+ggsave(gg_pca, filename = here(plot_dir, "ggpairs_pca.png"), height = 11, width = 11)
 
 
 pc_test <- pca_tab |>
@@ -156,13 +167,6 @@ ggsave(pc_test, filename = here(plot_dir, "Bulk_PC1vPC2_Region.png"))
 
 
 ## boxplots
-pca_vars_lab_tb <- tibble(PC = ss(pca_vars_lab,":"), var_expl = pca_vars_lab)
-
-pca_long <- pca_tab |> 
-  pivot_longer(!c(1:22), names_to = "PC", values_to = "PC_val") |>
-  left_join(pca_vars_lab_tb)
-  
-
 pca_boxplots <- pca_long |>
   ggplot(aes(x = Region, y = PC_val, fill = Region)) +
   geom_boxplot()  +
@@ -173,4 +177,43 @@ pca_boxplots <- pca_long |>
         legend.position = "None")
   
 ggsave(pca_boxplots, filename = here(plot_dir, "Bulk_PCA_boxplots.png"))
+
+pca_boxplots_free <- pca_long |>
+  ggplot(aes(x = Region, y = PC_val, fill = Region)) +
+  geom_boxplot()  +
+  scale_fill_manual(values = region_colors) +
+  facet_wrap(~var_expl, ncol = 2, scales = "free_y") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "None")
+
+ggsave(pca_boxplots_free, filename = here(plot_dir, "Bulk_PCA_boxplots_free.png"))
+
+pc_1v6 <- pca_tab |>
+  ggplot(aes(x = PC1, y = PC6, color = Region)) +
+  geom_point() +
+  theme_bw() +
+  scale_color_manual(values = region_colors) +
+  labs(x = pca_vars_lab[[1]], y = pca_vars_lab[[6]]) 
+
+ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region.png"))
+
+pc_1v6 <- pca_tab |>
+  ggplot(aes(x = PC1, y = PC6, color = Region)) +
+  geom_point() +
+  theme_bw() +
+  scale_color_manual(values = region_colors) +
+  labs(x = pca_vars_lab[[1]], y = pca_vars_lab[[6]]) 
+
+ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region.png"))
+
+
+# slurmjobs::job_single(name = "02_multiregion_PCA", memory = "10G", cores = 1, create_shell = TRUE, command = "Rscript 02_multiregion_PCA.R")
+
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
 
