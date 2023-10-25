@@ -1,4 +1,4 @@
-# Habenula_Bulk
+# Habenula_Pilot
 
 #### RNA-seq data from homogenate Habenula ####
 
