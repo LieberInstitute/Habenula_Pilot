@@ -11,6 +11,7 @@ library("ggplot2")
 library("tidyverse")
 library("ComplexHeatmap")
 library("spatialLIBD")
+library("RColorBrewer")
 
 # loading sce object
 load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_final.Rdata"),
@@ -193,13 +194,9 @@ row_ha <- rowAnnotation(
   Clusters = clusterData$cellType,
   col = list(Clusters = sn_colors)
 )
-# "#67001F" "#B2182B" "#D6604D" "#F4A582" "#FDDBC7" "#F7F7F7" "#D1E5F0" "#92C5DE" "#4393C3" "#2166AC" "#053061"
-
-library(circlize)
-col_fun = colorRamp2(c(-2, 0, 2), c("#053061", "#4393C3", "#F7F7F7", "#B2182B","#67001F"))
 
 heatmapped <- Heatmap(marker_z_score,
-                      col = rev(brewer.pal(11,"RdBu")),
+                      col = rev(brewer.pal(9,"RdBu")),
                       cluster_rows = FALSE,
                       cluster_columns = FALSE,
                       right_annotation = row_ha,
@@ -248,6 +245,28 @@ heatmap2 <- Heatmap(marker_z_score,
 # printing 
 pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Anno_FINAL.pdf"), width = 12, height = 8)
 heatmapped
+dev.off()
+
+#### Create Separate Legends ####
+lgd_Z = Legend(col_fun = circlize::colorRamp2(seq(-4, 4),
+                                             rev(RColorBrewer::brewer.pal(9, "RdBu"))),
+              title = "Z Score",
+              direction = "horizontal",
+              legend_width = unit(6, "cm"))
+
+pdf(here(plot_dir, "z_legend.pdf"), height = 1, width = 3)
+draw(lgd_Z)
+dev.off()
+
+
+lgd_celltypes = Legend(labels = names(sn_colors),
+                       title = "Cell Types", 
+                       legend_gp = gpar(fill = sn_colors),
+                       nrow = 4,
+                       legend_width = unit(6, "cm"))
+
+pdf(here(plot_dir, "ct_legend.pdf"), height = 2, width = 5)
+draw(lgd_celltypes)
 dev.off()
 
 sessioninfo::session_info()
