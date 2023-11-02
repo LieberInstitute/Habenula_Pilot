@@ -53,16 +53,16 @@ official_markers = list(
   "Astro" = c("AQP4"),
   "Endo" = c("ITIH5"),
   "Thal" = c("LYPD6B"),
-  "LHb.A" = c("LINC02653"), #  , ATP8B1
-  "LHb.B" = c("AC073071.1"),
-  "LHb.C" = c ("ENTHD1"),
-  "LHb.D" = c("TLE2"),
-  "LHb.E" = c("LINC01619"),
-  "LHb.F" = c("TACR3"),
-  "LHb.G" = c("AC008619.1"),
-  "MHb.A" = c("EXOC1L"), 
-  "MHb.B" = c("CHAT"),
-  "MHb.C" = c("BHLHE22"),
+  "LHb.1" = c("LINC02653"), #  , ATP8B1
+  "LHb.2" = c("AC073071.1"),
+  "LHb.3" = c ("ENTHD1"),
+  "LHb.4" = c("TLE2"),
+  "LHb.5" = c("LINC01619"),
+  "LHb.6" = c("TACR3"),
+  "LHb.7" = c("AC008619.1"),
+  "MHb.1" = c("EXOC1L"), 
+  "MHb.2" = c("CHAT"),
+  "MHb.3" = c("BHLHE22"),
   'Hb' = c("POU4F1"), # BARHL1
   "MHb" = c("CHRNB4"),
   "LHb" = c("HTR2C"),
@@ -113,11 +113,10 @@ color_official_markers = c(
   "Hb" = c("#702963"), 
   "MHb" = c("#F33A6A"),
   "LHb" = c("#0000FF"), 
-  'Neuron' = c('#D8BFD8'),
-  'Exc_Neuron' = c("#9e4ad1"), 
-  "Inh_Neuron" = c('#b5a2ff')
+  'Neuron' = c("#5C5C5C"),
+  'Exc_Neuron' = c('#8F8F8F'), 
+  "Inh_Neuron" = c("#C2C2C2")
 )
-
 
 # check colors 
 preview_colors <- function(cell_colors) {
@@ -158,12 +157,14 @@ sce_reorder <- sce[unlist(markerList) , row_namers]
 markTable <- as.data.frame(unlist(markerList)) |> 
   rownames_to_column("cellType") |>
   rename(gene = `unlist(markerList)`) |>
-  mutate(cellType = gsub("\\d+", "", cellType)) |>
+  # mutate(cellType = gsub("\\d+", "", cellType)) |>
   filter(gene %in% rowData(sce_reorder)$Symbol)
 
 # getting z scores
 marker_z_score <- scale(t(logcounts(sce_reorder)))
 # corner(marker_z_score)
+
+identical(markTable$gene, colnames(marker_z_score))
 
 # heatmap columns annotation
 column_ha <- HeatmapAnnotation(
@@ -186,12 +187,19 @@ names(clusterData) <- "cellType"
 # names(col_pal_ct) = unique(clusterData$cellType)
 
 # heatmap row annotationn
+identical(clusterData$cellType, rownames(marker_z_score))
+
 row_ha <- rowAnnotation(
   Clusters = clusterData$cellType,
   col = list(Clusters = sn_colors)
 )
+# "#67001F" "#B2182B" "#D6604D" "#F4A582" "#FDDBC7" "#F7F7F7" "#D1E5F0" "#92C5DE" "#4393C3" "#2166AC" "#053061"
+
+library(circlize)
+col_fun = colorRamp2(c(-2, 0, 2), c("#053061", "#4393C3", "#F7F7F7", "#B2182B","#67001F"))
 
 heatmapped <- Heatmap(marker_z_score,
+                      col = rev(brewer.pal(11,"RdBu")),
                       cluster_rows = FALSE,
                       cluster_columns = FALSE,
                       right_annotation = row_ha,
@@ -222,6 +230,25 @@ png(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.png"),
 heatmapped
 dev.off()
 
+heatmap2 <- Heatmap(marker_z_score,
+                      col = rev(brewer.pal(11,"RdBu")),
+                      cluster_rows = FALSE,
+                      cluster_columns = FALSE,
+                      right_annotation = row_ha,
+                      top_annotation = column_ha,
+                      column_split = factor(markTable$cellType, levels = markTable$cellType), 
+                      column_title_rot = 30,
+                      heatmap_legend_param = list(
+                        title = c("Z_Score"),
+                        border = "black"
+                      ))
+
+
+
+# printing 
+pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Anno_FINAL.pdf"), width = 12, height = 8)
+heatmapped
+dev.off()
 
 sessioninfo::session_info()
 
