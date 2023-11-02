@@ -111,11 +111,26 @@ Heatmap(combined_cor,
 Heatmap(t(cor_species$all),
         name = "Cor",
         col = my.col,
+        cluster_rows = FALSE,
+        cluster_columns = FALSE,
         bottom_annotation = ct_color_bar,
         rect_gp = gpar(col = "black", lwd = 1))
 
+Heatmap(t(cor_species$all),
+        name = "Cor",
+        col = my.col,
+        bottom_annotation = ct_color_bar,
+        rect_gp = gpar(col = "black", lwd = 1))
 
 ## All vs. Neuron
+Heatmap(t(cor_species$allXneuron),
+        name = "Cor",
+        col = my.col,
+        cluster_rows = FALSE,
+        cluster_columns = FALSE,
+        bottom_annotation = ct_color_bar,
+        rect_gp = gpar(col = "black", lwd = 1))
+
 Heatmap(t(cor_species$allXneuron),
         name = "Cor",
         col = my.col,
@@ -145,6 +160,7 @@ Heatmap(t(cor_species$all),
         left_annotation = rowAnnotation(
           `n cells` = ComplexHeatmap::anno_barplot(n_cells_mm$all[colnames(cor_species$all),"Freq"])),
         rect_gp = gpar(col = "black", lwd = 1))
+
 ## All vs. Neuron
 Heatmap(t(cor_species$allXneuron),
         name = "Cor",
