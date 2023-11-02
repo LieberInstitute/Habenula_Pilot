@@ -1,0 +1,329 @@
+**** Job starts ****
+Thu Oct 26 12:29:21 PM EDT 2023
+**** JHPCE info ****
+User: lhuuki
+Job id: 627879
+Job name: 02_multiregion_PCA
+Node name: compute-090
+Task id: 
+Unloading conda_R/4.3
+Loading conda_R/4.3
+
+Currently Loaded Modules:
+  1) JHPCE_ROCKY9_DEFAULT_ENV   3) ruby/3.2.2     5) conda/3-23.3.1
+  2) JHPCE_tools/3.0            4) rmate/1.5.10   6) conda_R/4.3
+
+ 
+
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
+Setting options('download.file.method.GEOquery'='auto')
+Setting options('GEOquery.inmemory.gpl'=FALSE)
+Loading required package: rafalib
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.3     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ lubridate::%within%() masks IRanges::%within%()
+✖ dplyr::collapse()     masks IRanges::collapse()
+✖ dplyr::combine()      masks Biobase::combine(), BiocGenerics::combine()
+✖ dplyr::count()        masks matrixStats::count()
+✖ dplyr::desc()         masks IRanges::desc()
+✖ tidyr::expand()       masks S4Vectors::expand()
+✖ dplyr::filter()       masks stats::filter()
+✖ dplyr::first()        masks S4Vectors::first()
+✖ dplyr::lag()          masks stats::lag()
+✖ ggplot2::Position()   masks BiocGenerics::Position(), base::Position()
+✖ purrr::reduce()       masks GenomicRanges::reduce(), IRanges::reduce()
+✖ dplyr::rename()       masks S4Vectors::rename()
+✖ lubridate::second()   masks S4Vectors::second()
+✖ lubridate::second<-() masks S4Vectors::second<-()
+✖ dplyr::slice()        masks IRanges::slice()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2
+Loading objects:
+  rse_gene
+[1] 58037    73
+[1] 58037    33
+Loading objects:
+  rse_gene
+[1] 58037   784
+
+Amygdala      BLA       CA  Caudate     dACC       DG    DLPFC    HIPPO 
+     140       54       11       82       55       41      121       26 
+     MeA     mPFC     sACC 
+      55       57      142 
+
+            Astellas_DG   BrainSeq_Phase2_DLPFC   BrainSeq_Phase2_HIPPO 
+                     30                      66                      12 
+BrainSeq_Phase3_Caudate     BrainSeq_Phase4and5        psychENCODE_Mood 
+                     82                      32                     268 
+        PTSD_BrainOmics                 VA_PTSD 
+                     75                     219 
+ [1] "SAMPLE_ID"         "RNum"              "RIN"              
+ [4] "Region"            "Dataset"           "BrNum"            
+ [7] "Dx"                "Age"               "Sex"              
+[10] "Race"              "Protocol"          "numReads"         
+[13] "numMapped"         "numUnmapped"       "mitoMapped"       
+[16] "totalMapped"       "overallMapRate"    "concordMapRate"   
+[19] "mitoRate"          "rRNA_rate"         "totalAssignedGene"
+[22] "bamFile"          
+  [1] "BrNum"                          "RNum"                          
+  [3] "RIN"                            "Brain.Region"                  
+  [5] "AgeDeath"                       "Sex"                           
+  [7] "Race"                           "PrimaryDx"                     
+  [9] "FQCbasicStats"                  "perBaseQual"                   
+ [11] "perTileQual"                    "perSeqQual"                    
+ [13] "perBaseContent"                 "GCcontent"                     
+ [15] "Ncontent"                       "SeqLengthDist"                 
+ [17] "SeqDuplication"                 "OverrepSeqs"                   
+ [19] "AdapterContent"                 "KmerContent"                   
+ [21] "SeqLength_R1"                   "percentGC_R1"                  
+ [23] "phred20.21_R1"                  "phred48.49_R1"                 
+ [25] "phred76.77_R1"                  "phred100.101_R1"               
+ [27] "phredGT30_R1"                   "phredGT35_R1"                  
+ [29] "Adapter50.51_R1"                "Adapter70.71_R1"               
+ [31] "Adapter88.89_R1"                "SeqLength_R2"                  
+ [33] "percentGC_R2"                   "phred20.21_R2"                 
+ [35] "phred48.49_R2"                  "phred76.77_R2"                 
+ [37] "phred100.101_R2"                "phredGT30_R2"                  
+ [39] "phredGT35_R2"                   "Adapter50.51_R2"               
+ [41] "Adapter70.71_R2"                "Adapter88.89_R2"               
+ [43] "ERCCsumLogErr"                  "bamFile"                       
+ [45] "trimmed"                        "numReads"                      
+ [47] "numMapped"                      "numUnmapped"                   
+ [49] "overallMapRate"                 "concordMapRate"                
+ [51] "totalMapped"                    "mitoMapped"                    
+ [53] "mitoRate"                       "totalAssignedGene"             
+ [55] "gene_Assigned"                  "gene_Unassigned_Ambiguity"     
+ [57] "gene_Unassigned_MultiMapping"   "gene_Unassigned_NoFeatures"    
+ [59] "gene_Unassigned_Unmapped"       "gene_Unassigned_MappingQuality"
+ [61] "gene_Unassigned_FragmentLength" "gene_Unassigned_Chimera"       
+ [63] "gene_Unassigned_Secondary"      "gene_Unassigned_Nonjunction"   
+ [65] "gene_Unassigned_Duplicate"      "rRNA_rate"                     
+ [67] "Flowcell"                       "hasGenotype"                   
+ [69] "sum"                            "detected"                      
+ [71] "subsets_Mito_sum"               "subsets_Mito_detected"         
+ [73] "subsets_Mito_percent"           "subsets_Ribo_sum"              
+ [75] "subsets_Ribo_detected"          "subsets_Ribo_percent"          
+ [77] "library_size"                   "log10_library_size"            
+ [79] "detected_num_genes"             "abs_ERCCsumLogErr"             
+ [81] "Astrocyte"                      "Endo"                          
+ [83] "Excit.Thal"                     "Inhib.Thal"                    
+ [85] "LHb"                            "MHb"                           
+ [87] "Microglia"                      "Oligo"                         
+ [89] "OPC"                            "tot.Hb"                        
+ [91] "tot.Thal"                       "qSV1"                          
+ [93] "qSV2"                           "qSV3"                          
+ [95] "qSV4"                           "qSV5"                          
+ [97] "qSV6"                           "qSV7"                          
+ [99] "qSV8"                           "snpPC1"                        
+[101] "snpPC2"                         "snpPC3"                        
+[103] "snpPC4"                         "snpPC5"                        
+[105] "snpPC6"                         "snpPC7"                        
+[107] "snpPC8"                         "snpPC9"                        
+[109] "snpPC10"                       
+[1] "SAMPLE_ID" "Region"    "Dataset"   "Dx"        "Age"       "Protocol" 
+DataFrame with 58037 rows and 10 columns
+                     Length         gencodeID       ensemblID
+                  <integer>       <character>     <character>
+ENSG00000223972.5      1735 ENSG00000223972.5 ENSG00000223972
+ENSG00000227232.5      1351 ENSG00000227232.5 ENSG00000227232
+ENSG00000278267.1        68 ENSG00000278267.1 ENSG00000278267
+ENSG00000243485.4      1021 ENSG00000243485.4 ENSG00000243485
+ENSG00000237613.2      1219 ENSG00000237613.2 ENSG00000237613
+...                     ...               ...             ...
+ENSG00000198695.2       525 ENSG00000198695.2 ENSG00000198695
+ENSG00000210194.1        69 ENSG00000210194.1 ENSG00000210194
+ENSG00000198727.2      1141 ENSG00000198727.2 ENSG00000198727
+ENSG00000210195.2        66 ENSG00000210195.2 ENSG00000210195
+ENSG00000210196.2        68 ENSG00000210196.2 ENSG00000210196
+                               gene_type      Symbol  EntrezID       Class
+                             <character> <character> <integer> <character>
+ENSG00000223972.5 transcribed_unproces..     DDX11L1     84771       InGen
+ENSG00000227232.5 unprocessed_pseudogene      WASH7P        NA       InGen
+ENSG00000278267.1                  miRNA   MIR6859-1 102466751       InGen
+ENSG00000243485.4                lincRNA   MIR1302-2 100302278       InGen
+ENSG00000237613.2                lincRNA     FAM138A    641702       InGen
+...                                  ...         ...       ...         ...
+ENSG00000198695.2         protein_coding      MT-ND6      4541       InGen
+ENSG00000210194.1                Mt_tRNA       MT-TE        NA       InGen
+ENSG00000198727.2         protein_coding      MT-CYB      4519       InGen
+ENSG00000210195.2                Mt_tRNA       MT-TT        NA       InGen
+ENSG00000210196.2                Mt_tRNA       MT-TP        NA       InGen
+                   meanExprs     NumTx              gencodeTx
+                   <numeric> <integer>            <character>
+ENSG00000223972.5 0.00588179         2 ENST00000456328.2;EN..
+ENSG00000227232.5 2.52965031         1      ENST00000488147.1
+ENSG00000278267.1 4.73393940         1      ENST00000619216.1
+ENSG00000243485.4 0.01252331         3 ENST00000473358.1;EN..
+ENSG00000237613.2 0.01838856         2 ENST00000417324.1;EN..
+...                      ...       ...                    ...
+ENSG00000198695.2  135.83546         1      ENST00000361681.2
+ENSG00000210194.1    8.05502         1      ENST00000387459.1
+ENSG00000198727.2 1203.48060         1      ENST00000361789.2
+ENSG00000210195.2  257.75635         1      ENST00000387460.2
+ENSG00000210196.2  360.55391         1      ENST00000387461.2
+DataFrame with 58037 rows and 9 columns
+                               Length         gencodeID       ensemblID
+                            <integer>       <character>     <character>
+DDX11L1|ENSG00000223972.5        1735 ENSG00000223972.5 ENSG00000223972
+WASH7P|ENSG00000227232.5         1351 ENSG00000227232.5 ENSG00000227232
+MIR6859-1|ENSG00000278267.1        68 ENSG00000278267.1 ENSG00000278267
+MIR1302-2|ENSG00000243485.4      1021 ENSG00000243485.4 ENSG00000243485
+FAM138A|ENSG00000237613.2        1219 ENSG00000237613.2 ENSG00000237613
+...                               ...               ...             ...
+MT-ND6|ENSG00000198695.2          525 ENSG00000198695.2 ENSG00000198695
+MT-TE|ENSG00000210194.1            69 ENSG00000210194.1 ENSG00000210194
+MT-CYB|ENSG00000198727.2         1141 ENSG00000198727.2 ENSG00000198727
+MT-TT|ENSG00000210195.2            66 ENSG00000210195.2 ENSG00000210195
+MT-TP|ENSG00000210196.2            68 ENSG00000210196.2 ENSG00000210196
+                                         gene_type      Symbol  EntrezID
+                                       <character> <character> <integer>
+DDX11L1|ENSG00000223972.5   transcribed_unproces..     DDX11L1     84771
+WASH7P|ENSG00000227232.5    unprocessed_pseudogene      WASH7P        NA
+MIR6859-1|ENSG00000278267.1                  miRNA   MIR6859-1 102466751
+MIR1302-2|ENSG00000243485.4                lincRNA   MIR1302-2 100302278
+FAM138A|ENSG00000237613.2                  lincRNA     FAM138A    641702
+...                                            ...         ...       ...
+MT-ND6|ENSG00000198695.2            protein_coding      MT-ND6      4541
+MT-TE|ENSG00000210194.1                    Mt_tRNA       MT-TE        NA
+MT-CYB|ENSG00000198727.2            protein_coding      MT-CYB      4519
+MT-TT|ENSG00000210195.2                    Mt_tRNA       MT-TT        NA
+MT-TP|ENSG00000210196.2                    Mt_tRNA       MT-TP        NA
+                                  Class     NumTx              gencodeTx
+                            <character> <integer>            <character>
+DDX11L1|ENSG00000223972.5         InGen         2 ENST00000456328.2;EN..
+WASH7P|ENSG00000227232.5          InGen         1      ENST00000488147.1
+MIR6859-1|ENSG00000278267.1       InGen         1      ENST00000619216.1
+MIR1302-2|ENSG00000243485.4       InGen         3 ENST00000473358.1;EN..
+FAM138A|ENSG00000237613.2         InGen         2 ENST00000417324.1;EN..
+...                                 ...       ...                    ...
+MT-ND6|ENSG00000198695.2          InGen         1      ENST00000361681.2
+MT-TE|ENSG00000210194.1           InGen         1      ENST00000387459.1
+MT-CYB|ENSG00000198727.2          InGen         1      ENST00000361789.2
+MT-TT|ENSG00000210195.2           InGen         1      ENST00000387460.2
+MT-TP|ENSG00000210196.2           InGen         1      ENST00000387461.2
+[1] TRUE
+class: RangedSummarizedExperiment 
+dim: 58037 817 
+metadata(0):
+assays(1): counts
+rownames(58037): ENSG00000223972.5 ENSG00000227232.5 ...
+  ENSG00000210195.2 ENSG00000210196.2
+rowData names(10): Length gencodeID ... gencodeTx meanExprs
+colnames(817): R10713_PilotRepeat R11449 ... R18422 R18423
+colData names(22): BrNum RNum ... Dataset Protocol
+
+Amygdala      BLA       CA  Caudate     dACC       DG    DLPFC    HIPPO 
+     140       54       11       82       55       41      121       26 
+     MeA     mPFC     sACC       Hb 
+      55       57      142       33 
+[1] 29507   817
+[1] 817 817
+ [1] "BrNum"             "RNum"              "RIN"              
+ [4] "Age"               "Sex"               "Race"             
+ [7] "Dx"                "bamFile"           "numReads"         
+[10] "numMapped"         "numUnmapped"       "overallMapRate"   
+[13] "concordMapRate"    "totalMapped"       "mitoMapped"       
+[16] "mitoRate"          "totalAssignedGene" "rRNA_rate"        
+[19] "SAMPLE_ID"         "Region"            "Dataset"          
+[22] "Protocol"          "PC1"               "PC2"              
+[25] "PC3"               "PC4"               "PC5"              
+[28] "PC6"               "PC7"               "PC8"              
+[31] "PC9"               "PC10"             
+ [1] "PC1: 19.7% Var Expl"  "PC2: 12.9% Var Expl"  "PC3: 8.51% Var Expl" 
+ [4] "PC4: 5.53% Var Expl"  "PC5: 4.19% Var Expl"  "PC6: 2.64% Var Expl" 
+ [7] "PC7: 2.56% Var Expl"  "PC8: 1.93% Var Expl"  "PC9: 1.43% Var Expl" 
+[10] "PC10: 1.28% Var Expl"
+Joining with `by = join_by(PC)`
+Saving 7 x 7 in image
+Saving 7 x 7 in image
+Saving 7 x 7 in image
+Error in `ggsave()`:
+! Unknown graphics device "df"
+Backtrace:
+    ▆
+ 1. └─ggplot2::ggsave(pca_boxplots_free, filename = here(plot_dir, "Bulk_PCA_boxplots_free.df"))
+ 2.   └─ggplot2:::plot_dev(device, filename, dpi = dpi)
+ 3.     └─cli::cli_abort("Unknown graphics device {.val {device}}", call = call)
+ 4.       └─rlang::abort(...)
+Execution halted
