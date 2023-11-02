@@ -196,7 +196,8 @@ row_ha <- rowAnnotation(
 )
 
 heatmapped <- Heatmap(marker_z_score,
-                      col = rev(brewer.pal(9,"RdBu")),
+                      col = circlize::colorRamp2(seq(-4, 4),
+                                                 rev(RColorBrewer::brewer.pal(9, "RdBu"))),
                       cluster_rows = FALSE,
                       cluster_columns = FALSE,
                       right_annotation = row_ha,
@@ -224,26 +225,6 @@ dev.off()
 # png
 png(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.png"), 
     width = 12, height = 8, units = "in", res = 1200)
-heatmapped
-dev.off()
-
-heatmap2 <- Heatmap(marker_z_score,
-                      col = rev(brewer.pal(11,"RdBu")),
-                      cluster_rows = FALSE,
-                      cluster_columns = FALSE,
-                      right_annotation = row_ha,
-                      top_annotation = column_ha,
-                      column_split = factor(markTable$cellType, levels = markTable$cellType), 
-                      column_title_rot = 30,
-                      heatmap_legend_param = list(
-                        title = c("Z_Score"),
-                        border = "black"
-                      ))
-
-
-
-# printing 
-pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Anno_FINAL.pdf"), width = 12, height = 8)
 heatmapped
 dev.off()
 
