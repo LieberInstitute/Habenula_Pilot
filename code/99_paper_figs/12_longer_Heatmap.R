@@ -184,6 +184,8 @@ row_ha <- rowAnnotation(
 )
 
 heatmapped <- Heatmap(marker_z_score,
+                      col = circlize::colorRamp2(seq(-4, 4),
+                                                 rev(RColorBrewer::brewer.pal(9, "RdBu"))),
                       cluster_rows = FALSE,
                       cluster_columns = FALSE,
                       right_annotation = row_ha,
