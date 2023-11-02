@@ -6,6 +6,7 @@ library("recount")
 library("jaffelab")
 library("tidyverse")
 library("GGally")
+library("patchwork")
 
 ## dirs
 data_dir <- here("processed-data", "03_bulk_pca", "02_multiregion_PCA")
@@ -15,7 +16,7 @@ plot_dir <- here("plots", "03_bulk_pca", "02_multiregion_PCA")
 if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
 #### load data ####
-## retreiv colData final rse 
+## retrieve colData final rse 
 load(here( "processed-data","rse_objects","rse_gene_Habenula_Pilot.rda"),verbose = TRUE)
 pd <- colData(rse_gene)
 
@@ -135,7 +136,7 @@ save(pca_tab, pca_long, file = here(data_dir, "Multi_region_PCs.Rdata"))
 # pca_vars_lab <- unique(pca_long$var_expl)
 
 #### PCA plots ####
-"#ff8032"
+# "#ff8032"
 
 region_colors <- c(Amygdala = "#ff9ccb",
                    BLA = "#c10040",
@@ -148,9 +149,10 @@ region_colors <- c(Amygdala = "#ff9ccb",
                    DLPFC = "#c495ff",
                    mPFC = "#8330b6",
                    Caudate = "#65717B",
-                   # Hb = "#F2CA18",
-                   # Hb = "#F9F50D"
-                   Hb = "#FA9A09"
+                   # Hb = "#F2CA18", #jonquil
+                   # Hb = "#F9F50D" #Yellow
+                   # Hb = "#FA9A09" #Orange Peel
+                   Hb = "#F4D23E" #Mustard
                    )
 
 ## ggpairs for pca ##
@@ -196,36 +198,48 @@ pca_boxplots_free <- pca_long |>
         legend.position = "None")
 
 ggsave(pca_boxplots_free, filename = here(plot_dir, "Bulk_PCA_boxplots_free.png"))
+ggsave(pca_boxplots_free, filename = here(plot_dir, "Bulk_PCA_boxplots_free.df"))
 
+## paper
 pc6_boxplot <- pca_long |>
   filter(PC == "PC6") |>
-  ggplot(aes(x = Region, y = PC_val)) +
-  geom_boxplot(aes(fill = Region), alpha = 0.5, outlier.shape = NA)  +
+  ggplot(aes(x = Region, y = PC_val, fill = Region, color = Region == "Hb")) +
+  geom_boxplot(alpha = 0.5, outlier.shape = NA)  +
   geom_jitter(aes(fill = Region),shape = 21, width = 0.25) +
   scale_fill_manual(values = region_colors) +
+  scale_color_manual(values = c(`TRUE` = "black", `FALSE` = "grey30"), guide = "none") +
   # facet_wrap(~var_expl, ncol = 2, scales = "free_y") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "None") +
   labs(y = pca_vars_lab[[6]])
 
-ggsave(pc6_boxplot, filename = here(plot_dir, "Bulk_PC6_boxplot.png"), height = 4, width = 5)
+ggsave(pc6_boxplot, filename = here(plot_dir, "Bulk_PC6_boxplot_test.png"), height = 4, width = 5)
 ggsave(pc6_boxplot, filename = here(plot_dir, "Bulk_PC6_boxplot.pdf"), height = 4, width = 5)
 
 pc_1v6 <- pca_tab  |>
   ggplot(aes(x = PC1, y = PC6)) +
   geom_point(shape = 21, aes(fill = Region, color = Region == "Hb")) +
   theme_bw() +
-  scale_color_manual(values = c(`TRUE` = "black", `FALSE` = "#00000000"), guide = "none") +
+  # scale_color_manual(values = c(`TRUE` = "black", `FALSE` = "#00000000"), guide = "none") +
+  scale_color_manual(values = c(`TRUE` = "black", `FALSE` = "grey30"), guide = "none") +
   scale_fill_manual(values = region_colors) +
   labs(x = pca_vars_lab[[1]], y = pca_vars_lab[[6]]) 
 
-ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region.png"), width = 5, height = 4)
+ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region_test.png"), width = 5, height = 4)
 ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region.pdf"), width = 5, height = 4)
 
-## combine scatter + boxplot
-library(patchwork)
+pc_1v6_outline <- pca_tab  |>
+  ggplot(aes(x = PC1, y = PC6)) +
+  geom_point(aes(fill = Region), shape = 21, color = "black") +
+  theme_bw() +
+  scale_fill_manual(values = region_colors) +
+  labs(x = pca_vars_lab[[1]], y = pca_vars_lab[[6]]) 
 
+ggsave(pc_1v6_outline, filename = here(plot_dir, "Bulk_PC1vPC6_Region_all_outline.png"), width = 5, height = 4)
+# ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region_all_outline.pdf"), width = 5, height = 4)
+
+## combine scatter + boxplot
 pc1_patch <- pc_1v6 + theme(legend.position = "None") + 
   pc6_boxplot + theme(axis.title.y=element_blank(),
                       axis.text.y=element_blank(),
