@@ -232,7 +232,7 @@ column_ha <- HeatmapAnnotation(
 # names(col_pal_ct) = unique(clusterData$cellType)
 
 # heatmap row annotationn
-identical(clusterData$cellType, rownames(marker_z_score))
+# identical(clusterData$cellType, rownames(marker_z_score))
 
 row_ha <- rowAnnotation(
   Clusters = rownames(marker_z_score),
