@@ -44,7 +44,8 @@ sce_final$RealSample <- sce_final$Sample
 sce_final$Sample <- sce_final$FakeSample
 
 set.seed(20220907) 
-sce_simple_pb_snAnno3 <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
+sce_pb <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
+save(sce_pb, file = here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_pseudobulk_final_Annotations.Rdata"))
 
 # list of marker genes 
 official_markers = list(
@@ -57,7 +58,7 @@ official_markers = list(
   "LHb.1" = c("LINC02653"), #  , ATP8B1
   "LHb.2" = c("AC073071.1"),
   "LHb.3" = c ("ENTHD1"),
-  "LHb.4" = c("TLE2"),
+  "LHb.4" = c("TLE2"), 
   "LHb.5" = c("LINC01619"),
   "LHb.6" = c("TACR3"),
   "LHb.7" = c("AC008619.1"),
@@ -72,27 +73,37 @@ official_markers = list(
   'Inh_Neuron' = c('GAD1')
 )
 
+#### Check marker genes ####
+marker_stats <- readxl::read_xlsx(here("plots", "99_paper_figs", "10c_snResolution_Top_Markers", "snResolution_top50MarkerGenes.xlsx"))
+marker_stats[[1]] <- NULL
+marker_stats |> count(cellType.target)
 
-row_namers <- c("Oligo",
-                "OPC",
-                "Microglia",
-                "Astrocyte",
-                "Endo",
-                'Inhib.Thal', 
-                'Excit.Thal', 
-                "LHb.1",
-                "LHb.2",
-                "LHb.3",
-                "LHb.4",
-                "LHb.5",
-                "LHb.6",
-                "LHb.7",
-                "MHb.1", 
-                "MHb.2",
-                "MHb.3"
-)
+official_markers_tb <- tibble(cellType.short = names(official_markers),
+                              cellType.target = names(official_markers), 
+                              gene = official_markers) |>
+  unnest(gene) |>
+  mutate(cellType.target = case_when(cellType.target == "Astro" ~'Astrocyte',
+                                     cellType.target == "Micro" ~'Microglia',
+                                     TRUE ~ cellType.target))
 
+## Hb an Thal sub-type genes are datadriven (top mean ratio genes, glia is a mixed bag)
+marker_details <- marker_stats |>
+  right_join(official_markers_tb) |>
+  arrange(rank_ratio) |>
+  select(cellType.short, cellType.target, gene, rank_ratio, rank_marker) |>
+  mutate(final_cell_type = cellType.target %in% marker_stats$cellType.target,
+         anno = case_when(rank_ratio == 1 ~ "Data-Driven",
+                          !final_cell_type | cellType.target == "Microglia" ~ "Literature",
+                          TRUE ~ "Literature + Data-Supported")) 
+  
+marker_details |> print(n = 22)
 
+marker_stats |> 
+  group_by(cellType.target) |>
+  arrange(rank_ratio) |>
+  slice(1:5)
+
+#### prep complex heatmap annotations  ####
 # explicit color scheme 
 color_official_markers = c(
   "Oligo" = c("#4d5802"),
@@ -119,6 +130,10 @@ color_official_markers = c(
   "Inh_Neuron" = c("#C2C2C2")
 )
 
+marker_method_colors <- c(`Data-Driven` = "#FFDA85",
+                          `Literature + Data-Supported` = "#F7A5A1",
+                          `Literature` = "#95E4EE")
+
 # check colors 
 preview_colors <- function(cell_colors) {
   par(las = 2) # make label text perpendicular to axis
@@ -141,7 +156,7 @@ dev.off()
 
 ####### PLOTTING ###############################################################
 # Plotting ComplexHeatmap
-sce = sce_simple_pb_snAnno3
+sce = sce_pb
 clusterMethod = "final_Annotations"
 markerList = official_markers
 
@@ -149,17 +164,48 @@ markerList = official_markers
 rownames(sce) <- rowData(sce)$Symbol
 
 # renaming rownnames of colData(sce) based on row annotations
-rownames(colData(sce)) <- paste(colData(sce)[, clusterMethod])
-
-# reordering sce object for plottability
-sce_reorder <- sce[unlist(markerList) , row_namers]
+rownames(colData(sce)) <- colData(sce)[, clusterMethod]
 
 # Making data frame of genes we are interested in annd their general classification
-markTable <- as.data.frame(unlist(markerList)) |> 
-  rownames_to_column("cellType") |>
-  rename(gene = `unlist(markerList)`) |>
-  # mutate(cellType = gsub("\\d+", "", cellType)) |>
-  filter(gene %in% rowData(sce_reorder)$Symbol)
+# markTable <- as.data.frame(unlist(markerList)) |> 
+#   rownames_to_column("cellType") |>
+#   rename(gene = `unlist(markerList)`) |>
+#   # mutate(cellType = gsub("\\d+", "", cellType)) |>
+#   filter(gene %in% rowData(sce_reorder)$Symbol)
+
+markTable <- marker_details |>
+  mutate(cellType.short = factor(cellType.short, levels = names(official_markers)),
+         anno = factor(anno, levels = c("Data-Driven", "Literature + Data-Supported", "Literature"))) |>
+  arrange(anno, cellType.short)
+## fix order in colsplit 
+markTable$cellType.short = factor(markTable$cellType.short, levels = markTable$cellType.short)
+
+markTable |> print(n=22)
+
+row_namers <- c("LHb.1",
+                "LHb.2",
+                "LHb.3",
+                "LHb.4",
+                "LHb.5",
+                "LHb.6",
+                "LHb.7",
+                "MHb.1",
+                "MHb.2",
+                "MHb.3",
+                'Inhib.Thal',
+                'Excit.Thal',
+                "Oligo",
+                "OPC",
+                "Astrocyte",
+                "Endo",
+                "Microglia")
+
+# row_namers <- markTable |> filter(final_cell_type) |> pull(cellType.target)
+# marker_order <- markTable |> pull(gene)
+
+# reordering sce object for plottability
+sce_reorder <- sce[markTable$gene , row_namers]
+sce_reorder$final_Annotations
 
 # getting z scores
 marker_z_score <- scale(t(logcounts(sce_reorder)))
@@ -169,17 +215,15 @@ identical(markTable$gene, colnames(marker_z_score))
 
 # heatmap columns annotation
 column_ha <- HeatmapAnnotation(
-  Gene_Marker = markTable$cellType,
-  col = list(Gene_Marker = color_official_markers),
-  annotation_legend_param = list(
-    Gene_Marker = list(
-      title = "Gene_Marker" 
-    )
-  ))
+  Marker_Gene = markTable$cellType.short,
+  Marker_Method = markTable$anno,
+  col = list(Marker_Gene = color_official_markers,
+             Marker_Method = marker_method_colors)
+)
 
 # grabbing the annotations per cluster from the sce_reorder object
-clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
-names(clusterData) <- "cellType"
+# clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
+# names(clusterData) <- "cellType"
 
 # prepping the colors we want
 # for cell type
@@ -191,25 +235,25 @@ names(clusterData) <- "cellType"
 identical(clusterData$cellType, rownames(marker_z_score))
 
 row_ha <- rowAnnotation(
-  Clusters = clusterData$cellType,
+  Clusters = rownames(marker_z_score),
   col = list(Clusters = sn_colors)
 )
 
 heatmapped <- Heatmap(marker_z_score,
-                      col = circlize::colorRamp2(seq(-4, 4),
-                                                 rev(RColorBrewer::brewer.pal(9, "RdBu"))),
+                      name = "Z Score",
+                      col = circlize::colorRamp2(seq(-4, 4,  8/10),
+                                                 rev(RColorBrewer::brewer.pal(11, "RdBu"))),
                       cluster_rows = FALSE,
                       cluster_columns = FALSE,
                       right_annotation = row_ha,
                       top_annotation = column_ha,
-                      column_split = factor(markTable$cellType, levels = markTable$cellType), 
-                      column_title_rot = 30,
-                      heatmap_legend_param = list(
-                        title = c("Z_Score"),
-                        border = "black"
-                      ))
-
-
+                      column_split = markTable$cellType.short,
+                      column_title_rot = 30
+                      # heatmap_legend_param = list(
+                      #   title = c("Z_Score"),
+                      #   border = "black"
+                      # )
+                      )
 
 # printing 
 pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Anno_FINAL.pdf"), width = 12, height = 8)
@@ -229,8 +273,8 @@ heatmapped
 dev.off()
 
 #### Create Separate Legends ####
-lgd_Z = Legend(col_fun = circlize::colorRamp2(seq(-4, 4),
-                                             rev(RColorBrewer::brewer.pal(9, "RdBu"))),
+lgd_Z = Legend(col_fun = circlize::colorRamp2(seq(-4, 4,  8/10),
+                                              rev(RColorBrewer::brewer.pal(11, "RdBu"))),
               title = "Z Score",
               direction = "horizontal",
               legend_width = unit(6, "cm"))
@@ -248,6 +292,15 @@ lgd_celltypes = Legend(labels = names(sn_colors),
 
 pdf(here(plot_dir, "ct_legend.pdf"), height = 2, width = 5)
 draw(lgd_celltypes)
+dev.off()
+
+
+lgd_marker_method = Legend(labels = unique(markTable$anno),
+                           legend_gp = gpar(fill = marker_method_colors),
+                       title = "Marker_Method")
+
+pdf(here(plot_dir, "marker_method_legend.pdf"), height = 2, width = 5)
+draw(lgd_marker_method)
 dev.off()
 
 sessioninfo::session_info()
