@@ -68,6 +68,21 @@ official_markers = list(
 # 'Exc_Neuron' = c('SLC17A6'), 
 # 'Inh_Neuron' = c('GAD1')
 
+#### check marker genes ####
+marker_stats <- readxl::read_xlsx(here("plots", "99_paper_figs", "10c_snResolution_Top_Markers", "snResolution_top50MarkerGenes.xlsx"))
+marker_stats[[1]] <- NULL
+
+official_markers_tb <- tibble(cellType.target = gsub("_","",names(official_markers)), 
+                              Symbol = official_markers) |>
+  unnest(Symbol) 
+
+marker_choice <- marker_stats |>
+  right_join(official_markers_tb) |>
+  select(cellType.target, Symbol, rank_ratio, rank_marker)
+## all data driven 
+marker_choice |> arrange(-rank_ratio)
+
+#### Prep comple heatmap annotations ####
 row_namers <- c( 
                 "LHb.1",
                 "LHb.2",
@@ -184,8 +199,8 @@ row_ha <- rowAnnotation(
 )
 
 heatmapped <- Heatmap(marker_z_score,
-                      col = circlize::colorRamp2(seq(-4, 4),
-                                                 rev(RColorBrewer::brewer.pal(9, "RdBu"))),
+                      col = circlize::colorRamp2(seq(-4, 4,  8/10),
+                                                 rev(RColorBrewer::brewer.pal(11, "RdBu"))),
                       cluster_rows = FALSE,
                       cluster_columns = FALSE,
                       right_annotation = row_ha,
