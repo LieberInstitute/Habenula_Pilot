@@ -6,6 +6,7 @@ library("recount")
 library("jaffelab")
 library("tidyverse")
 library("GGally")
+library("patchwork")
 
 ## dirs
 data_dir <- here("processed-data", "03_bulk_pca", "02_multiregion_PCA")
@@ -15,7 +16,7 @@ plot_dir <- here("plots", "03_bulk_pca", "02_multiregion_PCA")
 if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
 #### load data ####
-## retreiv colData final rse 
+## retrieve colData final rse 
 load(here( "processed-data","rse_objects","rse_gene_Habenula_Pilot.rda"),verbose = TRUE)
 pd <- colData(rse_gene)
 
@@ -114,9 +115,11 @@ pca_vars_lab <- paste0(
 
 dim(pca$x)
 
-pca_tab <- as.data.frame(colData(rse_gene)) |> cbind(pca$x[, 1:10])
-colnames(pca_tab)
+pca_tab <- as.data.frame(colData(rse_gene)) |> 
+  cbind(pca$x[, 1:10]) |> 
+  mutate(Region = factor(Region, levels = c("Amygdala", "BLA","CA","MeA", "DG", "HIPPO", "dACC","sACC","DLPFC","mPFC","Caudate","Hb")))
 
+colnames(pca_tab)
 ## create long table
 pca_vars_lab_tb <- tibble(PC = ss(pca_vars_lab,":"), var_expl = pca_vars_lab) |>
   mutate(var_expl = fct_reorder(var_expl, as.integer(gsub("PC","", PC))))
@@ -128,23 +131,29 @@ pca_long <- pca_tab |>
   left_join(pca_vars_lab_tb)
 
 ## save data 
-save(pca_tab, pca_long, file = here(data_dir, "Mulati_region_PCs.Rdata"))
+save(pca_tab, pca_long, file = here(data_dir, "Multi_region_PCs.Rdata"))
+# load(here(data_dir, "Multi_region_PCs.Rdata"), verbose = TRUE)
+# pca_vars_lab <- unique(pca_long$var_expl)
 
 #### PCA plots ####
-region_colors <- c("#ff9ccb",
-                  "#c10040",
-                  "#ff7168",
-                  "#9c2522",
-                  "#ff8032",
-                  "#00960e",
-                  "#0094fc",
-                  "#014abf",
-                  "#c495ff",
-                  "#8330b6",
-                  "#b9008b",
-                  "black")
-names(region_colors) <- levels(rse_gene$Region)
+# "#ff8032"
 
+region_colors <- c(Amygdala = "#ff9ccb",
+                   BLA = "#c10040",
+                   CA = "#ff7168",
+                   MeA = "#b9008b",
+                   DG = "#00960e",
+                   HIPPO = "#99C71A",
+                   dACC = "#0094fc",
+                   sACC = "#014abf",
+                   DLPFC = "#c495ff",
+                   mPFC = "#8330b6",
+                   Caudate = "#65717B",
+                   # Hb = "#F2CA18", #jonquil
+                   # Hb = "#F9F50D" #Yellow
+                   # Hb = "#FA9A09" #Orange Peel
+                   Hb = "#F4D23E" #Mustard
+                   )
 
 ## ggpairs for pca ##
 gg_pca <- ggpairs(pca_tab,
@@ -157,10 +166,11 @@ ggsave(gg_pca, filename = here(plot_dir, "ggpairs_pca.png"), height = 11, width 
 
 
 pc_test <- pca_tab |>
-  ggplot(aes(x = PC1, y = PC2, color = Region)) +
-  geom_point() +
+  ggplot(aes(x = PC1, y = PC2, )) +
+  geom_point(shape = 21, aes(fill = Region, color = Region == "Hb")) +
   theme_bw() +
-  scale_color_manual(values = region_colors) +
+  scale_color_manual(values = c(`TRUE` = "black", `FALSE` = "#00000000"), guide = "none") +
+  scale_fill_manual(values = region_colors) +
   labs(x = pca_vars_lab[[1]], y = pca_vars_lab[[2]]) 
 
 ggsave(pc_test, filename = here(plot_dir, "Bulk_PC1vPC2_Region.png"))
@@ -188,25 +198,55 @@ pca_boxplots_free <- pca_long |>
         legend.position = "None")
 
 ggsave(pca_boxplots_free, filename = here(plot_dir, "Bulk_PCA_boxplots_free.png"))
+ggsave(pca_boxplots_free, filename = here(plot_dir, "Bulk_PCA_boxplots_free.df"))
 
-pc_1v6 <- pca_tab |>
-  ggplot(aes(x = PC1, y = PC6, color = Region)) +
-  geom_point() +
+## paper
+pc6_boxplot <- pca_long |>
+  filter(PC == "PC6") |>
+  ggplot(aes(x = Region, y = PC_val, fill = Region, color = Region == "Hb")) +
+  geom_boxplot(alpha = 0.5, outlier.shape = NA)  +
+  geom_jitter(aes(fill = Region),shape = 21, width = 0.25) +
+  scale_fill_manual(values = region_colors) +
+  scale_color_manual(values = c(`TRUE` = "black", `FALSE` = "grey30"), guide = "none") +
+  # facet_wrap(~var_expl, ncol = 2, scales = "free_y") +
   theme_bw() +
-  scale_color_manual(values = region_colors) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "None") +
+  labs(y = pca_vars_lab[[6]])
+
+ggsave(pc6_boxplot, filename = here(plot_dir, "Bulk_PC6_boxplot_test.png"), height = 4, width = 5)
+ggsave(pc6_boxplot, filename = here(plot_dir, "Bulk_PC6_boxplot.pdf"), height = 4, width = 5)
+
+pc_1v6 <- pca_tab  |>
+  ggplot(aes(x = PC1, y = PC6)) +
+  geom_point(shape = 21, aes(fill = Region, color = Region == "Hb")) +
+  theme_bw() +
+  # scale_color_manual(values = c(`TRUE` = "black", `FALSE` = "#00000000"), guide = "none") +
+  scale_color_manual(values = c(`TRUE` = "black", `FALSE` = "grey30"), guide = "none") +
+  scale_fill_manual(values = region_colors) +
   labs(x = pca_vars_lab[[1]], y = pca_vars_lab[[6]]) 
 
-ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region.png"))
+ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region_test.png"), width = 5, height = 4)
+ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region.pdf"), width = 5, height = 4)
 
-pc_1v6 <- pca_tab |>
-  ggplot(aes(x = PC1, y = PC6, color = Region)) +
-  geom_point() +
+pc_1v6_outline <- pca_tab  |>
+  ggplot(aes(x = PC1, y = PC6)) +
+  geom_point(aes(fill = Region), shape = 21, color = "black") +
   theme_bw() +
-  scale_color_manual(values = region_colors) +
+  scale_fill_manual(values = region_colors) +
   labs(x = pca_vars_lab[[1]], y = pca_vars_lab[[6]]) 
 
-ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region.png"))
+ggsave(pc_1v6_outline, filename = here(plot_dir, "Bulk_PC1vPC6_Region_all_outline.png"), width = 5, height = 4)
+# ggsave(pc_1v6, filename = here(plot_dir, "Bulk_PC1vPC6_Region_all_outline.pdf"), width = 5, height = 4)
 
+## combine scatter + boxplot
+pc1_patch <- pc_1v6 + theme(legend.position = "None") + 
+  pc6_boxplot + theme(axis.title.y=element_blank(),
+                      axis.text.y=element_blank(),
+                      axis.ticks.y=element_blank())
+ 
+ggsave(pc1_patch, filename = here(plot_dir, "Bulk_PC6_Region_combo.png"), height = 4)
+ggsave(pc1_patch, filename = here(plot_dir, "Bulk_PC6_Region_combo.pdf"), height = 4)
 
 # slurmjobs::job_single(name = "02_multiregion_PCA", memory = "10G", cores = 1, create_shell = TRUE, command = "Rscript 02_multiregion_PCA.R")
 

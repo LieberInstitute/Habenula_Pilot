@@ -202,6 +202,36 @@ png(file = here(plot_dir, "sce_Comp_Plot_BROAD.png"), width = 7, height = 11,
   comp_plot_both_bulk
 dev.off()
 
+# plots composition plot using prop_clean 
+comp_plot_clean <- ggplot(data = prop_clean_sn, aes(x = Sample, 
+                                                               y = prop, fill = final_Annotations)) +
+  geom_bar(stat = "identity") +
+  geom_text(
+    aes(
+      label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
+    ),
+    size = 3,
+    position = position_stack(vjust = 0.5),
+    color = "black"
+  ) +
+  scale_fill_manual(values = c(sn_colors)) +
+  labs(y = "Proportion", fill = "Cell Type") +
+  facet_wrap(~ NeuN, scales = "free_x") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "none") +
+  guides(color = "none", fill = guide_legend(ncol = 1,
+                                             reverse = TRUE))
+# pdf version
+pdf(file = here(plot_dir, "sce_Comp_Plot_post-drop.pdf"), width = 3.5, height = 6.5)
+comp_plot_clean
+dev.off()
+
+# png version 
+png(file = here(plot_dir, "sce_Comp_Plot_post-drop.png"), width = 3.5, height = 6.5,
+    units = "in", res = 1200)
+comp_plot_clean
+dev.off()
+
 # # plotting total nuclei information per sample
 # barplot_n_nuc_bulk <- ggplot(prop_ambig_plus_bulk, 
 #   aes(x = Sample, y = n, fill = bulkTypeSepHb)) +
