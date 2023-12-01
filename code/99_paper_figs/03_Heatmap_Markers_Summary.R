@@ -283,11 +283,12 @@ pdf(here(plot_dir, "z_legend.pdf"), height = 1, width = 3)
 draw(lgd_Z)
 dev.off()
 
+sn_colors <- sn_colors[names(sn_colors) != "OPC_noisy"]
 
 lgd_celltypes = Legend(labels = names(sn_colors),
                        title = "Cell Types", 
                        legend_gp = gpar(fill = sn_colors),
-                       nrow = 4,
+                       nrow = 3,
                        legend_width = unit(6, "cm"))
 
 pdf(here(plot_dir, "ct_legend.pdf"), height = 2, width = 5)
