@@ -172,4 +172,51 @@ hex_copies_facet <- ggplot(halo_copies_long) +
 
 ggsave(hex_copies_facet, filename = here(plot_dir, paste0("hex_copies_median_facet.png")), height = 9, width = 9)
 
+#### Cell Type Annotations ####
+
+# Which of those copy count bins are most useful for spatially visualizing our "cell types" of interest
+
+halo_prelim |> count(`520 POU4F1 Classification`)
+halo_prelim |> count(`570 SEMA3D Classification`)
+halo_prelim |> count(`620 TLE2 Classification`)
+halo_prelim |> count(`690 ONECUT2 Classification`)
+
+
+
+cell_slide <- halo_prelim |>
+  ggplot() +
+  geom_rect(aes(
+    xmin = XMin, xmax = XMax,
+    ymin = YMin, ymax = YMax,
+    fill = as.factor(`520 POU4F1 Classification`)
+  )) +
+  scale_fill_manual(values = c(`0` = "grey75", `1` = "#FECC5C", `2` = "#FD8D3C", `3` = "#F03B20", `4` = "#BD0026"), "class") +
+  # scale_fill_manual(values = c(`0` = "grey75", `1` = "#D7191C", `2` = "#FDAE61", `3` = "#ABDDA4", `4` = "#2B83BA")) +
+  coord_equal()+
+  theme_bw() 
+
+ggsave(cell_slide, filename = here(plot_dir, "cell_slide.png"))
+
+## facet
+halo_class_long <- halo_prelim |>
+  select(XMin, XMax,YMin, YMax, ends_with("Classification")) |>
+  pivot_longer(!c(XMin, XMax,YMin, YMax), names_to = "probe", values_to = "class") |>
+  mutate(class = as.factor(class))
+
+cell_class_facet <- ggplot(halo_class_long) +
+  geom_rect(aes(
+    xmin = XMin, xmax = XMax,
+    ymin = YMin, ymax = YMax,
+    fill = class
+  )) +
+  scale_fill_manual(values = c(`0` = "grey75", `1` = "#FECC5C", `2` = "#FD8D3C", `3` = "#F03B20", `4` = "#BD0026"), "class") +
+  # scale_fill_manual(values = c(`0` = "grey75", `1` = "#D7191C", `2` = "#FDAE61", `3` = "#ABDDA4", `4` = "#2B83BA")) +
+  coord_equal()+
+  theme_bw() +
+  facet_wrap(~probe)
+
+ggsave(cell_class_facet, filename = here(plot_dir, paste0("cell_class_facet.png")), height = 9, width = 9)
+ggsave(cell_class_facet, filename = here(plot_dir, paste0("cell_class_facet.pdf")), height = 9, width = 9)
+
+
 
