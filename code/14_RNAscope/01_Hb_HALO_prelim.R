@@ -61,8 +61,12 @@ copies_tab |> count(sum == 0)
 # 1 FALSE      14210
 # 2 TRUE        4411
 
+
+
 gg_copies <- copies_tab |> select(-sum) |> ggpairs(aes(alpha = 0.5))
 ggsave(gg_copies, filename = here(plot_dir, "gg_copies.png"), height = 12, width = 12)
+
+summary(copies_tab)
 
 ## intensity
 halo_prelim |> 
@@ -87,6 +91,11 @@ walk(probes, ~{
     ggpairs() |>
     ggsave(filename = here(plot_dir, paste0("gg_",gsub("^\\d+ ", "", .x),"_intensity.png")), height = 9, width = 9)
   })
+
+#### determine cutoff ####
+
+halo_prelim |> filter(`690 ONECUT2 Copies` != 0) |> pull(`690 ONECUT2 Copies`) |> summary()
+
 
 #### Hex plots ####
 
@@ -157,7 +166,36 @@ walk(probes, ~{
 ## facet 
 halo_copies_long <- halo_prelim |>
   select(`Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
-  pivot_longer(!c(`Object Id`, XMin, XMax,YMin, YMax), names_to = "probe", values_to = "copies")
+  pivot_longer(!c(`Object Id`, XMin, XMax,YMin, YMax), names_to = "probe", values_to = "copies") |>
+  mutate(probe = gsub(" Copies", "", probe))
+
+# get quantile values for non-zero values
+copy_cutoff <- halo_copies_long |> 
+  filter(copies != 0) |> 
+  group_by(probe) |> 
+  summarize(q25 = quantile(copies,probs = 0.25),
+            q50 = quantile(copies,probs = 0.5),
+            q75 = quantile(copies,probs = 0.75),
+            q95 = quantile(copies,probs = 0.95))
+
+## use to classify cells
+halo_copies_long2 <- halo_copies_long |>
+  left_join(copy_cutoff, by = join_by(probe)) |>
+  mutate(copy_quant = case_when(copies > q75 ~ "q75",
+                                copies > q50 ~ "q50",
+                                copies > q25 ~ "q25",
+                                copies > 0 ~ "q0",
+                                copies == 0 ~ "None",
+                                TRUE ~ NA
+  )) |>
+  mutate(copy_quant = as.ordered(copy_quant))
+
+levels(halo_copies_long2$copy_quant)
+
+halo_copies_long2 |>
+  count(probe, copy_quant) |> 
+  pivot_wider(names_from = "copy_quant", values_from = "n")
+
 
 hex_copies_median <- ggplot(halo_copies_long) +
   stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
@@ -200,12 +238,13 @@ ggsave(hex_copies_any, filename = here(plot_dir, paste0("hex_copies_any_facet.pn
 
 #### distribution
 
-copies_density <- halo_copies_long |>
-  filter(copies != 0) |>
-  ggplot(aes(x = copies)) +
+copies_density <- halo_copies_long2 |>
+  # filter(copies != 0) |>
+  ggplot(aes(x = copies, fill = copy_quant)) +
   geom_histogram(binwidth = 1) +
   theme_bw() +
-  xlim(0,50) +
+  scale_fill_manual(values = c(None = "grey75", q0 = "#FECC5C", q25 = "#FD8D3C", q50 = "#F03B20", q75 = "#BD0026"), "Copy Quantile") +
+  coord_cartesian(ylim=c(0, 4000), xlim = c(-1, 20)) +
   facet_wrap(~probe, ncol =1)
 
 ggsave(copies_density, filename = here(plot_dir, "copies_denisty.png"))
@@ -280,7 +319,7 @@ cell_max_filter <- halo_POU4F1_long |>
 ggsave(cell_max_filter, filename = here(plot_dir, paste0("cell_max_filter.png")), height = 9, width = 9)
 ggsave(cell_max_filter, filename = here(plot_dir, paste0("cell_max_filter.pdf")), height = 9, width = 9)
 
-
+halo_POU4F1_long |> filter(copies > 0) |> group_by(probe) |> summary()
 
 #### Cell Type Annotations ####
 
@@ -345,6 +384,46 @@ cell_class_facet_filter <- halo_class_long |>
 
 ggsave(cell_class_facet_filter, filename = here(plot_dir, paste0("cell_class_facet_filter.png")), height = 9, width = 9)
 ggsave(cell_class_facet_filter, filename = here(plot_dir, paste0("cell_class_facet_filter.pdf")), height = 9, width = 9)
+
+#### plot with cell_quant 
+
+cell_count_quant <- halo_copies_long2 |> 
+  ggplot() +
+  geom_rect(aes(
+    xmin = XMin, xmax = XMax,
+    ymin = YMin, ymax = YMax,
+    fill = copy_quant
+  )) +
+  scale_fill_manual(values = c(None = "grey75", q0 = "#FECC5C", q25 = "#FD8D3C", q50 = "#F03B20", q75 = "#BD0026"), "Copy Quantile") +
+  # scale_fill_manual(values = c(`0` = "grey75", `1` = "#D7191C", `2` = "#FDAE61", `3` = "#ABDDA4", `4` = "#2B83BA")) +
+  coord_equal()+
+  theme_bw() +
+  facet_wrap(~probe)
+
+ggsave(cell_count_quant, filename = here(plot_dir, paste0("cell_count_quant_facet.png")), height = 9, width = 9)
+ggsave(cell_count_quant, filename = here(plot_dir, paste0("cell_count_quant_facet.pdf")), height = 9, width = 9)
+
+cell_max_quant <- halo_copies_long2 |>
+  group_by(`Object Id`) |>
+  filter(probe != "520 POU4F1 Copies", copies != 0) |>
+  arrange(-copies) |>
+  slice(1)
+
+cell_max_quant |> group_by(probe) |> count(copy_quant)
+
+cell_max_quant_plot <- cell_max_quant |>  
+  ggplot() +
+  geom_rect(aes(
+    xmin = XMin, xmax = XMax,
+    ymin = YMin, ymax = YMax,
+    fill = probe
+  )) +
+  coord_equal()+
+  theme_bw() 
+
+ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("cell_max_quant.png")), height = 9, width = 9)
+ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("cell_max_quant.pdf")), height = 9, width = 9)
+
 
 
 
