@@ -82,11 +82,11 @@ copy_cutoff <- halo_copies_long |>
 ## different by job 
 # probe job       q25   q50   q75   q95
 # <fct> <chr>   <dbl> <dbl> <dbl> <dbl>
-#   1 520   job1862     1     2     5  24  
+# 1 520   job1862     1     2     5  24  
 # 2 520   job1864     1     2     6  24.1
 # 3 570   job1862     1     2     5  27  
 # 4 570   job1864     1     2     5  25  
-# 5 620   job1862     1     1     2  13  
+# 5 620   job1862     1     1     2  13  ## 1 is q25 & q50
 # 6 620   job1864     1     1     3  18  
 # 7 690   job1862     1     2     7  30.3
 # 8 690   job1864     1     2     7  32.1
@@ -166,6 +166,37 @@ hex_copies_median <- ggplot(halo_copies_long2) +
   facet_grid(job~probe2)
 
 ggsave(hex_copies_median, filename = here(plot_dir, paste0("hex_copies_median_facet.png")), height = 9, width = 12)
+
+
+## max quant cell_max_quant <- halo_copies_long2 |>
+cell_max_quant <- halo_copies_long2 |>
+  group_by(`Object Id`) |>
+  filter(probe != "520", copies != 0) |>
+  arrange(-copies) |>
+  slice(1)
+
+cell_max_quant |> group_by(probe2, job) |> count()
+cell_max_quant |> group_by(probe2, job) |> count(copy_quant)
+
+cell_max_quant |>  
+  filter(copy_quant >= "q50") |>
+  group_by(probe2, job) |> 
+  count()
+
+cell_max_quant_plot <- cell_max_quant |>  
+  filter(copy_quant >= "q50") |>
+  ggplot() +
+  geom_rect(aes(
+    xmin = XMin, xmax = XMax,
+    ymin = YMin, ymax = YMax,
+    fill = probe2
+  )) +
+  coord_equal()+
+  theme_bw() +
+  facet_wrap(~job)
+
+ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("MHb_cell_max_quant.png")), height = 9, width = 9)
+ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("MHb_cell_max_quant.pdf")), height = 9, width = 9)
 
 
 
