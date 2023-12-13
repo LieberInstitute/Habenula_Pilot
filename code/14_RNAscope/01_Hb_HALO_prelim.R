@@ -425,5 +425,26 @@ ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("cell_max_quant.png
 ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("cell_max_quant.pdf")), height = 9, width = 9)
 
 
+## find the max quant ##
+cell_max_quant <- halo_copies_long2 |>
+  group_by(`Object Id`) |>
+  filter(probe != "520", copies != 0) |>
+  arrange(-copies) |>
+  slice(1)
+
+cell_max_quant |> group_by(probe) |> count(copy_quant)
+
+cell_max_quant_plot <- cell_max_quant |>  
+  ggplot() +
+  geom_rect(aes(
+    xmin = XMin, xmax = XMax,
+    ymin = YMin, ymax = YMax,
+    fill = probe
+  )) +
+  coord_equal()+
+  theme_bw() 
+
+ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("cell_max_quant.png")), height = 9, width = 9)
+ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("cell_max_quant.pdf")), height = 9, width = 9)
 
 
