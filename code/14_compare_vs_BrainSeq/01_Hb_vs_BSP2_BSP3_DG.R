@@ -262,6 +262,51 @@ save(
 )
 
 
+
+extract_info <- function(input, suffix) {
+    stopifnot(identical(habenula$gencodeID, input$gencodeID))
+    x <- input[, c("DLPFC", "HIPPO", "Caudate", "DG")]
+    colnames(x) <- paste0(colnames(x), "_", suffix)
+    return(x)
+}
+stopifnot(identical(habenula$Symbol, habenula$MGI_Symbol))
+habenula_combined <- rename(
+    cbind(
+        habenula[, -which(
+            colnames(habenula) %in% c(
+                "r.name",
+                "seqnames",
+                "start",
+                "end",
+                "width",
+                "strand",
+                "NumTx",
+                "gencodeTx",
+                "Class",
+                "MGI_Symbol",
+                "EntrezID",
+                "ensemblID"
+            )
+        )],
+        extract_info(all_t, "t"),
+        extract_info(all_logFC, "logFC"),
+        extract_info(all_FDR, "adj.P.Val")
+    ),
+    Hb_meanExprs = meanExprs,
+    Hb_logFC = logFC,
+    Hb_AveExpr = AveExpr,
+    Hb_t = t,
+    Hb_P.Value = P.Value,
+    Hb_adj.P.Val = adj.P.Val,
+    Hb_B = B
+)
+write.csv(
+    habenula_combined,
+    row.names = FALSE,
+    quote = FALSE,
+    file = file.path(dir_rdata, "TableSxx_SZCD_vs_Control_gene_results.csv")
+)
+
 ## Reproducibility information
 print("Reproducibility information:")
 Sys.time()
