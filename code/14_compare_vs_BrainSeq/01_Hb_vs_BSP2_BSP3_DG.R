@@ -92,7 +92,9 @@ plot_cor_type <- function(all_input, hb_only = TRUE) {
     if(hb_only) {
         df <- subset(df, Row == "Hb")
     }
-    print(t.test(df[, c("Sig", "NotSig")]))
+    t_res <- t.test(df[, c("Sig", "NotSig")])
+    # print(t_res)
+    lims <- range(c(df$Sig, df$NotSig))
     ggplot(df, aes(x = NotSig, y = Sig, colour = Col)) +
         geom_point(size = 5) +
         xlab("cor with Hb FDR >= 0.05") +
@@ -100,8 +102,9 @@ plot_cor_type <- function(all_input, hb_only = TRUE) {
         scale_color_manual(values = region_colors) +
         guides(colour = guide_legend(title="Region")) +
         geom_abline(intercept = 0, slope = 1, col = "red") +
-        xlim(range(c(df$Sig, df$NotSig))) +
-        ylim(range(c(df$Sig, df$NotSig))) +
+        xlim(lims) +
+        ylim(lims) +
+        annotate("text", label = paste0("p = ", signif(t_res$p.value, 3)), x = max(lims) - 0.08 * max(lims), y = min(lims), size = 5) +
         theme_bw(base_size = 20)
 }
 
@@ -201,7 +204,9 @@ ggpairs(
     )
 )
 
+pdf(file.path(dir_plots, "cor_Hb_sig_vs_Hb_notSig_t-stats.pdf"))
 plot_cor_type(all_t)
+dev.off()
 # 	One Sample t-test
 #
 # data:  df[, c("Sig", "NotSig")]
@@ -230,7 +235,9 @@ ggpairs(
     )
 )
 
+pdf(file.path(dir_plots, "cor_Hb_sig_vs_Hb_notSig_logFC.pdf"))
 plot_cor_type(all_logFC)
+dev.off()
 # 	One Sample t-test
 #
 # data:  df[, c("Sig", "NotSig")]
