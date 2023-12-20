@@ -171,6 +171,7 @@ addmargins(table(all_FDR$Hb < 0.05, all_FDR$DG < 0.05, useNA = "ifany"))
 # TRUE     25     0    20    45
 # Sum   17892    10  4854 22756
 
+pdf(file.path(dir_plots, "ggpairs_FDR.pdf"), height = 10, width = 10)
 ggpairs(
     mutate(all_FDR,
         adj.P.Val = Hb,
@@ -185,7 +186,8 @@ ggpairs(
         colour = adj.P.Val < 0.05,
         alpha = ifelse(adj.P.Val < 0.05, 1, 1 / 3)
     )
-)
+) + theme_bw()
+dev.off()
 
 
 ## Merge data: t-statistics
@@ -195,6 +197,7 @@ all_t <- left_join(all_t, mutate(bsp2_hpc, HIPPO = t)[, c("gencodeID", "HIPPO")]
 all_t <- left_join(all_t, mutate(bsp3_caudate, Caudate = t)[, c("gencodeID", "Caudate")], by = "gencodeID")
 all_t <- left_join(all_t, mutate(dg, DG = SZ_t)[, c("gencodeID", "DG")], by = "gencodeID")
 
+pdf(file.path(dir_plots, "ggpairs_t-stats.pdf"), height = 10, width = 10)
 ggpairs(
     all_t,
     columns = c("Hb", "DLPFC", "HIPPO", "Caudate", "DG"),
@@ -202,7 +205,8 @@ ggpairs(
         colour = adj.P.Val < 0.05,
         alpha = ifelse(adj.P.Val < 0.05, 1, 1 / 3)
     )
-)
+) + theme_bw()
+dev.off()
 
 pdf(file.path(dir_plots, "cor_Hb_sig_vs_Hb_notSig_t-stats.pdf"))
 plot_cor_type(all_t)
@@ -226,6 +230,7 @@ all_logFC <- left_join(all_logFC, mutate(bsp2_hpc, HIPPO = logFC)[, c("gencodeID
 all_logFC <- left_join(all_logFC, mutate(bsp3_caudate, Caudate = logFC)[, c("gencodeID", "Caudate")], by = "gencodeID")
 all_logFC <- left_join(all_logFC, mutate(dg, DG = SZ_logFC)[, c("gencodeID", "DG")], by = "gencodeID")
 
+pdf(file.path(dir_plots, "ggpairs_logFC.pdf"), height = 10, width = 10)
 ggpairs(
     all_logFC,
     columns = c("Hb", "DLPFC", "HIPPO", "Caudate", "DG"),
@@ -233,7 +238,8 @@ ggpairs(
         colour = adj.P.Val < 0.05,
         alpha = ifelse(adj.P.Val < 0.05, 1, 1 / 3)
     )
-)
+) + theme_bw()
+dev.off()
 
 pdf(file.path(dir_plots, "cor_Hb_sig_vs_Hb_notSig_logFC.pdf"))
 plot_cor_type(all_logFC)
@@ -248,6 +254,8 @@ dev.off()
 # sample estimates:
 # mean of x
 # 0.2633617
+
+
 
 
 ## Reproducibility information
