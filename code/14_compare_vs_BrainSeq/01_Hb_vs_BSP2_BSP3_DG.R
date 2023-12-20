@@ -71,6 +71,21 @@ cor_long_type <- function(all_input) {
     )
 }
 
+## Region colors from https://github.com/LieberInstitute/Habenula_Pilot/blob/dd21b1b6b0855d4688d625121c1e1de7a3836b18/code/03_bulk_pca/02_multiregion_PCA.R#L140C1-L152C21
+region_colors <- c(Amygdala = "#ff9ccb",
+    BLA = "#c10040",
+    CA = "#ff7168",
+    MeA = "#b9008b",
+    DG = "#00960e",
+    HIPPO = "#99C71A",
+    dACC = "#0094fc",
+    sACC = "#014abf",
+    DLPFC = "#c495ff",
+    mPFC = "#8330b6",
+    Caudate = "#65717B",
+    Hb = "#F4D23E" #Mustard
+)
+
 ## Make a plot
 plot_cor_type <- function(all_input, hb_only = TRUE) {
     df <- cor_long_type(all_input)
@@ -82,6 +97,7 @@ plot_cor_type <- function(all_input, hb_only = TRUE) {
         geom_point(size = 5) +
         xlab("cor with Hb FDR >= 0.05") +
         ylab("cor with Hb FDR < 0.05") +
+        scale_color_manual(values = region_colors) +
         guides(colour = guide_legend(title="Region")) +
         geom_abline(intercept = 0, slope = 1, col = "red") +
         xlim(range(c(df$Sig, df$NotSig))) +
