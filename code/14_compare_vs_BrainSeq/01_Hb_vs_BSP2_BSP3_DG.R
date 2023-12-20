@@ -3,6 +3,8 @@ library("BiocFileCache")
 library("readxl")
 library("dplyr")
 library("GGally")
+library("ggrepel")
+library("patchwork")
 library("sessioninfo")
 
 ## Output directories
@@ -197,8 +199,7 @@ all_t <- left_join(all_t, mutate(bsp2_hpc, HIPPO = t)[, c("gencodeID", "HIPPO")]
 all_t <- left_join(all_t, mutate(bsp3_caudate, Caudate = t)[, c("gencodeID", "Caudate")], by = "gencodeID")
 all_t <- left_join(all_t, mutate(dg, DG = SZ_t)[, c("gencodeID", "DG")], by = "gencodeID")
 
-pdf(file.path(dir_plots, "ggpairs_t-stats.pdf"), height = 10, width = 10)
-ggpairs(
+p <- ggpairs(
     all_t,
     columns = c("Hb", "DLPFC", "HIPPO", "Caudate", "DG"),
     ggplot2::aes(
@@ -206,6 +207,57 @@ ggpairs(
         alpha = ifelse(adj.P.Val < 0.05, 1, 1 / 3)
     )
 ) + theme_bw()
+pdf(file.path(dir_plots, "ggpairs_t-stats.pdf"), height = 10, width = 10)
+print(p)
+dev.off()
+
+pdf(
+    file.path(dir_plots, "ggpairs_t-stats_Hb.pdf"),
+    height = 10,
+    width = 10
+)
+set.seed(20231220)
+getPlot(p, 2, 1) +
+    xlab("Hb SCZD vs control t-stat") +
+    ylab("DLPFC SCZD vs control t-stat") +
+    theme_bw(base_size = 20) +
+    theme(legend.position = "none") +
+    geom_text_repel(
+        aes(label = Symbol),
+        data = all_t[which(all_FDR$Hb < 0.05 & all_FDR$DLPFC < 0.05), ]
+    ) +
+getPlot(p, 3, 1) +
+    xlab("Hb SCZD vs control t-stat") +
+    ylab("HIPPO SCZD vs control t-stat") +
+    theme_bw(base_size = 20) +
+    theme(legend.position = "none") +
+    geom_text_repel(
+        aes(label = Symbol),
+        data = all_t[which(all_FDR$Hb < 0.05 & all_FDR$HIPPO < 0.05), ]
+    ) +
+getPlot(p, 4, 1) +
+    xlab("Hb SCZD vs control t-stat") +
+    ylab("Caudate SCZD vs control t-stat") +
+    theme_bw(base_size = 20) +
+    theme(legend.position = "none") +
+    geom_text_repel(
+        aes(label = Symbol),
+        data = all_t[which(all_FDR$Hb < 0.05 & all_FDR$Caudate < 0.05), ],
+        force = 5
+    ) +
+getPlot(p, 5, 1) +
+    xlab("Hb SCZD vs control t-stat") +
+    ylab("DG SCZD vs control t-stat") +
+    theme_bw(base_size = 20) +
+    scale_alpha(guide = 'none') +
+    theme(
+        legend.position = c(0.89, 0.11),
+        legend.title = element_text(size = 6),
+        legend.text = element_text(size = 6),
+        legend.background = element_rect(fill=alpha('grey', 0.2))
+    ) +
+    guides(colour = guide_legend(title =
+            "Hb FDR < 0.05"))
 dev.off()
 
 pdf(file.path(dir_plots, "cor_Hb_sig_vs_Hb_notSig_t-stats.pdf"))
