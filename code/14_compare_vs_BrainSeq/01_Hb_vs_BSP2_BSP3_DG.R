@@ -255,7 +255,11 @@ dev.off()
 # mean of x
 # 0.2633617
 
-
+## Save for later
+save(
+    all_FDR, all_t, all_logFC,
+    file = file.path(dir_rdata, "SCZD_vs_control_Hb_and_other_regions.Rdata")
+)
 
 
 ## Reproducibility information
