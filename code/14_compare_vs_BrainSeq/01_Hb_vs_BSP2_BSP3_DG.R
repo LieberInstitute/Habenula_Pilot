@@ -77,6 +77,7 @@ plot_cor_type <- function(all_input, hb_only = TRUE) {
     if(hb_only) {
         df <- subset(df, Row == "Hb")
     }
+    print(t.test(df[, c("Sig", "NotSig")]))
     ggplot(df, aes(x = NotSig, y = Sig, colour = Col)) +
         geom_point(size = 5) +
         xlab("cor with Hb FDR >= 0.05") +
@@ -185,6 +186,16 @@ ggpairs(
 )
 
 plot_cor_type(all_t)
+# 	One Sample t-test
+#
+# data:  df[, c("Sig", "NotSig")]
+# t = 3.3082, df = 7, p-value = 0.01297
+# alternative hypothesis: true mean is not equal to 0
+# 95 percent confidence interval:
+#  0.07492158 0.45043804
+# sample estimates:
+# mean of x
+# 0.2626798
 
 
 ## Merge data: log FC
@@ -204,6 +215,16 @@ ggpairs(
 )
 
 plot_cor_type(all_logFC)
+# 	One Sample t-test
+#
+# data:  df[, c("Sig", "NotSig")]
+# t = 4.024, df = 7, p-value = 0.005034
+# alternative hypothesis: true mean is not equal to 0
+# 95 percent confidence interval:
+#  0.1086035 0.4181199
+# sample estimates:
+# mean of x
+# 0.2633617
 
 
 ## Reproducibility information
