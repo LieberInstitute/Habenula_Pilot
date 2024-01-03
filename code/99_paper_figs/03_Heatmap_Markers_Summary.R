@@ -283,7 +283,7 @@ pdf(here(plot_dir, "z_legend.pdf"), height = 1, width = 3)
 draw(lgd_Z)
 dev.off()
 
-sn_colors <- sn_colors[names(sn_colors) != "OPC_noisy"]
+sn_colors <- sn_colors[!names(sn_colors) %in% c("OPC_noisy", "Excit.Neuron")]
 
 lgd_celltypes = Legend(labels = names(sn_colors),
                        title = "Cell Types", 
