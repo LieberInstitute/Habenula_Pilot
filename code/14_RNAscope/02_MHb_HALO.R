@@ -62,6 +62,8 @@ experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
 # 3   570 CHAT   Mhb.2  
 # 4   520 POU4F1 Hb 
 
+write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp", "Probes_MHb.csv"))
+
 halo_copies_long <- halo |>
   select(job, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
   pivot_longer(!c(job, `Object Id`, XMin, XMax, YMin, YMax), names_to = "probe", values_to = "copies") |>
