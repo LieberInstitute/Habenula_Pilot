@@ -29,16 +29,17 @@ colnames(halo) <- gsub(" \\(µm.*\\)", "", colnames(halo))
 
 #### create halo long ####
 experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
-       marker = c("CCK", "EBF3","CHAT","POU4F1"),
-       cluster = c("LHb.1", "LHb.3", "LHb.2", "Hb"))
-# probe marker cluster
-# <dbl> <chr>  <chr>  
-# 1   690 CCK    LHb.1  
-# 2   620 EBF3   LHb.3  
-# 3   570 CHAT   LHb.2  
-# 4   520 POU4F1 Hb 
+       marker = c("ESPR1", "MCOLN3","CRH","POU4F1"),
+       cluster = c("LHb.6", "LHb.3", "LHb.2", "Hb"))
 
-# write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "Probes_LHb2.csv"))
+# probe marker cluster
+# <fct> <chr>  <chr>  
+#   1 690   ESPR1  LHb.6  
+# 2 620   MCOLN3 LHb.3  
+# 3 570   CRH    LHb.2  
+# 4 520   POU4F1 Hb 
+
+write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "Probes_LHb2.csv"))
 
 halo_copies_long <- halo |>
   select(job, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
@@ -57,9 +58,9 @@ copy_cutoff <- halo_copies_long |>
             q75 = quantile(copies,probs = 0.75),
             q95 = quantile(copies,probs = 0.95))
 
-## different by job 
-#.  probe job      q25   q50   q75   q95
-# 1 520   Br6462     1     3    10    25
+# probe job      q25   q50   q75   q95
+# <fct> <chr>  <dbl> <dbl> <dbl> <dbl>
+#   1 520   Br6462     1     3    10    25
 # 2 570   Br6462     1     1     3    18
 # 3 620   Br6462     1     2     4    16
 # 4 690   Br6462     1     1     2     4
@@ -80,12 +81,12 @@ halo_copies_long2 |>
   count(probe2, job, copy_quant) |> 
   pivot_wider(names_from = "copy_quant", values_from = "n")
 
-# probe2           job     None    q0   q25   q50   q75
-# <chr>            <chr>  <int> <int> <int> <int> <int>
-#   1 520 POU4F1 (Hb)  Br6462 14212   637   460   570   504
-# 2 570 CHAT (LHb.2) Br6462 13370  1718    NA   692   603
-# 3 620 EBF3 (LHb.3) Br6462 12618  1683   671   506   905
-# 4 690 CCK (LHb.1)  Br6462 14803  1032    NA   310   238
+# probe2             job     None    q0   q25   q50   q75
+# <chr>              <chr>  <int> <int> <int> <int> <int>
+# 1 520 POU4F1 (Hb)    Br6462 14212   637   460   570   504
+# 2 570 CRH (LHb.2)    Br6462 13370  1718    NA   692   603
+# 3 620 MCOLN3 (LHb.3) Br6462 12618  1683   671   506   905
+# 4 690 ESPR1 (LHb.6)  Br6462 14803  1032    NA   310   238
 
 
 #### plot with cell_quant 
@@ -100,6 +101,7 @@ cell_count_quant <- halo_copies_long2 |>
   )) +
   scale_fill_manual(values = copy_quant_colors, "Copy Quantile") +
   coord_equal()+
+  scale_y_reverse() + ## fix dorsal up - check if applicable to all samples
   theme_bw() +
   facet_wrap(job~probe2)
 
@@ -129,6 +131,7 @@ hex_copies_median <- ggplot(halo_copies_long2) +
   # scale_fill_continuous(type = "viridis") + ## top value of 100 for visualization 
   scale_fill_continuous(type = "viridis", limits = c(1,50), "Median Copies\n(max 50)") + ## top value of 100 for visualization
   coord_equal() +
+  scale_y_reverse() + ## fix dorsal up - check if applicable to all samples
   theme_bw() +
   facet_grid(job~probe2)
 
@@ -160,6 +163,7 @@ cell_max_quant_plot <- cell_max_quant |>
     fill = probe2
   )) +
   coord_equal()+
+  scale_y_reverse() + ## fix dorsal up - check if applicable to all samples
   theme_bw() +
   facet_wrap(~job)
 
@@ -224,6 +228,7 @@ halo_copies_rank_cut <- halo_copies_rank |>
   )) +
   scale_fill_manual(values = copy_cut_colors, "Copy Quantile") +
   coord_equal()+
+  scale_y_reverse() + ## fix dorsal up - check if applicable to all samples
   theme_bw() +
   facet_wrap(job~probe2)
 
@@ -255,6 +260,7 @@ cell_rank_top100 <- halo_copies_rank |>
     fill = probe2
   )) +
   coord_equal()+
+  scale_y_reverse() + ## fix dorsal up - check if applicable to all samples
   theme_bw() +
   facet_wrap(~job)
 
