@@ -8,15 +8,15 @@ library("patchwork")
 library("sessioninfo")
 
 ## Output directories
-dir_rdata <- here("processed-data", "14_compare_vs_BrainSeq")
-dir_plots <- here("plots", "14_compare_vs_BrainSeq")
+dir_rdata <- here("processed-data", "15_compare_vs_BrainSeq")
+dir_plots <- here("plots", "15_compare_vs_BrainSeq")
 dir.create(dir_rdata, showWarnings = FALSE, recursive = TRUE)
 dir.create(dir_plots, showWarnings = FALSE, recursive = TRUE)
 
 ## Inputs
 dir_input <- here("processed-data", "10_DEA", "04_DEA")
 # dir_rawdata <- "/dcs04/lieber/lcolladotor/qSVA_LIBD3080/qsva_brain/brainseq_phase2_qsv/rdas"
-dir_rawdata <- here("raw-data", "14_compare_vs_BrainSeq")
+dir_rawdata <- here("raw-data", "15_compare_vs_BrainSeq")
 
 ## Read in Habenula data: DLPFC and HIPPO (Hippocampus)
 habenula <- read.table(file.path(dir_input, "DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv"), header = TRUE)
