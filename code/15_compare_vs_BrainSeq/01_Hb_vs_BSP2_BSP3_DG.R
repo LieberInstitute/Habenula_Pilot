@@ -211,13 +211,9 @@ pdf(file.path(dir_plots, "ggpairs_t-stats.pdf"), height = 10, width = 10)
 print(p)
 dev.off()
 
-pdf(
-    file.path(dir_plots, "ggpairs_t-stats_Hb.pdf"),
-    height = 10,
-    width = 10
-)
+
 set.seed(20231220)
-getPlot(p, 2, 1) +
+p1 <- getPlot(p, 2, 1) +
     xlab("Hb SCZD vs control t-stat") +
     ylab("DLPFC SCZD vs control t-stat") +
     theme_bw(base_size = 20) +
@@ -225,8 +221,8 @@ getPlot(p, 2, 1) +
     geom_text_repel(
         aes(label = Symbol),
         data = all_t[which(all_FDR$Hb < 0.05 & all_FDR$DLPFC < 0.05), ]
-    ) +
-getPlot(p, 3, 1) +
+    )
+p2 <- getPlot(p, 3, 1) +
     xlab("Hb SCZD vs control t-stat") +
     ylab("HIPPO SCZD vs control t-stat") +
     theme_bw(base_size = 20) +
@@ -234,8 +230,8 @@ getPlot(p, 3, 1) +
     geom_text_repel(
         aes(label = Symbol),
         data = all_t[which(all_FDR$Hb < 0.05 & all_FDR$HIPPO < 0.05), ]
-    ) +
-getPlot(p, 4, 1) +
+    )
+p3 <- getPlot(p, 4, 1) +
     xlab("Hb SCZD vs control t-stat") +
     ylab("Caudate SCZD vs control t-stat") +
     theme_bw(base_size = 20) +
@@ -244,8 +240,8 @@ getPlot(p, 4, 1) +
         aes(label = Symbol),
         data = all_t[which(all_FDR$Hb < 0.05 & all_FDR$Caudate < 0.05), ],
         force = 5
-    ) +
-getPlot(p, 5, 1) +
+    )
+p4 <- getPlot(p, 5, 1) +
     xlab("Hb SCZD vs control t-stat") +
     ylab("DG SCZD vs control t-stat") +
     theme_bw(base_size = 20) +
@@ -258,6 +254,36 @@ getPlot(p, 5, 1) +
     ) +
     guides(colour = guide_legend(title =
             "Hb FDR < 0.05"))
+
+pdf(
+    file.path(dir_plots, "ggpairs_t-stats_Hb.pdf"),
+    height = 10,
+    width = 10
+)
+p1 + p2 + p3 + p4
+dev.off()
+
+pdf(
+    file.path(dir_plots, "ggpairs_t-stats_Hb_facet.pdf"),
+    height = 10,
+    width = 10
+)
+p1 +
+    facet_grid(reformulate('"Hb"', '"DLPFC"'), switch = "y") +
+    xlab("") +
+    ylab("") +
+p2 +
+    facet_grid(reformulate('"Hb"', '"HIPPO"')) +
+    xlab("") +
+    ylab("") +
+p3 +
+    facet_grid(reformulate('"Hb"', '"Caudate"'), switch = "both") +
+    xlab("") +
+    ylab("") +
+p4 +
+    facet_grid(reformulate('"Hb"', '"DG"'), switch = "x") +
+    xlab("") +
+    ylab("")
 dev.off()
 
 pdf(file.path(dir_plots, "cor_Hb_sig_vs_Hb_notSig_t-stats.pdf"))
