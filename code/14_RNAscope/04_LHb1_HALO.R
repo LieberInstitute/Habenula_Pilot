@@ -12,55 +12,82 @@ if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 ## load data
 ## local
 list.files("~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/", recursive = TRUE)
-# [1] "Br5422/LHb_Experiment1_Br5422_middleslice_job1879_object_RESULTS.csv"
+# [1] "Br5422/LHb_Experiment1_Br5422_middleslice_Sample1879_object_RESULTS.csv"
 ## TODO fix to here notation
-fn <- list(Br5422 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br5422/LHb_Experiment1_Br5422_middleslice_job1879_object_RESULTS.csv")
+fn <- list(Br5422 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br5422/LHb_Experiment1_Br5422_middleslice_Sample1879_object_RESULTS.csv",
+           Br6462 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br6462/LHb_Experiment1_Br6462_rightslice_20x_Sample1886_object_RESULTS.csv"
+           )
 
 map(fn, file.exists)
-# halo <- map2(fn, names(fn), ~read_excel(.x) |> mutate(job = .y))
-halo <- map2(fn, names(fn), ~read_csv(.x) |> mutate(job = .y))
+# halo <- map2(fn, names(fn), ~read_excel(.x) |> mutate(Sample = .y))
+halo <- map2(fn, names(fn), ~read_csv(.x) |> mutate(Sample = .y))
 
-# all.equal(halo$job1862 |> select(-job), halo$job1864|> select(-job))
+# all.equal(halo$Sample1862 |> select(-Sample), halo$Sample1864|> select(-Sample))
 
 map(halo, dim)
 # $Br5422
 # [1] 15899    55
+#
+# $Br6462
+# [1] 35045    55
 
 ## rbind tables
 halo <- do.call("rbind", halo)
 colnames(halo) <- gsub(" \\(µm.*\\)", "", colnames(halo))
 
-#### create halo long ####
 experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
-       marker = c("ONECUT2", "TLE2","SEMA3D","POU4F1"),
-       cluster = c("LHb.1", "LHb.4", "LHb.5/1", "Hb"))
-# probe marker  cluster
-# <fct> <chr>   <chr>
-# 1 690   ONECUT2 LHb.1
-# 2 620   TLE2    LHb.4
-# 3 570   SEMA3D  LHb.5/1
-# 4 520   POU4F1  Hb
+                     marker = c("ONECUT2", "TLE2","SEMA3D","POU4F1"),
+                     cluster = c("LHb.1", "LHb.4", "LHb.5/1", "Hb")) |>
+    mutate(probe2 = paste0(probe, " ", marker, " (", cluster,")"))
+# A tibble: 4 × 4
+# probe marker  cluster probe2
+# <fct> <chr>   <chr>   <chr>
+# 1 690   ONECUT2 LHb.1   690 ONECUT2 (LHb.1)
+# 2 620   TLE2    LHb.4   620 TLE2 (LHb.4)
+# 3 570   SEMA3D  LHb.5/1 570 SEMA3D (LHb.5/1)
+# 4 520   POU4F1  Hb      520 POU4F1 (Hb)
 
 # write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "Probes_LHb1.csv"))
 
+#### gpairs for copies ####
+copies_tab <- halo |>
+    select(Sample, ends_with("Copies")) |>
+    mutate(sum = rowSums(across(where(is.numeric))))
+
+copies_tab |> count(sum == 0)
+copies_tab |> count(Sample, sum == 0)
+# # A tibble: 2 × 2
+# `sum == 0`     n
+# <lgl>      <int>
+# 1 FALSE       9600
+# 2 TRUE        6299
+
+experiment |> transmute()
+
+colnames(copies_tab)
+
+gg_copies <- copies_tab |> select(-sum) |> ggpairs(aes(alpha = 0.5))
+ggsave(gg_copies, filename = here(plot_dir, "LHb1_gg_copies.png"), height = 12, width = 12)
+
+#### create halo long ####
+
 halo_copies_long <- halo |>
-  select(job, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
-  pivot_longer(!c(job, `Object Id`, XMin, XMax, YMin, YMax), names_to = "probe", values_to = "copies") |>
+  select(Sample, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
+  pivot_longer(!c(Sample, `Object Id`, XMin, XMax, YMin, YMax), names_to = "probe", values_to = "copies") |>
   mutate(probe = factor(gsub("^2.*Opal (\\d+) Copies", "\\1", probe))) |>
-  left_join(experiment) |>
-  mutate(probe2 = paste0(probe, " ", marker, " (", cluster,")"))
+  left_join(experiment)
   # mutate(probe = extract_numeric(probe))
 
 # get quantile values for non-zero values
 copy_cutoff <- halo_copies_long |>
   filter(copies != 0) |>
-  group_by(probe, job) |>
+  group_by(probe, Sample) |>
   summarize(q25 = quantile(copies,probs = 0.25),
             q50 = quantile(copies,probs = 0.5),
             q75 = quantile(copies,probs = 0.75),
             q95 = quantile(copies,probs = 0.95))
 
-# probe job      q25   q50   q75   q95
+# probe Sample      q25   q50   q75   q95
 # <fct> <chr>  <dbl> <dbl> <dbl> <dbl>
 # 1 520   Br5422     1     2     9  59
 # 2 570   Br5422     1     2     3   8
@@ -80,10 +107,10 @@ halo_copies_long2 <- halo_copies_long |>
   mutate(copy_quant = as.ordered(copy_quant))
 
 halo_copies_long2 |>
-  count(probe2, job, copy_quant) |>
+  count(probe2, Sample, copy_quant) |>
   pivot_wider(names_from = "copy_quant", values_from = "n")
 
-# probe2               job     None    q0   q25   q50   q75
+# probe2               Sample     None    q0   q25   q50   q75
 # <chr>                <chr>  <int> <int> <int> <int> <int>
 #     1 520 POU4F1 (Hb)      Br5422 12325  1573   480   664   857
 # 2 570 SEMA3D (LHb.5/1) Br5422  9847  2762  1258   654  1378
@@ -104,24 +131,24 @@ cell_count_quant <- halo_copies_long2 |>
   scale_fill_manual(values = copy_quant_colors, "Copy Quantile") +
   coord_equal()+
   theme_bw() +
-  facet_wrap(job~probe2)
+  facet_grid(Sample~probe2)
 
-ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant_facet.png")), height = 7, width = 9)
-ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant_facet.pdf")), height = 7, width = 9)
+ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant_facet.png")), height = 4, width = 9)
+ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant_facet.pdf")), height = 4, width = 9)
 
 
 #### distribution
 copies_density <- halo_copies_long2 |>
-  # filter(job == "job1862") |>
+  # filter(Sample == "Sample1862") |>
   # filter(copies != 0) |>
   ggplot(aes(x = copies, fill = copy_quant)) +
   geom_histogram(binwidth = 1) +
   theme_bw() +
   scale_fill_manual(values = copy_quant_colors, "Copy Quantile") +
   coord_cartesian(ylim=c(0, 2000), xlim = c(-1, 50)) +
-  facet_grid(job~probe2)
+  facet_grid(Sample~probe2)
 
-ggsave(copies_density, filename = here(plot_dir, "LHb1_copies_denisty.png"), height = 5)
+ggsave(copies_density, filename = here(plot_dir, "LHb1_copies_denisty.png"), height = 5, width = 9)
 
 #### hex plots ####
 
@@ -129,13 +156,37 @@ hex_copies_median <- ggplot(halo_copies_long2) +
   stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                    fun = median, bins = 100
   ) +
-  # scale_fill_continuous(type = "viridis") + ## top value of 100 for visualization
-  scale_fill_continuous(type = "viridis", limits = c(1,50), "Median Copies\n(max 50)") + ## top value of 100 for visualization
+    scale_fill_gradientn(
+        name = "Median Copies",
+        colors = rev(viridisLite::rocket(21)),
+        na.value = "#CCCCCC50",
+        limits = c(1,200)
+    )+
   coord_equal() +
   theme_bw() +
-  facet_grid(job~probe2)
+  facet_grid(Sample~probe2)
 
-ggsave(hex_copies_median, filename = here(plot_dir, paste0("LHb1_hex_copies_median_facet.png")), height = 4, width = 12)
+ggsave(hex_copies_median, filename = here(plot_dir, paste0("LHb1_hex_copies_median_facet.png")), height = 4, width = 9)
+
+
+hex_copies_max <- ggplot(halo_copies_long2) +
+    stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
+                     fun = max, bins = 100
+    ) +
+    # scale_fill_continuous(type = "viridis") + ## top value of 100 for visualization
+    scale_fill_gradientn(
+        name = "Max Copies",
+        colors = rev(viridisLite::rocket(21)),
+        na.value = "#CCCCCC50",
+        limits = c(1,200)
+    )+
+    # scale_fill_continuous(type = "plasma", limits = c(2,200), "Median Copies\n(max 100)") + ## top value of 100 for visualization
+    coord_equal() +
+    theme_bw() +
+    facet_grid(Sample~probe2)
+
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.png")), height = 4, width = 9)
+
 
 
 ## max quant cell_max_quant <- halo_copies_long2 |>
@@ -146,12 +197,12 @@ cell_max_quant <- halo_copies_long2 |>
   arrange(-copies) |>
   slice(1)
 
-cell_max_quant |> group_by(probe2, job) |> count()
-cell_max_quant |> group_by(probe2, job) |> count(copy_quant)
+cell_max_quant |> group_by(probe2, Sample) |> count()
+cell_max_quant |> group_by(probe2, Sample) |> count(copy_quant)
 
 cell_max_quant |>
   filter(copy_quant >= "q50") |>
-  group_by(probe2, job) |>
+  group_by(probe2, Sample) |>
   count()
 
 cell_max_quant_plot <- cell_max_quant |>
@@ -164,7 +215,7 @@ cell_max_quant_plot <- cell_max_quant |>
   )) +
   coord_equal()+
   theme_bw() +
-  facet_wrap(~job)
+  facet_wrap(~Sample)
 
 ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("LHb1_cell_max_quant.png")), height = 9, width = 9)
 ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("LHb1_cell_max_quant.pdf")), height = 9, width = 9)
@@ -180,23 +231,24 @@ gg_copies <- copies |>
 
 ggsave(gg_copies, filename = here(plot_dir, "LHb1_gg_copies.png"), height = 12, width = 12)
 
-
 #### Bin by 100 ####
 
 halo_copies_rank <- halo_copies_long |>
-  group_by(probe) |>
+  group_by(Sample, probe) |>
   arrange(-copies) |>
   mutate(copies_rank = rank(-copies)) |>
-  mutate(rank_cut = cut(copies_rank, c(0, 100, 200, 300, 400)))
+  mutate(rank_cut = cut(copies_rank, c(0, 100, 200, 300, 400)) ,
+         top400 = !is.na(rank_cut))
 
 halo_copies_rank |> count(rank_cut)
+halo_copies_rank |> count(top400)
 
 halo_copies_rank |>
   filter(rank_cut == "(0,100]") |>
   arrange(copies) |>
   slice(1)
 
-# job    `Object Id`  XMin  XMax  YMin  YMax probe copies marker  cluster probe2          copies_rank rank_cut
+# Sample    `Object Id`  XMin  XMax  YMin  YMax probe copies marker  cluster probe2          copies_rank rank_cut
 # <chr>        <dbl> <dbl> <dbl> <dbl> <dbl> <fct>  <dbl> <chr>   <chr>   <chr>                 <dbl> <fct>
 #     1 Br5422        6769  1925  1961  8481  8513 520       79 POU4F1  Hb      520 POU4F1 (Hb)       100   (0,100]
 # 2 Br5422        1589  7922  7945  3041  3070 570       15 SEMA3D  LHb.5/1 570 SEMA3D (LH…        99.5 (0,100]
@@ -208,6 +260,40 @@ halo_copies_rank |>
   arrange(copies) |>
   slice(1)
 
+#### confusion matrix ###
+
+halo_copies_rank_wide <- halo_copies_rank |>
+    ungroup() |>
+    select(Sample, `Object Id`, marker, rank_cut) |>
+    pivot_wider(id_cols = c(Sample, `Object Id`), names_from = marker, values_from = rank_cut)
+
+confusion_SEMA3D_ONECUT2 <- halo_copies_rank_wide |>
+    group_by(Sample) |>
+    count(SEMA3D, ONECUT2) |>
+    ggplot(aes(SEMA3D, ONECUT2, fill = n)) +
+    geom_tile() +
+    geom_text(aes(label = n)) +
+    facet_wrap(~Sample) + scale_fill_gradient(name = "count", trans = "log")
+
+ggsave(confusion_SEMA3D_ONECUT2, filename = here(plot_dir, "confusion_SEMA3D_ONECUT2.png"), height = 5, width = 9)
+
+## coppies scatter
+
+top100_ID <- halo_copies_rank |>
+    filter(rank_cut == "(0,100]", probe != 520) |>
+    select(Sample, `Object Id`, top100_ID = marker)
+
+any(duplicated(top100_ID$`Object Id`))
+
+top100_ID |> ungroup() |> group_by(Sample, `Object Id`) |> filter(n() > 1)|>
+    arrange(`Object Id`)
+
+
+halo_copies_rank |>
+    ggplot(aes(x = probe2, y = copies, color))
+
+
+#### cell plots ####
 copy_cut_colors <- c(`(300,400]` = "#FECC5C", `(200,300]` = "#FD8D3C", `(100,200]` = "#F03B20", `(0,100]` = "#BD0026")
 
 halo_copies_rank_cut <- halo_copies_rank |>
@@ -221,27 +307,26 @@ halo_copies_rank_cut <- halo_copies_rank |>
   scale_fill_manual(values = copy_cut_colors, "Copy Quantile") +
   coord_equal()+
   theme_bw() +
-  facet_wrap(job~probe2)
+  facet_wrap(Sample~probe2)
 
-ggsave(halo_copies_rank_cut, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet.png")), height = 7, width = 9)
-ggsave(halo_copies_rank_cut, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet.pdf")), height = 7, width = 9)
+ggsave(halo_copies_rank_cut, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet.png")), height = 5, width = 9)
+ggsave(halo_copies_rank_cut, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet.pdf")), height = 5, width = 9)
 
 
 rank_cut_density <- halo_copies_rank |>
-  # filter(job == "job1862") |>
+  # filter(Sample == "Sample1862") |>
   # filter(copies != 0) |>
   ggplot(aes(x = copies, fill = rank_cut)) +
   geom_histogram(binwidth = 1) +
   theme_bw() +
   scale_fill_manual(values = copy_cut_colors) +
   coord_cartesian(ylim=c(0, 100)) +
-  facet_wrap(~probe2, scales = "free_x")
+  facet_grid(Sample~probe2, scales = "free_x")
 
-ggsave(rank_cut_density, filename = here(plot_dir, "LHb1_rank_cut_denisty.png"), height = 5)
+ggsave(rank_cut_density, filename = here(plot_dir, "LHb1_rank_cut_denisty.png"), height = 5, width = 9)
 
 
 ## top 100
-
 cell_rank_top100 <- halo_copies_rank |>
   filter(rank_cut == "(0,100]") |>
   ggplot() +
@@ -252,10 +337,10 @@ cell_rank_top100 <- halo_copies_rank |>
   )) +
   coord_equal()+
   theme_bw() +
-  facet_wrap(~job)
+  facet_wrap(~Sample)
 
-ggsave(cell_rank_top100, filename = here(plot_dir, "LHb1_rank_top100.png"))
-ggsave(cell_rank_top100, filename = here(plot_dir, "LHb1_rank_top100.pdf"))
+ggsave(cell_rank_top100, filename = here(plot_dir, "LHb1_rank_top100.png"), height = 5, width = 9)
+ggsave(cell_rank_top100, filename = here(plot_dir, "LHb1_rank_top100.pdf"), height = 5, width = 9)
 
 cell_rank_top100_point <-halo_copies_rank |>
     filter(rank_cut == "(0,100]")  |>
@@ -279,33 +364,104 @@ cell_rank_top200 <- halo_copies_rank |>
     )) +
     coord_equal()+
     theme_bw() +
-    facet_wrap(~job)
+    facet_wrap(~Sample)
 
 ggsave(cell_rank_top200, filename = here(plot_dir, "LHb1_rank_top200.png"))
 ggsave(cell_rank_top200, filename = here(plot_dir, "LHb1_rank_top200.pdf"))
 
 
+color_official_markers = c(
+    "LHb.1" = c("#0085af"),
+    "LHb.4" = c("#6F8FAF"),
+    "LHb.5" = c("#40E0D0"),
+)
+
 halo_copies_rank_cut_shadow <- halo_copies_rank |>
     filter(probe == 520) |>
     ggplot() +
-    geom_rect(dataset = halo_copies_rank |>
-                  filter(is.na(rank_cut)), aes(
-                      xmin = XMin, xmax = XMax,
-                      ymin = YMin, ymax = YMax,
-                      fill = rank_cut
-                  )) +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = copies > 10
+    )) +
     geom_point(data = halo_copies_rank |>
                    filter(rank_cut == "(0,100]",
                           probe != 520),
                aes(x = XMax,
                    y = YMax,
                    color = probe2
-    ), size = 0.7) +
-    scale_fill_manual(values = copy_cut_colors, "POU4F1Copy Quantile") +
+               ), size = 0.7) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "magenta"), "POU4F1Copy >10") +
+    scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = c("#0085af"),
+                                 "620 TLE2 (LHb.4)" = c("#6F8FAF"),
+                                 "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
     coord_equal()+
-    theme_bw()
+    theme_void() +
+    facet_wrap(~Sample)
 
-ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 7, width = 9)
-ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.pdf")), height = 7, width = 9)
+ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 5, width = 9)
+ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 9)
+
+# neon purple "#B026FF"
+
+halo_copies_rank_cut_shadow2 <- halo_copies_rank |>
+    filter(probe == 520) |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = copies > 10
+    )) +
+    geom_point(data = halo_copies_rank |>
+                   filter(rank_cut == "(0,100]",
+                          probe != 520),
+               aes(x = XMax,
+                   y = YMax,
+                   fill = probe2
+               ), shape = 21,
+               color = "black",
+               size = 1.2) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80",
+                                 `TRUE` = "magenta",
+                                 "690 ONECUT2 (LHb.1)" = c("#0085af"),
+                                 "620 TLE2 (LHb.4)" = c("#6F8FAF"),
+                                 "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
+    coord_equal()+
+    theme_void() +
+    facet_wrap(~Sample)
+
+# ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 6, width = 9)
+ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow2.pdf")), height = 6, width = 10)
+
+## main figure plot
+halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
+    filter(probe == 520,
+           Sample == "Br5422") |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = copies > 10
+    )) +
+    geom_point(data = halo_copies_rank |>
+                   filter(rank_cut == "(0,100]",
+                          probe != 520,
+                          Sample == "Br5422"),
+               aes(x = XMax,
+                   y = YMax,
+                   fill = probe2
+               ), shape = 21,
+               color = "black",
+               size = 1.2) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC",
+                                 `TRUE` = "magenta",
+                                 "690 ONECUT2 (LHb.1)" = c("#0085af"),
+                                 "620 TLE2 (LHb.4)" = c("#6F8FAF"),
+                                 "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
+    coord_equal()+
+    theme_void()
+
+# ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 6, width = 9)
+ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow_Br5422.pdf")), height = 6, width =)
 
 
