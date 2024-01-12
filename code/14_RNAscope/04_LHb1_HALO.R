@@ -12,24 +12,29 @@ if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 ## load data
 ## local
 list.files("~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/", recursive = TRUE)
-# [1] "Br5422/LHb_Experiment1_Br5422_middleslice_Sample1879_object_RESULTS.csv"
-## TODO fix to here notation
-fn <- list(Br5422 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br5422/LHb_Experiment1_Br5422_middleslice_Sample1879_object_RESULTS.csv",
-           Br6462 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br6462/LHb_Experiment1_Br6462_rightslice_20x_Sample1886_object_RESULTS.csv"
+# [1] "Br5422/LHb_Experiment1_Br5422_middleslice_job1879_object_RESULTS.csv"
+# [2] "Br6462/LHb_Experiment1_Br6462_rightslice_20x_job1886_object_RESULTS.csv"
+# [3] "Br8112/LHbExperiment1_Br8112_thirdtoleft_20x_job1889_object_RESULTS.csv"
+## TODO fix to here notation/JHPCE paths
+fn <- list(Br5422 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br5422/LHb_Experiment1_Br5422_middleslice_job1879_object_RESULTS.csv",
+           Br6462 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br6462/LHb_Experiment1_Br6462_rightslice_20x_job1886_object_RESULTS.csv",
+           Br8112 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br8112/LHbExperiment1_Br8112_thirdtoleft_20x_job1889_object_RESULTS.csv"
            )
 
 map(fn, file.exists)
 # halo <- map2(fn, names(fn), ~read_excel(.x) |> mutate(Sample = .y))
 halo <- map2(fn, names(fn), ~read_csv(.x) |> mutate(Sample = .y))
 
-# all.equal(halo$Sample1862 |> select(-Sample), halo$Sample1864|> select(-Sample))
+map_int(halo, ncol)
+map_int(halo, nrow)
 
-map(halo, dim)
-# $Br5422
-# [1] 15899    55
-#
-# $Br6462
-# [1] 35045    55
+## flip y for Br8112
+max(halo$Br8112$YMax)
+max(halo$Br8112$YMin)
+
+## wrong ...
+halo$Br8112$YMax <- max(halo$Br8112$YMax) - halo$Br8112$YMax
+halo$Br8112$YMin <- max(halo$Br8112$YMax) - halo$Br8112$YMin
 
 ## rbind tables
 halo <- do.call("rbind", halo)
@@ -50,27 +55,8 @@ experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
 # write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "Probes_LHb1.csv"))
 
 #### gpairs for copies ####
-copies_tab <- halo |>
-    select(Sample, ends_with("Copies")) |>
-    mutate(sum = rowSums(across(where(is.numeric))))
-
-copies_tab |> count(sum == 0)
-copies_tab |> count(Sample, sum == 0)
-# # A tibble: 2 × 2
-# `sum == 0`     n
-# <lgl>      <int>
-# 1 FALSE       9600
-# 2 TRUE        6299
-
-experiment |> transmute()
-
-colnames(copies_tab)
-
-gg_copies <- copies_tab |> select(-sum) |> ggpairs(aes(alpha = 0.5))
-ggsave(gg_copies, filename = here(plot_dir, "LHb1_gg_copies.png"), height = 12, width = 12)
 
 #### create halo long ####
-
 halo_copies_long <- halo |>
   select(Sample, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
   pivot_longer(!c(Sample, `Object Id`, XMin, XMax, YMin, YMax), names_to = "probe", values_to = "copies") |>
@@ -78,8 +64,21 @@ halo_copies_long <- halo |>
   left_join(experiment)
   # mutate(probe = extract_numeric(probe))
 
+#### ggpairs ####
+halo_copies_wide <- halo_copies_long |>
+    select(Sample, `Object Id`, copies, probe2) |>
+    pivot_wider(id_cols = c(Sample, `Object Id`), names_from = probe2, values_from = copies)
+
+# copies_tab |> count(sum == 0)
+# copies_tab |> count(Sample, sum == 0)
+
+gg_copies <- halo_copies_wide |> ggpairs(3:6, mapping=ggplot2::aes(colour = Sample))
+ggsave(gg_copies, filename = here(plot_dir, "LHb1_gg_copies.png"), height = 12, width = 12)
+
+
+#### quantile grouping ####
 # get quantile values for non-zero values
-copy_cutoff <- halo_copies_long |>
+copy_quant_cutoff <- halo_copies_long |>
   filter(copies != 0) |>
   group_by(probe, Sample) |>
   summarize(q25 = quantile(copies,probs = 0.25),
@@ -87,16 +86,15 @@ copy_cutoff <- halo_copies_long |>
             q75 = quantile(copies,probs = 0.75),
             q95 = quantile(copies,probs = 0.95))
 
-# probe Sample      q25   q50   q75   q95
+# probe Sample   q25   q50   q75   q95
 # <fct> <chr>  <dbl> <dbl> <dbl> <dbl>
 # 1 520   Br5422     1     2     9  59
-# 2 570   Br5422     1     2     3   8
-# 3 620   Br5422     1     2     3  16.8
-# 4 690   Br5422     1     1     2  14
+# 2 520   Br6462     1     2     6 129
+# 3 520   Br8112     1     2     4  22
 
 ## use to classify cells
-halo_copies_long2 <- halo_copies_long |>
-  left_join(copy_cutoff) |>
+halo_copies_long_quant <- halo_copies_long |>
+  left_join(copy_quant_cutoff) |>
   mutate(copy_quant = case_when(copies > q75 ~ "q75",
                                 copies > q50 ~ "q50",
                                 copies > q25 ~ "q25",
@@ -106,7 +104,7 @@ halo_copies_long2 <- halo_copies_long |>
   )) |>
   mutate(copy_quant = as.ordered(copy_quant))
 
-halo_copies_long2 |>
+halo_copies_long_quant |>
   count(probe2, Sample, copy_quant) |>
   pivot_wider(names_from = "copy_quant", values_from = "n")
 
@@ -121,7 +119,7 @@ halo_copies_long2 |>
 #### plot with cell_quant
 copy_quant_colors <- c(None = "grey75", q0 = "#FECC5C", q25 = "#FD8D3C", q50 = "#F03B20", q75 = "#BD0026")
 
-cell_count_quant <- halo_copies_long2 |>
+cell_count_quant <- halo_copies_long_quant |>
   ggplot() +
   geom_rect(aes(
     xmin = XMin, xmax = XMax,
@@ -133,12 +131,12 @@ cell_count_quant <- halo_copies_long2 |>
   theme_bw() +
   facet_grid(Sample~probe2)
 
-ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant_facet.png")), height = 4, width = 9)
-ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant_facet.pdf")), height = 4, width = 9)
+ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant_facet.png")), height = 6, width = 9)
+ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant_facet.pdf")), height = 6, width = 9)
 
 
 #### distribution
-copies_density <- halo_copies_long2 |>
+copies_density <- halo_copies_long_quant |>
   # filter(Sample == "Sample1862") |>
   # filter(copies != 0) |>
   ggplot(aes(x = copies, fill = copy_quant)) +
@@ -152,7 +150,7 @@ ggsave(copies_density, filename = here(plot_dir, "LHb1_copies_denisty.png"), hei
 
 #### hex plots ####
 
-hex_copies_median <- ggplot(halo_copies_long2) +
+hex_copies_median <- ggplot(halo_copies_long_quant) +
   stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                    fun = median, bins = 100
   ) +
@@ -169,7 +167,7 @@ hex_copies_median <- ggplot(halo_copies_long2) +
 ggsave(hex_copies_median, filename = here(plot_dir, paste0("LHb1_hex_copies_median_facet.png")), height = 4, width = 9)
 
 
-hex_copies_max <- ggplot(halo_copies_long2) +
+hex_copies_max <- ggplot(halo_copies_long_quant) +
     stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                      fun = max, bins = 100
     ) +
@@ -188,9 +186,8 @@ hex_copies_max <- ggplot(halo_copies_long2) +
 ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.png")), height = 4, width = 9)
 
 
-
-## max quant cell_max_quant <- halo_copies_long2 |>
-cell_max_quant <- halo_copies_long2 |>
+## max quant cell_max_quant <- halo_copies_long_quant |>
+cell_max_quant <- halo_copies_long_quant |>
   group_by(`Object Id`) |>
   filter(probe != "520",
          copies != 0) |>
@@ -277,8 +274,29 @@ confusion_SEMA3D_ONECUT2 <- halo_copies_rank_wide |>
 
 ggsave(confusion_SEMA3D_ONECUT2, filename = here(plot_dir, "confusion_SEMA3D_ONECUT2.png"), height = 5, width = 9)
 
-## coppies scatter
+## better confusion
+halo_copies_cat <- halo_copies_rank |>
+    filter(!is.na(rank_cut)) |>
+    filter(rank_cut == "(0,100]") |>
+    ungroup() |>
+    mutate(cat = paste0(marker, "_", rank_cut)) |>
+    select(Sample, `Object Id`, cat)
 
+halo_copies_cat2 <- halo_copies_cat |>
+    left_join(halo_copies_cat, by = join_by(Sample, `Object Id`), relationship = "many-to-many")
+
+confusion_top100 <- halo_copies_cat2 |>
+    count(Sample, cat.x, cat.y) |>
+    ggplot(aes(cat.x, cat.y, fill = n)) +
+    geom_tile() +
+    geom_text(aes(label = n)) +
+    facet_wrap(~Sample) +
+    scale_fill_gradient(name = "count", trans = "log") +
+    theme_bw()
+
+ggsave(confusion_top100, filename = here(plot_dir, "LHb1_confusion_top100.png"), height = 5, width = 9)
+
+## copies scatter
 top100_ID <- halo_copies_rank |>
     filter(rank_cut == "(0,100]", probe != 520) |>
     select(Sample, `Object Id`, top100_ID = marker)
