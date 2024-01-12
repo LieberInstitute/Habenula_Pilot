@@ -104,11 +104,12 @@ names(colData(rse_gene))
 # [107] "snpPC8"                         "snpPC9"
 # [109] "snpPC10"
 
+rse_gene$PrimaryDx[rse_gene$PrimaryDx == "Schizo"] <- "SCZD"
 unique(colData(rse_gene)$PrimaryDx)
-# [1] "Schizo"  "Control"
+# [1] "SCZD"    "Control"
 
 table(colData(rse_gene)$PrimaryDx)
-# Control  Schizo
+# Control    SCZD
 #      33      35
 
 table(colData(rse_gene)$Sex)
@@ -139,7 +140,7 @@ QC_boxplots <- function(qc_metric, sample_var) {
         x_label <- "PrimaryDx"
         sample_var_v2 <- "Flowcell"
     } else if (sample_var == "Flowcell") {
-        colors <- c("Schizo" = "darkgoldenrod3", "Control" = "turquoise3")
+        colors <- c("SCZD" = "darkgoldenrod3", "Control" = "turquoise3")
         x_label <- "Flowcell"
         sample_var_v2 <- "PrimaryDx"
     }
@@ -148,16 +149,12 @@ QC_boxplots <- function(qc_metric, sample_var) {
 
     data <- data.frame(colData(rse_gene))
     plot <- ggplot(data = data, mapping = aes(x = !!rlang::sym(sample_var), y = !!rlang::sym(qc_metric), color = !!rlang::sym(sample_var_v2))) +
-        theme_bw() +
+        theme_bw(base_size = 18) +
         geom_violin(alpha = 0, size = 0.4, color = "black", width = 0.7) +
         geom_jitter(width = 0.1, alpha = 0.7, size = 2) +
         geom_boxplot(alpha = 0, size = 0.4, width = 0.1, color = "black") +
         scale_color_manual(values = colors) +
-        labs(y = y_label, x = x_label) +
-        theme(
-            axis.title = element_text(size = (9)),
-            axis.text = element_text(size = (8))
-        )
+        labs(y = y_label, x = x_label)
 
     return(plot)
 }
@@ -167,7 +164,18 @@ for (sample_var in sample_variables) {
     i <- 1
     plots <- list()
     for (qc_metric in qc_metrics) {
-        plots[[i]] <- QC_boxplots(qc_metric, sample_var)
+        p <- QC_boxplots(qc_metric, sample_var)
+        if (i %% 3 != 0) {
+            p <- p + theme(legend.position = "none")
+        }
+        if (i <= 6) {
+            p <- p + theme(
+                axis.title.x = element_blank(),
+                axis.text.x = element_blank(),
+                axis.ticks.x = element_blank()
+            )
+        }
+        plots[[i]] <- p
         i <- i + 1
     }
     plot_grid(plotlist = plots, nrow = 3)
