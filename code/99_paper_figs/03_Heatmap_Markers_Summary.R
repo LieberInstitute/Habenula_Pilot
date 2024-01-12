@@ -174,27 +174,33 @@ rownames(colData(sce)) <- colData(sce)[, clusterMethod]
 #   filter(gene %in% rowData(sce_reorder)$Symbol)
 
 markTable <- marker_details |>
-  mutate(cellType.short = factor(cellType.short, levels = names(official_markers)),
-         anno = factor(anno, levels = c("Data-Driven", "Literature + Data-Supported", "Literature"))) |>
-  arrange(anno, cellType.short)
+    mutate(
+        cellType.short = factor(cellType.short, levels = names(official_markers)),
+        anno = factor(
+            anno,
+            levels = c("Data-Driven", "Literature + Data-Supported", "Literature")
+        )
+    ) |>
+    arrange(anno, cellType.short)
 ## fix order in colsplit
+official_markers_order <- c(
+    "Hb",
+    "MHb",
+    "LHb",
+    "Thal",
+    "Neuron",
+    "Exc_Neuron",
+    "Inh_Neuron",
+    "Oligo",
+    "OPC",
+    "Astro",
+    "Endo",
+    "Micro"
+)
+stopifnot(all(official_markers_order %in% names(official_markers)))
 markTable$cellType.short = factor(
     markTable$cellType.short,
-    levels =
-        c(
-            "Hb",
-            "MHb",
-            "Lhb",
-            "Thal",
-            "Neuron",
-            "Exc_Neuron",
-            "Inh_Neuron",
-            "Oligo",
-            "OPC",
-            "Astro",
-            "Endo",
-            "Micro"
-        )
+    levels = official_markers_order
 )
 
 markTable |> print(n=22)
