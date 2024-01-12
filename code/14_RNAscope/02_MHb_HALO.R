@@ -260,4 +260,66 @@ confusion_top100 <- halo_copies_cat2 |>
 
 ggsave(confusion_top100[[1]] + confusion_top100[[2]], filename = here(plot_dir, "MHb_confusion_top100.png"), height = 5, width = 11)
 
+#### cell plots ####
+copy_cut_colors <- c(`(300,400]` = "#FECC5C", `(200,300]` = "#FD8D3C", `(100,200]` = "#F03B20", `(0,100]` = "#BD0026")
+
+# Category
+halo_copies_rank_cut <- halo_copies_rank |>
+    filter(!is.na(rank_cut)) |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = rank_cut
+    )) +
+    scale_fill_manual(values = copy_cut_colors, "Rank Category") +
+    coord_equal()+
+    theme_bw() +
+    facet_wrap(Sample~probe2)
+
+ggsave(halo_copies_rank_cut, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet.png")), height = 5, width = 9)
+ggsave(halo_copies_rank_cut, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet.pdf")), height = 5, width = 9)
+
+rank_cut_density <- halo_copies_rank |>
+    # filter(Sample == "Sample1862") |>
+    # filter(copies != 0) |>
+    ggplot(aes(x = copies, fill = rank_cut)) +
+    geom_histogram(binwidth = 1) +
+    theme_bw() +
+    scale_fill_manual(values = copy_cut_colors) +
+    coord_cartesian(ylim=c(0, 100)) +
+    facet_grid(Sample~probe2, scales = "free_x")
+
+ggsave(rank_cut_density, filename = here(plot_dir, "MHb_rank_cut_denisty.png"), height = 5, width = 9)
+
+#### Shadow plot ####
+halo_copies_rank_cut_shadow <- halo_copies_rank |>
+    filter(probe == 520) |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = copies > 1
+    )) +
+    geom_point(data = halo_copies_rank |>
+                   filter(rank_cut == "(0,100]",
+                          probe != 520),
+               aes(x = XMax,
+                   y = YMax,
+                   color = probe2
+               ), size = 0.7) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "magenta"), "Hb marker Copy > 2") +
+    scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
+                                  "570 CHAT (Mhb.2)" = "#FAA0A0",
+                                  "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
+    # scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = "red",
+    #                              "620 TLE2 (LHb.4)" = "blue",
+    #                              "570 SEMA3D (LHb.5/1)" ="orange"), "Top100 Nuclei") +
+    coord_equal()+
+    theme_void() +
+    facet_wrap(~Sample)
+
+ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 7)
+
+
 
