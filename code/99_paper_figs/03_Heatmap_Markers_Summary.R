@@ -16,16 +16,16 @@ library("RColorBrewer")
 # loading sce object
 load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_final.Rdata"),
      verbose = TRUE)
-  # sce_final 
+  # sce_final
 
 table(sce_final$final_Annotations)
-  # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3 
-  # 538         38       1800       7612        201        266        134 
-  # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
-  # 477         83         39       1014        152        540         18 
-  # Microglia      Oligo        OPC 
-  # 145       2178       1796 
-    # has no Hb cluster 
+  # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3
+  # 538         38       1800       7612        201        266        134
+  # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3
+  # 477         83         39       1014        152        540         18
+  # Microglia      Oligo        OPC
+  # 145       2178       1796
+    # has no Hb cluster
 
 # creating plot directory
 plot_dir <- here("plots", "99_paper_figs", "03_Heatmap_Markers_Summary")
@@ -33,7 +33,7 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# sourcing official color palette 
+# sourcing official color palette
 source(file = here("code", "99_paper_figs", "source_colors.R"))
   # bulk_colors and sn_colors
 
@@ -43,33 +43,33 @@ sce_final$FakeSample <- "Br1011"
 sce_final$RealSample <- sce_final$Sample
 sce_final$Sample <- sce_final$FakeSample
 
-set.seed(20220907) 
+set.seed(20220907)
 sce_pb <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
 save(sce_pb, file = here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_pseudobulk_final_Annotations.Rdata"))
 
-# list of marker genes 
+# list of marker genes
 official_markers = list(
   "Oligo" = c("MOBP"),
   "OPC" = c("PDGFRA"),
   "Micro" = c("CSF1R"),
   "Astro" = c("AQP4"),
   "Endo" = c("ITIH5"),
-  "Thal" = c("LYPD6B"),
-  "LHb.1" = c("LINC02653"), #  , ATP8B1
-  "LHb.2" = c("AC073071.1"),
-  "LHb.3" = c ("ENTHD1"),
-  "LHb.4" = c("TLE2"), 
-  "LHb.5" = c("LINC01619"),
-  "LHb.6" = c("TACR3"),
-  "LHb.7" = c("AC008619.1"),
-  "MHb.1" = c("EXOC1L"), 
-  "MHb.2" = c("CHAT"),
-  "MHb.3" = c("BHLHE22"),
-  'Hb' = c("POU4F1"), # BARHL1
+  "Thal" = c("LYPD6B", "ADARB2", "RORB"),
+  # "LHb.1" = c("LINC02653"), #  , ATP8B1
+  # "LHb.2" = c("AC073071.1"),
+  # "LHb.3" = c ("ENTHD1"),
+  # "LHb.4" = c("TLE2"),
+  # "LHb.5" = c("LINC01619"),
+  # "LHb.6" = c("TACR3"),
+  # "LHb.7" = c("AC008619.1"),
+  # "MHb.1" = c("EXOC1L"),
+  # "MHb.2" = c("CHAT"),
+  # "MHb.3" = c("BHLHE22"),
+  'Hb' = c("POU4F1", "GPR151", "TAC3"), # BARHL1
   "MHb" = c("CHRNB4"),
   "LHb" = c("HTR2C"),
   'Neuron' = c('SYT1'),
-  'Exc_Neuron' = c('SLC17A6'), 
+  'Exc_Neuron' = c('SLC17A6'),
   'Inh_Neuron' = c('GAD1')
 )
 
@@ -79,7 +79,7 @@ marker_stats[[1]] <- NULL
 marker_stats |> count(cellType.target)
 
 official_markers_tb <- tibble(cellType.short = names(official_markers),
-                              cellType.target = names(official_markers), 
+                              cellType.target = names(official_markers),
                               gene = official_markers) |>
   unnest(gene) |>
   mutate(cellType.target = case_when(cellType.target == "Astro" ~'Astrocyte',
@@ -94,39 +94,39 @@ marker_details <- marker_stats |>
   mutate(final_cell_type = cellType.target %in% marker_stats$cellType.target,
          anno = case_when(rank_ratio == 1 ~ "Data-Driven",
                           !final_cell_type | cellType.target == "Microglia" ~ "Literature",
-                          TRUE ~ "Literature + Data-Supported")) 
-  
+                          TRUE ~ "Literature + Data-Supported"))
+
 marker_details |> print(n = 22)
 
-marker_stats |> 
+marker_stats |>
   group_by(cellType.target) |>
   arrange(rank_ratio) |>
   slice(1:5)
 
 #### prep complex heatmap annotations  ####
-# explicit color scheme 
+# explicit color scheme
 color_official_markers = c(
   "Oligo" = c("#4d5802"),
-  "OPC"= c("#d3c871"), 
-  "Micro" = c("#222222"), 
-  "Astro" = c("#8d363c"), 
-  "Endo" = c("#ee6c14"), 
-  "Thal" = c("#EADDCA"), 
+  "OPC"= c("#d3c871"),
+  "Micro" = c("#222222"),
+  "Astro" = c("#8d363c"),
+  "Endo" = c("#ee6c14"),
+  "Thal" = c("#EADDCA"),
   "LHb.1" = c("#0085af"),
   "LHb.2" = c("#0096FF"),
-  "LHb.3" = c ("#89CFF0"), 
-  "LHb.4" = c("#6F8FAF"), 
+  "LHb.3" = c ("#89CFF0"),
+  "LHb.4" = c("#6F8FAF"),
   "LHb.5" = c("#40E0D0"),
-  "LHb.6" = c("#008080"), 
-  "LHb.7" = c("#7DF9FF"), 
+  "LHb.6" = c("#008080"),
+  "LHb.7" = c("#7DF9FF"),
   "MHb.1" = c("#FF00FF"),
-  "MHb.2" = c("#FAA0A0"), 
+  "MHb.2" = c("#FAA0A0"),
   "MHb.3" = c("#fa246a"),
-  "Hb" = c("#702963"), 
+  "Hb" = c("#702963"),
   "MHb" = c("#F33A6A"),
-  "LHb" = c("#0000FF"), 
+  "LHb" = c("#0000FF"),
   'Neuron' = c("#5C5C5C"),
-  'Exc_Neuron' = c('#8F8F8F'), 
+  'Exc_Neuron' = c('#8F8F8F'),
   "Inh_Neuron" = c("#C2C2C2")
 )
 
@@ -134,7 +134,7 @@ marker_method_colors <- c(`Data-Driven` = "#FFDA85",
                           `Literature + Data-Supported` = "#F7A5A1",
                           `Literature` = "#95E4EE")
 
-# check colors 
+# check colors
 preview_colors <- function(cell_colors) {
   par(las = 2) # make label text perpendicular to axis
   par(mar = c(5, 8, 4, 2)) # increase y-axis margin.
@@ -167,18 +167,41 @@ rownames(sce) <- rowData(sce)$Symbol
 rownames(colData(sce)) <- colData(sce)[, clusterMethod]
 
 # Making data frame of genes we are interested in annd their general classification
-# markTable <- as.data.frame(unlist(markerList)) |> 
+# markTable <- as.data.frame(unlist(markerList)) |>
 #   rownames_to_column("cellType") |>
 #   rename(gene = `unlist(markerList)`) |>
 #   # mutate(cellType = gsub("\\d+", "", cellType)) |>
 #   filter(gene %in% rowData(sce_reorder)$Symbol)
 
 markTable <- marker_details |>
-  mutate(cellType.short = factor(cellType.short, levels = names(official_markers)),
-         anno = factor(anno, levels = c("Data-Driven", "Literature + Data-Supported", "Literature"))) |>
-  arrange(anno, cellType.short)
-## fix order in colsplit 
-markTable$cellType.short = factor(markTable$cellType.short, levels = markTable$cellType.short)
+    mutate(
+        cellType.short = factor(cellType.short, levels = names(official_markers)),
+        anno = factor(
+            anno,
+            levels = c("Data-Driven", "Literature + Data-Supported", "Literature")
+        )
+    ) |>
+    arrange(anno, cellType.short)
+## fix order in colsplit
+official_markers_order <- c(
+    "Hb",
+    "MHb",
+    "LHb",
+    "Thal",
+    "Neuron",
+    "Exc_Neuron",
+    "Inh_Neuron",
+    "Oligo",
+    "OPC",
+    "Astro",
+    "Endo",
+    "Micro"
+)
+stopifnot(all(official_markers_order %in% names(official_markers)))
+markTable$cellType.short = factor(
+    markTable$cellType.short,
+    levels = official_markers_order
+)
 
 markTable |> print(n=22)
 
@@ -216,13 +239,13 @@ identical(markTable$gene, colnames(marker_z_score))
 # heatmap columns annotation
 column_ha <- HeatmapAnnotation(
   Marker_Gene = markTable$cellType.short,
-  Marker_Method = markTable$anno,
+  # Marker_Method = markTable$anno,
   col = list(Marker_Gene = color_official_markers,
              Marker_Method = marker_method_colors)
 )
 
 # grabbing the annotations per cluster from the sce_reorder object
-# clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod]) 
+# clusterData <- as.data.frame(colData(sce_reorder)[,clusterMethod])
 # names(clusterData) <- "cellType"
 
 # prepping the colors we want
@@ -255,19 +278,19 @@ heatmapped <- Heatmap(marker_z_score,
                       # )
                       )
 
-# printing 
+# printing
 pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Anno_FINAL.pdf"), width = 12, height = 8)
   heatmapped
 dev.off()
 
-#### FOR ONE DRIVE 
+#### FOR ONE DRIVE
 # pdf
 pdf(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.pdf"), width = 12, height = 8)
   heatmapped
 dev.off()
 
 # png
-png(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.png"), 
+png(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.png"),
     width = 12, height = 8, units = "in", res = 1200)
 heatmapped
 dev.off()
@@ -286,7 +309,7 @@ dev.off()
 sn_colors <- sn_colors[!names(sn_colors) %in% c("OPC_noisy", "Excit.Neuron")]
 
 lgd_celltypes = Legend(labels = names(sn_colors),
-                       title = "Cell Types", 
+                       title = "Cell Types",
                        legend_gp = gpar(fill = sn_colors),
                        nrow = 3,
                        legend_width = unit(6, "cm"))
@@ -318,7 +341,7 @@ sessioninfo::session_info()
 # tz       US/Eastern
 # date     2023-06-13
 # pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/bin/pandoc
-# 
+#
 # ─ Packages ──────────────────────────────────────────────────────────────────────────────────
 # ! package                * version   date (UTC) lib source
 # AnnotationDbi            1.60.2    2023-03-10 [2] Bioconductor
@@ -493,11 +516,11 @@ sessioninfo::session_info()
 # XVector                  0.38.0    2022-11-01 [2] Bioconductor
 # yaml                     2.3.7     2023-01-23 [2] CRAN (R 4.2.2)
 # zlibbioc                 1.44.0    2022-11-01 [2] Bioconductor
-# 
+#
 # [1] /users/bsimbiat/R/4.2.x
 # [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/site-library
 # [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/library
-# 
+#
 # R ── Package was removed from disk.
-# 
+#
 # ─────────────────────────────────────────────────────────────────────────────────────────────
