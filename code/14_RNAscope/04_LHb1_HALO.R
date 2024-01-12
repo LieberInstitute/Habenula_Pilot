@@ -58,8 +58,6 @@ experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
 
 # write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "Probes_LHb1.csv"))
 
-#### gpairs for copies ####
-
 #### create halo long ####
 halo_copies_long <- halo |>
   select(Sample, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
@@ -217,17 +215,6 @@ cell_max_quant_plot <- cell_max_quant |>
 
 ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("LHb1_cell_max_quant.png")), height = 9, width = 9)
 ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("LHb1_cell_max_quant.pdf")), height = 9, width = 9)
-
-#### Examine the relationship of counts in larger field of view ####
-
-copies <- halo |>
-  select(ends_with("Copies")) |>
-  filter(rowSums(across(where(is.numeric))) > 0)
-
-gg_copies <- copies |>
-  ggpairs(aes(alpha = 0.5))
-
-ggsave(gg_copies, filename = here(plot_dir, "LHb1_gg_copies.png"), height = 12, width = 12)
 
 #### Bin by 100 ####
 
@@ -503,3 +490,9 @@ halo_copies_rank |>
     filter(rank_cut == "(0,100]",
            probe != 520,
            Sample == "Br5422") |> count(probe)
+
+#### Export top objects ####
+
+halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp1", "LHb1_top10_nuclei.csv"))
+
+
