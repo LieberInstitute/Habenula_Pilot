@@ -321,5 +321,8 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
 
 ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 7)
 
+#### Export top objects ####
+
+halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp1", "LHb1_top10_nuclei.csv"))
 
 
