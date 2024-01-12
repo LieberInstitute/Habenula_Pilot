@@ -413,16 +413,18 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
                    y = YMax,
                    color = probe2
                ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "magenta"), "POU4F1Copy >10") +
-    scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = c("#0085af"),
-                                 "620 TLE2 (LHb.4)" = c("#6F8FAF"),
-                                 "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "magenta"), "POU4F1 Copy >10") +
+    scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = "#0085af", ## cell type colors
+                                 "620 TLE2 (LHb.4)" = "#6F8FAF",
+                                 "570 SEMA3D (LHb.5/1)" = "#40E0D0"), "Top100 Nuclei") +
+    # scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = "red",
+    #                              "620 TLE2 (LHb.4)" = "blue",
+    #                              "570 SEMA3D (LHb.5/1)" ="orange"), "Top100 Nuclei") +
     coord_equal()+
     theme_void() +
     facet_wrap(~Sample)
 
-ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 5, width = 9)
-ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 9)
+ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.pdf")), height = 3, width = 9)
 
 # neon purple "#B026FF"
 
@@ -443,6 +445,11 @@ halo_copies_rank_cut_shadow2 <- halo_copies_rank |>
                ), shape = 21,
                color = "black",
                size = 1.2) +
+    # scale_fill_manual(values = c(`FALSE`="#CCCCCC80",
+    #                              `TRUE` = "magenta",
+    #                              "690 ONECUT2 (LHb.1)" = c("#0085af"),
+    #                              "620 TLE2 (LHb.4)" = c("#6F8FAF"),
+    #                              "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
     scale_fill_manual(values = c(`FALSE`="#CCCCCC80",
                                  `TRUE` = "magenta",
                                  "690 ONECUT2 (LHb.1)" = c("#0085af"),
@@ -482,7 +489,7 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
                                  # "620 TLE2 (LHb.4)" = c("#6F8FAF"),
                                  # "570 SEMA3D (LHb.5/1)" = c("#40E0D0")
                                 "690 ONECUT2 (LHb.1)" = c("red"),
-                                 "620 TLE2 (LHb.4)" = "orange",
+                                 "620 TLE2 (LHb.4)" = "yellow",
                                  "570 SEMA3D (LHb.5/1)" = c("cyan")
                                 ),
                       "Top100 Nuclei") +
