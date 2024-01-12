@@ -29,12 +29,16 @@ map_int(halo, ncol)
 map_int(halo, nrow)
 
 ## flip y for Br8112
-max(halo$Br8112$YMax)
-max(halo$Br8112$YMin)
-
-## wrong ...
 halo$Br8112$YMax <- max(halo$Br8112$YMax) - halo$Br8112$YMax
 halo$Br8112$YMin <- max(halo$Br8112$YMax) - halo$Br8112$YMin
+
+## test
+# halo$Br8112 |>
+#     ggplot() +
+#     geom_rect(aes(
+#         xmin = XMin, xmax = XMax,
+#         ymin = YMin, ymax = YMax
+#     ))
 
 ## rbind tables
 halo <- do.call("rbind", halo)
@@ -146,10 +150,9 @@ copies_density <- halo_copies_long_quant |>
   coord_cartesian(ylim=c(0, 2000), xlim = c(-1, 50)) +
   facet_grid(Sample~probe2)
 
-ggsave(copies_density, filename = here(plot_dir, "LHb1_copies_denisty.png"), height = 5, width = 9)
+ggsave(copies_density, filename = here(plot_dir, "LHb1_copies_denisty.png"), height = 6, width = 9)
 
 #### hex plots ####
-
 hex_copies_median <- ggplot(halo_copies_long_quant) +
   stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                    fun = median, bins = 100
@@ -164,9 +167,9 @@ hex_copies_median <- ggplot(halo_copies_long_quant) +
   theme_bw() +
   facet_grid(Sample~probe2)
 
-ggsave(hex_copies_median, filename = here(plot_dir, paste0("LHb1_hex_copies_median_facet.png")), height = 4, width = 9)
+ggsave(hex_copies_median, filename = here(plot_dir, paste0("LHb1_hex_copies_median_facet.png")), height = 6, width = 9)
 
-
+## TODO add limit to legend title
 hex_copies_max <- ggplot(halo_copies_long_quant) +
     stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                      fun = max, bins = 100
@@ -177,14 +180,12 @@ hex_copies_max <- ggplot(halo_copies_long_quant) +
         colors = rev(viridisLite::rocket(21)),
         na.value = "#CCCCCC50",
         limits = c(1,200)
-    )+
-    # scale_fill_continuous(type = "plasma", limits = c(2,200), "Median Copies\n(max 100)") + ## top value of 100 for visualization
-    coord_equal() +
+    )+ coord_equal() +
     theme_bw() +
     facet_grid(Sample~probe2)
 
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.png")), height = 4, width = 9)
-
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.png")), height = 6, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.pdf")), height = 6, width = 9)
 
 ## max quant cell_max_quant <- halo_copies_long_quant |>
 cell_max_quant <- halo_copies_long_quant |>
@@ -291,25 +292,28 @@ confusion_top100 <- halo_copies_cat2 |>
     geom_tile() +
     geom_text(aes(label = n)) +
     facet_wrap(~Sample) +
-    scale_fill_gradient(name = "count", trans = "log") +
-    theme_bw()
+    # scale_fill_gradient(name = "count", trans = "log") +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90))
 
-ggsave(confusion_top100, filename = here(plot_dir, "LHb1_confusion_top100.png"), height = 5, width = 9)
+ggsave(confusion_top100, filename = here(plot_dir, "LHb1_confusion_top100.png"), height = 5, width = 11)
 
 ## copies scatter
-top100_ID <- halo_copies_rank |>
-    filter(rank_cut == "(0,100]", probe != 520) |>
-    select(Sample, `Object Id`, top100_ID = marker)
+halo_copies2_cat <- halo_copies_rank |>
+    filter(!is.na(rank_cut)) |>
+    ungroup() |>
+    select(Sample, `Object Id`, probe2, copies) |>
+    left_join(halo_copies_cat)
 
-any(duplicated(top100_ID$`Object Id`))
+halo_copies2_cat |> count(cat)
 
-top100_ID |> ungroup() |> group_by(Sample, `Object Id`) |> filter(n() > 1)|>
-    arrange(`Object Id`)
+copies_vs_top100_jitter <- halo_copies2_cat |>
+    ggplot(aes(x = probe2, y = copies, color = cat)) +
+    geom_jitter(alpha = .5) +
+    theme_bw() +
+    theme(legend.position = "bottom")
 
-
-halo_copies_rank |>
-    ggplot(aes(x = probe2, y = copies, color))
-
+ggsave(copies_vs_top100_jitter, filename = here(plot_dir, "LHb1_copies_vs_top100_jitter.png"), width = 8)
 
 #### cell plots ####
 copy_cut_colors <- c(`(300,400]` = "#FECC5C", `(200,300]` = "#FD8D3C", `(100,200]` = "#F03B20", `(0,100]` = "#BD0026")
@@ -391,7 +395,7 @@ ggsave(cell_rank_top200, filename = here(plot_dir, "LHb1_rank_top200.pdf"))
 color_official_markers = c(
     "LHb.1" = c("#0085af"),
     "LHb.4" = c("#6F8FAF"),
-    "LHb.5" = c("#40E0D0"),
+    "LHb.5" = c("#40E0D0")
 )
 
 halo_copies_rank_cut_shadow <- halo_copies_rank |>
@@ -462,6 +466,7 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
         fill = copies > 10
     )) +
     geom_point(data = halo_copies_rank |>
+    # geom_jitter(data = halo_copies_rank |>
                    filter(rank_cut == "(0,100]",
                           probe != 520,
                           Sample == "Br5422"),
@@ -473,13 +478,21 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
                size = 1.2) +
     scale_fill_manual(values = c(`FALSE`="#CCCCCC",
                                  `TRUE` = "magenta",
-                                 "690 ONECUT2 (LHb.1)" = c("#0085af"),
-                                 "620 TLE2 (LHb.4)" = c("#6F8FAF"),
-                                 "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
+                                 # "690 ONECUT2 (LHb.1)" = c("#0085af"),
+                                 # "620 TLE2 (LHb.4)" = c("#6F8FAF"),
+                                 # "570 SEMA3D (LHb.5/1)" = c("#40E0D0")
+                                "690 ONECUT2 (LHb.1)" = c("red"),
+                                 "620 TLE2 (LHb.4)" = "orange",
+                                 "570 SEMA3D (LHb.5/1)" = c("cyan")
+                                ),
+                      "Top100 Nuclei") +
     coord_equal()+
     theme_void()
 
 # ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 6, width = 9)
-ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow_Br5422.pdf")), height = 6, width =)
+ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_shadow_Br5422_color2.pdf")), height = 6, width =)
 
-
+halo_copies_rank |>
+    filter(rank_cut == "(0,100]",
+           probe != 520,
+           Sample == "Br5422") |> count(probe)
