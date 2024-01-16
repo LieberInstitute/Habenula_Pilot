@@ -166,13 +166,6 @@ res_formula <- DE_analysis(
 ###############################################################################
 
 
-## Export demographic info
-rse_gene$PrimaryDx[rse_gene$PrimaryDx == "Schizo"] <- "SCZD"
-rse_gene$Race[rse_gene$Race == "CAUC"] <- "EUA/CAUC"
-pheno <- colData(rse_gene)
-pheno$bamFile <- NULL
-write.csv(pheno, file.path(out_data, "TableSxx_Demographics.csv"), row.names = FALSE)
-
 ######################### Reproducibility information #########################
 
 ## Reproducibility information
