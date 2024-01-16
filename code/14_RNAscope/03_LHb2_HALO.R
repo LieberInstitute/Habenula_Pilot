@@ -61,7 +61,7 @@ experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
 # 3 570   CRH    LHb.2   570 CRH (LHb.2)
 # 4 520   POU4F1 Hb      520 POU4F1 (Hb)
 
-write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "Probes_LHb2.csv"))
+# write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "Probes_LHb2.csv"))
 
 #### create halo long ####
 halo_copies_long <- halo |>
@@ -318,6 +318,17 @@ ggsave(cell_rank_top100, filename = here(plot_dir, "LHb2_rank_top100.png"))
 ggsave(cell_rank_top100, filename = here(plot_dir, "LHb2_rank_top100.pdf"))
 
 #### shadow plots ####
+## if nuclei has >1 top100 ID, pick marker w/ max copies
+halo_copies_rank_ID  <- halo_copies_rank |>
+    filter(rank_cut == "(0,100]",
+           probe != 520) |>
+    group_by(Sample, `Object Id`) |>
+    arrange(-copies) |>
+    slice(1)
+
+halo_copies_rank_ID |> count() |> filter(n>1)
+
+
 halo_copies_rank_cut_shadow <- halo_copies_rank |>
     filter(probe == 520) |>
     ggplot() +
@@ -326,25 +337,65 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
         ymin = YMin, ymax = YMax,
         fill = copies > 10
     )) +
-    # geom_point(data = halo_copies_rank |>
-    #                filter(rank_cut == "(0,100]",
-    #                       probe != 520),
-    #            aes(x = XMax,
-    #                y = YMax,
-    #                color = probe2
-    #            ), size = 0.7) +
+    geom_point(data = halo_copies_rank_ID,
+               aes(x = XMax,
+                   y = YMax,
+                   color = probe2
+               ), size = 0.7) +
     scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy >10") +
     scale_color_manual(values = c("570 CRH (LHb.2)" = "#0096FF", ## cell type colors
                                   "620 MCOLN3 (LHb.3)" = "#89CFF0",
                                   "690 ESRP1 (LHb.6)" = "#008080"), "Top100 Nuclei") +
-    # scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = "red",
-    #                              "620 TLE2 (LHb.4)" = "blue",
-    #                              "570 SEMA3D (LHb.5/1)" ="orange"), "Top100 Nuclei") +
     coord_equal()+
     theme_void() +
     facet_wrap(~Sample)
 
 ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadow.pdf")), height = 3, width = 9)
+
+## for main fig
+halo_copies_rank_cut_shadow_Br8112 <- halo_copies_rank |>
+    filter(probe == 520,
+           Sample == "Br8112") |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = copies > 10
+    )) +
+    geom_point(data = halo_copies_rank_ID |>
+               filter(Sample == "Br8112"),
+               aes(x = XMax,
+                   y = YMax,
+                   color = probe2
+               ), size = 0.7) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy >10") +
+    scale_color_manual(values = c("570 CRH (LHb.2)" = "#0096FF", ## cell type colors
+                                  "620 MCOLN3 (LHb.3)" = "#89CFF0",
+                                  "690 ESRP1 (LHb.6)" = "#008080"), "Top100 Nuclei") +
+    coord_equal()+
+    theme_void() +
+    facet_wrap(~Sample)
+
+ggsave(halo_copies_rank_cut_shadow_Br8112, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadow_Br8112.pdf")), height = 4, width = 4)
+
+## just POU4F1 inset
+adj = 15
+halo_copies_rank_cut_shadowIN_Br8112 <- halo_copies_rank |>
+    filter(probe == 520,
+           Sample == "Br8112") |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin-adj, xmax = XMax+adj,
+        ymin = YMin-(adj*2), ymax = YMax+(adj*2),
+        fill = copies > 10
+    )) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black")) +
+    coord_equal()+
+    theme_void() +
+    theme(legend.position = "None")
+
+ggsave(halo_copies_rank_cut_shadowIN_Br8112, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadowIN_Br8112.pdf")), height = 1, width = 1)
+
 
 #### Export top objects ####
 
