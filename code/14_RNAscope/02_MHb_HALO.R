@@ -353,14 +353,39 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
     scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
                                   "570 CHAT (Mhb.2)" = "#FAA0A0",
                                   "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
-    # scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = "red",
-    #                              "620 TLE2 (LHb.4)" = "blue",
-    #                              "570 SEMA3D (LHb.5/1)" ="orange"), "Top100 Nuclei") +
     coord_equal()+
     theme_void() +
     facet_wrap(~Sample)
 
 ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 7)
+
+
+halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
+    filter(probe == 520, Sample == "Br5422") |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = copies > 1
+    )) +
+    geom_point(data = halo_copies_rank |>
+                   filter(rank_cut == "(0,100]",
+                          probe != 520,
+                          Sample == "Br5422"),
+               aes(x = XMax,
+                   y = YMax,
+                   color = probe2
+               ), size = 0.7) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POUUF1 Copy > 2") +
+    scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
+                                  "570 CHAT (Mhb.2)" = "#FAA0A0",
+                                  "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
+    coord_equal()+
+    theme_void() +
+    facet_wrap(~Sample)
+
+ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow_Br5422.pdf")), height = 4, width = 4)
+
 
 #### Export top objects ####
 halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp", "MHb_top10_nuclei.csv"))
