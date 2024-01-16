@@ -10,6 +10,13 @@ names(metrics_files) <-
 
 metrics <- do.call(rbind, lapply(metrics_files, read.csv))
 
+sum(as.numeric(gsub(",", "", metrics$Estimated.Number.of.Cells)))
+# 20327
+
+summary(as.numeric(gsub(",", "", metrics$Estimated.Number.of.Cells)))
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#  923    2024    3156    2904    3906    4389
+
 summary(as.numeric(gsub(",", "", metrics$Number.of.Reads)) / 1e6)
 #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 # 162.8   172.9   193.0   188.3   201.8   213.0
