@@ -85,6 +85,22 @@ snpPCs <- read.table(
     ),
     header = TRUE
 )
+snpPCs <- rbind(
+    snpPCs,
+    data.frame(
+        BrNum = "Br5572",
+        "snpPC1" = NA,
+        "snpPC2" = NA,
+        "snpPC3" = NA,
+        "snpPC4" = NA,
+        "snpPC5" = NA,
+        "snpPC6" = NA,
+        "snpPC7" = NA,
+        "snpPC8" = NA,
+        "snpPC9" = NA,
+        "snpPC10" = NA
+    )
+)
 
 ## Load qSVa
 qSVAs <- read.table(
@@ -94,6 +110,20 @@ qSVAs <- read.table(
         "qSVA.tsv"
     ),
     header = TRUE
+)
+qSVAs <- rbind(
+    qSVAs,
+    data.frame(
+        qSV1 = NA,
+        qSV2 = NA,
+        qSV3 = NA,
+        qSV4 = NA,
+        qSV5 = NA,
+        qSV6 = NA,
+        qSV7 = NA,
+        qSV8 = NA,
+        row.names = "R18424"
+    )
 )
 
 ###############################################################################
@@ -121,14 +151,6 @@ est_prop <- cbind(est_prop, est_prop[, colnames(est_prop) == "LHb"] + est_prop[,
 est_prop <- cbind(est_prop, est_prop[, colnames(est_prop) == "Excit.Thal"] + est_prop[, colnames(est_prop) == "Inhib.Thal"])
 
 colnames(est_prop)[10:11] <- c("tot.Hb", "tot.Thal")
-
-## Delete sample Br5572/R18424 from all rse objects and deconvolution data
-rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
-rse_tx <- rse_tx[, rse_tx$BrNum != "Br5572"]
-rse_exon <- rse_exon[, rse_exon$BrNum != "Br5572"]
-rse_jx <- rse_jx[, rse_jx$BrNum != "Br5572"]
-
-est_prop <- est_prop[rownames(est_prop) != "R18424", ]
 
 ###############################################################################
 
@@ -160,7 +182,20 @@ rse_jx <- add_vars(rse_jx)
 
 ###############################################################################
 
+## Export demographic info
+rse_gene_export <- rse_gene
+rse_gene_export$PrimaryDx[rse_gene$PrimaryDx == "Schizo"] <- "SCZD"
+rse_gene_export$Race[rse_gene$Race == "CAUC"] <- "EUA/CAUC"
+pheno <- colData(rse_gene_export)
+pheno$bamFile <- NULL
+write.csv(pheno, file.path(out_data, "TableSxx_Demographics.csv"), row.names = FALSE)
 
+## Delete sample Br5572/R18424 from all rse objects and deconvolution data
+rse_gene <- rse_gene[, rse_gene$BrNum != "Br5572"]
+rse_tx <- rse_tx[, rse_tx$BrNum != "Br5572"]
+rse_exon <- rse_exon[, rse_exon$BrNum != "Br5572"]
+rse_jx <- rse_jx[, rse_jx$BrNum != "Br5572"]
+# est_prop <- est_prop[rownames(est_prop) != "R18424", ]
 
 ################# Save rse objects with qsva and SNP PCs data #################
 
