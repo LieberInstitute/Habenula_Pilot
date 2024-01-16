@@ -1,50 +1,39 @@
-## June 15, 2023 - Bukola Ajanaku
-# This is the exact code I used for the original progress report. Copy and pasted!
-# Simply changed plotting directory!!!
-# qrsh -l mem_free=30G,h_vmem=30G
 
-# loading relevant libraries
 library("SingleCellExperiment")
 library("here")
 library("ggplot2")
 library("DeconvoBuddies")
 
-# loading sce object 
-load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_final.Rdata"),
+# loading sce object
+load(here("processed-data",  "sce_objects", "official_final_sce.RDATA"),
      verbose = TRUE)
-# sce_final 
+# sce
 
 # creating plot directory
-plot_dir <- here("plots", "99_paper_figs", "13_RNA_Probe_Violin")
+plot_dir <- here("plots", "14_RNAscope", "05_RNAscope_violin_plots")
 if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# sourcing official color palette 
+# sourcing official color palette
 source(file = here("code", "99_paper_figs", "source_colors.R"))
 # bulk_colors and sn_colors
 
-marker_list <- c(
-  "RNA Scope Probe Experiment 1: MHb" = c("TAC3", "CCK", "CHRNB4", "BHLHE22", "CHAT"),
-  "RNA Scope Probe Experiment 2: LHb" = c("ONCUT2", "MCOLN3", "SEMA3D", "HTR4"),
-  "RNA Scope Probe Experiment 3: LHb" = c("ESRP1", "TLE2", "CRH", "HTR4")
-)
-
-
 # using Louise's package (yayyyy!!) to make the violin plots easy peasy
-rownames(sce_final) <- rowData(sce_final)$Symbol
+rownames(sce) <- rowData(sce)$Symbol
 
+LHb1 <- plot_gene_express(sce = sce,
+                          genes = c("POU4F1", "SEMA3D", "TLE2", "ONECUT2"),
+                          cat = "final_Annotations",
+                          color_pal = sn_colors,
+                          title = NA,
+                          ncol = 4)
 
-pdf(file = here(plot_dir, "RNA_Scope_Probe_Exp1_Violin.pdf"))
-  plot_gene_express(sce = sce_final, 
-                           genes = c("TAC3", "CCK", "CHRNB4", "BHLHE22", "CHAT"),
-                           cat = "final_Annotations",
-                           color_pal = sn_colors,
-                           title = "RNA Scope Probe Experiment 1: MHb")
-dev.off()
+ggsave(LHb1, filename = here(plot_dir, "RNAscope_violin_LHb1.pdf"),  height = 4, width = 9)
+
 
 pdf(file = here(plot_dir, "RNA_Scope_Probe_Exp2_Violin.pdf"))
-  plot_gene_express(sce = sce_final, 
+  plot_gene_express(sce = sce,
                     genes = c("ONCUT2", "MCOLN3", "SEMA3D", "HTR4"),
                     cat = "final_Annotations",
                     color_pal = sn_colors,
@@ -52,7 +41,7 @@ pdf(file = here(plot_dir, "RNA_Scope_Probe_Exp2_Violin.pdf"))
 dev.off()
 
 pdf(file = here(plot_dir, "RNA_Scope_Probe_Exp3_Violin.pdf"))
-plot_gene_express(sce = sce_final, 
+plot_gene_express(sce = sce,
                   genes = c("ESRP1", "TLE2", "CRH", "HTR4"),
                   cat = "final_Annotations",
                   color_pal = sn_colors,
@@ -73,7 +62,7 @@ sessioninfo::session_info()
 # tz       US/Eastern
 # date     2023-06-15
 # pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/bin/pandoc
-# 
+#
 # ─ Packages ───────────────────────────────────────────────────────────────────────────────────
 # package              * version   date (UTC) lib source
 # beachmat               2.14.2    2023-04-07 [2] Bioconductor
@@ -151,12 +140,12 @@ sessioninfo::session_info()
 # withr                  2.5.0     2022-03-03 [2] CRAN (R 4.2.1)
 # XVector                0.38.0    2022-11-01 [2] Bioconductor
 # zlibbioc               1.44.0    2022-11-01 [2] Bioconductor
-# 
+#
 # [1] /users/bsimbiat/R/4.2.x
 # [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/site-library
 # [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/library
-# 
+#
 # ────────────────────
-# 
-# 
-# 
+#
+#
+#
