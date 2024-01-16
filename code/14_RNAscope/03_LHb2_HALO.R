@@ -52,12 +52,12 @@ colnames(halo) <- gsub(" \\(µm.*\\)", "", colnames(halo))
 
 #### create halo long ####
 experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
-       marker = c("ESPR1", "MCOLN3","CRH","POU4F1"),
+       marker = c("ESRP1", "MCOLN3","CRH","POU4F1"),
        cluster = c("LHb.6", "LHb.3", "LHb.2", "Hb")) |>
     mutate(probe2 = paste0(probe, " ", marker, " (", cluster,")"))
 # probe marker cluster probe2
 # <fct> <chr>  <chr>   <chr>
-# 1 690   ESPR1  LHb.6   690 ESPR1 (LHb.6)
+# 1 690   ESRP1  LHb.6   690 ESRP1 (LHb.6)
 # 2 620   MCOLN3 LHb.3   620 MCOLN3 (LHb.3)
 # 3 570   CRH    LHb.2   570 CRH (LHb.2)
 # 4 520   POU4F1 Hb      520 POU4F1 (Hb)
@@ -237,11 +237,11 @@ halo_copies_rank |>
 #     1 Br6462        5170  6918  6967  6068  6106 520       26 POU4F1 Hb      520 POU4F1 (Hb)           93   (0,100]
 # 2 Br6462        5641  5785  5815  6533  6557 570       25 CRH    LHb.2   570 CRH (LHb.2)           97.5 (0,100]
 # 3 Br6462        5658  6133  6179  6647  6692 620       24 MCOLN3 LHb.3   620 MCOLN3 (LHb.3)        93.5 (0,100]
-# 4 Br6462         281 13751 13782  1079  1107 690        4 ESPR1  LHb.6   690 ESPR1 (LHb.6)         99.5 (0,100]
+# 4 Br6462         281 13751 13782  1079  1107 690        4 ESRP1  LHb.6   690 ESRP1 (LHb.6)         99.5 (0,100]
 # 5 Br8112        5334  6961  6999  7838  7830 520      109 POU4F1 Hb      520 POU4F1 (Hb)           99.5 (0,100]
 # 6 Br8112        3997  2859  2892  8397  8381 570       15 CRH    LHb.2   570 CRH (LHb.2)           97   (0,100]
 # 7 Br8112       11864  2325  2359  2840  2823 620       21 MCOLN3 LHb.3   620 MCOLN3 (LHb.3)        96.5 (0,100]
-# 8 Br8112         185  2723  2751 12638 12630 690        7 ESPR1  LHb.6   690 ESPR1 (LHb.6)         78   (0,100]
+# 8 Br8112         185  2723  2751 12638 12630 690        7 ESRP1  LHb.6   690 ESRP1 (LHb.6)         78   (0,100]
 
 halo_copies_rank |>
   filter(rank_cut == "(300,400]") |>
@@ -338,7 +338,7 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
     scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "magenta"), "POU4F1 Copy >10") +
     scale_color_manual(values = c("570 CRH (LHb.2)" = "#0096FF", ## cell type colors
                                   "620 MCOLN3 (LHb.3)" = "#89CFF0",
-                                  "690 ESPR1 (LHb.6)" = "#008080"), "Top100 Nuclei") +
+                                  "690 ESRP1 (LHb.6)" = "#008080"), "Top100 Nuclei") +
     # scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = "red",
     #                              "620 TLE2 (LHb.4)" = "blue",
     #                              "570 SEMA3D (LHb.5/1)" ="orange"), "Top100 Nuclei") +

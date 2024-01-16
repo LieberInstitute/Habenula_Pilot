@@ -267,17 +267,30 @@ halo_copies_cat <- halo_copies_rank |>
     filter(!is.na(rank_cut)) |>
     filter(rank_cut == "(0,100]") |>
     ungroup() |>
-    mutate(cat = paste0(marker, "_", rank_cut)) |>
+    mutate(cat = paste0(probe, "_", marker, "_", rank_cut)) |>
     select(Sample, `Object Id`, cat)
 
 halo_copies_cat2 <- halo_copies_cat |>
     left_join(halo_copies_cat, by = join_by(Sample, `Object Id`), relationship = "many-to-many")
 
+
+halo_copies_cat2 |>
+    mutate(cat.x = factor(cat.x),
+           cat.y = factor(cat.y),
+           Sample = factor(Sample)) |>
+    group_by(cat.x, cat.y, Sample, .drop = FALSE) |>
+    summarise(n=n()) |>
+    arrange(n)
+
 confusion_top100 <- halo_copies_cat2 |>
-    count(Sample, cat.x, cat.y) |>
+    mutate(cat.x = factor(cat.x),
+           cat.y = factor(cat.y),
+           Sample = factor(Sample)) |>
+    group_by(cat.x, cat.y, Sample, .drop = FALSE) |>
+    summarise(n=n()) |>
     ggplot(aes(cat.x, cat.y, fill = n)) +
     geom_tile() +
-    geom_text(aes(label = n)) +
+    geom_text(aes(label = n), color = "white") +
     facet_wrap(~Sample) +
     # scale_fill_gradient(name = "count", trans = "log") +
     theme_bw() +
@@ -285,7 +298,8 @@ confusion_top100 <- halo_copies_cat2 |>
           axis.title.x=element_blank(),
           axis.title.y=element_blank())
 
-ggsave(confusion_top100, filename = here(plot_dir, "LHb1_confusion_top100.png"), height = 5, width = 11)
+ggsave(confusion_top100, filename = here(plot_dir, "LHb1_confusion_top100.png"), height = 4, width = 9)
+ggsave(confusion_top100, filename = here(plot_dir, "LHb1_confusion_top100.pdf"), height = 4, width = 9)
 
 ## copies scatter
 halo_copies2_cat <- halo_copies_rank |>
