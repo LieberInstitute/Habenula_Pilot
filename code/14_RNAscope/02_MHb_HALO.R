@@ -9,10 +9,6 @@ library("patchwork")
 plot_dir <- here("plots", "14_RNAscope", "02_MHb_HALO")
 if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
-list.files("~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Medial_exp/", recursive = TRUE)
-# [1] "Br5422/MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2_Sample1871MHbExperiment_Br5422_middle_secondpass_object_results.csv"
-# [2] "Josh Ege Redo/MHb_ExperimentJ_Br8112_20x_EgeRedo_Sample1883_object_RESULTS.csv"
-
 ## load data
 ## local
 datadir <- "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Medial_exp/"
@@ -20,8 +16,12 @@ datadir <- "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Medial_exp/
 ## jhpce
 # datadir <- here("processed-data", "14_RNAscope", "HALO_data")
 
-fn <- list(Br5422 = "Br5422/MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2_Sample1871MHbExperiment_Br5422_middle_secondpass_object_results.csv",
-           Br8112 = "Josh Ege Redo/MHb_ExperimentJ_Br8112_20x_EgeRedo_Sample1883_object_RESULTS.csv"
+list.files(datadir, recursive = TRUE)
+# [1] "Br5422/MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2_Sample1871MHbExperiment_Br5422_middle_secondpass_object_results.csv"
+# [2] "Josh Ege Redo/MHb_ExperimentJ_Br8112_20x_EgeRedo_Sample1883_object_RESULTS.csv"
+
+fn <- list(Br5422 = "Br5422/MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2_job1871MHbExperiment_Br5422_middle_secondpass_object_results.csv",
+           Br8112 = "Josh Ege Redo/MHb_ExperimentJ_Br8112_20x_EgeRedo_job1883_object_RESULTS.csv"
 )
 
 fn <- map(fn, ~paste0(datadir, .x))
@@ -322,7 +322,6 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
 ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 7)
 
 #### Export top objects ####
-
-halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp1", "LHb1_top10_nuclei.csv"))
+halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp", "MHb_top10_nuclei.csv"))
 
 
