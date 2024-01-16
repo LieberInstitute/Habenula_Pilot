@@ -334,6 +334,16 @@ rank_cut_density <- halo_copies_rank |>
 ggsave(rank_cut_density, filename = here(plot_dir, "MHb_rank_cut_denisty.png"), height = 5, width = 9)
 
 #### Shadow plot ####
+## if nuclei has >1 top100 ID, pick marker w/ max copies
+halo_copies_rank_ID  <- halo_copies_rank |>
+    filter(rank_cut == "(0,100]",
+           probe != 520) |>
+    group_by(Sample, `Object Id`) |>
+    arrange(-copies) |>
+    slice(1)
+
+halo_copies_rank_ID |> count() |> filter(n>1)
+
 halo_copies_rank_cut_shadow <- halo_copies_rank |>
     filter(probe == 520) |>
     ggplot() +
@@ -342,9 +352,7 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
         ymin = YMin, ymax = YMax,
         fill = copies > 1
     )) +
-    geom_point(data = halo_copies_rank |>
-                   filter(rank_cut == "(0,100]",
-                          probe != 520),
+    geom_point(data = halo_copies_rank_ID,
                aes(x = XMax,
                    y = YMax,
                    color = probe2
@@ -368,15 +376,13 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
         ymin = YMin, ymax = YMax,
         fill = copies > 1
     )) +
-    geom_point(data = halo_copies_rank |>
-                   filter(rank_cut == "(0,100]",
-                          probe != 520,
-                          Sample == "Br5422"),
+    geom_point(data = halo_copies_rank_ID |>
+                   filter(Sample == "Br5422"),
                aes(x = XMax,
                    y = YMax,
                    color = probe2
                ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POUUF1 Copy > 2") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy > 2") +
     scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
                                   "570 CHAT (Mhb.2)" = "#FAA0A0",
                                   "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
@@ -385,6 +391,24 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
     facet_wrap(~Sample)
 
 ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow_Br5422.pdf")), height = 4, width = 4)
+
+## just POU4F1 inset
+adj = 10
+halo_copies_rank_cut_shadowIN_Br5422 <- halo_copies_rank |>
+    filter(probe == 520,
+           Sample == "Br5422") |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin-adj, xmax = XMax+adj,
+        ymin = YMin-(adj*2), ymax = YMax+(adj*2),
+        fill = copies > 2
+    )) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black")) +
+    coord_equal()+
+    theme_void() +
+    theme(legend.position = "None")
+
+ggsave(halo_copies_rank_cut_shadowIN_Br5422, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadowIN_Br5422.pdf")), height = 1, width = 1)
 
 
 #### Export top objects ####
