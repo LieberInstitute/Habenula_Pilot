@@ -14,13 +14,25 @@ library(cowplot)
 library(scater)
 
 # loading sce object with dropped ambig cluster
-load(file = here("processed-data", "99_paper_figs", "sce_objects", 
+load(file = here("processed-data", "99_paper_figs", "sce_objects",
                  "sce_final_preHbdrop.RDATA"), verbose = TRUE)
 table(sce$final_Annotations)
+# Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal        LHb.1
+#       538           38           51         1800         7612          201
+#     LHb.2        LHb.3        LHb.4        LHb.5        LHb.6        LHb.7
+#       266          134          477           83           39         1014
+#     MHb.1        MHb.2        MHb.3    Microglia        Oligo          OPC
+#       152          540           18          145         2178         1202
+# OPC_noisy
+#       594
+ncol(sce)
+# [1] 17082
 
 # dropping Excit.Neuron and OPC_noisy clusters
 sce <- sce[, sce$final_Annotations != "OPC_noisy"]
 sce <- sce[, sce$final_Annotations != "Excit.Neuron"]
+ncol(sce)
+# [1] 16437
 
 # creating plot_dir
 plot_dir <- here("plots", "99_paper_figs", "09_step_Wise_Plots")
@@ -28,12 +40,12 @@ if(!dir.exists(plot_dir)){
   dir.create(plot_dir)
 }
 
-# sourcing official color palette 
-source(file = here("code", "99_paper_figs", "source_colors.R"))
+# sourcing official color palette
+source(file = here("code", "99_paper_figs", "source_colors.R"), echo = TRUE)
 # bulk_colors and bulk_colors
 
 ############ PLOT 1: TSNE using sn annotations ##################################
-# grabbing bulk annotations 
+# grabbing bulk annotations
 sce$bulkTypeSepHb <- sce$final_Annotations
 
 # Combining into 5 glia, two thalamus, 1 broad LHb, and 1 broad MHb.
@@ -42,6 +54,10 @@ sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^MHb\\.", unique(sce$bulkTypeSepH
 
 # check levels
 table(sce$bulkTypeSepHb)
+# Astrocyte       Endo Excit.Thal Inhib.Thal        LHb        MHb  Microglia
+#       538         38       1800       7612       2214        710        145
+#     Oligo        OPC
+#      2178       1202
 
 # cleaned TSNE with facet_wrap
 TSNE <- plotReducedDim(sce, dimred = "TSNE") +
@@ -68,8 +84,8 @@ png(file = here(plot_dir, "mfigu_TSNE_by_CellType_CLEAN_FACETED_A.png"), width =
 dev.off()
 
 ############ PLOT 2: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
-# number of nuclei per cell type post drop
-num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations", 
+# number of nuclei per cell type post drop (broad resolution)
+num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations",
                                          "bulkTypeSepHb", "Sample", "NeuN")]) |>
   group_by(Sample, bulkTypeSepHb, NeuN) |>
   mutate(n_nuc = n())
@@ -86,19 +102,50 @@ num_nuc_comp_plot <- num_nuc |>
   theme_bw() +
   labs(y = "Number of Nuclei", fill = "Cell Type") +
   theme(axis.title.x = element_blank()) +
-  theme(legend.position = "None", 
+  theme(legend.position = "None",
     axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
 
 pdf(file = here(plot_dir, "num_nuclei_post_clean.pdf"), width = 15, height = 6)
-  num_nuc_comp_plot 
+  num_nuc_comp_plot
 dev.off()
 
 # for One Drive
 png(file = here(plot_dir, "mfigu_num_Nuclei_by_CellType_CLEAN_B.png"), width = 7, height = 6,
     units = "in", res = 1200)
-  num_nuc_comp_plot 
+  num_nuc_comp_plot
 dev.off()
 
+# number of nuclei per cell type post drop (fine resolution)
+num_nuc_fine <- as.data.frame(colData(sce)[,c("final_Annotations", "Sample", "NeuN")]) |>
+  group_by(Sample, final_Annotations, NeuN) |>
+  mutate(n_nuc = n())
+
+num_nuc_comp_plot_fine <- num_nuc_fine |>
+  group_by(final_Annotations) |>
+  summarize(tot_across_Samps = n()) |>
+  ggplot(aes(x = final_Annotations, y = tot_across_Samps , fill = final_Annotations)) +
+  geom_col() +
+  geom_label(aes(label = tot_across_Samps),
+             fill = "#FFFFFF",
+             size = 4,
+      nudge_y = 200
+      ) +
+  scale_fill_manual(values = sn_colors) +
+  theme_bw() +
+  labs(y = "Number of Nuclei", fill = "Cell Type") +
+  theme(axis.title.x = element_blank()) +
+  theme(legend.position = "None",
+    axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
+
+pdf(file = here(plot_dir, "num_nuclei_post_clean_fineResolution.pdf"), width = 15, height = 6)
+  num_nuc_comp_plot_fine
+dev.off()
+
+# for One Drive
+png(file = here(plot_dir, "mfigu_num_Nuclei_by_CellType_CLEAN_B_fineResolution.png"), width = 7, height = 6,
+    units = "in", res = 1200)
+  num_nuc_comp_plot_fine
+dev.off()
 
 ############ PLOT 3: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
 prop_df <- as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
@@ -107,20 +154,20 @@ prop_df <- as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
   group_by(Sample) |>
   mutate(prop = n / sum(n))
 
-comp_plot <- ggplot(prop_df, 
+comp_plot <- ggplot(prop_df,
                         aes(x = Sample, y = prop, fill = bulkTypeSepHb)) +
   geom_col() +
   geom_text(
     aes(
     label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
-    ), 
+    ),
     size = 3,
     position = position_stack(vjust = 0.5),
     color = "white",
   ) +
   scale_fill_manual(values = bulk_colors) +
   theme_bw() +
-  theme(legend.position = "None", 
+  theme(legend.position = "None",
         axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
   labs(y = "Proportion")
 
@@ -138,7 +185,7 @@ dev.off()
 ########## COMBINING PLOTS #####################################################
 pdf(file = here(plot_dir, "stepWise_Plot_Post_Drop.pdf"), width = 10, height = 10)
 plot_grid(
-  TSNE, 
+  TSNE,
   TSNE_facet,
   num_nuc_comp_plot,
   comp_plot,
@@ -162,7 +209,7 @@ sessioninfo::session_info()
 # tz       US/Eastern
 # date     2023-06-13
 # pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/bin/pandoc
-# 
+#
 # ─ Packages ──────────────────────────────────────────────────────────────────────────────────
 # package              * version   date (UTC) lib source
 # beachmat               2.14.2    2023-04-07 [2] Bioconductor
@@ -249,4 +296,4 @@ sessioninfo::session_info()
 # vctrs                  0.6.2     2023-04-19 [1] CRAN (R 4.2.3)
 # vipor                  0.4.5     2017-03-22 [2] CRAN (R 4.2.1)
 # viridis                0.6.2     2021-10-13 [2] CRAN (R 4.2.1)
-# viridisLite            0.4.2     2023-05-02 [1] 
+# viridisLite            0.4.2     2023-05-02 [1]
