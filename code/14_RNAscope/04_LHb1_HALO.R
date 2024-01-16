@@ -167,7 +167,7 @@ hex_copies_median <- ggplot(halo_copies_long_quant) +
 
 ggsave(hex_copies_median, filename = here(plot_dir, paste0("LHb1_hex_copies_median_facet.png")), height = 6, width = 9)
 
-## TODO add limit to legend title
+## max hex
 hex_copies_max <- halo_copies_long |>
     mutate(copies = ifelse(copies > 200, 200, copies)) |> # cap data at 200 counts for visualization
     ggplot() +
@@ -503,10 +503,25 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
 
 ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow_Br5422.pdf")), height = 4, width = 4)
 
-halo_copies_rank |>
-    filter(rank_cut == "(0,100]",
-           probe != 520,
-           Sample == "Br5422") |> count(probe)
+## just POU4F1 inset
+adj = 10
+halo_copies_rank_cut_shadowIN_Br5422 <- halo_copies_rank |>
+    filter(probe == 520,
+           Sample == "Br5422") |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin-adj, xmax = XMax+adj,
+        ymin = YMin-(adj*2), ymax = YMax+(adj*2),
+        fill = copies > 2
+    )) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black")) +
+    coord_equal()+
+    theme_void() +
+    theme(legend.position = "None")
+
+ggsave(halo_copies_rank_cut_shadowIN_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadowIN_Br5422.pdf")), height = 1, width = 1)
+
+
 
 #### Export top objects ####
 
