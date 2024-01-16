@@ -333,7 +333,7 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
     #                y = YMax,
     #                color = probe2
     #            ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "magenta"), "POU4F1 Copy >10") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy >10") +
     scale_color_manual(values = c("570 CRH (LHb.2)" = "#0096FF", ## cell type colors
                                   "620 MCOLN3 (LHb.3)" = "#89CFF0",
                                   "690 ESRP1 (LHb.6)" = "#008080"), "Top100 Nuclei") +
