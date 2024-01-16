@@ -186,6 +186,7 @@ rse_jx <- add_vars(rse_jx)
 rse_gene_export <- rse_gene
 rse_gene_export$PrimaryDx[rse_gene$PrimaryDx == "Schizo"] <- "SCZD"
 rse_gene_export$Race[rse_gene$Race == "CAUC"] <- "EUA/CAUC"
+rse_gene_export$AgeDeath <- round(rse_gene_export$AgeDeath, 2)
 pheno <- colData(rse_gene_export)
 pheno$bamFile <- NULL
 write.csv(pheno, file.path(out_data, "TableSxx_Demographics.csv"), row.names = FALSE)
