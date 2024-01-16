@@ -168,22 +168,25 @@ hex_copies_median <- ggplot(halo_copies_long_quant) +
 ggsave(hex_copies_median, filename = here(plot_dir, paste0("LHb1_hex_copies_median_facet.png")), height = 6, width = 9)
 
 ## TODO add limit to legend title
-hex_copies_max <- ggplot(halo_copies_long_quant) +
+hex_copies_max <- halo_copies_long |>
+    mutate(copies = ifelse(copies > 200, 200, copies)) |> # cap data at 200 counts for visualization
+    ggplot() +
     stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                      fun = max, bins = 100
     ) +
     # scale_fill_continuous(type = "viridis") + ## top value of 100 for visualization
     scale_fill_gradientn(
-        name = "Max Copies",
+        name = "Max Copies\n(capped at 200)",
         colors = rev(viridisLite::rocket(21)),
         na.value = "#CCCCCC50",
-        limits = c(1,200)
-    )+ coord_equal() +
+        limits = c(1,NA)
+    ) + coord_equal() +
     theme_bw() +
-    facet_grid(Sample~probe2)
+    facet_grid(Sample~probe2) +
+    theme(legend.position = "bottom")
 
 ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.png")), height = 6, width = 9)
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.pdf")), height = 6, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.pdf")), height = 7, width = 7)
 
 ## max quant cell_max_quant <- halo_copies_long_quant |>
 cell_max_quant <- halo_copies_long_quant |>
@@ -416,7 +419,7 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
                    y = YMax,
                    color = probe2
                ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "magenta"), "POU4F1 Copy >10") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy >10") +
     scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = "#0085af", ## cell type colors
                                  "620 TLE2 (LHb.4)" = "#6F8FAF",
                                  "570 SEMA3D (LHb.5/1)" = "#40E0D0"), "Top100 Nuclei") +
