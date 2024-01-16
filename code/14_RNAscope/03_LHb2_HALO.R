@@ -42,7 +42,6 @@ halo$Br8112$YMin <- max(halo$Br8112$YMax) - halo$Br8112$YMin
 #         ymin = YMin, ymax = YMax
 #     ))
 
-
 ## subset to common colnames
 common_colnames <- intersect(colnames(halo$Br6462), colnames(halo$Br8112))
 halo <- map(halo, ~.x[,common_colnames])
@@ -159,32 +158,26 @@ hex_copies_median <- ggplot(halo_copies_long_quant) +
 
 ggsave(hex_copies_median, filename = here(plot_dir, paste0("LHb2_hex_copies_median_facet.png")), height = 6, width = 9)
 
-## test grdient limit fix
-# df <- expand.grid(x = 0:5, y = 0:5)
-# df$z <- runif(nrow(df))
-# ggplot(df, aes(x, y, fill = z)) +
-#     geom_raster() +
-#     scale_fill_gradientn(colours=topo.colors(7),
-#                          na.value = "transparent",
-#                          limits = c(.1,NA))
-
-## TODO add limit to legend title
-hex_copies_max <- ggplot(halo_copies_long_quant) +
+## max hex for supp
+hex_copies_max <- halo_copies_long |>
+    mutate(copies = ifelse(copies > 200, 200, copies)) |> # cap data at 200 counts for visualization
+    ggplot() +
     stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                      fun = max, bins = 100
     ) +
     # scale_fill_continuous(type = "viridis") + ## top value of 100 for visualization
     scale_fill_gradientn(
-        name = "Max Copies",
+        name = "Max Copies\n(capped at 200)",
         colors = rev(viridisLite::rocket(21)),
         na.value = "#CCCCCC50",
-        limits = c(1,200) ## fix limit!!
+        limits = c(1,NA)
     )+ coord_equal() +
     theme_bw() +
-    facet_grid(Sample~probe2)
+    facet_grid(Sample~probe2) +
+    theme(legend.position = "bottom")
 
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb2_hex_copies_max_facet.png")), height = 6, width = 9)
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb2_hex_copies_max_facet.pdf")), height = 6, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb2_hex_copies_max_facet.png")), height = 5, width = 7)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb2_hex_copies_max_facet.pdf")), height = 5, width = 7)
 
 
 ## max quant cell_max_quant <- halo_copies_long_quant |>
@@ -260,7 +253,11 @@ halo_copies_cat2 <- halo_copies_cat |>
     left_join(halo_copies_cat, by = join_by(Sample, `Object Id`), relationship = "many-to-many")
 
 confusion_top100 <- halo_copies_cat2 |>
-    count(Sample, cat.x, cat.y) |>
+    mutate(cat.x = factor(cat.x),
+           cat.y = factor(cat.y),
+           Sample = factor(Sample)) |>
+    group_by(cat.x, cat.y, Sample, .drop = FALSE) |>
+    summarise(n=n()) |>
     ggplot(aes(cat.x, cat.y, fill = n)) +
     geom_tile() +
     geom_text(aes(label = n), color = "white") +
@@ -271,7 +268,8 @@ confusion_top100 <- halo_copies_cat2 |>
           axis.title.x=element_blank(),
           axis.title.y=element_blank())
 
-ggsave(confusion_top100, filename = here(plot_dir, "LHb2_confusion_top100.png"), height = 5, width = 11)
+ggsave(confusion_top100, filename = here(plot_dir, "LHb2_confusion_top100.png"), height = 4, width = 8)
+ggsave(confusion_top100, filename = here(plot_dir, "LHb2_confusion_top100.pdf"), height = 4, width = 8)
 
 
 #### cell plots ####
