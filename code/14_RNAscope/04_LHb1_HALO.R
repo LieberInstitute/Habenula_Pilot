@@ -281,7 +281,9 @@ confusion_top100 <- halo_copies_cat2 |>
     facet_wrap(~Sample) +
     # scale_fill_gradient(name = "count", trans = "log") +
     theme_bw() +
-    theme(axis.text.x = element_text(angle = 90))
+    theme(axis.text.x = element_text(angle = 90),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank())
 
 ggsave(confusion_top100, filename = here(plot_dir, "LHb1_confusion_top100.png"), height = 5, width = 11)
 
