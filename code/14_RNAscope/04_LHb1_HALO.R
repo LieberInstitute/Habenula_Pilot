@@ -220,7 +220,6 @@ ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("LHb1_cell_max_quan
 ggsave(cell_max_quant_plot, filename = here(plot_dir, paste0("LHb1_cell_max_quant.pdf")), height = 9, width = 9)
 
 #### Bin by 100 ####
-
 halo_copies_rank <- halo_copies_long |>
   group_by(Sample, probe) |>
   arrange(-copies) |>
@@ -404,6 +403,18 @@ color_official_markers = c(
     "LHb.5" = c("#40E0D0")
 )
 
+#### Shadow plots ####
+
+## if nuclei has >1 top100 ID, pick marker w/ max copies
+halo_copies_rank_ID  <- halo_copies_rank |>
+    filter(rank_cut == "(0,100]",
+           probe != 520) |>
+    group_by(Sample, `Object Id`) |>
+    arrange(-copies) |>
+    slice(1)
+
+halo_copies_rank_ID |> count() |> filter(n>1)
+
 halo_copies_rank_cut_shadow <- halo_copies_rank |>
     filter(probe == 520) |>
     ggplot() +
@@ -412,9 +423,7 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
         ymin = YMin, ymax = YMax,
         fill = copies > 10
     )) +
-    geom_point(data = halo_copies_rank |>
-                   filter(rank_cut == "(0,100]",
-                          probe != 520),
+    geom_point(data = halo_copies_rank_ID,
                aes(x = XMax,
                    y = YMax,
                    color = probe2
@@ -434,39 +443,39 @@ ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_
 
 # neon purple "#B026FF"
 
-halo_copies_rank_cut_shadow2 <- halo_copies_rank |>
-    filter(probe == 520) |>
-    ggplot() +
-    geom_rect(aes(
-        xmin = XMin, xmax = XMax,
-        ymin = YMin, ymax = YMax,
-        fill = copies > 10
-    )) +
-    geom_point(data = halo_copies_rank |>
-                   filter(rank_cut == "(0,100]",
-                          probe != 520),
-               aes(x = XMax,
-                   y = YMax,
-                   fill = probe2
-               ), shape = 21,
-               color = "black",
-               size = 1.2) +
-    # scale_fill_manual(values = c(`FALSE`="#CCCCCC80",
-    #                              `TRUE` = "magenta",
-    #                              "690 ONECUT2 (LHb.1)" = c("#0085af"),
-    #                              "620 TLE2 (LHb.4)" = c("#6F8FAF"),
-    #                              "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80",
-                                 `TRUE` = "magenta",
-                                 "690 ONECUT2 (LHb.1)" = c("#0085af"),
-                                 "620 TLE2 (LHb.4)" = c("#6F8FAF"),
-                                 "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
-    coord_equal()+
-    theme_void() +
-    facet_wrap(~Sample)
-
-# ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 6, width = 9)
-ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow2.pdf")), height = 6, width = 10)
+# halo_copies_rank_cut_shadow2 <- halo_copies_rank |>
+#     filter(probe == 520) |>
+#     ggplot() +
+#     geom_rect(aes(
+#         xmin = XMin, xmax = XMax,
+#         ymin = YMin, ymax = YMax,
+#         fill = copies > 10
+#     )) +
+#     geom_point(data = halo_copies_rank |>
+#                    filter(rank_cut == "(0,100]",
+#                           probe != 520),
+#                aes(x = XMax,
+#                    y = YMax,
+#                    fill = probe2
+#                ), shape = 21,
+#                color = "black",
+#                size = 1.2) +
+#     # scale_fill_manual(values = c(`FALSE`="#CCCCCC80",
+#     #                              `TRUE` = "magenta",
+#     #                              "690 ONECUT2 (LHb.1)" = c("#0085af"),
+#     #                              "620 TLE2 (LHb.4)" = c("#6F8FAF"),
+#     #                              "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
+#     scale_fill_manual(values = c(`FALSE`="#CCCCCC80",
+#                                  `TRUE` = "magenta",
+#                                  "690 ONECUT2 (LHb.1)" = c("#0085af"),
+#                                  "620 TLE2 (LHb.4)" = c("#6F8FAF"),
+#                                  "570 SEMA3D (LHb.5/1)" = c("#40E0D0")), "Top100 Nuclei") +
+#     coord_equal()+
+#     theme_void() +
+#     facet_wrap(~Sample)
+#
+# # ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 6, width = 9)
+# ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow2.pdf")), height = 6, width = 10)
 
 ## main figure plot
 halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
@@ -478,32 +487,21 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
         ymin = YMin, ymax = YMax,
         fill = copies > 10
     )) +
-    geom_point(data = halo_copies_rank |>
-    # geom_jitter(data = halo_copies_rank |>
-                   filter(rank_cut == "(0,100]",
-                          probe != 520,
-                          Sample == "Br5422"),
+    geom_point(data = halo_copies_rank_ID |>
+                   filter(Sample == "Br5422"),
                aes(x = XMax,
                    y = YMax,
-                   fill = probe2
-               ), shape = 21,
-               color = "black",
-               size = 1.2) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC",
-                                 `TRUE` = "magenta",
-                                 # "690 ONECUT2 (LHb.1)" = c("#0085af"),
-                                 # "620 TLE2 (LHb.4)" = c("#6F8FAF"),
-                                 # "570 SEMA3D (LHb.5/1)" = c("#40E0D0")
-                                "690 ONECUT2 (LHb.1)" = c("red"),
-                                 "620 TLE2 (LHb.4)" = "yellow",
-                                 "570 SEMA3D (LHb.5/1)" = c("cyan")
-                                ),
-                      "Top100 Nuclei") +
+                   color = probe2
+               ), size = 0.7) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy >10") +
+    scale_color_manual(values = c("690 ONECUT2 (LHb.1)" = "#0085af", ## cell type colors
+                                  "620 TLE2 (LHb.4)" = "#6F8FAF",
+                                  "570 SEMA3D (LHb.5/1)" = "#40E0D0"), "Top100 Nuclei") +
     coord_equal()+
-    theme_void()
+    theme_void() +
+    facet_wrap(~Sample)
 
-# ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.png")), height = 6, width = 9)
-ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_shadow_Br5422_color2.pdf")), height = 6, width =)
+ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow_Br5422.pdf")), height = 4, width = 4)
 
 halo_copies_rank |>
     filter(rank_cut == "(0,100]",
