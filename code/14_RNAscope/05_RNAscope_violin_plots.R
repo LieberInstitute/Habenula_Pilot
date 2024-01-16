@@ -42,6 +42,16 @@ LHb2 <- plot_gene_express(sce = sce,
 ggsave(LHb2, filename = here(plot_dir, "RNAscope_violin_LHb2.pdf"),  height = 4, width = 9)
 
 
+MHb <- plot_gene_express(sce = sce,
+                          genes = c("POU4F1","CHRNB4","CHAT", "EBF3","CCK"),
+                          cat = "final_Annotations",
+                          color_pal = sn_colors,
+                          title = "Expression in snRNA-seq",
+                          ncol = 5)
+
+ggsave(MHb, filename = here(plot_dir, "RNAscope_violin_MHb.pdf"),  height = 4, width = 10)
+
+
 MHb1 <- plot_gene_express(sce = sce,
                           genes = c("POU4F1","CHAT", "EBF3","CCK"),
                           cat = "final_Annotations",
