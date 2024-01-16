@@ -14,8 +14,15 @@ library(cowplot)
 library(scater)
 
 # loading sce object with dropped ambig cluster
-load(file = here("processed-data", "99_paper_figs", "sce_objects",
-                 "sce_final_preHbdrop.RDATA"), verbose = TRUE)
+load(
+    file = here(
+        "processed-data",
+        "99_paper_figs",
+        "sce_objects",
+        "sce_final_preHbdrop.RDATA"
+    ),
+    verbose = TRUE
+)
 table(sce$final_Annotations)
 # Astrocyte         Endo Excit.Neuron   Excit.Thal   Inhib.Thal        LHb.1
 #       538           38           51         1800         7612          201
@@ -36,12 +43,15 @@ ncol(sce)
 
 # creating plot_dir
 plot_dir <- here("plots", "99_paper_figs", "09_step_Wise_Plots")
-if(!dir.exists(plot_dir)){
-  dir.create(plot_dir)
+if (!dir.exists(plot_dir)) {
+    dir.create(plot_dir)
 }
 
 # sourcing official color palette
-source(file = here("code", "99_paper_figs", "source_colors.R"), echo = TRUE)
+source(
+    file = here("code", "99_paper_figs", "source_colors.R"),
+    echo = TRUE
+)
 # bulk_colors and bulk_colors
 
 ############ PLOT 1: TSNE using sn annotations ##################################
@@ -49,8 +59,10 @@ source(file = here("code", "99_paper_figs", "source_colors.R"), echo = TRUE)
 sce$bulkTypeSepHb <- sce$final_Annotations
 
 # Combining into 5 glia, two thalamus, 1 broad LHb, and 1 broad MHb.
-sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^LHb\\.", unique(sce$bulkTypeSepHb), value = TRUE)] <-  'LHb'
-sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^MHb\\.", unique(sce$bulkTypeSepHb), value = TRUE)] <-  'MHb'
+sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^LHb\\.", unique(sce$bulkTypeSepHb), value = TRUE)] <-
+    "LHb"
+sce$bulkTypeSepHb[sce$bulkTypeSepHb %in% grep("^MHb\\.", unique(sce$bulkTypeSepHb), value = TRUE)] <-
+    "MHb"
 
 # check levels
 table(sce$bulkTypeSepHb)
@@ -61,135 +73,194 @@ table(sce$bulkTypeSepHb)
 
 # cleaned TSNE with facet_wrap
 TSNE <- plotReducedDim(sce, dimred = "TSNE") +
-  geom_point(aes(color = sce$bulkTypeSepHb)) +
-  scale_colour_manual(values = bulk_colors) +
-  theme(legend.position = "none") +
-  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    geom_point(aes(color = sce$bulkTypeSepHb)) +
+    scale_colour_manual(values = bulk_colors) +
+    theme(legend.position = "none") +
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
 TSNE_facet <- plotReducedDim(sce, dimred = "TSNE") +
-  geom_point(aes(color = sce$bulkTypeSepHb)) +
-  scale_colour_manual(values = bulk_colors) +
-  facet_wrap(~ sce$bulkTypeSepHb) +
-  guides(color = guide_legend(title="Cell Type")) +
-  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+    geom_point(aes(color = sce$bulkTypeSepHb)) +
+    scale_colour_manual(values = bulk_colors) +
+    facet_wrap(~ sce$bulkTypeSepHb) +
+    guides(color = guide_legend(title = "Cell Type")) +
+    labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
-pdf(file = here(plot_dir, "bulk_clean_TSNE.pdf"), width = 9, height = 5)
-  plot_grid(TSNE, TSNE_facet)
+pdf(
+    file = here(plot_dir, "bulk_clean_TSNE.pdf"),
+    width = 9,
+    height = 5
+)
+plot_grid(TSNE, TSNE_facet)
 dev.off()
 
 # for One Drive
-png(file = here(plot_dir, "mfigu_TSNE_by_CellType_CLEAN_FACETED_A.png"), width = 9, height = 5,
-    units = "in", res = 1200)
-  plot_grid(TSNE, TSNE_facet)
+png(
+    file = here(plot_dir, "mfigu_TSNE_by_CellType_CLEAN_FACETED_A.png"),
+    width = 9,
+    height = 5,
+    units = "in",
+    res = 1200
+)
+plot_grid(TSNE, TSNE_facet)
 dev.off()
 
 ############ PLOT 2: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
 # number of nuclei per cell type post drop (broad resolution)
-num_nuc <- as.data.frame(colData(sce)[,c("final_Annotations",
-                                         "bulkTypeSepHb", "Sample", "NeuN")]) |>
-  group_by(Sample, bulkTypeSepHb, NeuN) |>
-  mutate(n_nuc = n())
+num_nuc <- as.data.frame(colData(sce)[, c(
+    "final_Annotations",
+    "bulkTypeSepHb", "Sample", "NeuN"
+)]) |>
+    group_by(Sample, bulkTypeSepHb, NeuN) |>
+    mutate(n_nuc = n())
 
 num_nuc_comp_plot <- num_nuc |>
-  group_by(bulkTypeSepHb) |>
-  summarize(tot_across_Samps = n()) |>
-  ggplot(aes(x = bulkTypeSepHb, y = tot_across_Samps , fill = bulkTypeSepHb)) +
-  geom_col() +
-  geom_label(aes(label = tot_across_Samps),
-             fill = "#FFFFFF",
-             size = 4) +
-  scale_fill_manual(values = bulk_colors) +
-  theme_bw() +
-  labs(y = "Number of Nuclei", fill = "Cell Type") +
-  theme(axis.title.x = element_blank()) +
-  theme(legend.position = "None",
-    axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
+    group_by(bulkTypeSepHb) |>
+    summarize(tot_across_Samps = n()) |>
+    ggplot(aes(x = bulkTypeSepHb, y = tot_across_Samps, fill = bulkTypeSepHb)) +
+    geom_col() +
+    geom_label(aes(label = tot_across_Samps),
+        fill = "#FFFFFF",
+        size = 4
+    ) +
+    scale_fill_manual(values = bulk_colors) +
+    theme_bw() +
+    labs(y = "Number of Nuclei", fill = "Cell Type") +
+    theme(axis.title.x = element_blank()) +
+    theme(
+        legend.position = "None",
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.x = element_blank()
+    )
 
-pdf(file = here(plot_dir, "num_nuclei_post_clean.pdf"), width = 15, height = 6)
-  num_nuc_comp_plot
+pdf(
+    file = here(plot_dir, "num_nuclei_post_clean.pdf"),
+    width = 15,
+    height = 6
+)
+num_nuc_comp_plot
 dev.off()
 
 # for One Drive
-png(file = here(plot_dir, "mfigu_num_Nuclei_by_CellType_CLEAN_B.png"), width = 7, height = 6,
-    units = "in", res = 1200)
-  num_nuc_comp_plot
+png(
+    file = here(plot_dir, "mfigu_num_Nuclei_by_CellType_CLEAN_B.png"),
+    width = 7,
+    height = 6,
+    units = "in",
+    res = 1200
+)
+num_nuc_comp_plot
 dev.off()
 
 # number of nuclei per cell type post drop (fine resolution)
-num_nuc_fine <- as.data.frame(colData(sce)[,c("final_Annotations", "Sample", "NeuN")]) |>
-  group_by(Sample, final_Annotations, NeuN) |>
-  mutate(n_nuc = n())
+num_nuc_fine <-
+    as.data.frame(colData(sce)[, c("final_Annotations", "Sample", "NeuN")]) |>
+    group_by(Sample, final_Annotations, NeuN) |>
+    mutate(n_nuc = n())
 
 num_nuc_comp_plot_fine <- num_nuc_fine |>
-  group_by(final_Annotations) |>
-  summarize(tot_across_Samps = n()) |>
-  ggplot(aes(x = final_Annotations, y = tot_across_Samps , fill = final_Annotations)) +
-  geom_col() +
-  geom_label(aes(label = tot_across_Samps),
-             fill = "#FFFFFF",
-             size = 4,
-      nudge_y = 200
-      ) +
-  scale_fill_manual(values = sn_colors) +
-  theme_bw() +
-  labs(y = "Number of Nuclei", fill = "Cell Type") +
-  theme(axis.title.x = element_blank()) +
-  theme(legend.position = "None",
-    axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank())
+    group_by(final_Annotations) |>
+    summarize(tot_across_Samps = n()) |>
+    ggplot(aes(x = final_Annotations, y = tot_across_Samps, fill = final_Annotations)) +
+    geom_col() +
+    geom_label(
+        aes(label = tot_across_Samps),
+        fill = "#FFFFFF",
+        size = 4,
+        nudge_y = 200
+    ) +
+    scale_fill_manual(values = sn_colors) +
+    theme_bw() +
+    labs(y = "Number of Nuclei", fill = "Cell Type") +
+    theme(axis.title.x = element_blank()) +
+    theme(
+        legend.position = "None",
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.x = element_blank()
+    )
 
-pdf(file = here(plot_dir, "num_nuclei_post_clean_fineResolution.pdf"), width = 15, height = 6)
-  num_nuc_comp_plot_fine
+pdf(
+    file = here(plot_dir, "num_nuclei_post_clean_fineResolution.pdf"),
+    width = 15,
+    height = 6
+)
+num_nuc_comp_plot_fine
 dev.off()
 
 # for One Drive
-png(file = here(plot_dir, "mfigu_num_Nuclei_by_CellType_CLEAN_B_fineResolution.png"), width = 7, height = 6,
-    units = "in", res = 1200)
-  num_nuc_comp_plot_fine
+png(
+    file = here(
+        plot_dir,
+        "mfigu_num_Nuclei_by_CellType_CLEAN_B_fineResolution.png"
+    ),
+    width = 7,
+    height = 6,
+    units = "in",
+    res = 1200
+)
+num_nuc_comp_plot_fine
 dev.off()
 
 ############ PLOT 3: TOTAL NUCLEI PLOT PER CT (bulk annotation) ################
-prop_df <- as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
-  group_by(Sample, bulkTypeSepHb) |>
-  summarize(n = n()) |>
-  group_by(Sample) |>
-  mutate(prop = n / sum(n))
+prop_df <-
+    as.data.frame(colData(sce)[, c("bulkTypeSepHb", "Sample")]) |>
+    group_by(Sample, bulkTypeSepHb) |>
+    summarize(n = n()) |>
+    group_by(Sample) |>
+    mutate(prop = n / sum(n))
 
-comp_plot <- ggplot(prop_df,
-                        aes(x = Sample, y = prop, fill = bulkTypeSepHb)) +
-  geom_col() +
-  geom_text(
-    aes(
-    label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")
-    ),
-    size = 3,
-    position = position_stack(vjust = 0.5),
-    color = "white",
-  ) +
-  scale_fill_manual(values = bulk_colors) +
-  theme_bw() +
-  theme(legend.position = "None",
-        axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
-  labs(y = "Proportion")
+comp_plot <- ggplot(
+    prop_df,
+    aes(x = Sample, y = prop, fill = bulkTypeSepHb)
+) +
+    geom_col() +
+    geom_text(
+        aes(label = ifelse(prop > 0.02, format(round(
+            prop, 3
+        ), 3), "")),
+        size = 3,
+        position = position_stack(vjust = 0.5),
+        color = "white",
+    ) +
+    scale_fill_manual(values = bulk_colors) +
+    theme_bw() +
+    theme(
+        legend.position = "None",
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.x = element_blank()
+    ) +
+    labs(y = "Proportion")
 
 
-pdf(file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"), width = 10, height = 9)
-  comp_plot
+pdf(
+    file = here(plot_dir, "comp_per_Sample_Bulk_Anno.pdf"),
+    width = 10,
+    height = 9
+)
+comp_plot
 dev.off()
 
 # for One Drive
-png(file = here(plot_dir, "mfigu_sce_Sample_Comp_Plot_CLEAN_C.png"), width = 7, height = 6,
-    units = "in", res = 1200)
-  comp_plot
+png(
+    file = here(plot_dir, "mfigu_sce_Sample_Comp_Plot_CLEAN_C.png"),
+    width = 7,
+    height = 6,
+    units = "in",
+    res = 1200
+)
+comp_plot
 dev.off()
 
 ########## COMBINING PLOTS #####################################################
-pdf(file = here(plot_dir, "stepWise_Plot_Post_Drop.pdf"), width = 10, height = 10)
-plot_grid(
-  TSNE,
-  TSNE_facet,
-  num_nuc_comp_plot,
-  comp_plot,
-  labels = c("A", "", "B", "C")
+pdf(
+    file = here(plot_dir, "stepWise_Plot_Post_Drop.pdf"),
+    width = 10,
+    height = 10
+)
+plot_grid(TSNE,
+    TSNE_facet,
+    num_nuc_comp_plot,
+    comp_plot,
+    labels = c("A", "", "B", "C")
 )
 
 dev.off()
