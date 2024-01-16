@@ -182,7 +182,9 @@ hex_copies_median <- ggplot(halo_copies_long) +
 
 ggsave(hex_copies_median, filename = here(plot_dir, paste0("MHb_hex_copies_median_facet.png")), height = 6, width = 9)
 
-hex_copies_max <- ggplot(halo_copies_long) +
+hex_copies_max <- halo_copies_long |>
+    mutate(copies = ifelse(copies > 200, 200, copies)) |> # cap data at 200 counts for visualization
+    ggplot() +
     stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                      fun = max, bins = 100
     ) +
@@ -198,6 +200,44 @@ hex_copies_max <- ggplot(halo_copies_long) +
 
 ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.png")), height = 6, width = 9)
 ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.pdf")), height = 6, width = 9)
+
+hex_copies_max_Br5422 <- halo_copies_long |>
+    filter(Sample == "Br5422") |>
+    mutate(copies = ifelse(copies > 200, 200, copies)) |> # cap data at 200 counts for visualization
+    ggplot() +
+    stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
+                     fun = max, bins = 100
+    ) +
+    scale_fill_gradientn(
+        name = "Max Copies\n(capped at 200)",
+        colors = rev(viridisLite::rocket(21)),
+        na.value = "#CCCCCC50",
+        limits = c(1,NA)
+    )+ coord_equal() +
+    theme_bw() +
+    facet_grid(Sample~probe2)
+
+ggsave(hex_copies_max_Br5422, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet_Br5422.pdf")), height = 3.5, width = 8)
+
+hex_copies_max_Br8112 <- halo_copies_long |>
+    filter(Sample == "Br8112") |>
+    mutate(copies = ifelse(copies > 200, 200, copies)) |> # cap data at 200 counts for visualization
+    ggplot() +
+    stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
+                     fun = max, bins = 100
+    ) +
+    scale_fill_gradientn(
+        name = "Max Copies\n(capped at 200)",
+        colors = rev(viridisLite::rocket(21)),
+        na.value = "#CCCCCC50",
+        limits = c(1,NA)
+    )+ coord_equal() +
+    theme_bw() +
+    facet_grid(Sample~probe2) +
+    theme(legend.position = "bottom")
+
+ggsave(hex_copies_max_Br8112, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet_Br8112.pdf")), height = 5, width = 8)
+
 
 
 #### Bin by 100 ####
@@ -259,6 +299,7 @@ confusion_top100 <- halo_copies_cat2 |>
     )
 
 ggsave(confusion_top100[[1]] + confusion_top100[[2]], filename = here(plot_dir, "MHb_confusion_top100.png"), height = 5, width = 11)
+ggsave(confusion_top100[[1]] + confusion_top100[[2]], filename = here(plot_dir, "MHb_confusion_top100.pdf"), height = 5, width = 11)
 
 #### cell plots ####
 copy_cut_colors <- c(`(300,400]` = "#FECC5C", `(200,300]` = "#FD8D3C", `(100,200]` = "#F03B20", `(0,100]` = "#BD0026")
@@ -308,7 +349,7 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
                    y = YMax,
                    color = probe2
                ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "magenta"), "Hb marker Copy > 2") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "Hb marker Copy > 2") +
     scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
                                   "570 CHAT (Mhb.2)" = "#FAA0A0",
                                   "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
