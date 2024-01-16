@@ -1,0 +1,1 @@
+bash /dcl01/lieber/ajaffe/Emily/RNAseq-pipeline/sh/rnaseq-run-all.sh --experiment "Roche_Habenula" --prefix "PairedEnd" --reference "hg38" --stranded "reverse" --ercc "TRUE"
