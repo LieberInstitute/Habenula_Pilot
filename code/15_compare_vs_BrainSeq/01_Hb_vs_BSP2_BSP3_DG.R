@@ -357,7 +357,7 @@ tstat_scatter <- all_t_long |>
     geom_text_repel(aes(label = ifelse(signif == "Both", Symbol, NA)), size = 2, show.legend = FALSE) +
     facet_wrap(~region, scales = "free_y") +
     theme_bw() +
-    scale_color_manual(values = c(Both = "purple", only_region = "skyblue", only_Hb = "red", None = "#CCCCCC20")) +
+    scale_color_manual(values = c(Both = "purple", only_region = "skyblue", only_Hb = "red", None = "#CCCCCC20"), "FDR < 0.05") +
     labs(x = "Hb t-statistic", y ="Region t-statistic")
 
 ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.pdf"), height = 5, width = 7)
