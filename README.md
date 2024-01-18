@@ -27,19 +27,11 @@ Files for this project are publicly available, either directly here or via contr
 
 ## snRNA-seq
 
-### Raw data
-
-The FASTQ files are available via TODO.
-
-### Processed data
-
-A `SingleCellExperiment` R/Bioconductor object is available with the processed data.
+The FASTQ files are available via Globus at the ['jhpce#habenulaPilotsnRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotsnRNAseq/index.html) endpoint.
 
 ## bulk RNA-seq
 
-### Raw data
-
-The FASTQ files are available via TODO. The DNA genotype data is available via TODO, however access to it is granted upon request (TODO).
+The RNA-seq FASTQ files are available via Globus at the ['jhpce#habenulaPilotbulkRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotbulkRNAseq/index.html) endpoint. The DNA genotype data is available via ['jhpce#habenulaPilotbulkDNAgenotype'](https://research.libd.org/globus/jhpce_habenulaPilotbulkDNAgenotype/index.html), however access to it is granted upon request given the protected nature of this data.
 
 ## smFISH data
 
