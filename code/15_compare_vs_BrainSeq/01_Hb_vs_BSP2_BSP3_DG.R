@@ -333,13 +333,41 @@ dev.off()
 # mean of x
 # 0.2633617
 
+#### plot with overlap colors ####
+library(tidyverse)
+
+all_FDR_long <- all_FDR |>
+    pivot_longer(!c(gencodeID:Hb), names_to = "region", values_to = "region_FDR") |>
+    rename(Hb_FDR = Hb) |>
+    mutate(signif = case_when(Hb_FDR < 0.05 & region_FDR < 0.05 ~ "Both",
+                              region_FDR < 0.05 ~ "only_region",
+                              Hb_FDR < 0.05 ~ "only_Hb",
+                              TRUE ~ "None"))
+
+all_FDR_long |> count(region, signif)
+
+all_t_long <- all_t |>
+    pivot_longer(!c(gencodeID:adj.P.Val), names_to = "region", values_to = "region_t") |>
+    rename(Hb_t = Hb) |>
+    left_join(all_FDR_long)
+
+tstat_scatter <- all_t_long |>
+    ggplot(aes(x = Hb_t, y = region_t, color = signif)) +
+    geom_point(alpha = 0.5) +
+    geom_text_repel(aes(label = ifelse(signif == "Both", Symbol, NA)), size = 2, show.legend = FALSE) +
+    facet_wrap(~region, scales = "free_y") +
+    theme_bw() +
+    scale_color_manual(values = c(Both = "purple", only_region = "skyblue", only_Hb = "red", None = "#CCCCCC20")) +
+    labs(x = "Hb t-statistic", y ="Region t-statistic")
+
+ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.pdf"), height = 5, width = 7)
+ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.png"), height = 5, width = 6)
+
 ## Save for later
 save(
     all_FDR, all_t, all_logFC,
     file = file.path(dir_rdata, "SCZD_vs_control_Hb_and_other_regions.Rdata")
 )
-
-
 
 extract_info <- function(input, suffix) {
     stopifnot(identical(habenula$gencodeID, input$gencodeID))
