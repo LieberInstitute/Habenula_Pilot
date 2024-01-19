@@ -354,10 +354,24 @@ all_t_long <- all_t |>
 
 all_t_long |> filter(text) |> count(Symbol, signif)
 
-tstat_scatter <-l
 
-# ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.pdf"), height = 5, width = 7)
-ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.png"), height = 5, width = 6)
+all_t_long |> filter(Symbol %in% c("CCDC141", "QPRT", "HES5", "EHMT2")) |> count(region)
+all_t_long |> filter(Symbol %in% c("CCDC141", "QPRT", "HES5", "EHMT2"))
+
+tstat_scatter <- all_t_long |>
+    ggplot(aes(x = Hb_t, y = region_t, color = signif)) +
+    geom_point(alpha = 0.4) +
+    # geom_point(data = all_t_long |> filter(text), aes(x = Hb_t, y = region_t, fill = signif), shape = 21, color = "black") +
+    geom_text_repel(aes(label = ifelse(text, Symbol, NA)), size = 1.8, show.legend = FALSE) +
+    facet_wrap(~region, scales = "free_y") +
+    theme_bw() +
+    scale_color_manual(values = c(Both = "purple", only_region = "skyblue", only_Hb = "red", None = "#CCCCCC20"), "FDR < 0.05") +
+    # scale_fill_manual(values = c(Both = "purple", only_region = "skyblue", only_Hb = "red", None = "#CCCCCC20"), "FDR < 0.05") +
+    labs(x = "Hb t-statistic", y ="Comparison Region t-statistic") +
+    theme(legend.position = "left")
+
+ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.pdf"), height = 5, width = 6)
+ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.png"), height = 12, width = 12)
 
 ## Save for later
 save(
