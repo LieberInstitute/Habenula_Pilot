@@ -349,18 +349,14 @@ all_FDR_long |> count(region, signif)
 all_t_long <- all_t |>
     pivot_longer(!c(gencodeID:adj.P.Val), names_to = "region", values_to = "region_t") |>
     rename(Hb_t = Hb) |>
-    left_join(all_FDR_long)
+    left_join(all_FDR_long) |>
+    mutate(text = signif == "Both" | Symbol %in% c("CCDC141", "QPRT", "HES5", "EHMT2"))
 
-tstat_scatter <- all_t_long |>
-    ggplot(aes(x = Hb_t, y = region_t, color = signif)) +
-    geom_point(alpha = 0.5) +
-    geom_text_repel(aes(label = ifelse(signif == "Both", Symbol, NA)), size = 2, show.legend = FALSE) +
-    facet_wrap(~region, scales = "free_y") +
-    theme_bw() +
-    scale_color_manual(values = c(Both = "purple", only_region = "skyblue", only_Hb = "red", None = "#CCCCCC20"), "FDR < 0.05") +
-    labs(x = "Hb t-statistic", y ="Comparison Region t-statistic")
+all_t_long |> filter(text) |> count(Symbol, signif)
 
-ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.pdf"), height = 5, width = 7)
+tstat_scatter <-l
+
+# ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.pdf"), height = 5, width = 7)
 ggsave(tstat_scatter, filename = file.path(dir_plots, "Hb_v_region_t-stats_scater_facet.png"), height = 5, width = 6)
 
 ## Save for later
