@@ -9,27 +9,26 @@ library("sessioninfo")
 plot_dir <- here("plots", "14_RNAscope", "03_LHb2_HALO")
 if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
-## load data
-## local
-list.files("~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp2/", recursive = TRUE)
-# [1] "Br6462/LHbExperiment_Br6462_secondpass.xls"
-# [2] "Br8112/LHbExperiment2_Br8112_thirdtoleft_20x_Sample1881__object_RESULTS.csv"
-
-## load data
-## local
+##local
 datadir <- "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp2/"
 ## JHPCE
 # datadir <- here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp1")
 
+## local
+list.files(datadir, recursive = TRUE)
+# [1] "Br6462/LHbExperiment_Br6462_secondpass.xls"
+# [2] "Br8112/LHbExperiment2_Br8112_thirdtoleft_20x_Sample1881__object_RESULTS.csv"
+
+
 halo <- list(
-    Br6462 = read_excel(paste0(datadir, "Br6462/LHbExperiment_Br6462_secondpass.xls")) |> mutate(Sample = "Br6462"),
+    Br6462 = read_csv(paste0(datadir, "Br6462/NEWLHbExperiment2_Br6462_rightslice_20x_job1895_object_RESULTS.csv")) |> mutate(Sample = "Br6462"),
     Br8112 = read_csv(paste0(datadir, "Br8112/LHbExperiment2_Br8112_thirdtoleft_20x_job1881__object_RESULTS.csv")) |> mutate(Sample = "Br8112")
     )
 
 map_int(halo, ncol)
 map_int(halo, nrow)
 # Br6462 Br8112
-# 16383  15395
+# 19554  15395
 
 # ## flip y for Br8112
 halo$Br8112$YMax <- max(halo$Br8112$YMax) - halo$Br8112$YMax
