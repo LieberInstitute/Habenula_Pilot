@@ -6,7 +6,7 @@
 
 # Project overview
 
-This project involves bulk RNA-seq data from the habenula of 59 donors with both cases and controls for schizophrenia risk disorder. Additionally, we generated single nucleus RNA-seq (snRNA-seq) data from a subset 7 control donors. Finally, we performed multiplexed single-molecule fluorescence in situ hybridization (smFISH) experiments. These smFISH experiments were analyzed with [_HALO_](https://indicalab.com/halo/).
+This project involves bulk RNA-seq data from the habenula of 69 donors with both cases and controls for schizophrenia risk disorder. Additionally, we generated single nucleus RNA-seq (snRNA-seq) data from a subset 7 control donors. Finally, we performed multiplexed single-molecule fluorescence in situ hybridization (smFISH) experiments. These smFISH experiments were analyzed with [_HALO_](https://indicalab.com/halo/).
 
 # Citation
 
@@ -14,7 +14,7 @@ We hope that this repository will be useful for your research. Please use the fo
 
 > **Transcriptomic analysis of the human habenula in schizophrenia**
 
-> Ege A. Yalcinbas, Bukola Ajanaku, Erik D. Nelson, Renee Garcia-Flores, Kelsey D. Montgomery, Joshua M. Stolz, Joshua Wu, Heena R. Divecha, Rahul Bharadwaj, Svitlana Bach, Ran Tao, Joo-Heon Shin, Joel E. Kleinman, Thomas M. Hyde, Louise A. Huuki-Myers, Leonardo Collado-Torres, Kristen R. Maynard.
+> Ege A. Yalcinbas, Bukola Ajanaku, Erik D. Nelson, Renee Garcia-Flores, Kelsey D. Montgomery, Joshua M. Stolz, Joshua Wu, Heena R. Divecha, Atharv Chandra, Rahul Bharadwaj, Svitlana Bach, Anandita Rajpurohit, Ran Tao, Joo-Heon Shin, Joel E. Kleinman, Thomas M. Hyde, Louise A. Huuki-Myers, Leonardo Collado-Torres, Kristen R. Maynard.
 
 > bioRxiv (TODO DOI); doi: <https://doi.org/10.1101/TODO>
 
@@ -29,15 +29,15 @@ Files for this project are publicly available, either directly here or via contr
 
 ## snRNA-seq
 
-The FASTQ files are available via Globus at the ['jhpce#habenulaPilotsnRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotsnRNAseq/index.html) endpoint.
+The FASTQ files are available via Globus endpoint ['jhpce#habenulaPilotsnRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotsnRNAseq/index.html) endpoint.
 
 ## bulk RNA-seq
 
-The RNA-seq FASTQ files are available via Globus at the ['jhpce#habenulaPilotbulkRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotbulkRNAseq/index.html) endpoint. The DNA genotype data is available via ['jhpce#habenulaPilotbulkDNAgenotype'](https://research.libd.org/globus/jhpce_habenulaPilotbulkDNAgenotype/index.html), however access to it is granted upon request given the protected nature of this data.
+The RNA-seq FASTQ files are available via Globus endpoint ['jhpce#habenulaPilotbulkRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotbulkRNAseq/index.html) endpoint. The DNA genotype data is available via ['jhpce#habenulaPilotbulkDNAgenotype'](https://research.libd.org/globus/jhpce_habenulaPilotbulkDNAgenotype/index.html), however access to it is granted upon request given the protected nature of this data.
 
 ## smFISH data
 
-(TODO by Louise: describe settings files + the output files from HALO. Also describe where to get the actual full images)
+The RNAscope images are available via the Globus endpoint ['jhpce#habenulaPilotRNAscope'](https://research.libd.org/globus/jhpce_habenulaPilotRNAscope/index.html). (TODO by Louise: describe settings files + the output files from HALO. You might want to put them all as a sub-directory of `/dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/raw-data/RNAscope_images` so it's all part of the same Globus endpoint)
 
 # Code structure
 
