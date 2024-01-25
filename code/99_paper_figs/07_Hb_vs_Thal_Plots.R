@@ -10,19 +10,19 @@ library("ggplot2")
 library("cowplot")
 
 # Loading sce object
-load(here("processed-data", "99_paper_figs", "sce_objects", 
+load(here("processed-data", "99_paper_figs", "sce_objects",
           "official_final_sce.RDATA"), verbose = TRUE)
 # sce
 
 table(sce$final_Annotations)
-# Astrocyte       Endo Excit.Thal Inhib.Thal  LHb.1      LHb.2      LHb.3 
-# 538         38       1800       7612        201        266        134 
-# LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3 
-# 477         83         39       1014        152        540         18 
-# Microglia      Oligo        OPC 
-# 145       2178       1796 
+# Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3
+#       538         38       1800       7612        201        266        134
+#     LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3
+#       477         83         39       1014        152        540         18
+# Microglia      Oligo        OPC
+#       145       2178       1202
 
-# sourcing official color palette 
+# sourcing official color palette
 source(file = here("code", "99_paper_figs", "source_colors.R"))
 # bulk_colors and sn_colors
 
@@ -52,20 +52,20 @@ dev.off()
 
 
 ##### FOR ONE DRIVE PIECES #####################################################
-# pdf 
+# pdf
 pdf(here(plot_dir, "forOneDrive","sfigu_PC2vsPC3_HabvsThalModality.pdf"),
     width = 8, height = 4.5)
     plot1 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
       geom_point(aes(color = sce$final_Annotations)) +
       scale_colour_manual(values = sn_colors) +
       theme(legend.position = "none")
-    
+
     plot2 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
       geom_point(aes(color = sce$final_Annotations)) +
       scale_colour_manual(values = sn_colors) +
       facet_wrap(~ sce$final_Annotations) +
-      guides(color = guide_legend(title="Cell Type")) + 
-      theme(axis.text = element_text(size = 6)) 
+      guides(color = guide_legend(title="Cell Type")) +
+      theme(axis.text = element_text(size = 6))
 
   plot_grid(plot1, plot2,
             rel_widths = c(.4, .6))
@@ -83,8 +83,8 @@ plot2 <- plotReducedDim(sce, dimred = "PCA", ncomponents = 2:3) +
   geom_point(aes(color = sce$final_Annotations)) +
   scale_colour_manual(values = sn_colors) +
   facet_wrap(~ sce$final_Annotations) +
-  guides(color = guide_legend(title="Cell Type")) + 
-  theme(axis.text = element_text(size = 6)) 
+  guides(color = guide_legend(title="Cell Type")) +
+  theme(axis.text = element_text(size = 6))
 
 plot_grid(plot1, plot2,
           rel_widths = c(.4, .6))
@@ -105,7 +105,7 @@ sessioninfo::session_info()
 # tz       US/Eastern
 # date     2023-06-13
 # pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/bin/pandoc
-# 
+#
 # ─ Packages ──────────────────────────────────────────────────────────────────────────────────
 # package              * version   date (UTC) lib source
 # beachmat               2.14.2    2023-04-07 [2] Bioconductor
@@ -183,7 +183,7 @@ sessioninfo::session_info()
 # withr                  2.5.0     2022-03-03 [2] CRAN (R 4.2.1)
 # XVector                0.38.0    2022-11-01 [2] Bioconductor
 # zlibbioc               1.44.0    2022-11-01 [2] Bioconductor
-# 
+#
 # [1] /users/bsimbiat/R/4.2.x
 # [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/site-library
 # [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/library
