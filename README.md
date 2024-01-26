@@ -23,6 +23,13 @@ We hope that this repository will be useful for your research. Please use the fo
 }
 ```
 
+# Interactive websites
+
+Using [`iSEE`](https://bioconductor.org/packages/iSEE/) we have two interactive websites which you can use to explore the gene expression data.
+
+* bulk RNA-seq: https://libd.shinyapps.io/habenulaPilot_bulk/
+* snRNA-seq: https://libd.shinyapps.io/habenulaPilot_snRNAseq/
+
 # Data access
 
 Files for this project are publicly available, either directly here or via controlled-access locations when necessary.
