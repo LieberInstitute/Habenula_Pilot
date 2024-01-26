@@ -9,6 +9,8 @@ MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2
 redo of 20x multistitched umixed.nd2
 ```
 
+Note that `redo of 20x multistitched umixed.nd2` is a redo of the MHb experiment for Br8112.
+
 These RNAscope raw image files are available from the from the Globus endpoint (as they were too large for github) ['jhpce#habenulaPilotRNAscope'](https://research.libd.org/globus/jhpce_habenulaPilotRNAscope/index.html)
 
 These images were analyzed with HALO software (Indica labs), settings files & tabular output of the HALO analysis are available in `processed-data/14_RNAscope/HALO_data`.

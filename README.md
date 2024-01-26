@@ -37,8 +37,9 @@ The RNA-seq FASTQ files are available via Globus endpoint ['jhpce#habenulaPilotb
 
 ## smFISH data
 
-The RNAscope images are available via the Globus endpoint ['jhpce#habenulaPilotRNAscope'](https://research.libd.org/globus/jhpce_habenulaPilotRNAscope/index.html). 
-These images were analyzed with HALO software (Indica labs), settings files & tabular output of the HALO analysis are available in `processed-data/14_RNAscope/HALO_data`.
+The RNAscope images are available via the Globus endpoint ['jhpce#habenulaPilotRNAscope'](https://research.libd.org/globus/jhpce_habenulaPilotRNAscope/index.html).
+
+These images were analyzed with HALO software (Indica labs), settings files & tabular output of the HALO analysis are available in [`processed-data/14_RNAscope/HALO_data`](https://github.com/LieberInstitute/Habenula_Pilot/tree/master/processed-data/14_RNAscope/HALO_data).
 
 # Code structure
 
