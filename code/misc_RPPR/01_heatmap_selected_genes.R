@@ -52,8 +52,8 @@ load(
 
 official_markers  <- list(
     "Hb" = c("MMRN1", "GPR151", "POU4F1"),
-    "LHb" = c("EPHA5", "TLL1", "AC109466.1", "AC008415.1", "GPR149", "GNG8", "NEUROD1"),
-    "MHb" = c("RASGRP1", "SLC5A7", "CHRNB3", "SCUBE1", "LINC02143", "CD24")
+    "LHb" = c("EPHA5", "TLL1"),
+    "MHb" = c("AC109466.1", "AC008415.1", "GPR149", "GNG8", "NEUROD1", "RASGRP1", "SLC5A7", "CHRNB3", "SCUBE1", "LINC02143", "CD24")
     # ,
     # "Oligo" = c("MOBP"),
     # "OPC" = c("PDGFRA"),
