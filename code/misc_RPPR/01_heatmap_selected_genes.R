@@ -6,6 +6,9 @@
 library("SingleCellExperiment")
 library("here")
 library("sessioninfo")
+
+
+
 library("jaffelab")
 library("ggplot2")
 library("tidyverse")
@@ -13,39 +16,11 @@ library("ComplexHeatmap")
 library("spatialLIBD")
 library("RColorBrewer")
 
-# loading sce object
-load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_final.Rdata"),
-     verbose = TRUE)
-  # sce_final
-
-table(sce_final$final_Annotations)
-  # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3
-  # 538         38       1800       7612        201        266        134
-  # LHb.4      LHb.5      LHb.6      LHb.7      MHb.1      MHb.2      MHb.3
-  # 477         83         39       1014        152        540         18
-  # Microglia      Oligo        OPC
-  # 145       2178       1796
-    # has no Hb cluster
-
 # creating plot directory
-plot_dir <- here("plots", "99_paper_figs", "03_Heatmap_Markers_Summary")
-if(!dir.exists(plot_dir)){
-  dir.create(plot_dir)
-}
+plot_dir <- here("plots", "misc_RPPR")
+dir.create(plot_dir, recursive = TRUE, showWarnings = FALSE)
 
-# sourcing official color palette
-source(file = here("code", "99_paper_figs", "source_colors.R"))
-  # bulk_colors and sn_colors
-
-# Pseudobulking to create compressed sce object
-## faking the pseudobulking function out by setting sample as all same sample
-sce_final$FakeSample <- "Br1011"
-sce_final$RealSample <- sce_final$Sample
-sce_final$Sample <- sce_final$FakeSample
-
-set.seed(20220907)
-sce_pb <- registration_pseudobulk(sce_final, "final_Annotations", "Sample")
-save(sce_pb, file = here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_pseudobulk_final_Annotations.Rdata"))
+load(here("processed-data", "04_snRNA-seq",  "sce_objects", "sce_pseudobulk_final_Annotations.Rdata"), verbose = TRUE)
 
 # list of marker genes
 official_markers = list(
@@ -283,51 +258,12 @@ pdf(here(plot_dir, "Completed_Markers_Heatmap_final_Anno_FINAL.pdf"), width = 12
   heatmapped
 dev.off()
 
-#### FOR ONE DRIVE
-# pdf
-pdf(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.pdf"), width = 12, height = 8)
-  heatmapped
-dev.off()
-
-# png
-png(here(plot_dir, "forOneDrive", "mfigu_heatmap_progress_report.png"),
-    width = 12, height = 8, units = "in", res = 1200)
-heatmapped
-dev.off()
-
-#### Create Separate Legends ####
-lgd_Z = Legend(col_fun = circlize::colorRamp2(seq(-4, 4,  8/10),
-                                              rev(RColorBrewer::brewer.pal(11, "RdBu"))),
-              title = "Z Score",
-              direction = "horizontal",
-              legend_width = unit(6, "cm"))
-
-pdf(here(plot_dir, "z_legend.pdf"), height = 1, width = 3)
-draw(lgd_Z)
-dev.off()
-
-sn_colors <- sn_colors[!names(sn_colors) %in% c("OPC_noisy", "Excit.Neuron")]
-
-lgd_celltypes = Legend(labels = names(sn_colors),
-                       title = "Cell Types",
-                       legend_gp = gpar(fill = sn_colors),
-                       nrow = 3,
-                       legend_width = unit(6, "cm"))
-
-pdf(here(plot_dir, "ct_legend.pdf"), height = 2, width = 5)
-draw(lgd_celltypes)
-dev.off()
-
-
-lgd_marker_method = Legend(labels = unique(markTable$anno),
-                           legend_gp = gpar(fill = marker_method_colors),
-                       title = "Marker_Method")
-
-pdf(here(plot_dir, "marker_method_legend.pdf"), height = 2, width = 5)
-draw(lgd_marker_method)
-dev.off()
-
-sessioninfo::session_info()
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
 
 # ─ Session info ──────────────────────────────────────────────────────────────────────────────
 # setting  value
