@@ -16,6 +16,9 @@ pca_path = here(
     'processed-data', '03_bulk_pca', '02_multiregion_PCA',
     'Multi_region_PCs.Rdata'
 )
+expected_covariates = c(
+    "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5'
+)
 
 rse = get(load(rse_path, verbose = TRUE))
 
@@ -42,8 +45,12 @@ covar_format <- function(data, rn) {
 
 message(Sys.time(), " - Format covariates")
 ## Phenodata
-pd <- as.data.frame(colData(rse)[, c("PrimaryDx", "Sex", paste0("snpPC", 1:5))])
-pd <- model.matrix(~ PrimaryDx + Sex + snpPC1 + snpPC2 + snpPC3 + snpPC4 + snpPC5, data = pd)[, 2:9]
+pd = as.data.frame(colData(rse)[, expected_covariates])
+
+pd <- model.matrix(
+        as.formula(paste('~', paste(expected_covariates, collapse = " + "))),
+        data = pd
+    )[, 2:(1 + length(expected_covariates))]
 pd <- covar_format(pd, rse$genoSample)
 
 ## PC data
