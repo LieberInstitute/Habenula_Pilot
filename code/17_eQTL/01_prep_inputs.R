@@ -8,10 +8,7 @@ library("data.table")
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
-pca_path = here(
-    'processed-data', '03_bulk_pca', '02_multiregion_PCA',
-    'Multi_region_PCs.Rdata'
-)
+pca_path = here('processed-data', '03_bulk_pca', 'PCs.rds')
 expected_covariates = c(
     "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5'
 )
@@ -59,11 +56,14 @@ rse = get(load(rse_path, verbose = TRUE))
 message(Sys.time(), " - Format covariates")
 
 #   Select PC columns in the order of rows present in 'rse'
-load(pca_path, verbose = TRUE)
+pca_tab = readRDS(pca_path)
 pcs = colData(rse) |>
     as_tibble() |>
     dplyr::select(RNum) |>
-    left_join(pca_tab, by = "RNum") |>
+    left_join(
+        pca_tab |> as.data.frame() |> rownames_to_column("RNum"),
+        by = "RNum"
+    ) |>
     dplyr::select(RNum, starts_with("PC")) |>
     column_to_rownames("RNum")
 corner(pcs)
