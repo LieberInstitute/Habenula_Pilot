@@ -11,17 +11,17 @@ if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
 ## load data
 ## local
-datadir <- "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Medial_exp/"
+# datadir <- "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Medial_exp"
 
 ## jhpce
-# datadir <- here("processed-data", "14_RNAscope", "HALO_data")
+datadir <- here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp")
 
 list.files(datadir, recursive = TRUE)
 # [1] "Br5422/MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2_Sample1871MHbExperiment_Br5422_middle_secondpass_object_results.csv"
 # [2] "Josh Ege Redo/MHb_ExperimentJ_Br8112_20x_EgeRedo_Sample1883_object_RESULTS.csv"
 
-fn <- list(Br5422 = "Br5422/MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2_job1871MHbExperiment_Br5422_middle_secondpass_object_results.csv",
-           Br8112 = "Josh Ege Redo/MHb_ExperimentJ_Br8112_20x_EgeRedo_job1883_object_RESULTS.csv"
+fn <- list(Br5422 = "/Br5422/MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2_job1871MHbExperiment_Br5422_middle_secondpass_object_results.csv",
+           Br8112 = "/Br8112/NEW_MHbExperimentEAY_Br5422_middleslice_20x_job1901_object_RESULTS.csv"
 )
 
 fn <- map(fn, ~paste0(datadir, .x))
