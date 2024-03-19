@@ -22,11 +22,15 @@ expected_covariates = c(
 out_dir = here("processed-data", "17_eQTL", "tensorQTL_input")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
+################################################################################
+#   Compute and write 'covariates.txt'
+################################################################################
+
 rse = get(load(rse_path, verbose = TRUE))
 
-samples_split <- map(rse_split, colnames)
+message(Sys.time(), " - Format covariates")
 
-#### Covariate Data ####
+#   Select PC columns in the order of rows present in 'rse'
 load(pca_path, verbose = TRUE)
 pcs = colData(rse) |>
     as_tibble() |>
@@ -34,17 +38,16 @@ pcs = colData(rse) |>
     left_join(pca_tab, by = "RNum") |>
     dplyr::select(RNum, starts_with("PC")) |>
     column_to_rownames("RNum")
-
 corner(pcs)
 
-message(Sys.time(), " - Format covariates")
-
+#   Model non-PC covariates
 pd = as.data.frame(colData(rse)[, expected_covariates])
 pd <- model.matrix(
         as.formula(paste('~', paste(expected_covariates, collapse = " + "))),
         data = pd
     )[, 2:(1 + length(expected_covariates))]
 
+#   Combine all covariates and save
 covars = cbind(pd, pcs) |>
     t() |>
     as.data.frame() |>
@@ -53,55 +56,19 @@ corner(covars)
 
 write_tsv(covars, file = file.path(out_dir, "covariates.txt"))
 
-#### Expression Data ####
+################################################################################
+#   Write logcounts to a ".bed.gz" file
+################################################################################
 
-message(Sys.time(), " - logcounts to bed")
+message(Sys.time(), " - Format logcounts as bed in memory")
 expression_bed <- rse_to_bed(rse)
 corner(expression_bed)
 
-message(Sys.time(), " - Write bed tables to .bed.gz files")
+message(Sys.time(), " - Write bed table to .bed.gz file")
 data.table::fwrite(
     expression_bed, here(out_dir, "logcounts.bed.gz"), sep = "\t",
     quote = FALSE, row.names = FALSE
 )
-
-
-#### VCF ####
-# message(Sys.time(), " - Split VCF")
-# risk_vcf <- readVcf(here("eqtl", "data", "risk_snps", "LIBD_maf01_gwas_BPD.vcf.gz"))
-# risk_vcf
-# risk_vcf_split <- map(rse_split, ~ risk_vcf[, .x$genoSample])
-# map(risk_vcf_split, dim)
-# 
-# vcf_fn <- map(regions, ~ here("eqtl", "data", "risk_snps", paste0("LIBD_maf01_gwas_BPD_", .x, ".vcf.gz")))
-# walk2(risk_vcf_split, vcf_fn, ~ writeVcf(.x, .y))
-# 
-# ## plink commands
-# map(vcf_fn, ~ paste("plink --make-bed --output-chr chrM --vcf", .x, "--out", gsub(".vcf.gz", "", .x)))
-# 
-
-## check
-
-# map2(bed, risk_vcf_split, ~ all(colnames(.x[, 5:ncol(.x)]) == colnames(.y)))
-# map2(bed, covars, ~ all(colnames(.x[, 5:ncol(.x)]) == colnames(.y[[1]][, 2:ncol(.y[[1]])])))
-
-
-#### prep interaction csv ####
-message(Sys.time(), " - Prep interaction data")
-walk2(rse_split, regions, function(rse, region) {
-    cell_fractions <- colData(rse)[, c("Astro", "Endo", "Macro", "Micro", "Mural", "Oligo", "OPC", "Tcell", "Excit", "Inhib")]
-    cell_fractions <- as.data.frame(cell_fractions)
-    rownames(cell_fractions) <- rse$genoSample
-    write.csv(cell_fractions, file = here("eqtl", "data", "tensorQTL_input", "interaction", paste0("cell_fraction_", region, ".csv")))
-})
-
-## create shell commands ##
-# sgejobs::job_single("tensorqtl_risk_snps",
-#     create_shell = TRUE, queue = "bluejay", memory = "50G",
-#     command = "python tensorqtl_risk_snps.py"
-# )
-
-# sgejobs::job_single('01_convert_rdata_to_tensorqtl_format', create_shell = TRUE, memory = '50G', command = "Rscript 01_convert_rdata_to_tensorqtl_format.R")
 
 ## Reproducibility information
 print("Reproducibility information:")
