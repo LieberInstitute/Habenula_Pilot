@@ -38,9 +38,8 @@ pcs = colData(rse) |>
 corner(pcs)
 
 message(Sys.time(), " - Format covariates")
-## Phenodata
-pd = as.data.frame(colData(rse)[, expected_covariates])
 
+pd = as.data.frame(colData(rse)[, expected_covariates])
 pd <- model.matrix(
         as.formula(paste('~', paste(expected_covariates, collapse = " + "))),
         data = pd
@@ -54,37 +53,17 @@ corner(covars)
 
 write_tsv(covars, file = file.path(out_dir, "covariates.txt"))
 
-
 #### Expression Data ####
 
-## test TSS fix 8/24/23
-# bed <- rse_to_bed(rse_split$amyg)
-# corner(bed)
-# tail(colnames(bed))
-# bed |> filter(ID == "ENSG00000000003.14") |> dplyr::select(ID, `#Chr`, `start`, `end`)
-# ID #Chr     start       end
-# 1 ENSG00000000003.14 chrX 100639991 100639992
-
 message(Sys.time(), " - logcounts to bed")
-expression_fn <- map(features, function(feat) map(regions, ~ here("eqtl", "data", "tensorQTL_input", "expression_bed", paste0(feat, "_", .x, ".bed.gz"))))
-
-expression_bed <- map2(list(rse, rse_exon, rse_jxn, rse_tx), features, function(rse, feat) {
-    message(Sys.time(), " - ", feat)
-    rse_split <- map(regions, ~ rse[, rse$BrainRegion == .x])
-    expr_bed <- map(rse_split, rse_to_bed)
-    return(expr_bed)
-})
-
-## double check the output
-map_depth(expression_bed, 2, corner)
+expression_bed <- rse_to_bed(rse)
+corner(expression_bed)
 
 message(Sys.time(), " - Write bed tables to .bed.gz files")
-walk2(expression_bed, expression_fn, function(expr, fn) {
-    walk2(expr, fn, ~ data.table::fwrite(.x, .y,
-        sep = "\t",
-        quote = FALSE, row.names = FALSE
-    ))
-})
+data.table::fwrite(
+    expression_bed, here(out_dir, "logcounts.bed.gz"), sep = "\t",
+    quote = FALSE, row.names = FALSE
+)
 
 
 #### VCF ####
