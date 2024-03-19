@@ -7,8 +7,6 @@ library("here")
 library("recount")
 library("data.table")
 
-source(here("eqtl", "code", "rse_to_bed.R"))
-
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
@@ -21,6 +19,39 @@ expected_covariates = c(
 )
 out_dir = here("processed-data", "17_eQTL", "tensorQTL_input")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+################################################################################
+#   Function definitions
+################################################################################
+
+# Convert assay from a SummarizedExperiment to tensorQTL compatible bed file
+rse_to_bed <- function(rse, assay_name = "logcounts") {
+    stopifnot(assay_name %in% assayNames(rse))
+
+    rr_df <- as.data.frame(rowRanges(rse)) |>
+        tibble::rownames_to_column("ID") |>
+        dplyr::mutate(
+            start = ifelse(strand == "+", start, end),
+            end = start + 1
+        ) |>
+        dplyr::arrange(seqnames, start) |>
+        dplyr::select(`#Chr` = seqnames, start, end, ID)
+  
+    message(
+        Sys.time(), " - Converting assay '", assay_name, "' to bed format: (",
+        nrow(rse), ", ", ncol(rse),")"
+    )
+    counts <- SummarizedExperiment::assays(rse)[[assay_name]]
+    colnames(counts) <- rse$genoSample
+
+    counts <- rr_df |> 
+        dplyr::left_join(
+            as.data.frame(counts) |> 
+                tibble::rownames_to_column("ID"), 
+                by = "ID"
+            )
+    return(counts)
+}
 
 ################################################################################
 #   Compute and write 'covariates.txt'
