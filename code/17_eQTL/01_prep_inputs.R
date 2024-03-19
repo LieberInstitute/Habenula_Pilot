@@ -19,6 +19,8 @@ pca_path = here(
 expected_covariates = c(
     "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5'
 )
+out_dir = here("processed-data", "17_eQTL", "tensorQTL_input")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 rse = get(load(rse_path, verbose = TRUE))
 
@@ -35,14 +37,6 @@ pcs = colData(rse) |>
 
 corner(pcs)
 
-covar_format <- function(data, rn) {
-    data <- as.data.frame(data)
-    rownames(data) <- rn
-    data <- t(data)
-    data <- as.data.frame(data) %>% rownames_to_column("id")
-    return(data)
-}
-
 message(Sys.time(), " - Format covariates")
 ## Phenodata
 pd = as.data.frame(colData(rse)[, expected_covariates])
@@ -51,20 +45,14 @@ pd <- model.matrix(
         as.formula(paste('~', paste(expected_covariates, collapse = " + "))),
         data = pd
     )[, 2:(1 + length(expected_covariates))]
-pd <- covar_format(pd, rse$genoSample)
 
-## PC data
-pc <- covar_format(pc, rse$genoSample)
-## bind and save
-covars <- rbind(pd, pc)
-fn = here("eqtl", "data", "tensorQTL_input", "covariates_txt", paste0("covariates_", feat, "_", region, ".txt"))
-message(fn)
-write.table(covars,
-    file = fn,
-    sep = "\t", quote = FALSE, row.names = FALSE
-)
-return(covars)
-corner(covars$gene$amyg)
+covars = cbind(pd, pcs) |>
+    t() |>
+    as.data.frame() |>
+    rownames_to_column("id")
+corner(covars)
+
+write_tsv(covars, file = file.path(out_dir, "covariates.txt"))
 
 
 #### Expression Data ####
