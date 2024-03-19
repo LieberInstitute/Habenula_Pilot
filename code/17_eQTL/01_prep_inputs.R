@@ -1,10 +1,8 @@
 library("SummarizedExperiment")
 library("sessioninfo")
 library("tidyverse")
-library("VariantAnnotation")
 library("jaffelab")
 library("here")
-library("recount")
 library("data.table")
 
 rse_path = here(
@@ -42,7 +40,6 @@ rse_to_bed <- function(rse, assay_name = "logcounts") {
         nrow(rse), ", ", ncol(rse),")"
     )
     counts <- SummarizedExperiment::assays(rse)[[assay_name]]
-    colnames(counts) <- rse$genoSample
 
     counts <- rr_df |> 
         dplyr::left_join(
