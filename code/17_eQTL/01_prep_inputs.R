@@ -52,6 +52,7 @@ rse_to_bed <- function(rse, assay_name = "logcounts") {
 ################################################################################
 
 rse = get(load(rse_path, verbose = TRUE))
+colnames(rse) = rse$BrNum
 
 message(Sys.time(), " - Format covariates")
 
@@ -59,13 +60,13 @@ message(Sys.time(), " - Format covariates")
 pca_tab = readRDS(pca_path)
 pcs = colData(rse) |>
     as_tibble() |>
-    dplyr::select(RNum) |>
+    dplyr::select(BrNum, RNum) |>
     left_join(
         pca_tab |> as.data.frame() |> rownames_to_column("RNum"),
         by = "RNum"
     ) |>
-    dplyr::select(RNum, starts_with("PC")) |>
-    column_to_rownames("RNum")
+    dplyr::select(BrNum, starts_with("PC")) |>
+    column_to_rownames("BrNum")
 corner(pcs)
 
 #   Model non-PC covariates
