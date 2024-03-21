@@ -22,6 +22,8 @@ expression_bed = str(in_dir / "logcounts.bed.gz")
 prefix = "habenula"
 add_chr = False
 
+out_dir.mkdir(exist_ok = True)
+
 ################################################################################
 #   Load and ensure compatibility in input data
 ################################################################################
@@ -44,25 +46,42 @@ variant_df = pr.bim.set_index('snp')[['chrom', 'pos']]
 print("Genotype dimensions:", end='')
 print(genotype_df.shape)
 
+genotype_ids = set(genotype_df.columns)
+covariates_ids = set(covariates_df.index)
+
+#   Exclude any samples that have genotypes but not covariates; halt in the
+#   reverse situation
+if (genotype_ids > covariates_ids):
+    extra_donors = list(genotype_ids - covariates_ids)
+    print("Excluding extra genotyped donors:", ','.join(extra_donors))
+    genotype_df.drop(extra_donors, axis = 1, inplace = True)
+elif (genotype_ids != covariates_ids):
+    print("Not all covariate samples in genotyped samples.")
+    sys.exit()
+
 ## Fix chr names (maybe fix in plink?)
 if add_chr:
     print("Adding 'chr' to genotype positions")
     variant_df.chrom = [s.split(':')[0] for s in list(variant_df.index)]
 
-# Filter expression to chrom in snp data
 variant_chrom = set(variant_df.chrom)
 express_chrom = set(phenotype_pos_df.chr)
 
-if express_chrom - variant_chrom:
+#   Exclude any expressed chromosomes that aren't in genotyping data; halt in
+#   the reverse situation
+if express_chrom > variant_chrom:
     print("Excluding phenotypes from these chromosomes:")
     print(express_chrom - variant_chrom)
-
+    
     chrom_filter = phenotype_pos_df.chr.isin(variant_chrom)
     print("Phenotypes with chr in variants: " )
     print(chrom_filter.value_counts())
-
+    
     phenotype_df = phenotype_df[chrom_filter]
     phenotype_pos_df = phenotype_pos_df[chrom_filter]
+elif express_chrom != variant_chrom:
+    print("Expression data must contain the same or a superset of chromosomes as the genotyping data.")
+    sys.exit()
 
 ################################################################################
 #   Run tensorQTL
