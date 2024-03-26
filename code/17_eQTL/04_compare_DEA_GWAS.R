@@ -3,6 +3,8 @@ library(tidyverse)
 library(readxl)
 library(SummarizedExperiment)
 library(snpStats)
+library(bigsnpr)
+library(sessioninfo)
 
 eqtl_path = here('processed-data', '17_eQTL', 'tensorQTL_output', 'FDR05.csv')
 deg_path = here(
@@ -21,14 +23,45 @@ plot_dir = here('plots', '17_eQTL')
 sig_cutoff = 0.05
 sig_cutoff_gwas = 5e-8
 
+lift_over_path = system('which liftOver', intern = TRUE)
 dir.create(plot_dir, showWarnings = FALSE)
 
-#   Read in eQTL, DEA, and GWAS results as tibbles
+################################################################################
+#   Read in eQTL, DEA, and GWAS results, and the RSE
+################################################################################
+
 eqtl = read_csv(eqtl_path, show_col_types = FALSE)
+
 deg = read_tsv(deg_path, show_col_types = FALSE) |>
     filter(adj.P.Val < sig_cutoff)
+
+rse_gene = get(load(rse_path))
+colnames(rse_gene) = rse_gene$BrNum
+
 gwas = read_excel(gwas_path) |>
-    filter(P < sig_cutoff_gwas)
+    filter(P < sig_cutoff_gwas) |>
+    dplyr::rename(chr = CHR, pos = BP) |>
+    #   Map from hg19 to hg38 and drop anything that fails
+    snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
+    filter(!is.na(pos)) |>
+    #   Construct variant_id from SNP info
+    mutate(
+        variant_id = sprintf(
+            'chr%s:%s:%s:%s',
+            chr,
+            pos,
+            str_split_i(gwas$A1A2, '/', 1),
+            str_split_i(gwas$A1A2, '/', 2)
+        )
+    )
+
+################################################################################
+#   Compare each type of result
+################################################################################
+
+#-------------------------------------------------------------------------------
+#   Info about eQTLS alone
+#-------------------------------------------------------------------------------
 
 eqtl_gene = eqtl |>
     group_by(phenotype_id) |>
@@ -45,29 +78,58 @@ message(
     )
 )
 
-table(deg$gencodeID %in% eqtl_gene$phenotype_id)
-deg$Symbol[deg$gencodeID %in% eqtl_gene$phenotype_id]
+#-------------------------------------------------------------------------------
+#   Compare eQTLs with GWAS SNPs
+#-------------------------------------------------------------------------------
 
-overlap_variants = eqtl |>
+message("Number of Trubetskoy et al. GWAS SNPs matching sig eQTLs:")
+table(gwas$variant_id %in% eqtl$variant_id)
+
+gwas_paired_genes = eqtl |>
+    filter(variant_id %in% gwas$variant_id) |>
+    pull(phenotype_id)
+
+message("Genes paired with GWAS-significant eQTL SNPs:")
+rowData(rse_gene)$Symbol[
+    match(gwas_paired_genes, rownames(rse_gene))
+] |>
+    paste(collapse = ', ') |>
+    message()
+
+#-------------------------------------------------------------------------------
+#   Compare eQTLS with DE genes
+#-------------------------------------------------------------------------------
+
+message("Number and name of DE genes implicated in any eQTLs:")
+table(deg$gencodeID %in% eqtl_gene$phenotype_id)
+deg$Symbol[deg$gencodeID %in% eqtl_gene$phenotype_id] |>
+    paste(collapse = ', ') |>
+    message()
+
+message("Genes implicated in the GWAS, DEA, and eQTLs:")
+dea_paired_genes = deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id]
+dea_paired_genes[dea_paired_genes %in% gwas_paired_genes] |>
+    paste(collapse = ', ') |>
+    message()
+
+dea_paired_variants = eqtl |>
     filter(phenotype_id %in% deg$gencodeID) |>
     pull(variant_id)
 
-rse_gene = get(load(rse_path))
-colnames(rse_gene) = rse_gene$BrNum
+################################################################################
+#   Plots exploring how genotype affects expression at select eQTLs
+################################################################################
 
 #   Grab the expression for all genes significant in the DEA having significantly
 #   associated variants found in the eQTL analysis; convert to long format
-rse_small = rse_gene[
-    deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id],
-]
-express = assays(rse_small)$logcounts |>
+express = assays(rse_gene[dea_paired_genes,])$logcounts |>
     as.data.frame() |>
     rownames_to_column("gene_id") |>
     pivot_longer(cols = -gene_id, names_to = "sample_id", values_to = "logcount")
 
 #   Read in genotype data and join with expression data
 a = read.plink(paste0(plink_path_prefix, '.bed'))
-exp_df = a$genotypes[, overlap_variants] |>
+exp_df = a$genotypes[, dea_paired_variants] |>
     as.data.frame() |>
     rownames_to_column("sample_id") |>
     pivot_longer(
@@ -100,3 +162,5 @@ for (this_gene in unique(exp_df$gene_id)) {
 pdf(file.path(plot_dir, 'expr_by_geno.pdf'))
 print(plot_list)
 dev.off()
+
+session_info()
