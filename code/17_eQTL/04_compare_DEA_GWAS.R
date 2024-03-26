@@ -3,7 +3,6 @@ library(tidyverse)
 library(readxl)
 library(SummarizedExperiment)
 library(snpStats)
-# library(bedr)
 
 eqtl_path = here('processed-data', '17_eQTL', 'tensorQTL_output', 'FDR05.csv')
 deg_path = here(
@@ -17,10 +16,12 @@ rse_path = here(
 plink_path_prefix = here(
     "processed-data", '08_bulk_snpPC', "habenula_genotypes"
 )
-geno_path = here('processed-data', '08_bulk_snpPC', 'habenula_genotypes.vcf.gz')
+plot_dir = here('plots', '17_eQTL')
 
 sig_cutoff = 0.05
 sig_cutoff_gwas = 5e-8
+
+dir.create(plot_dir, showWarnings = FALSE)
 
 #   Read in eQTL, DEA, and GWAS results as tibbles
 eqtl = read_csv(eqtl_path, show_col_types = FALSE)
@@ -69,22 +70,33 @@ a = read.plink(paste0(plink_path_prefix, '.bed'))
 exp_df = a$genotypes[, overlap_variants] |>
     as.data.frame() |>
     rownames_to_column("sample_id") |>
-    pivot_longer(cols = -sample_id, names_to = "snp_id", values_to = "genotype") |>
+    pivot_longer(
+        cols = -sample_id, names_to = "snp_id", values_to = "genotype"
+    ) |>
     mutate(
         genotype = factor(as.integer(genotype)),
         gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)]
     ) |>
-    left_join(express, by = c('sample_id', 'gene_id'))
+    left_join(express, by = c('sample_id', 'gene_id')) |>
+    filter(sample_id %in% express$sample_id)
 
+#   Plot expression by genotype of each variant with one gene per page and
+#   potentially several variants per gene
+plot_list = list()
 for (this_gene in unique(exp_df$gene_id)) {
-    p = exp_df |>
+    plot_list[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
         ggplot(mapping = aes(x = genotype, y = logcount)) +
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
-            facet_wrap(~ snp_id)
+            facet_wrap(~ snp_id) +
+            labs(
+                title = rowData(rse_gene)$Symbol[
+                    match(this_gene, rownames(rse_gene))
+                ]
+            )
 }
 
-# Started trying to read in VCF instead
-# a = read.vcf(geno_path)
-# b = a$vcf[match(overlap_variants, a$vcf$ID),]
+pdf(file.path(plot_dir, 'expr_by_geno.pdf'))
+print(plot_list)
+dev.off()
