@@ -50,8 +50,8 @@ gwas = read_excel(gwas_path) |>
             'chr%s:%s:%s:%s',
             chr,
             pos,
-            str_split_i(gwas$A1A2, '/', 1),
-            str_split_i(gwas$A1A2, '/', 2)
+            str_split_i(A1A2, '/', 1),
+            str_split_i(A1A2, '/', 2)
         )
     )
 
