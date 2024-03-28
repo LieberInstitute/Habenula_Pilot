@@ -139,28 +139,49 @@ exp_df = a$genotypes[, dea_paired_variants] |>
         genotype = factor(as.integer(genotype)),
         gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)]
     ) |>
+    #   Add expression data
     left_join(express, by = c('sample_id', 'gene_id')) |>
+    #   Add colData
+    left_join(
+        colData(rse_gene) |> as_tibble(), by = join_by(sample_id == BrNum)
+    ) |>
     filter(sample_id %in% express$sample_id)
 
 #   Plot expression by genotype of each variant with one gene per page and
 #   potentially several variants per gene
-plot_list = list()
+plot_list_geno = list()
+plot_list_dx = list()
 for (this_gene in unique(exp_df$gene_id)) {
-    plot_list[[this_gene]] = exp_df |>
+    this_symbol = rowData(rse_gene)$Symbol[
+        match(this_gene, rownames(rse_gene))
+    ]
+
+    plot_list_geno[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
         ggplot(mapping = aes(x = genotype, y = logcount)) +
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
             facet_wrap(~ snp_id) +
-            labs(
-                title = rowData(rse_gene)$Symbol[
-                    match(this_gene, rownames(rse_gene))
-                ]
-            )
+            labs(title = this_symbol) +
+            theme_bw()
+    
+    plot_list_dx[[this_gene]] = exp_df |>
+        filter(gene_id == this_gene) |>
+        #   Don't take duplicate rows if there are multiple SNPs per gene
+        filter(snp_id == snp_id[1]) |>
+        ggplot(mapping = aes(x = PrimaryDx, y = logcount)) +
+            geom_boxplot(outlier.shape = NA) +
+            geom_jitter() +
+            labs(title = this_symbol) +
+            theme_bw(base_size = 20)
 }
 
 pdf(file.path(plot_dir, 'expr_by_geno.pdf'))
-print(plot_list)
+print(plot_list_geno)
+dev.off()
+
+pdf(file.path(plot_dir, 'expr_by_dx.pdf'))
+print(plot_list_dx)
 dev.off()
 
 session_info()
