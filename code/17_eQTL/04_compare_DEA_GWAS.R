@@ -5,6 +5,7 @@ library(SummarizedExperiment)
 library(snpStats)
 library(bigsnpr)
 library(sessioninfo)
+library(cowplot)
 
 eqtl_path = here('processed-data', '17_eQTL', 'tensorQTL_output', 'FDR05.csv')
 deg_path = here(
@@ -151,6 +152,7 @@ exp_df = a$genotypes[, dea_paired_variants] |>
 #   potentially several variants per gene
 plot_list_geno = list()
 plot_list_dx = list()
+plot_list_fraction = list()
 for (this_gene in unique(exp_df$gene_id)) {
     this_symbol = rowData(rse_gene)$Symbol[
         match(this_gene, rownames(rse_gene))
@@ -174,6 +176,22 @@ for (this_gene in unique(exp_df$gene_id)) {
             geom_jitter() +
             labs(title = this_symbol) +
             theme_bw(base_size = 20)
+    
+    temp = list()
+    for (x_var_name in c("tot.Hb", "tot.Thal")) {
+        temp[[x_var_name]] = exp_df |>
+            filter(gene_id == this_gene) |>
+            ggplot(
+                mapping = aes(
+                    x = get({{ x_var_name }}), y = logcount, color = genotype
+                )
+            ) +
+            geom_point() +
+            geom_smooth(method = lm) +
+            theme_bw() +
+            labs(x = x_var_name)
+    }
+    plot_list_fraction[[this_gene]] = plot_grid(plotlist = temp, ncol = 2)
 }
 
 pdf(file.path(plot_dir, 'expr_by_geno.pdf'))
@@ -182,6 +200,10 @@ dev.off()
 
 pdf(file.path(plot_dir, 'expr_by_dx.pdf'))
 print(plot_list_dx)
+dev.off()
+
+pdf(file.path(plot_dir, 'expr_by_geno_fraction.pdf'), width = 10, height = 5)
+print(plot_list_fraction)
 dev.off()
 
 session_info()
