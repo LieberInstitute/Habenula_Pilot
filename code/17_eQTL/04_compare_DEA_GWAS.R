@@ -24,6 +24,10 @@ plot_dir = here('plots', '17_eQTL')
 sig_cutoff = 0.05
 sig_cutoff_gwas = 5e-8
 
+covariates = c(
+    "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5'
+)
+
 lift_over_path = system('which liftOver', intern = TRUE)
 dir.create(plot_dir, showWarnings = FALSE)
 
@@ -121,12 +125,21 @@ dea_paired_variants = eqtl |>
 #   Plots exploring how genotype affects expression at select eQTLs
 ################################################################################
 
+#   Model covariates to later call jaffelab::cleaningY() to residualize
+#   expression for downstream plots
+pd = as.data.frame(colData(rse_gene)[, covariates])
+mod <- model.matrix(
+        as.formula(paste('~', paste(covariates, collapse = " + "))),
+        data = pd
+    )[, 2:(1 + length(covariates))]
+
 #   Grab the expression for all genes significant in the DEA having significantly
 #   associated variants found in the eQTL analysis; convert to long format
 express = assays(rse_gene[dea_paired_genes,])$logcounts |>
+    cleaningY(mod = mod, P = 1) |>
     as.data.frame() |>
     rownames_to_column("gene_id") |>
-    pivot_longer(cols = -gene_id, names_to = "sample_id", values_to = "logcount")
+    pivot_longer(cols = -gene_id, names_to = "sample_id", values_to = "resid_logcount")
 
 #   Read in genotype data and join with expression data
 a = read.plink(paste0(plink_path_prefix, '.bed'))
@@ -160,21 +173,24 @@ for (this_gene in unique(exp_df$gene_id)) {
 
     plot_list_geno[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
-        ggplot(mapping = aes(x = genotype, y = logcount)) +
+        ggplot(mapping = aes(x = genotype, y = resid_logcount)) +
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
             facet_wrap(~ snp_id) +
-            labs(title = this_symbol) +
+            labs(
+                x = "Genotype", y = "Residualized Expression",
+                title = this_symbol
+            ) +
             theme_bw()
     
     plot_list_dx[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
         #   Don't take duplicate rows if there are multiple SNPs per gene
         filter(snp_id == snp_id[1]) |>
-        ggplot(mapping = aes(x = PrimaryDx, y = logcount)) +
+        ggplot(mapping = aes(x = PrimaryDx, y = resid_logcount)) +
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
-            labs(title = this_symbol) +
+            labs(y = "Residualized Expression", title = this_symbol) +
             theme_bw(base_size = 20)
     
     temp = list()
@@ -183,13 +199,17 @@ for (this_gene in unique(exp_df$gene_id)) {
             filter(gene_id == this_gene) |>
             ggplot(
                 mapping = aes(
-                    x = get({{ x_var_name }}), y = logcount, color = genotype
+                    x = get({{ x_var_name }}), y = resid_logcount,
+                    color = genotype
                 )
             ) +
             geom_point() +
             geom_smooth(method = lm) +
             theme_bw() +
-            labs(x = x_var_name)
+            labs(
+                x = x_var_name, y = "Residualized Expression",
+                color = "Genotype"
+            )
     }
     plot_list_fraction[[this_gene]] = plot_grid(plotlist = temp, ncol = 2)
 }
