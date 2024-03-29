@@ -21,6 +21,8 @@ if run_mode == "interaction":
         print("Since 'interaction' mode was selected, exactly one covariate name was expected to be specified at the command line.")
         sys.exit()
     interaction_cov = sys.argv[2]
+else:
+    interaction_cov = "none"
 
 #   Specify paths and global variables
 in_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_input"))
@@ -35,6 +37,8 @@ prefix = "habenula"
 add_chr = False
 
 out_dir.mkdir(exist_ok = True)
+
+print(f"Using 'run_mode'={run_mode} and 'interaction_cov'={interaction_cov}.")
 
 ################################################################################
 #   Load and ensure compatibility in input data
