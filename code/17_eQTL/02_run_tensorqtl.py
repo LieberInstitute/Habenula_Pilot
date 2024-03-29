@@ -12,6 +12,8 @@ print(f'PyTorch {torch.__version__}')
 print(f'Pandas {pd.__version__}')
 
 run_mode = sys.argv[1]
+if len(sys.argv) > 2:
+    interaction_cov = sys.argv[2]
 assert run_mode in ['nominal', 'cis', 'independent', 'interaction']
 
 in_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_input"))
@@ -122,7 +124,12 @@ elif run_mode == "independent":
     ind_out.to_csv(out_dir / "independent_out.csv")
 else:
     #   'run_mode' must be 'interaction' based on check at the top of script
-
-    #   interaction code here
+    
+    nominal_out = cis.map_nominal(
+        genotype_df, variant_df, phenotype_df, phenotype_pos_df,
+        prefix = prefix, covariates_df = covariates_df, output_dir = out_dir, 
+        interaction_df = interaction_df, maf_threshold_interaction = 0.05,
+        group_s = None, window = 500000, run_eigenmt = False, write_stats = True
+    )
 
 session_info.show()
