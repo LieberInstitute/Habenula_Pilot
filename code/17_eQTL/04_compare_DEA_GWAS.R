@@ -159,7 +159,7 @@ exp_df = a$genotypes[, dea_paired_variants] |>
         cols = -sample_id, names_to = "snp_id", values_to = "genotype"
     ) |>
     mutate(
-        genotype = factor(as.integer(genotype)),
+        genotype = factor(3 - as.integer(genotype)),
         gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)]
     ) |>
     #   Add expression data
