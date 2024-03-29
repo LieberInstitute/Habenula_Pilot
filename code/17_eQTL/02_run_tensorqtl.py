@@ -124,12 +124,15 @@ elif run_mode == "independent":
     ind_out.to_csv(out_dir / "independent_out.csv")
 else:
     #   'run_mode' must be 'interaction' based on check at the top of script
-    
+    col_data = pd.read_csv(in_dir / "colData.csv")
+    assert interaction_cov in col_data.columns
+
     nominal_out = cis.map_nominal(
         genotype_df, variant_df, phenotype_df, phenotype_pos_df,
         prefix = prefix, covariates_df = covariates_df, output_dir = out_dir, 
-        interaction_df = interaction_df, maf_threshold_interaction = 0.05,
-        group_s = None, window = 500000, run_eigenmt = False, write_stats = True
+        interaction_df = col_data[[interaction_cov]],
+        maf_threshold_interaction = 0.05, group_s = None, window = 500000,
+        run_eigenmt = False, write_stats = True
     )
 
 session_info.show()
