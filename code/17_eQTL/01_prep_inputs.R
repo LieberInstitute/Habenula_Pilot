@@ -56,9 +56,9 @@ colnames(rse) = rse$BrNum
 
 #   Also write colData to CSV, to have easy access to potential interaction
 #   covariates
-colData(rse) |>
-    as_tibble() |>
-    write_csv(file.path(out_dir, 'colData.csv'))
+col_data = as_tibble(colData(rse))
+colnames(col_data) = gsub('\\.', '_', colnames(col_data)) 
+write_csv(col_data, file.path(out_dir, 'colData.csv'))
 
 message(Sys.time(), " - Format covariates")
 
