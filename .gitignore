@@ -8,7 +8,7 @@ processed-data/08_bulk_snpPC/*
 processed-data/99_paper_figs/*
 processed-data/09_trans_special_analysis/*
 processed-data/17_eQTL/tensorQTL_input/logcounts.bed.gz
-processed-data/17_eQTL/tensorQTL_output/*.parquet
+processed-data/17_eQTL/tensorQTL_output/*/*.parquet
 .Rhistory
 .Rproj.user
 .DS_Store
