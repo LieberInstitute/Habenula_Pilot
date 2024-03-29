@@ -11,6 +11,7 @@ from tensorqtl import genotypeio, cis
 print(f'PyTorch {torch.__version__}')
 print(f'Pandas {pd.__version__}')
 
+#   Read in command-line arguments
 run_mode = sys.argv[1]
 if run_mode not in ['nominal', 'cis', 'independent', 'interaction']:
     print("'run_mode', the first command-line argument, must be one of 'nominal', 'cis', 'interaction', or 'independent'.")
@@ -21,6 +22,7 @@ if run_mode == "interaction":
         sys.exit()
     interaction_cov = sys.argv[2]
 
+#   Specify paths and global variables
 in_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_input"))
 out_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_output", run_mode))
 plink_prefix_path = str(

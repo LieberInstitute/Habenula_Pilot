@@ -8,9 +8,14 @@
 #SBATCH -o /dev/null
 #SBATCH -e /dev/null
 
-run_mode=nominal
+run_mode=cis
+interaction_cov=none
 
-log_path="logs/02_run_tensorqtl_${run_mode}.log"
+if [[ "$run_mode" == "interaction" ]]; then
+    log_path="logs/02_run_tensorqtl_${run_mode}_${interaction_cov}.log"
+else
+    log_path="logs/02_run_tensorqtl_${run_mode}.log"
+fi
 
 {
 echo "**** Job starts ****"
@@ -22,7 +27,7 @@ echo "Job name: ${SLURM_JOB_NAME}"
 echo "Node name: ${SLURMD_NODENAME}"
 
 module load tensorqtl/1.0.8
-python 02_run_tensorqtl.py $run_mode
+python 02_run_tensorqtl.py $run_mode $interaction_cov
 
 echo "**** Job ends ****"
 date
