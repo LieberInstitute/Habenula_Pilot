@@ -19,7 +19,7 @@ big_vcf=../../processed-data/08_bulk_snpPC/habenula_genotypes.vcf.gz
 out_dir=../../processed-data/17_eQTL
 
 paired_variants=${out_dir}/DEA_paired_variants.txt
-small_vcf=${out_dir}/paired_DEA_eQTL_SNPs.vcf.gz
+small_vcf=${out_dir}/paired_DEA_eQTL_SNPs.vcf
 
 set -e
 
@@ -33,7 +33,6 @@ echo "Node name: ${SLURMD_NODENAME}"
 
 zcat $big_vcf \
     | grep -E "^#|$(paste -sd "|" $paired_variants)" \
-    | gzip \
     > $small_vcf
 echo "**** Job ends ****"
 date
