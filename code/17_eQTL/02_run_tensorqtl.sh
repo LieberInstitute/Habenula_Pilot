@@ -5,9 +5,14 @@
 #SBATCH --gpus=1
 #SBATCH --mem=50G
 #SBATCH --job-name=02_run_tensorqtl
-#SBATCH -o logs/02_run_tensorqtl.log
-#SBATCH -e logs/02_run_tensorqtl.log
+#SBATCH -o /dev/null
+#SBATCH -e /dev/null
 
+run_mode=nominal
+
+log_path="logs/02_run_tensorqtl_${run_mode}.log"
+
+{
 echo "**** Job starts ****"
 date
 echo "**** JHPCE info ****"
@@ -17,7 +22,8 @@ echo "Job name: ${SLURM_JOB_NAME}"
 echo "Node name: ${SLURMD_NODENAME}"
 
 module load tensorqtl/1.0.8
-python 02_run_tensorqtl.py
+python 02_run_tensorqtl.py $run_mode
 
 echo "**** Job ends ****"
 date
+} > $log_path 2>&1

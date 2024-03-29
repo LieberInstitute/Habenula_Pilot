@@ -11,8 +11,11 @@ from tensorqtl import genotypeio, cis
 print(f'PyTorch {torch.__version__}')
 print(f'Pandas {pd.__version__}')
 
+run_mode = sys.argv[1]
+assert run_mode in ['nominal', 'cis', 'independent', 'interaction']
+
 in_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_input"))
-out_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_output"))
+out_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_output", run_mode))
 plink_prefix_path = str(
     here("processed-data", '08_bulk_snpPC', "habenula_genotypes")
 )
@@ -87,11 +90,15 @@ elif express_chrom != variant_chrom:
 #   Run tensorQTL
 ################################################################################
 
-cis.map_nominal(
-    genotype_df, variant_df, phenotype_df, phenotype_pos_df, prefix = prefix,
-    covariates_df = covariates_df, maf_threshold = 0.05, interaction_df = None,
-    maf_threshold_interaction = 0, group_s = None, window = 500000,
-    run_eigenmt = True, output_dir = out_dir, write_top = False, verbose = False
-)
+if run_mode == "nominal":
+    # nominal code here
+elif run_mode == "cis":
+    # cis code here
+elif run_mode == "independent":
+    # independent code here
+else:
+    #   'run_mode' must be 'interaction' based on check at the top of script
+
+    #   interaction code here
 
 session_info.show()
