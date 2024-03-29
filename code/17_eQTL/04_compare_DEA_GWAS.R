@@ -7,7 +7,9 @@ library(bigsnpr)
 library(sessioninfo)
 library(cowplot)
 
-eqtl_path = here('processed-data', '17_eQTL', 'tensorQTL_output', 'FDR05.csv')
+eqtl_path = here(
+    'processed-data', '17_eQTL', 'tensorQTL_output', 'nominal', 'FDR05.csv'
+)
 deg_path = here(
     'processed-data', '10_DEA', '04_DEA',
     'DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv'
@@ -18,6 +20,9 @@ rse_path = here(
 )
 plink_path_prefix = here(
     "processed-data", '08_bulk_snpPC', "habenula_genotypes"
+)
+paired_variants_path = here(
+    "processed-data", "17_eQTL", "DEA_paired_variants.txt"
 )
 plot_dir = here('plots', '17_eQTL')
 
@@ -117,9 +122,13 @@ dea_paired_genes[dea_paired_genes %in% gwas_paired_genes] |>
     paste(collapse = ', ') |>
     message()
 
+#   Write paired variants to a text file. This will be read used to subset the
+#   big VCF to ensure the below method for reading in genotypes (reading in the
+#   plink bed file) works as VariantAnnotation::readVcf() does
 dea_paired_variants = eqtl |>
     filter(phenotype_id %in% deg$gencodeID) |>
     pull(variant_id)
+writeLines(dea_paired_variants, paired_variants_path)
 
 ################################################################################
 #   Plots exploring how genotype affects expression at select eQTLs
