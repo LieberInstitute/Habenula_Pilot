@@ -12,9 +12,14 @@ print(f'PyTorch {torch.__version__}')
 print(f'Pandas {pd.__version__}')
 
 run_mode = sys.argv[1]
-if len(sys.argv) > 2:
+if run_mode not in ['nominal', 'cis', 'independent', 'interaction']:
+    print("'run_mode', the first command-line argument, must be one of 'nominal', 'cis', 'interaction', or 'independent'.")
+    sys.exit()
+if run_mode == "interaction":
+    if len(sys.argv) != 3:
+        print("Since 'interaction' mode was selected, exactly one covariate name was expected to be specified at the command line.")
+        sys.exit()
     interaction_cov = sys.argv[2]
-assert run_mode in ['nominal', 'cis', 'independent', 'interaction']
 
 in_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_input"))
 out_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_output", run_mode))
@@ -125,7 +130,9 @@ elif run_mode == "independent":
 else:
     #   'run_mode' must be 'interaction' based on check at the top of script
     col_data = pd.read_csv(in_dir / "colData.csv")
-    assert interaction_cov in col_data.columns
+    if interaction_cov not in col_data.columns:
+        print(f'Expected {interaction_cov} to be a valid colData column.')
+        sys.exit()
 
     nominal_out = cis.map_nominal(
         genotype_df, variant_df, phenotype_df, phenotype_pos_df,
