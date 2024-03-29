@@ -54,6 +54,12 @@ rse_to_bed <- function(rse, assay_name = "logcounts") {
 rse = get(load(rse_path, verbose = TRUE))
 colnames(rse) = rse$BrNum
 
+#   Also write colData to CSV, to have easy access to potential interaction
+#   covariates
+colData(rse) |>
+    as_tibble() |>
+    write_csv(file.path(out_dir, 'colData.csv'))
+
 message(Sys.time(), " - Format covariates")
 
 #   Select PC columns in the order of rows present in 'rse'
