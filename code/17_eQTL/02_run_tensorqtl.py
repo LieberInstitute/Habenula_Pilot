@@ -91,11 +91,35 @@ elif express_chrom != variant_chrom:
 ################################################################################
 
 if run_mode == "nominal":
-    # nominal code here
+    cis.map_nominal(
+        genotype_df, variant_df, phenotype_df, phenotype_pos_df,
+        prefix = prefix, covariates_df = covariates_df, maf_threshold = 0.05,
+        interaction_df = None, maf_threshold_interaction = 0, group_s = None,
+        window = 500000, run_eigenmt = True, output_dir = out_dir,
+        write_top = False, verbose = False
+    )
 elif run_mode == "cis":
-    # cis code here
+    cis_out = cis.map_cis(
+        genotype_df, variant_df, phenotype_df, phenotype_pos_df,
+        covariates_df = covariates_df, group_s = None, maf_threshold = 0.05,
+        beta_approx = True, nperm = 10000, window = 500000,
+        random_tiebreak = False, logger = None, seed = 118, verbose = True
+    )
+    cis_out.to_csv(out_dir / "cis_out.csv")
 elif run_mode == "independent":
-    # independent code here
+    cis_out = pd.read_csv(
+        out_dir.parent / "cis" / "cis_out.csv", index_col = 0
+    )
+
+    ind_out = cis.map_independent(
+        genotype_df = genotype_df, variant_df = variant_df, cis_df = cis_out,
+        phenotype_df = phenotype_df, phenotype_pos_df = phenotype_pos_df,
+        covariates_df = covariates_df, group_s = None, maf_threshold = 0.05,
+        nperm = 10000, window = 500000, random_tiebreak = False, logger = None,
+        seed = 119, verbose = True
+    )
+
+    ind_out.to_csv(out_dir / "independent_out.csv")
 else:
     #   'run_mode' must be 'interaction' based on check at the top of script
 
