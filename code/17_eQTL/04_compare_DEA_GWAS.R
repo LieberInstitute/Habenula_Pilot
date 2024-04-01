@@ -8,8 +8,25 @@ library(sessioninfo)
 library(cowplot)
 library(data.table)
 
+#   Read in which tensorQTL run mode is being used
+spec <- matrix(
+    c("mode", "m", 1, "character", "tensorQTL run mode"),
+    byrow = TRUE, ncol = 5
+)
+opt <- getopt(spec)
+
+accepted_modes = c('nominal', 'cis', 'independent')
+if (!(opt$mode %in% accepted_modes)) {
+    stop(
+        sprintf(
+            "'opt$mode' must be in '%s'.",
+            paste(accepted_modes, collapse = "', '")
+        )
+    )
+}
+
 eqtl_path = here(
-    'processed-data', '17_eQTL', 'tensorQTL_output', 'nominal', 'FDR05.csv'
+    'processed-data', '17_eQTL', 'tensorQTL_output', opt$mode, 'FDR05.csv'
 )
 deg_path = here(
     'processed-data', '10_DEA', '04_DEA',
@@ -31,7 +48,7 @@ plink_path_prefix = here(
 paired_variants_path = here(
     "processed-data", "17_eQTL", "DEA_paired_variants.txt"
 )
-plot_dir = here('plots', '17_eQTL')
+plot_dir = here('plots', '17_eQTL', opt$mode)
 
 sig_cutoff = 0.05
 sig_cutoff_gwas = 5e-8

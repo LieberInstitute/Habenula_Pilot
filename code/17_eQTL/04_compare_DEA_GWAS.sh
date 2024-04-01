@@ -4,9 +4,14 @@
 #SBATCH -c 1
 #SBATCH --mem=25G
 #SBATCH --job-name=04_compare_DEA_GWAS
-#SBATCH -o logs/04_compare_DEA_GWAS.log
-#SBATCH -e logs/04_compare_DEA_GWAS.log
+#SBATCH -o /dev/null
+#SBATCH -e /dev/null
 
+run_mode=cis
+
+log_path="logs/04_compare_DEA_GWAS_${run_mode}.log"
+
+{
 set -e
 
 echo "**** Job starts ****"
@@ -23,3 +28,4 @@ Rscript 04_compare_DEA_GWAS.R
 
 echo "**** Job ends ****"
 date
+} > $log_path 2>&1
