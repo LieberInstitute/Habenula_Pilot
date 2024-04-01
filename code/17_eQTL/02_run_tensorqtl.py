@@ -135,7 +135,7 @@ elif run_mode == "independent":
     ind_out.to_csv(out_dir / "independent_out.csv")
 else:
     #   'run_mode' must be 'interaction' based on check at the top of script
-    col_data = pd.read_csv(in_dir / "colData.csv")
+    col_data = pd.read_csv(in_dir / "colData.csv", index_col = 'BrNum')
     if interaction_cov not in col_data.columns:
         print(f'Expected {interaction_cov} to be a valid colData column.')
         sys.exit()
