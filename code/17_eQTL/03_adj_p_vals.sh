@@ -7,8 +7,8 @@
 #SBATCH -o /dev/null
 #SBATCH -e /dev/null
 
-run_mode=cis
-interaction_cov=none
+run_mode=interaction
+interaction_cov=tot_Thal
 
 if [[ "$run_mode" == "interaction" ]]; then
     log_path="logs/03_adj_p_val_${run_mode}_${interaction_cov}.log"

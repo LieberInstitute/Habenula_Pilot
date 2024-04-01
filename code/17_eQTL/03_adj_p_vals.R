@@ -8,8 +8,10 @@ library("getopt")
 
 #   Read in which tensorQTL run mode is being used
 spec <- matrix(
-    c("mode", "m", 1, "character", "tensorQTL run mode"),
-    c("covariate", "c", 2, "character", "covariate applicable for interaction model"),
+    c(
+        "mode", "m", 1, "character", "tensorQTL run mode",
+        "covariate", "c", 2, "character", "covariate applicable for interaction model"
+    ),
     byrow = TRUE, ncol = 5
 )
 opt <- getopt(spec)
