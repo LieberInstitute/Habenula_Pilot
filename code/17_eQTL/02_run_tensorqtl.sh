@@ -8,7 +8,7 @@
 #SBATCH -o /dev/null
 #SBATCH -e /dev/null
 
-run_mode=cis
+run_mode=independent
 interaction_cov=none
 
 if [[ "$run_mode" == "interaction" ]]; then
