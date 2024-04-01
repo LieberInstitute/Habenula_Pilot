@@ -53,18 +53,12 @@ if (opt$mode == 'nominal') {
 
     eqtl_out <- do.call("rbind", map(parquet_files, parquet_read)) |>
         mutate(FDR = p.adjust(pval_gi, "fdr"))
-} else if (opt$mode == 'cis') {
+} else if (opt$mode %in% c('cis', 'independent')) {
     eqtl_out = read_csv(
             file.path(out_dir, paste0(opt$mode, '_out.csv')),
             show_col_types = FALSE
         ) |>
         mutate(FDR =  p.adjust(pval_beta, "fdr"))
-} else if (opt$mode == "independent") {
-    eqtl_out = read_csv(
-            file.path(out_dir, paste0(opt$mode, '_out.csv')),
-            show_col_types = FALSE
-        ) |>
-        mutate(FDR =  p.adjust(pval_perm, "fdr"))
 } else { 
     stop(sprintf("Unsupported 'opt$mode' = '%s'.", opt$mode))
 }

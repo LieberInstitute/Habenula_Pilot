@@ -1,10 +1,10 @@
 **** Job starts ****
-Mon Apr  1 03:18:14 PM EDT 2024
+Mon Apr  1 03:59:40 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 3745161
+Job id: 3747452
 Job name: 03_adj_p_vals
-Node name: compute-048
+Node name: compute-152
 Loading conda_R/4.3.x
 ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
@@ -24,9 +24,9 @@ New names:
 n pairs: 742
 n pairs FDR<0.05: 742
 [1] "Reproducibility information:"
-[1] "2024-04-01 15:18:39 EDT"
+[1] "2024-04-01 15:59:49 EDT"
    user  system elapsed 
- 18.053   1.344  21.114 
+  5.441   0.237   6.538 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.2 Patched (2024-02-08 r85876)
@@ -126,4 +126,4 @@ n pairs FDR<0.05: 742
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Mon Apr  1 03:18:40 PM EDT 2024
+Mon Apr  1 03:59:49 PM EDT 2024
