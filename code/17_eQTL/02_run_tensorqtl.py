@@ -3,6 +3,7 @@ import pandas as pd
 import session_info
 from pyhere import here
 from pathlib import Path
+import statsmodels.stats.multitest
 
 import pandas as pd
 import torch
@@ -123,6 +124,9 @@ elif run_mode == "independent":
     cis_out = pd.read_csv(
         out_dir.parent / "cis" / "cis_out.csv", index_col = 0
     )
+
+    #   Compute q value, an expected input column
+    cis_out['qval'] = statsmodels.stats.multitest.fdrcorrection(cis_out['pval_beta'])[1]
 
     ind_out = cis.map_independent(
         genotype_df = genotype_df, variant_df = variant_df, cis_df = cis_out,
