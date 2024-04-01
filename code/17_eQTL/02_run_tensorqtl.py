@@ -22,12 +22,14 @@ if run_mode == "interaction":
         print("Since 'interaction' mode was selected, exactly one covariate name was expected to be specified at the command line.")
         sys.exit()
     interaction_cov = sys.argv[2]
+    out_dir_suffix = f'{run_mode}_{interaction_cov}'
 else:
     interaction_cov = "none"
+    out_dir_suffix = run_mode
 
 #   Specify paths and global variables
 in_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_input"))
-out_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_output", run_mode))
+out_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_output", out_dir_suffix))
 plink_prefix_path = str(
     here("processed-data", '08_bulk_snpPC', "habenula_genotypes")
 )
