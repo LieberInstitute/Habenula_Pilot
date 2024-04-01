@@ -6,6 +6,7 @@ library(snpStats)
 library(bigsnpr)
 library(sessioninfo)
 library(cowplot)
+library(data.table)
 
 eqtl_path = here(
     'processed-data', '17_eQTL', 'tensorQTL_output', 'nominal', 'FDR05.csv'
@@ -14,7 +15,13 @@ deg_path = here(
     'processed-data', '10_DEA', '04_DEA',
     'DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv'
 )
-gwas_path = here('processed-data', '17_eQTL', 'trubetskoy_gwas_supp_tab1.xls')
+gwas_narrow_path = here(
+    'processed-data', '17_eQTL', 'trubetskoy_gwas_supp_tab1.xls'
+)
+gwas_wide_path = here(
+    "processed-data", "13_MAGMA","GWAS", "scz2022",
+    "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"
+)
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
@@ -48,7 +55,7 @@ deg = read_tsv(deg_path, show_col_types = FALSE) |>
 rse_gene = get(load(rse_path))
 colnames(rse_gene) = rse_gene$BrNum
 
-gwas = read_excel(gwas_path) |>
+gwas_narrow = read_excel(gwas_narrow_path) |>
     filter(P < sig_cutoff_gwas) |>
     dplyr::rename(chr = CHR, pos = BP) |>
     #   Map from hg19 to hg38 and drop anything that fails
@@ -64,6 +71,16 @@ gwas = read_excel(gwas_path) |>
             str_split_i(A1A2, '/', 2)
         )
     )
+
+gwas_wide = fread(gwas_wide_path) |>
+    as_tibble() |>
+    filter(PVAL < sig_cutoff_gwas) |>
+    dplyr::rename(chr = CHROM, pos = POS) |>
+    #   Map from hg19 to hg38 and drop anything that fails
+    snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
+    filter(!is.na(pos)) |>
+    #   Construct variant_id from SNP info
+    mutate(variant_id = sprintf('chr%s:%s:%s:%s', chr, pos, A1, A2))
 
 ################################################################################
 #   Compare each type of result
@@ -92,19 +109,37 @@ message(
 #   Compare eQTLs with GWAS SNPs
 #-------------------------------------------------------------------------------
 
-message("Number of Trubetskoy et al. GWAS SNPs matching sig eQTLs:")
-table(gwas$variant_id %in% eqtl$variant_id)
+gwas_paired_genes = list()
+for (breadth in c('narrow', 'wide')) {
+    if (breadth == 'narrow') {
+        gwas = gwas_narrow
+    } else {
+        gwas = gwas_wide
+    }
 
-gwas_paired_genes = eqtl |>
-    filter(variant_id %in% gwas$variant_id) |>
-    pull(phenotype_id)
+    message(
+        sprintf(
+            "Number of %s Trubetskoy et al. GWAS SNPs matching sig eQTLs:",
+            breadth
+        )
+    )
+    table(gwas$variant_id %in% eqtl$variant_id)
 
-message("Genes paired with GWAS-significant eQTL SNPs:")
-rowData(rse_gene)$Symbol[
-    match(gwas_paired_genes, rownames(rse_gene))
-] |>
-    paste(collapse = ', ') |>
-    message()
+    gwas_paired_genes[[breadth]] = eqtl |>
+        filter(variant_id %in% gwas$variant_id) |>
+        pull(phenotype_id) |>
+        unique()
+
+    message(
+        sprintf("Genes paired with %s-GWAS-significant eQTL SNPs:", breadth)
+    )
+    rowData(rse_gene)$Symbol[
+        match(gwas_paired_genes[[breadth]], rownames(rse_gene))
+    ] |>
+        paste(collapse = ', ') |>
+        message()
+}
+
 
 #-------------------------------------------------------------------------------
 #   Compare eQTLS with DE genes
@@ -116,11 +151,17 @@ deg$Symbol[deg$gencodeID %in% eqtl_gene$phenotype_id] |>
     paste(collapse = ', ') |>
     message()
 
-message("Genes implicated in the GWAS, DEA, and eQTLs:")
 dea_paired_genes = deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id]
-dea_paired_genes[dea_paired_genes %in% gwas_paired_genes] |>
-    paste(collapse = ', ') |>
-    message()
+
+for (breadth in c('narrow', 'wide')) {
+    message(
+        sprintf("Genes implicated in the %s GWAS, DEA, and eQTLs:", breadth)
+    )
+
+    dea_paired_genes[dea_paired_genes %in% gwas_paired_genes[[breadth]]] |>
+        paste(collapse = ', ') |>
+        message()
+}
 
 #   Write paired variants to a text file. This will be read used to subset the
 #   big VCF to ensure the below method for reading in genotypes (reading in the
