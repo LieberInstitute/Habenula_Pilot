@@ -50,7 +50,8 @@ paired_variants_path = here(
 )
 plot_dir = here('plots', '17_eQTL', opt$mode)
 
-sig_cutoff = 0.05
+sig_cutoff_deg_explore = c(0.1, 0.05)
+sig_cutoff_deg_plot = 0.05
 sig_cutoff_gwas = 5e-8
 
 covariates = c(
@@ -66,8 +67,7 @@ dir.create(plot_dir, showWarnings = FALSE)
 
 eqtl = read_csv(eqtl_path, show_col_types = FALSE)
 
-deg = read_tsv(deg_path, show_col_types = FALSE) |>
-    filter(adj.P.Val < sig_cutoff)
+deg_full = read_tsv(deg_path, show_col_types = FALSE)
 
 rse_gene = get(load(rse_path))
 colnames(rse_gene) = rse_gene$BrNum
@@ -111,8 +111,9 @@ eqtl_gene = eqtl |>
     group_by(phenotype_id) |>
     summarize(n = n())
 
+#   Significance hardcoded here because it was pre-filtered in 03_adj_p_vals.R
 message(
-    sprintf("%s significant SNP-gene pairs at FDR<%s", nrow(eqtl), sig_cutoff)
+    sprintf("%s significant SNP-gene pairs at FDR<0.05", nrow(eqtl))
 )
 message(
     sprintf(
@@ -140,7 +141,7 @@ for (breadth in c('narrow', 'wide')) {
             breadth
         )
     )
-    table(gwas$variant_id %in% eqtl$variant_id)
+    print(table(gwas$variant_id %in% eqtl$variant_id))
 
     gwas_paired_genes[[breadth]] = eqtl |>
         filter(variant_id %in% gwas$variant_id) |>
@@ -162,23 +163,39 @@ for (breadth in c('narrow', 'wide')) {
 #   Compare eQTLS with DE genes
 #-------------------------------------------------------------------------------
 
-message("Number and name of DE genes implicated in any eQTLs:")
-table(deg$gencodeID %in% eqtl_gene$phenotype_id)
-deg$Symbol[deg$gencodeID %in% eqtl_gene$phenotype_id] |>
-    paste(collapse = ', ') |>
-    message()
-
-dea_paired_genes = deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id]
-
-for (breadth in c('narrow', 'wide')) {
+for (sig_cutoff in sig_cutoff_deg_explore) {
+    deg =  deg_full |> filter(adj.P.Val < sig_cutoff)
     message(
-        sprintf("Genes implicated in the %s GWAS, DEA, and eQTLs:", breadth)
+        sprintf(
+            "Number and name of DE genes at FDR<%s implicated in any eQTLs:",
+            sig_cutoff
+        )
     )
-
-    dea_paired_genes[dea_paired_genes %in% gwas_paired_genes[[breadth]]] |>
+    print(table(deg$gencodeID %in% eqtl_gene$phenotype_id))
+    deg$Symbol[deg$gencodeID %in% eqtl_gene$phenotype_id] |>
         paste(collapse = ', ') |>
         message()
+
+    dea_paired_genes = deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id]
+
+    for (breadth in c('narrow', 'wide')) {
+        message(
+            sprintf(
+                "Genes implicated in the %s GWAS, DEA at FDR<%s, and eQTLs:",
+                breadth,
+                sig_cutoff
+            )
+        )
+
+        dea_paired_genes[dea_paired_genes %in% gwas_paired_genes[[breadth]]] |>
+            paste(collapse = ', ') |>
+            message()
+    }
 }
+
+#   After exploring multiple significance cutoffs, choose one for plotting
+deg =  deg_full |> filter(adj.P.Val < sig_cutoff_deg_plot)
+dea_paired_genes = deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id]
 
 #   Write paired variants to a text file. This will be read used to subset the
 #   big VCF to ensure the below method for reading in genotypes (reading in the
