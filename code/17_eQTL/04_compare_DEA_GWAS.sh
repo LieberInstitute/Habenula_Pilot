@@ -7,7 +7,7 @@
 #SBATCH -o /dev/null
 #SBATCH -e /dev/null
 
-run_mode=cis
+run_mode=nominal
 
 log_path="logs/04_compare_DEA_GWAS_${run_mode}.log"
 
@@ -24,7 +24,7 @@ echo "Node name: ${SLURMD_NODENAME}"
 
 module load conda_R/4.3.x
 module load liftover/1.0
-Rscript 04_compare_DEA_GWAS.R
+Rscript 04_compare_DEA_GWAS.R -m $run_mode
 
 echo "**** Job ends ****"
 date

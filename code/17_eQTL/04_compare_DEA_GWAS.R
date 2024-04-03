@@ -8,6 +8,7 @@ library(sessioninfo)
 library(cowplot)
 library(data.table)
 library(jaffelab)
+library(getopt)
 
 #   Read in which tensorQTL run mode is being used
 spec <- matrix(
@@ -52,7 +53,14 @@ paired_variants_path = here(
 plot_dir = here('plots', '17_eQTL', opt$mode)
 
 sig_cutoff_deg_explore = c(0.1, 0.05)
-sig_cutoff_deg_plot = 0.05
+
+#   We can use a stricter cutoff for nominal, where we have more results
+if (opt$mode == 'nominal') {
+    sig_cutoff_deg_plot = 0.05
+} else {
+    sig_cutoff_deg_plot = 0.1
+}
+
 sig_cutoff_gwas = 5e-8
 
 #   Covariates used in the model for tensorQTL and for DEA, respectively
