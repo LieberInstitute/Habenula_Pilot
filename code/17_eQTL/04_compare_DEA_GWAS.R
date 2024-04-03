@@ -281,7 +281,11 @@ for (this_gene in unique(exp_df$gene_id)) {
 
     plot_list_geno[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
-        ggplot(mapping = aes(x = genotype, y = resid_logcount_eqtl)) +
+        ggplot(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = genotype
+                )
+            ) +
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
             facet_wrap(~ snp_id) +
@@ -289,43 +293,63 @@ for (this_gene in unique(exp_df$gene_id)) {
                 x = "Genotype", y = "Residualized Expression",
                 title = this_symbol
             ) +
-            theme_bw(base_size = 20)
+            theme_bw()
     
     plot_list_dx[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
         #   Don't take duplicate rows if there are multiple SNPs per gene
         filter(snp_id == snp_id[1]) |>
-        ggplot(mapping = aes(x = PrimaryDx, y = resid_logcount_deg)) +
+        ggplot(
+                mapping = aes(
+                    x = PrimaryDx, y = resid_logcount_deg, color = PrimaryDx
+                )
+            ) +
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
             labs(y = "Residualized Expression", title = this_symbol) +
             theme_bw(base_size = 20)
     
-    temp = list()
-    for (x_var_name in c("tot.Hb", "tot.Thal")) {
-        temp[[x_var_name]] = exp_df |>
-            filter(gene_id == this_gene) |>
-            ggplot(
-                mapping = aes(
-                    x = get({{ x_var_name }}), y = resid_logcount_eqtl,
-                    color = genotype
+    #   Grab all SNPs associated with this gene
+    these_snp_ids = exp_df |>
+        filter(gene_id == this_gene) |>
+        pull(snp_id) |>
+        unique()
+
+    #   Each page will consist of one SNP-gene pair and two plots: one for
+    #   habenula and one for thalamus fraction
+    for (this_snp_id in these_snp_ids) {
+        temp = list()
+        this_title = sprintf('%s: %s', this_symbol, this_snp_id)
+        for (x_var_name in c("tot.Hb", "tot.Thal")) {
+            temp[[x_var_name]] = exp_df |>
+                filter(gene_id == this_gene, snp_id == this_snp_id) |>
+                ggplot(
+                    mapping = aes(
+                        x = get({{ x_var_name }}), y = resid_logcount_eqtl,
+                        color = genotype
+                    )
+                ) +
+                geom_point() +
+                geom_smooth(method = lm) +
+                coord_cartesian(xlim = c(0, 1)) +
+                theme_bw(base_size = 20) +
+                labs(
+                    x = x_var_name, y = "Residualized Expression",
+                    color = "Genotype"
                 )
-            ) +
-            geom_point() +
-            geom_smooth(method = lm) +
-            facet_wrap(~ snp_id) +
-            coord_cartesian(xlim = c(0, 1)) +
-            theme_bw(base_size = 20) +
-            labs(
-                x = x_var_name, y = "Residualized Expression",
-                color = "Genotype"
-            )
-        
-        if (x_var_name == "tot.Hb") {
-            temp[[x_var_name]] = temp[[x_var_name]] + labs(title = this_symbol)
+            
+            #   Only want one title and legend, not 2
+            if (x_var_name == "tot.Hb") {
+                temp[[x_var_name]] = temp[[x_var_name]] +
+                    labs(title = this_title) +
+                    theme(legend.position = "none")
+            } else {
+                temp[[x_var_name]] = temp[[x_var_name]] +
+                    labs(title = " ")
+            }
         }
+        plot_list_fraction[[this_title]] = plot_grid(plotlist = temp, ncol = 2)
     }
-    plot_list_fraction[[this_gene]] = plot_grid(plotlist = temp, ncol = 2)
 }
 
 pdf(file.path(plot_dir, 'expr_by_geno.pdf'))
