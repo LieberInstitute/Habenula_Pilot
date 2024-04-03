@@ -289,7 +289,7 @@ for (this_gene in unique(exp_df$gene_id)) {
                 x = "Genotype", y = "Residualized Expression",
                 title = this_symbol
             ) +
-            theme_bw()
+            theme_bw(base_size = 20)
     
     plot_list_dx[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
@@ -313,11 +313,17 @@ for (this_gene in unique(exp_df$gene_id)) {
             ) +
             geom_point() +
             geom_smooth(method = lm) +
-            theme_bw() +
+            facet_wrap(~ snp_id) +
+            coord_cartesian(xlim = c(0, 1)) +
+            theme_bw(base_size = 20) +
             labs(
                 x = x_var_name, y = "Residualized Expression",
                 color = "Genotype"
             )
+        
+        if (x_var_name == "tot.Hb") {
+            temp[[x_var_name]] = temp[[x_var_name]] + labs(title = this_symbol)
+        }
     }
     plot_list_fraction[[this_gene]] = plot_grid(plotlist = temp, ncol = 2)
 }
@@ -330,7 +336,7 @@ pdf(file.path(plot_dir, 'expr_by_dx.pdf'))
 print(plot_list_dx)
 dev.off()
 
-pdf(file.path(plot_dir, 'expr_by_geno_fraction.pdf'), width = 10, height = 5)
+pdf(file.path(plot_dir, 'expr_by_geno_fraction.pdf'), width = 14, height = 7)
 print(plot_list_fraction)
 dev.off()
 
