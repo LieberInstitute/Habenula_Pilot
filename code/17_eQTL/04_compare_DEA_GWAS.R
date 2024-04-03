@@ -7,6 +7,7 @@ library(bigsnpr)
 library(sessioninfo)
 library(cowplot)
 library(data.table)
+library(jaffelab)
 
 #   Read in which tensorQTL run mode is being used
 spec <- matrix(
@@ -54,8 +55,14 @@ sig_cutoff_deg_explore = c(0.1, 0.05)
 sig_cutoff_deg_plot = 0.05
 sig_cutoff_gwas = 5e-8
 
-covariates = c(
+#   Covariates used in the model for tensorQTL and for DEA, respectively
+eqtl_covariates = c(
     "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5'
+)
+deg_covariates = c(
+    'PrimaryDx', 'AgeDeath', 'Flowcell', 'mitoRate', 'rRNA_rate', 'RIN',
+    'totalAssignedGene', 'abs_ERCCsumLogErr', 'qSV1', 'qSV2', 'qSV3', 'qSV4',
+    'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
 )
 
 lift_over_path = system('which liftOver', intern = TRUE)
@@ -211,19 +218,35 @@ writeLines(dea_paired_variants, paired_variants_path)
 
 #   Model covariates to later call jaffelab::cleaningY() to residualize
 #   expression for downstream plots
-pd = as.data.frame(colData(rse_gene)[, covariates])
-mod <- model.matrix(
-        as.formula(paste('~', paste(covariates, collapse = " + "))),
+pd = as.data.frame(colData(rse_gene))
+mod_eqtl <- model.matrix(
+        as.formula(paste('~', paste(eqtl_covariates, collapse = " + "))),
         data = pd
-    )[, 2:(1 + length(covariates))]
+    )[, 2:(1 + length(eqtl_covariates))]
+mod_deg <- model.matrix(
+        as.formula(paste('~', paste(deg_covariates, collapse = " + "))),
+        data = pd
+    )[, 2:(1 + length(deg_covariates))]
 
 #   Grab the expression for all genes significant in the DEA having significantly
-#   associated variants found in the eQTL analysis; convert to long format
-express = assays(rse_gene[dea_paired_genes,])$logcounts |>
-    cleaningY(mod = mod, P = 1) |>
+#   associated variants found in the eQTL analysis; convert to long format.
+#   Residualize using both the tensorQTL and DEA models
+express_eqtl = assays(rse_gene[dea_paired_genes,])$logcounts |>
+    cleaningY(mod = mod_eqtl, P = 1) |>
     as.data.frame() |>
     rownames_to_column("gene_id") |>
-    pivot_longer(cols = -gene_id, names_to = "sample_id", values_to = "resid_logcount")
+    pivot_longer(
+        cols = -gene_id, names_to = "sample_id",
+        values_to = "resid_logcount_eqtl"
+    )
+express_deg = assays(rse_gene[dea_paired_genes,])$logcounts |>
+    cleaningY(mod = mod_deg, P = 2) |>
+    as.data.frame() |>
+    rownames_to_column("gene_id") |>
+    pivot_longer(
+        cols = -gene_id, names_to = "sample_id",
+        values_to = "resid_logcount_deg"
+    )
 
 #   Read in genotype data and join with expression data
 a = read.plink(paste0(plink_path_prefix, '.bed'))
@@ -237,13 +260,14 @@ exp_df = a$genotypes[, dea_paired_variants] |>
         genotype = factor(3 - as.integer(genotype)),
         gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)]
     ) |>
-    #   Add expression data
-    left_join(express, by = c('sample_id', 'gene_id')) |>
+    #   Add expression data residualized from both models
+    left_join(express_eqtl, by = c('sample_id', 'gene_id')) |>
+    left_join(express_deg, by = c('sample_id', 'gene_id')) |>
     #   Add colData
     left_join(
         colData(rse_gene) |> as_tibble(), by = join_by(sample_id == BrNum)
     ) |>
-    filter(sample_id %in% express$sample_id)
+    filter(sample_id %in% express_eqtl$sample_id)
 
 #   Plot expression by genotype of each variant with one gene per page and
 #   potentially several variants per gene
@@ -257,7 +281,7 @@ for (this_gene in unique(exp_df$gene_id)) {
 
     plot_list_geno[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
-        ggplot(mapping = aes(x = genotype, y = resid_logcount)) +
+        ggplot(mapping = aes(x = genotype, y = resid_logcount_eqtl)) +
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
             facet_wrap(~ snp_id) +
@@ -271,7 +295,7 @@ for (this_gene in unique(exp_df$gene_id)) {
         filter(gene_id == this_gene) |>
         #   Don't take duplicate rows if there are multiple SNPs per gene
         filter(snp_id == snp_id[1]) |>
-        ggplot(mapping = aes(x = PrimaryDx, y = resid_logcount)) +
+        ggplot(mapping = aes(x = PrimaryDx, y = resid_logcount_deg)) +
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
             labs(y = "Residualized Expression", title = this_symbol) +
@@ -283,7 +307,7 @@ for (this_gene in unique(exp_df$gene_id)) {
             filter(gene_id == this_gene) |>
             ggplot(
                 mapping = aes(
-                    x = get({{ x_var_name }}), y = resid_logcount,
+                    x = get({{ x_var_name }}), y = resid_logcount_eqtl,
                     color = genotype
                 )
             ) +
