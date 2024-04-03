@@ -279,15 +279,33 @@ for (this_gene in unique(exp_df$gene_id)) {
         match(this_gene, rownames(rse_gene))
     ]
 
+    label_df = eqtl |>
+        filter(
+            phenotype_id == this_gene,
+            variant_id %in% exp_df$snp_id
+        ) |>
+        mutate(sig_label = sprintf(" p = %s", signif(pval_nominal, 3))) |>
+        dplyr::rename(snp_id = variant_id)
+
     plot_list_geno[[this_gene]] = exp_df |>
         filter(gene_id == this_gene) |>
-        ggplot(
+        ggplot() +
+            geom_boxplot(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = genotype
+                ),
+                outlier.shape = NA) +
+            geom_jitter(
                 mapping = aes(
                     x = genotype, y = resid_logcount_eqtl, color = genotype
                 )
             ) +
-            geom_boxplot(outlier.shape = NA) +
-            geom_jitter() +
+            geom_text(
+                data = label_df,
+                mapping = aes(label = sig_label, x = -Inf, y = Inf),
+                hjust = 0,
+                vjust = 1
+            ) +
             facet_wrap(~ snp_id) +
             labs(
                 x = "Genotype", y = "Residualized Expression",
