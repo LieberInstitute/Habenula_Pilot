@@ -77,6 +77,181 @@ lift_over_path = system('which liftOver', intern = TRUE)
 dir.create(plot_dir, showWarnings = FALSE)
 
 ################################################################################
+#   Functions
+################################################################################
+
+plot_triad = function(
+        rse_gene, dea_paired_variants, mod_deg, mod_eqtl, eqtl, plink, plot_dir,
+        plot_prefix
+    ) {
+    #   Grab vector of unique genes paired (via a significant eQTL) with the
+    #   variants of interest
+    dea_paired_genes = unique(
+        eqtl$phenotype_id[
+            match(dea_paired_variants, eqtl$variant_id)
+        ]
+    )
+
+    #   Grab the expression for all genes paired with significant eQTLs;
+    #   convert to long format. Residualize using both the tensorQTL and DEA
+    #   models
+    express_eqtl = assays(rse_gene[dea_paired_genes,])$logcounts |>
+        cleaningY(mod = mod_eqtl, P = 1) |>
+        as.data.frame() |>
+        rownames_to_column("gene_id") |>
+        pivot_longer(
+            cols = -gene_id, names_to = "sample_id",
+            values_to = "resid_logcount_eqtl"
+        )
+    express_deg = assays(rse_gene[dea_paired_genes,])$logcounts |>
+        cleaningY(mod = mod_deg, P = 2) |>
+        as.data.frame() |>
+        rownames_to_column("gene_id") |>
+        pivot_longer(
+            cols = -gene_id, names_to = "sample_id",
+            values_to = "resid_logcount_deg"
+        )
+
+    #   Join genotyping data, expression, and colData
+    exp_df = a$genotypes[, dea_paired_variants] |>
+        as.data.frame() |>
+        rownames_to_column("sample_id") |>
+        pivot_longer(
+            cols = -sample_id, names_to = "snp_id", values_to = "genotype"
+        ) |>
+        mutate(
+            genotype = factor(3 - as.integer(genotype)),
+            gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)]
+        ) |>
+        #   Add expression data residualized from both models
+        left_join(express_eqtl, by = c('sample_id', 'gene_id')) |>
+        left_join(express_deg, by = c('sample_id', 'gene_id')) |>
+        #   Add colData
+        left_join(
+            colData(rse_gene) |> as_tibble(), by = join_by(sample_id == BrNum)
+        ) |>
+        filter(sample_id %in% express_eqtl$sample_id)
+
+    #   Plot expression by genotype of each variant with one gene per page and
+    #   potentially several variants per gene
+    plot_list_geno = list()
+    plot_list_dx = list()
+    plot_list_fraction = list()
+    for (this_gene in unique(exp_df$gene_id)) {
+        this_symbol = rowData(rse_gene)$Symbol[
+            match(this_gene, rownames(rse_gene))
+        ]
+
+        label_df = eqtl |>
+            filter(
+                phenotype_id == this_gene,
+                variant_id %in% exp_df$snp_id
+            ) |>
+            mutate(sig_label = sprintf(" p = %s", signif(pval_nominal, 3))) |>
+            dplyr::rename(snp_id = variant_id)
+
+        plot_list_geno[[this_gene]] = exp_df |>
+            filter(gene_id == this_gene) |>
+            ggplot() +
+                geom_boxplot(
+                    mapping = aes(
+                        x = genotype, y = resid_logcount_eqtl, color = genotype
+                    ),
+                    outlier.shape = NA) +
+                geom_jitter(
+                    mapping = aes(
+                        x = genotype, y = resid_logcount_eqtl, color = genotype
+                    )
+                ) +
+                geom_text(
+                    data = label_df,
+                    mapping = aes(label = sig_label, x = -Inf, y = Inf),
+                    hjust = 0,
+                    vjust = 1
+                ) +
+                facet_wrap(~ snp_id) +
+                labs(
+                    x = "Genotype", y = "Residualized Expression",
+                    title = this_symbol
+                ) +
+                theme_bw()
+        
+        plot_list_dx[[this_gene]] = exp_df |>
+            filter(gene_id == this_gene) |>
+            #   Don't take duplicate rows if there are multiple SNPs per gene
+            filter(snp_id == snp_id[1]) |>
+            ggplot(
+                    mapping = aes(
+                        x = PrimaryDx, y = resid_logcount_deg, color = PrimaryDx
+                    )
+                ) +
+                geom_boxplot(outlier.shape = NA) +
+                geom_jitter() +
+                labs(y = "Residualized Expression", title = this_symbol) +
+                theme_bw(base_size = 20)
+        
+        #   Grab all SNPs associated with this gene
+        these_snp_ids = exp_df |>
+            filter(gene_id == this_gene) |>
+            pull(snp_id) |>
+            unique()
+
+        #   Each page will consist of one SNP-gene pair and two plots: one for
+        #   habenula and one for thalamus fraction
+        for (this_snp_id in these_snp_ids) {
+            temp = list()
+            this_title = sprintf('%s: %s', this_symbol, this_snp_id)
+            for (x_var_name in c("tot.Hb", "tot.Thal")) {
+                temp[[x_var_name]] = exp_df |>
+                    filter(gene_id == this_gene, snp_id == this_snp_id) |>
+                    ggplot(
+                        mapping = aes(
+                            x = get({{ x_var_name }}), y = resid_logcount_eqtl,
+                            color = genotype
+                        )
+                    ) +
+                    geom_point() +
+                    geom_smooth(method = lm) +
+                    coord_cartesian(xlim = c(0, 1)) +
+                    theme_bw(base_size = 20) +
+                    labs(
+                        x = x_var_name, y = "Residualized Expression",
+                        color = "Genotype"
+                    )
+                
+                #   Only want one title and legend, not 2
+                if (x_var_name == "tot.Hb") {
+                    temp[[x_var_name]] = temp[[x_var_name]] +
+                        labs(title = this_title) +
+                        theme(legend.position = "none")
+                } else {
+                    temp[[x_var_name]] = temp[[x_var_name]] +
+                        labs(title = " ")
+                }
+            }
+            plot_list_fraction[[this_title]] = plot_grid(plotlist = temp, ncol = 2)
+        }
+    }
+
+    pdf(file.path(plot_dir, sprintf('expr_by_geno_%s.pdf', plot_prefix)))
+    print(plot_list_geno)
+    dev.off()
+
+    pdf(file.path(plot_dir, sprintf('expr_by_dx_%s.pdf', plot_prefix)))
+    print(plot_list_dx)
+    dev.off()
+
+    pdf(
+        file.path(
+            plot_dir, sprintf('expr_by_geno_fraction_%s.pdf', plot_prefix)
+        ),
+        width = 14, height = 7
+    )
+    print(plot_list_fraction)
+    dev.off()
+}
+
+################################################################################
 #   Read in eQTL, DEA, and GWAS results, and the RSE
 ################################################################################
 
@@ -236,158 +411,19 @@ mod_deg <- model.matrix(
         data = pd
     )[, 2:(1 + length(deg_covariates))]
 
-#   Grab the expression for all genes significant in the DEA having significantly
-#   associated variants found in the eQTL analysis; convert to long format.
-#   Residualize using both the tensorQTL and DEA models
-express_eqtl = assays(rse_gene[dea_paired_genes,])$logcounts |>
-    cleaningY(mod = mod_eqtl, P = 1) |>
-    as.data.frame() |>
-    rownames_to_column("gene_id") |>
-    pivot_longer(
-        cols = -gene_id, names_to = "sample_id",
-        values_to = "resid_logcount_eqtl"
-    )
-express_deg = assays(rse_gene[dea_paired_genes,])$logcounts |>
-    cleaningY(mod = mod_deg, P = 2) |>
-    as.data.frame() |>
-    rownames_to_column("gene_id") |>
-    pivot_longer(
-        cols = -gene_id, names_to = "sample_id",
-        values_to = "resid_logcount_deg"
-    )
+#   Read in genotypes
+plink = read.plink(paste0(plink_path_prefix, '.bed'))
 
-#   Read in genotype data and join with expression data
-a = read.plink(paste0(plink_path_prefix, '.bed'))
-exp_df = a$genotypes[, dea_paired_variants] |>
-    as.data.frame() |>
-    rownames_to_column("sample_id") |>
-    pivot_longer(
-        cols = -sample_id, names_to = "snp_id", values_to = "genotype"
-    ) |>
-    mutate(
-        genotype = factor(3 - as.integer(genotype)),
-        gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)]
-    ) |>
-    #   Add expression data residualized from both models
-    left_join(express_eqtl, by = c('sample_id', 'gene_id')) |>
-    left_join(express_deg, by = c('sample_id', 'gene_id')) |>
-    #   Add colData
-    left_join(
-        colData(rse_gene) |> as_tibble(), by = join_by(sample_id == BrNum)
-    ) |>
-    filter(sample_id %in% express_eqtl$sample_id)
+plot_triad(
+    rse_gene = rse_gene,
+    dea_paired_variants = dea_paired_variants,
+    mod_deg = mod_deg,
+    mod_eqtl = mod_eqtl,
+    eqtl = eqtl,
+    plink = plink,
+    plot_dir = plot_dir,
+    plot_prefix = "eqtls_paired_with_dea_genes"
+)
 
-#   Plot expression by genotype of each variant with one gene per page and
-#   potentially several variants per gene
-plot_list_geno = list()
-plot_list_dx = list()
-plot_list_fraction = list()
-for (this_gene in unique(exp_df$gene_id)) {
-    this_symbol = rowData(rse_gene)$Symbol[
-        match(this_gene, rownames(rse_gene))
-    ]
-
-    label_df = eqtl |>
-        filter(
-            phenotype_id == this_gene,
-            variant_id %in% exp_df$snp_id
-        ) |>
-        mutate(sig_label = sprintf(" p = %s", signif(pval_nominal, 3))) |>
-        dplyr::rename(snp_id = variant_id)
-
-    plot_list_geno[[this_gene]] = exp_df |>
-        filter(gene_id == this_gene) |>
-        ggplot() +
-            geom_boxplot(
-                mapping = aes(
-                    x = genotype, y = resid_logcount_eqtl, color = genotype
-                ),
-                outlier.shape = NA) +
-            geom_jitter(
-                mapping = aes(
-                    x = genotype, y = resid_logcount_eqtl, color = genotype
-                )
-            ) +
-            geom_text(
-                data = label_df,
-                mapping = aes(label = sig_label, x = -Inf, y = Inf),
-                hjust = 0,
-                vjust = 1
-            ) +
-            facet_wrap(~ snp_id) +
-            labs(
-                x = "Genotype", y = "Residualized Expression",
-                title = this_symbol
-            ) +
-            theme_bw()
-    
-    plot_list_dx[[this_gene]] = exp_df |>
-        filter(gene_id == this_gene) |>
-        #   Don't take duplicate rows if there are multiple SNPs per gene
-        filter(snp_id == snp_id[1]) |>
-        ggplot(
-                mapping = aes(
-                    x = PrimaryDx, y = resid_logcount_deg, color = PrimaryDx
-                )
-            ) +
-            geom_boxplot(outlier.shape = NA) +
-            geom_jitter() +
-            labs(y = "Residualized Expression", title = this_symbol) +
-            theme_bw(base_size = 20)
-    
-    #   Grab all SNPs associated with this gene
-    these_snp_ids = exp_df |>
-        filter(gene_id == this_gene) |>
-        pull(snp_id) |>
-        unique()
-
-    #   Each page will consist of one SNP-gene pair and two plots: one for
-    #   habenula and one for thalamus fraction
-    for (this_snp_id in these_snp_ids) {
-        temp = list()
-        this_title = sprintf('%s: %s', this_symbol, this_snp_id)
-        for (x_var_name in c("tot.Hb", "tot.Thal")) {
-            temp[[x_var_name]] = exp_df |>
-                filter(gene_id == this_gene, snp_id == this_snp_id) |>
-                ggplot(
-                    mapping = aes(
-                        x = get({{ x_var_name }}), y = resid_logcount_eqtl,
-                        color = genotype
-                    )
-                ) +
-                geom_point() +
-                geom_smooth(method = lm) +
-                coord_cartesian(xlim = c(0, 1)) +
-                theme_bw(base_size = 20) +
-                labs(
-                    x = x_var_name, y = "Residualized Expression",
-                    color = "Genotype"
-                )
-            
-            #   Only want one title and legend, not 2
-            if (x_var_name == "tot.Hb") {
-                temp[[x_var_name]] = temp[[x_var_name]] +
-                    labs(title = this_title) +
-                    theme(legend.position = "none")
-            } else {
-                temp[[x_var_name]] = temp[[x_var_name]] +
-                    labs(title = " ")
-            }
-        }
-        plot_list_fraction[[this_title]] = plot_grid(plotlist = temp, ncol = 2)
-    }
-}
-
-pdf(file.path(plot_dir, 'expr_by_geno.pdf'))
-print(plot_list_geno)
-dev.off()
-
-pdf(file.path(plot_dir, 'expr_by_dx.pdf'))
-print(plot_list_dx)
-dev.off()
-
-pdf(file.path(plot_dir, 'expr_by_geno_fraction.pdf'), width = 14, height = 7)
-print(plot_list_fraction)
-dev.off()
 
 session_info()
