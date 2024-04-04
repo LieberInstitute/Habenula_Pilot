@@ -188,7 +188,8 @@ plot_triad = function(
                 geom_boxplot(outlier.shape = NA) +
                 geom_jitter() +
                 labs(y = "Residualized Expression", title = this_symbol) +
-                theme_bw(base_size = 20)
+                theme_bw(base_size = 20) +
+                theme(legend.position = "none")
         
         #   Grab all SNPs associated with this gene
         these_snp_ids = exp_df |>
@@ -383,18 +384,6 @@ for (sig_cutoff in sig_cutoff_deg_explore) {
     }
 }
 
-#   After exploring multiple significance cutoffs, choose one for plotting
-deg =  deg_full |> filter(adj.P.Val < sig_cutoff_deg_plot)
-dea_paired_genes = deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id]
-
-#   Write paired variants to a text file. This will be read used to subset the
-#   big VCF to ensure the below method for reading in genotypes (reading in the
-#   plink bed file) works as VariantAnnotation::readVcf() does
-dea_paired_variants = eqtl |>
-    filter(phenotype_id %in% deg$gencodeID) |>
-    pull(variant_id)
-writeLines(dea_paired_variants, paired_variants_path)
-
 ################################################################################
 #   Plots exploring how genotype affects expression at select eQTLs
 ################################################################################
@@ -414,6 +403,20 @@ mod_deg <- model.matrix(
 #   Read in genotypes
 plink = read.plink(paste0(plink_path_prefix, '.bed'))
 
+#   After exploring multiple significance cutoffs, choose one for plotting
+deg =  deg_full |> filter(adj.P.Val < sig_cutoff_deg_plot)
+dea_paired_variants = eqtl |>
+    filter(phenotype_id %in% deg$gencodeID) |>
+    pull(variant_id)
+
+#   Write paired variants to a text file. This will be read used to subset the
+#   big VCF to ensure the below method for reading in genotypes (reading in the
+#   plink bed file) works as VariantAnnotation::readVcf() does
+if (opt$mode == "nominal") {
+    writeLines(dea_paired_variants, paired_variants_path)
+}
+
+#   For all modes, plot any SNPs in an eQTL pair paired with a DEG
 plot_triad(
     rse_gene = rse_gene,
     dea_paired_variants = dea_paired_variants,
@@ -422,8 +425,16 @@ plot_triad(
     eqtl = eqtl,
     plink = plink,
     plot_dir = plot_dir,
-    plot_prefix = "eqtls_paired_with_dea_genes"
+    plot_prefix = sprintf(
+        "eqtls_paired_with_dea_genes_FDR%s",
+        as.character(sig_cutoff_deg_plot) |> str_split_i('\\.', 2)
+    )
 )
+
+if (opt$mode == "independent") {
+    dea_paired_genes = deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id]
+}
+
 
 
 session_info()
