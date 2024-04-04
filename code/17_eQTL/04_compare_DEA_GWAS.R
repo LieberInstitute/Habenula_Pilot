@@ -431,8 +431,23 @@ plot_triad(
     )
 )
 
+#   For independent, plot (11) SNPs overlapping wider GWAS and their paired
+#   genes
 if (opt$mode == "independent") {
-    dea_paired_genes = deg$gencodeID[deg$gencodeID %in% eqtl_gene$phenotype_id]
+    gwas_variants = gwas_wide |>
+        filter(variant_id %in% eqtl$variant_id) |>
+        pull(variant_id)
+    
+    plot_triad(
+        rse_gene = rse_gene,
+        dea_paired_variants = gwas_variants,
+        mod_deg = mod_deg,
+        mod_eqtl = mod_eqtl,
+        eqtl = eqtl,
+        plink = plink,
+        plot_dir = plot_dir,
+        plot_prefix = "wide_gwas"
+    )
 }
 
 
