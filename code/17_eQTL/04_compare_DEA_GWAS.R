@@ -431,9 +431,10 @@ plot_triad(
     )
 )
 
-#   For independent, plot (11) SNPs overlapping wider GWAS and their paired
-#   genes
+
 if (opt$mode == "independent") {
+    #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
+    #   genes
     gwas_variants = gwas_wide |>
         filter(variant_id %in% eqtl$variant_id) |>
         pull(variant_id)
@@ -446,10 +447,25 @@ if (opt$mode == "independent") {
         eqtl = eqtl,
         plink = plink,
         plot_dir = plot_dir,
-        plot_prefix = "wide_gwas"
+        plot_prefix = "wide_gwas_eqtls"
+    )
+
+    #   Also plot the top 10 (by significance) eQTLs for independent
+    top_eqtls = eqtl |>
+        arrange(FDR) |>
+        slice_head(n = 10) |>
+        pull(variant_id)
+    
+    plot_triad(
+        rse_gene = rse_gene,
+        dea_paired_variants = top_eqtls,
+        mod_deg = mod_deg,
+        mod_eqtl = mod_eqtl,
+        eqtl = eqtl,
+        plink = plink,
+        plot_dir = plot_dir,
+        plot_prefix = "top_10_eqtls"
     )
 }
-
-
 
 session_info()
