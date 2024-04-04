@@ -185,7 +185,8 @@ plot_triad = function(
                     x = "Genotype", y = "Residualized Expression",
                     title = this_symbol
                 ) +
-                theme_bw()
+                theme_bw() +
+                theme(legend.position = "none")
         
         plot_list_dx[[this_gene]] = exp_df |>
             filter(gene_id == this_gene) |>
@@ -273,6 +274,7 @@ deg_full = read_tsv(deg_path, show_col_types = FALSE)
 
 rse_gene = get(load(rse_path))
 colnames(rse_gene) = rse_gene$BrNum
+rse_gene$PrimaryDx[rse_gene$PrimaryDx == "Schizo"] = "SCZD"
 
 gwas_narrow = read_excel(gwas_narrow_path) |>
     filter(P < sig_cutoff_gwas) |>
