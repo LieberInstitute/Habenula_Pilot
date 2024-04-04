@@ -50,6 +50,9 @@ plink_path_prefix = here(
 paired_variants_path = here(
     "processed-data", "17_eQTL", "DEA_paired_variants.txt"
 )
+raw_geno_path = here(
+    'processed-data', '08_bulk_snpPC', 'habenula_genotypes_filt.traw'
+)
 plot_dir = here('plots', '17_eQTL', opt$mode)
 
 sig_cutoff_deg_explore = c(0.1, 0.05)
@@ -385,6 +388,24 @@ for (sig_cutoff in sig_cutoff_deg_explore) {
 }
 
 ################################################################################
+#   Read in and preprocess genotype info
+################################################################################
+
+#   Read in genotypes
+plink = read.plink(paste0(plink_path_prefix, '.bed'))
+
+#   Read in genotype metadata and line up with plink genotypes
+geno_raw = read_delim(raw_geno_path, delim = '\t')
+geno_raw = geno_raw[match(plink$map$snp.name, geno_raw$SNP),]
+
+#   Keep track of which genotypes should be flipped later, based on code from
+#   https://github.com/LieberInstitute/brainseq_phase2/blob/d6779afe6f1509165b4c4eecdfdb7ff7a5d16a19/misc/pull_genotype_data.R#L76-L81
+alt_mismatch_df = tibble(
+    snp_id = plink$map$snp.name,
+    is_flipped = plink$map$allele.2 == geno_raw$COUNTED
+)
+
+################################################################################
 #   Plots exploring how genotype affects expression at select eQTLs
 ################################################################################
 
@@ -399,9 +420,6 @@ mod_deg <- model.matrix(
         as.formula(paste('~', paste(deg_covariates, collapse = " + "))),
         data = pd
     )[, 2:(1 + length(deg_covariates))]
-
-#   Read in genotypes
-plink = read.plink(paste0(plink_path_prefix, '.bed'))
 
 #   After exploring multiple significance cutoffs, choose one for plotting
 deg =  deg_full |> filter(adj.P.Val < sig_cutoff_deg_plot)
