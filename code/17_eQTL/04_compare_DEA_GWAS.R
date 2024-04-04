@@ -85,7 +85,7 @@ dir.create(plot_dir, showWarnings = FALSE)
 
 plot_triad = function(
         rse_gene, dea_paired_variants, mod_deg, mod_eqtl, eqtl, plink, plot_dir,
-        plot_prefix
+        plot_prefix, mismatched_snps
     ) {
     #   Grab vector of unique genes paired (via a significant eQTL) with the
     #   variants of interest
@@ -116,14 +116,22 @@ plot_triad = function(
         )
 
     #   Join genotyping data, expression, and colData
-    exp_df = a$genotypes[, dea_paired_variants] |>
+    exp_df = plink$genotypes[, dea_paired_variants] |>
         as.data.frame() |>
         rownames_to_column("sample_id") |>
         pivot_longer(
             cols = -sample_id, names_to = "snp_id", values_to = "genotype"
         ) |>
         mutate(
-            genotype = factor(3 - as.integer(genotype)),
+            genotype = factor(
+                #   Ensure 0 is reference, 1 is heterozygous, and 2 is
+                #   homozygous for the ALT
+                ifelse(
+                    snp_id %in% mismatched_snps,
+                    as.integer(genotype) - 1,
+                    3 - as.integer(genotype)
+                )
+            ),
             gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)]
         ) |>
         #   Add expression data residualized from both models
@@ -400,10 +408,7 @@ geno_raw = geno_raw[match(plink$map$snp.name, geno_raw$SNP),]
 
 #   Keep track of which genotypes should be flipped later, based on code from
 #   https://github.com/LieberInstitute/brainseq_phase2/blob/d6779afe6f1509165b4c4eecdfdb7ff7a5d16a19/misc/pull_genotype_data.R#L76-L81
-alt_mismatch_df = tibble(
-    snp_id = plink$map$snp.name,
-    is_flipped = plink$map$allele.2 == geno_raw$COUNTED
-)
+mismatched_snps = plink$map$snp.name[plink$map$allele.2 == geno_raw$COUNTED]
 
 ################################################################################
 #   Plots exploring how genotype affects expression at select eQTLs
@@ -446,7 +451,8 @@ plot_triad(
     plot_prefix = sprintf(
         "eqtls_paired_with_dea_genes_FDR%s",
         as.character(sig_cutoff_deg_plot) |> str_split_i('\\.', 2)
-    )
+    ),
+    mismatched_snps
 )
 
 
@@ -465,7 +471,8 @@ if (opt$mode == "independent") {
         eqtl = eqtl,
         plink = plink,
         plot_dir = plot_dir,
-        plot_prefix = "wide_gwas_eqtls"
+        plot_prefix = "wide_gwas_eqtls",
+        mismatched_snps
     )
 
     #   Also plot the top 10 (by significance) eQTLs for independent
@@ -482,7 +489,8 @@ if (opt$mode == "independent") {
         eqtl = eqtl,
         plink = plink,
         plot_dir = plot_dir,
-        plot_prefix = "top_10_eqtls"
+        plot_prefix = "top_10_eqtls",
+        mismatched_snps
     )
 }
 
