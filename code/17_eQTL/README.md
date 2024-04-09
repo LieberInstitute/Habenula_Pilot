@@ -2,14 +2,14 @@
 
 ## Overview of results
 
-This table summarizes the number of significant results when comparing overlap of eQTLs with DEGs and GWAS SNPs.
+This table summarizes the number of significant results when comparing overlap of eQTLs with DEGs and GWAS SNPs. While [3 plots are produced for each eQTL set](#plot-organization-and-naming-conventions), links to the first plot (against diagnosis) are provided in the table where they exist.
 
 | eQTL type | eQTL FDR | num sig genes total | num sig genes overlap FDR < 0.05 DEGs | num sig genes overlap FDR < 0.1 DEGs | num sig SNP-gene pairs | num sig SNPs overlap GWAS 313 p < 5e-8 | num sig SNPs overlap GWAS 20k p < 5e-8 | trifectas at DEG FDR < 0.05 | trifectas at DEG FDR < 0.1 |
-| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
-| nominal | 0.05 | 3163 | 5 | 23 | 147744 | 7 | 4285 | 0 | 0 |
+| ----- | ----- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
+| nominal | 0.05 | 3163 | [5](https://github.com/LieberInstitute/Habenula_Pilot/blob/master/plots/17_eQTL/nominal/expr_by_dx_eqtls_paired_with_dea_genes_FDR05.pdf) | 23 | 147744 | 7 | 4285 | 0 | 0 |
 | nominal | 0.01 | 1311 | 1 | 12 | 86656 | 3 | 3354 | 0 | 0 |
 | cis | 0.05 | 728 | 0 | 3 | 728 | 0 | 11 | 0 | 0 |
-| independent | 0.05 | 728 | 0 | 3 | 742 | 0 | 11 | 0 | 0 |
+| independent | 0.05 | 728 | 0 | [3](https://github.com/LieberInstitute/Habenula_Pilot/blob/master/plots/17_eQTL/independent/expr_by_dx_eqtls_paired_with_dea_genes_FDR1.pdf) | 742 | 0 | [11](https://github.com/LieberInstitute/Habenula_Pilot/blob/master/plots/17_eQTL/independent/expr_by_dx_wide_gwas_eqtls.pdf) | 0 | 0 |
 
 ## Plot organization and naming conventions
 
