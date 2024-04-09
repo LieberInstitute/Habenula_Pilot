@@ -1,4 +1,4 @@
-- `04_compare_DEA_GWAS.*`: These scripts explore `tensorQTL` eQTL results, and check for overlap with [our DEGs](https://github.com/LieberInstitute/Habenula_Pilot/blob/d3810a75cb9dba46b14e6cb51a3bdac44c8abe1d/code/17_eQTL/04_compare_DEA_GWAS.R#L33-L36) and PGC3 GWAS SNPs at [two levels](https://github.com/LieberInstitute/Habenula_Pilot/blob/d3810a75cb9dba46b14e6cb51a3bdac44c8abe1d/code/17_eQTL/04_compare_DEA_GWAS.R#L37-L43): a larger set of ~20k SNPs, and a smaller set of just 313.
+This README describes results from the `04_compare_DEA_GWAS.*` scripts, which explore `tensorQTL` eQTL results, and check for overlap with [our DEGs](https://github.com/LieberInstitute/Habenula_Pilot/blob/d3810a75cb9dba46b14e6cb51a3bdac44c8abe1d/code/17_eQTL/04_compare_DEA_GWAS.R#L33-L36) and PGC3 GWAS SNPs at [two levels](https://github.com/LieberInstitute/Habenula_Pilot/blob/d3810a75cb9dba46b14e6cb51a3bdac44c8abe1d/code/17_eQTL/04_compare_DEA_GWAS.R#L37-L43): a larger set of ~20k SNPs, and a smaller set of just 313.
 
 ## Overview of results
 
