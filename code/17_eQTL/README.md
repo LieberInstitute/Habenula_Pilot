@@ -1,5 +1,16 @@
 - `04_compare_DEA_GWAS.*`: These scripts explore `tensorQTL` eQTL results, and check for overlap with [our DEGs](https://github.com/LieberInstitute/Habenula_Pilot/blob/d3810a75cb9dba46b14e6cb51a3bdac44c8abe1d/code/17_eQTL/04_compare_DEA_GWAS.R#L33-L36) and PGC3 GWAS SNPs at [two levels](https://github.com/LieberInstitute/Habenula_Pilot/blob/d3810a75cb9dba46b14e6cb51a3bdac44c8abe1d/code/17_eQTL/04_compare_DEA_GWAS.R#L37-L43): a larger set of ~20k SNPs, and a smaller set of just 313.
 
+## Overview of results
+
+This table summarizes the number of significant results when comparing overlap of eQTLs with DEGs and GWAS SNPs.
+
+| eQTL type | eQTL FDR | num sig genes total | num sig genes overlap FDR < 0.05 DEGs | num sig genes overlap FDR < 0.1 DEGs | num sig SNP-gene pairs | num sig SNPs overlap GWAS 313 p < 5e-8 | num sig SNPs overlap GWAS 20k p < 5e-8 | trifectas at DEG FDR < 0.05 | trifectas at DEG FDR < 0.1 |
+| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
+| nominal | 0.05 | 3163 | 5 | 23 | 147744 | 7 | 4285 | 0 | 0 |
+| nominal | 0.01 | 1311 | 1 | 12 | 86656 | 3 | 3354 | 0 | 0 |
+| cis | 0.05 | 728 | 0 | 3 | 728 | 0 | 11 | 0 | 0 |
+| independent | 0.05 | 728 | 0 | 3 | 742 | 0 | 11 | 0 | 0 |
+
 ## Plot organization and naming conventions
 
 ### Prefix
