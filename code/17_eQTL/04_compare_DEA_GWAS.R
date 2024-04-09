@@ -37,9 +37,15 @@ deg_path = here(
 gwas_narrow_path = here(
     'processed-data', '17_eQTL', 'trubetskoy_gwas_supp_tab1.xls'
 )
+gwas_narrow_filt_path = here(
+    'processed-data', '17_eQTL', 'gwas_narrow_filtered.csv'
+)
 gwas_wide_path = here(
     "processed-data", "13_MAGMA","GWAS", "scz2022",
     "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"
+)
+gwas_wide_filt_path = here(
+    'processed-data', '17_eQTL', 'gwas_wide_filtered.csv'
 )
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
@@ -276,32 +282,42 @@ rse_gene = get(load(rse_path))
 colnames(rse_gene) = rse_gene$BrNum
 rse_gene$PrimaryDx[rse_gene$PrimaryDx == "Schizo"] = "SCZD"
 
-gwas_narrow = read_excel(gwas_narrow_path) |>
-    filter(P < sig_cutoff_gwas) |>
-    dplyr::rename(chr = CHR, pos = BP) |>
-    #   Map from hg19 to hg38 and drop anything that fails
-    snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
-    filter(!is.na(pos)) |>
-    #   Construct variant_id from SNP info
-    mutate(
-        variant_id = sprintf(
-            'chr%s:%s:%s:%s',
-            chr,
-            pos,
-            str_split_i(A1A2, '/', 1),
-            str_split_i(A1A2, '/', 2)
-        )
-    )
+#   Due to repeated issues with the FTP servers performing the liftover,
+#   save filtered copies and load from that rather than lifting over
+#   in each interactive session
 
-gwas_wide = fread(gwas_wide_path) |>
-    as_tibble() |>
-    filter(PVAL < sig_cutoff_gwas) |>
-    dplyr::rename(chr = CHROM, pos = POS) |>
-    #   Map from hg19 to hg38 and drop anything that fails
-    snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
-    filter(!is.na(pos)) |>
-    #   Construct variant_id from SNP info
-    mutate(variant_id = sprintf('chr%s:%s:%s:%s', chr, pos, A1, A2))
+# gwas_narrow = read_excel(gwas_narrow_path) |>
+#     filter(P < sig_cutoff_gwas) |>
+#     dplyr::rename(chr = CHR, pos = BP) |>
+#     #   Map from hg19 to hg38 and drop anything that fails
+#     snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
+#     filter(!is.na(pos)) |>
+#     #   Construct variant_id from SNP info
+#     mutate(
+#         variant_id = sprintf(
+#             'chr%s:%s:%s:%s',
+#             chr,
+#             pos,
+#             str_split_i(A1A2, '/', 1),
+#             str_split_i(A1A2, '/', 2)
+#         )
+#     )
+#
+# write_csv(gwas_narrow, gwas_narrow_filt_path)
+gwas_narrow = read_csv(gwas_narrow_filt_path, show_col_types = FALSE)
+
+# gwas_wide = fread(gwas_wide_path) |>
+#     as_tibble() |>
+#     filter(PVAL < sig_cutoff_gwas) |>
+#     dplyr::rename(chr = CHROM, pos = POS) |>
+#     #   Map from hg19 to hg38 and drop anything that fails
+#     snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
+#     filter(!is.na(pos)) |>
+#     #   Construct variant_id from SNP info
+#     mutate(variant_id = sprintf('chr%s:%s:%s:%s', chr, pos, A1, A2))
+
+# write_csv(gwas_wide, gwas_wide_filt_path)
+gwas_wide = read_csv(gwas_wide_filt_path, show_col_types = FALSE)
 
 ################################################################################
 #   Compare each type of result
