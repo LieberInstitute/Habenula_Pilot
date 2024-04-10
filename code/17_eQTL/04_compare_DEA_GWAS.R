@@ -323,16 +323,6 @@ gwas_narrow = read_csv(gwas_narrow_filt_path, show_col_types = FALSE)
 # write_csv(gwas_wide, gwas_wide_filt_path)
 gwas_wide = read_csv(gwas_wide_filt_path, show_col_types = FALSE)
 
-eqtl |>
-    left_join(
-        gwas_narrow |>
-            separate(A1A2, into = c("A1", "A2"), sep = "/") |>
-            select(variant_id, OR),
-        by = "variant_id"
-    ) |>
-
-
-
 ################################################################################
 #   Compare each type of result
 ################################################################################
