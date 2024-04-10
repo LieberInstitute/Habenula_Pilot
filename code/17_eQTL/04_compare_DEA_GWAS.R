@@ -548,9 +548,12 @@ if (opt$mode == "independent") {
                 variant_id %in% gwas_wide$variant_id,
                 "gwas_wide",
                 "independent_deg_snp"
-            )
+            ),
+            symbol = rowData(rse_gene)$Symbol[
+                match(phenotype_id, rownames(rse_gene))
+            ]
         ) |>
-        dplyr::select(variant_id, rs_id, source) |>
+        dplyr::select(phenotype_id, symbol, variant_id, rs_id, source) |>
         write_csv(rs_path)
 }
 
