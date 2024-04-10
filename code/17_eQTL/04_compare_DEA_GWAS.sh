@@ -7,7 +7,7 @@
 #SBATCH -o /dev/null
 #SBATCH -e /dev/null
 
-run_mode=nominal
+run_mode=independent
 
 log_path="logs/04_compare_DEA_GWAS_${run_mode}.log"
 
