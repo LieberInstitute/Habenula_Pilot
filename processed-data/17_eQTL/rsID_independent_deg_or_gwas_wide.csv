@@ -1,0 +1,17 @@
+variant_id,rs_id,source
+chr3:52550699:A:G,rs2878628,gwas_wide
+chr6:26353872:G:T,rs67509210,gwas_wide
+chr6:28558878:A:C,rs414745,gwas_wide
+chr6:28207375:G:T,rs1150694,gwas_wide
+chr6:29861474:A:C,rs1611713,gwas_wide
+chr6:30932650:T:G,rs2253718,gwas_wide
+chr6:32839713:C:T,rs114595701,gwas_wide
+chr6:125720018:C:T,rs1268070,independent_deg_snp
+chr11:44066439:G:T,rs2074038,independent_deg_snp
+chr12:69711278:C:T,rs775457,independent_deg_snp
+chr15:84592552:C:T,rs72750843,gwas_wide
+chr17:45910839:A:G,rs2435204,gwas_wide
+chr17:45910839:A:G,rs2435204,gwas_wide
+chr17:45868952:T:C,rs753236,gwas_wide
+chr17:46278268:C:A,rs2696531,gwas_wide
+chr17:46278268:C:A,rs2696531,gwas_wide

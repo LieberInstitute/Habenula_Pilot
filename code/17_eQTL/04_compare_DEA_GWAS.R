@@ -9,6 +9,7 @@ library(cowplot)
 library(data.table)
 library(jaffelab)
 library(getopt)
+library(MRutils)
 
 #   Read in which tensorQTL run mode is being used
 spec <- matrix(
@@ -55,6 +56,9 @@ plink_path_prefix = here(
 )
 paired_variants_path = here(
     "processed-data", "17_eQTL", "DEA_paired_variants.txt"
+)
+rs_path = here(
+    "processed-data", "17_eQTL", "rsID_independent_deg_or_gwas_wide.csv"
 )
 raw_geno_path = here(
     'processed-data', '08_bulk_snpPC', 'habenula_genotypes_filt.traw'
@@ -293,15 +297,15 @@ rse_gene$PrimaryDx[rse_gene$PrimaryDx == "Schizo"] = "SCZD"
 #     snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
 #     filter(!is.na(pos)) |>
 #     #   Construct variant_id from SNP info
-#     mutate(
-#         variant_id = sprintf(
-#             'chr%s:%s:%s:%s',
-#             chr,
-#             pos,
-#             str_split_i(A1A2, '/', 1),
-#             str_split_i(A1A2, '/', 2)
-#         )
-#     )
+    # mutate(
+    #     variant_id = sprintf(
+    #         'chr%s:%s:%s:%s',
+    #         chr,
+    #         pos,
+    #         str_split_i(A1A2, '/', 1),
+    #         str_split_i(A1A2, '/', 2)
+    #     )
+    # )
 #
 # write_csv(gwas_narrow, gwas_narrow_filt_path)
 gwas_narrow = read_csv(gwas_narrow_filt_path, show_col_types = FALSE)
@@ -318,6 +322,16 @@ gwas_narrow = read_csv(gwas_narrow_filt_path, show_col_types = FALSE)
 
 # write_csv(gwas_wide, gwas_wide_filt_path)
 gwas_wide = read_csv(gwas_wide_filt_path, show_col_types = FALSE)
+
+eqtl |>
+    left_join(
+        gwas_narrow |>
+            separate(A1A2, into = c("A1", "A2"), sep = "/") |>
+            select(variant_id, OR),
+        by = "variant_id"
+    ) |>
+
+
 
 ################################################################################
 #   Compare each type of result
@@ -377,7 +391,6 @@ for (breadth in c('narrow', 'wide')) {
         paste(collapse = ', ') |>
         message()
 }
-
 
 #-------------------------------------------------------------------------------
 #   Compare eQTLS with DE genes
@@ -510,6 +523,45 @@ if (opt$mode == "independent") {
         plot_prefix = "top_10_eqtls",
         mismatched_snps
     )
+
+    #   Next, find SNP ID ("rs ID") for SNPs overlapping the wide GWAS or
+    #   paired with a DEG
+
+    deg = deg_full |>
+        filter(adj.P.Val < sig_cutoff_deg_plot)
+
+    a = eqtl |>
+        separate(
+            variant_id, into = c("chr", "pos", "A1", "A2"), sep = ":",
+            remove = FALSE
+        ) |>
+        mutate(chr = str_extract(chr, '^chr(.*)', group = 1)) |>
+        dplyr::filter(
+            (variant_id %in% gwas_wide$variant_id) |
+            (phenotype_id %in% deg$gencodeID)
+        )
+
+    #   Individually search for rs IDs
+    a$rs_id = sapply(
+        seq(nrow(a)), function(i) {
+            get_rsid_from_position(
+                chrom = a$chr[i], pos = a$pos[i], ref = a$A1[i], alt = a$A2[i],
+                assembly = "hg38"
+            )
+        }
+    )
+
+    #   Write to a CSV of results for manually querying BSP1+BSP2 eQTL browser
+    a |>
+        mutate(
+            source = ifelse(
+                variant_id %in% gwas_wide$variant_id,
+                "gwas_wide",
+                "independent_deg_snp"
+            )
+        ) |>
+        dplyr::select(variant_id, rs_id, source) |>
+        write_csv(rs_path)
 }
 
 session_info()
