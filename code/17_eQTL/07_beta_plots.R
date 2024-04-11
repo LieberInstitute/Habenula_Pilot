@@ -16,6 +16,12 @@ eqtl_thal_path = here(
     'processed-data', '17_eQTL', 'tensorQTL_output', 'interaction_tot_Thal',
     'all.csv'
 )
+
+#   Cache some temporary results from this script for quicker interactive testing
+eqtl_int_path = here(
+    'processed-data', '17_eQTL', 'tensorQTL_output', 'combined_interaaction_subset.csv'
+)
+
 deg_path = here(
     'processed-data', '10_DEA', '04_DEA',
     'DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv'
@@ -64,6 +70,11 @@ eqtl_thal = read_csv(eqtl_thal_path, show_col_types = FALSE) |>
 
 eqtl_int = rbind(eqtl_hb, eqtl_thal) |>
     filter(pair_id %in% intersect(eqtl_hb$pair_id, eqtl_thal$pair_id))
+
+write_csv(eqtl_int, eqtl_int_path)
+
+#   For quicker interactive testing
+# eqtl_int = read_csv(eqtl_int_path)
 
 #   Make note of filtered independent pairs not measured in each interaction
 #   model
