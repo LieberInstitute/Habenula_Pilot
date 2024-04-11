@@ -53,6 +53,9 @@ if (opt$mode == 'nominal') {
 
     eqtl_out <- do.call("rbind", map(parquet_files, parquet_read)) |>
         mutate(FDR = p.adjust(pval_gi, "fdr"))
+    
+    #   We also want the unfiltered, total set of eQTLs for interaction
+    write_csv(eqtl_out, file.path(out_dir, 'all.csv'))
 } else if (opt$mode %in% c('cis', 'independent')) {
     eqtl_out = read_csv(
             file.path(out_dir, paste0(opt$mode, '_out.csv')),
