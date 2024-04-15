@@ -33,7 +33,7 @@ rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
 
-plot_dir = here('plots', '17_eQTL', opt$mode)
+plot_dir = here('plots', '17_eQTL')
 
 sig_cutoff_deg = 0.1
 
@@ -51,6 +51,23 @@ filt_eqtl_independent = eqtl_independent |>
         variant_id %in% gwas_wide$variant_id
     ) |>
     mutate(pair_id = paste(phenotype_id, variant_id, sep = '_'))
+
+#   Note that there are 11 SNPs overlapping the GWAS data, but these SNPs appear
+#   in 13 eQTLs total
+message(
+    "Num SNPs overlapping wide GWAS data: ",
+    eqtl_independent |>
+        filter(variant_id %in% gwas_wide$variant_id) |>
+        pull(variant_id) |>
+        unique() |>
+        length()
+)
+message(
+    "Num eQTLs including those SNPs: ",
+    eqtl_independent |>
+        filter(variant_id %in% gwas_wide$variant_id) |>
+        nrow()
+)
 
 #   Read in the full set of interaction eQTLs (with habenula and thalamus
 #   fraction) and individually filter SNPs that overlap in the independent set
@@ -88,10 +105,21 @@ message(
     )
 )
 
-eqtl_int |>
+p = eqtl_int |>
     select(phenotype_id, variant_id, b_gi, pval_gi, interaction_var) |>
+    mutate(
+        source = factor(
+            ifelse(variant_id %in% gwas_wide$variant_id, "GWAS SNP", "DEG")
+        )
+    ) |>
     pivot_wider(
         values_from = c("b_gi", "pval_gi"), names_from = "interaction_var"
     ) |>
-    ggplot() +
-        geom_point(aes(x = b_gi_hb, y = b_gi_thal))
+    ggplot(mapping = aes(x = b_gi_hb, y = b_gi_thal, color = source)) +
+        geom_point() +
+        geom_hline(yintercept = 0) +
+        geom_vline(xintercept = 0)
+
+pdf(file.path(plot_dir, 'interaction_beta.pdf'))
+print(p)
+dev.off()
