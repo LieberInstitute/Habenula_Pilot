@@ -485,8 +485,40 @@ plot_triad_exploratory(
 )
 
 if (opt$mode == "independent") {
+    #---------------------------------------------------------------------------
+    #   For DEGs paired with eQTLs, manually re-plot a manuscript-ready
+    #   expression vs. diagnosis plot faceted to contain all 3 genes
+    #---------------------------------------------------------------------------
+
+    p = exp_df |>
+        ggplot(
+                mapping = aes(
+                    x = PrimaryDx, y = resid_logcount_deg, color = PrimaryDx
+                )
+            ) +
+            geom_boxplot(outlier.shape = NA) +
+            geom_jitter() +
+            facet_wrap(~gene_symbol) +
+            labs(y = "Residualized Expression") +
+            theme_bw(base_size = 20) +
+            theme(legend.position = "none")
+    pdf(
+        file.path(
+            plot_dir,
+            sprintf(
+                'expr_by_dx_eqtls_paired_with_dea_genes_FDR%s.pdf',
+                as.character(sig_cutoff_deg_plot) |> str_split_i('\\.', 2)
+            )
+        )
+    )
+    print(p)
+    dev.off()
+
+    #---------------------------------------------------------------------------
     #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
-    #   genes
+    #   (14) genes
+    #---------------------------------------------------------------------------
+
     gwas_variants = gwas_wide |>
         filter(variant_id %in% eqtl$variant_id) |>
         pull(variant_id)
@@ -507,7 +539,10 @@ if (opt$mode == "independent") {
         plot_prefix = "wide_gwas_eqtls"
     )
 
+    #---------------------------------------------------------------------------
     #   Also plot the top 10 (by significance) eQTLs for independent
+    #---------------------------------------------------------------------------
+
     top_eqtls = eqtl |>
         arrange(FDR) |>
         slice_head(n = 10) |>
@@ -529,8 +564,10 @@ if (opt$mode == "independent") {
         plot_prefix = "top_10_eqtls"
     )
 
+    #---------------------------------------------------------------------------
     #   Next, find SNP ID ("rs ID") for SNPs overlapping the wide GWAS or
     #   paired with a DEG
+    #---------------------------------------------------------------------------
 
     deg = deg_full |>
         filter(adj.P.Val < sig_cutoff_deg_plot)
