@@ -93,9 +93,11 @@ dir.create(plot_dir, showWarnings = FALSE)
 #   Functions
 ################################################################################
 
-plot_triad = function(
-        rse_gene, dea_paired_variants, mod_deg, mod_eqtl, eqtl, plink, plot_dir,
-        plot_prefix, mismatched_snps
+#   Return a merged tibble of genotyping data, residualized expression, and
+#   colData
+merge_exp_df = function(
+        rse_gene, dea_paired_variants, mod_deg, mod_eqtl, eqtl, plink,
+        mismatched_snps
     ) {
     #   Grab vector of unique genes paired (via a significant eQTL) with the
     #   variants of interest
@@ -142,7 +144,10 @@ plot_triad = function(
                     3 - as.integer(genotype)
                 )
             ),
-            gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)]
+            gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)],
+            gene_symbol = rowData(rse_gene)$Symbol[
+                match(gene_id, rownames(rse_gene))
+            ]
         ) |>
         #   Add expression data residualized from both models
         left_join(express_eqtl, by = c('sample_id', 'gene_id')) |>
@@ -153,14 +158,18 @@ plot_triad = function(
         ) |>
         filter(sample_id %in% express_eqtl$sample_id)
 
+    return(exp_df)
+}
+
+plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
     #   Plot expression by genotype of each variant with one gene per page and
     #   potentially several variants per gene
     plot_list_geno = list()
     plot_list_dx = list()
     plot_list_fraction = list()
     for (this_gene in unique(exp_df$gene_id)) {
-        this_symbol = rowData(rse_gene)$Symbol[
-            match(this_gene, rownames(rse_gene))
+        this_symbol = exp_df$gene_symbol[
+            match(this_gene, exp_df$gene_id)
         ]
 
         label_df = eqtl |>
@@ -448,7 +457,7 @@ mod_deg <- model.matrix(
     )[, 2:(1 + length(deg_covariates))]
 
 #   After exploring multiple significance cutoffs, choose one for plotting
-deg =  deg_full |> filter(adj.P.Val < sig_cutoff_deg_plot)
+deg = deg_full |> filter(adj.P.Val < sig_cutoff_deg_plot)
 dea_paired_variants = eqtl |>
     filter(phenotype_id %in% deg$gencodeID) |>
     pull(variant_id)
@@ -461,21 +470,19 @@ if (opt$mode == "nominal") {
 }
 
 #   For all modes, plot any SNPs in an eQTL pair paired with a DEG
-plot_triad(
-    rse_gene = rse_gene,
-    dea_paired_variants = dea_paired_variants,
-    mod_deg = mod_deg,
-    mod_eqtl = mod_eqtl,
-    eqtl = eqtl,
-    plink = plink,
-    plot_dir = plot_dir,
+exp_df = merge_exp_df(
+    rse_gene, dea_paired_variants, mod_deg, mod_eqtl, eqtl, plink,
+    mismatched_snps
+)
+plot_triad_exploratory(
+    eqtl,
+    exp_df,
+    plot_dir,
     plot_prefix = sprintf(
         "eqtls_paired_with_dea_genes_FDR%s",
         as.character(sig_cutoff_deg_plot) |> str_split_i('\\.', 2)
-    ),
-    mismatched_snps
+    )
 )
-
 
 if (opt$mode == "independent") {
     #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
@@ -484,16 +491,20 @@ if (opt$mode == "independent") {
         filter(variant_id %in% eqtl$variant_id) |>
         pull(variant_id)
     
-    plot_triad(
+    exp_df = merge_exp_df(
         rse_gene = rse_gene,
         dea_paired_variants = gwas_variants,
         mod_deg = mod_deg,
         mod_eqtl = mod_eqtl,
         eqtl = eqtl,
         plink = plink,
-        plot_dir = plot_dir,
-        plot_prefix = "wide_gwas_eqtls",
         mismatched_snps
+    )
+    plot_triad_exploratory(
+        eqtl,
+        exp_df,
+        plot_dir = plot_dir,
+        plot_prefix = "wide_gwas_eqtls"
     )
 
     #   Also plot the top 10 (by significance) eQTLs for independent
@@ -502,16 +513,20 @@ if (opt$mode == "independent") {
         slice_head(n = 10) |>
         pull(variant_id)
     
-    plot_triad(
+    exp_df = merge_exp_df(
         rse_gene = rse_gene,
         dea_paired_variants = top_eqtls,
         mod_deg = mod_deg,
         mod_eqtl = mod_eqtl,
         eqtl = eqtl,
         plink = plink,
-        plot_dir = plot_dir,
-        plot_prefix = "top_10_eqtls",
         mismatched_snps
+    )
+    plot_triad_exploratory(
+        eqtl,
+        exp_df,
+        plot_dir = plot_dir,
+        plot_prefix = "top_10_eqtls"
     )
 
     #   Next, find SNP ID ("rs ID") for SNPs overlapping the wide GWAS or
