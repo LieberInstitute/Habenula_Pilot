@@ -486,10 +486,16 @@ plot_triad_exploratory(
 
 if (opt$mode == "independent") {
     #---------------------------------------------------------------------------
-    #   For DEGs paired with eQTLs, manually re-plot a manuscript-ready
-    #   expression vs. diagnosis plot faceted to contain all 3 genes
+    #   For DEGs paired with eQTLs, manually re-plot manuscript-ready
+    #   plot versions
     #---------------------------------------------------------------------------
 
+    plot_suffix = sprintf(
+        'eqtls_paired_with_dea_genes_FDR%s.pdf',
+        as.character(sig_cutoff_deg_plot) |> str_split_i('\\.', 2)
+    )
+
+    #   Expression vs diagnosis for DEGs
     p = exp_df |>
         ggplot(
                 mapping = aes(
@@ -502,15 +508,40 @@ if (opt$mode == "independent") {
             labs(y = "Residualized Expression") +
             theme_bw(base_size = 20) +
             theme(legend.position = "none")
-    pdf(
-        file.path(
-            plot_dir,
-            sprintf(
-                'expr_by_dx_eqtls_paired_with_dea_genes_FDR%s.pdf',
-                as.character(sig_cutoff_deg_plot) |> str_split_i('\\.', 2)
-            )
-        )
-    )
+    pdf(file.path(plot_dir, paste0('expr_by_dx_', plot_suffix)))
+    print(p)
+    dev.off()
+
+    #   Expression by genotype for SNPs paired with DEGs
+    label_df = eqtl |>
+        filter(phenotype_id %in% deg$gencodeID) |>
+        mutate(sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))) |>
+        dplyr::rename(snp_id = variant_id)
+
+    p = exp_df |>
+        ggplot() +
+            geom_boxplot(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = genotype
+                ),
+                outlier.shape = NA) +
+            geom_jitter(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = genotype
+                )
+            ) +
+            geom_text(
+                data = label_df,
+                mapping = aes(label = sig_label, x = Inf, y = -Inf),
+                hjust = 1,
+                vjust = 0,
+                size = 6
+            ) +
+            facet_wrap(~ snp_id) +
+            labs(x = "Genotype", y = "Residualized Expression") +
+            theme_bw(base_size = 20) +
+            theme(legend.position = "none", strip.text.x = element_text(size = 13))
+    pdf(file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)))
     print(p)
     dev.off()
 
@@ -538,6 +569,9 @@ if (opt$mode == "independent") {
         plot_dir = plot_dir,
         plot_prefix = "wide_gwas_eqtls"
     )
+
+    #   For a manuscript plot, we'll also want to sample 3 of these SNPs and
+    #   produce an expression-by-genotype plot faceted by eQTL
 
     #---------------------------------------------------------------------------
     #   Also plot the top 10 (by significance) eQTLs for independent
