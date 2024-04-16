@@ -253,22 +253,22 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                     scale_color_manual(values = geno_colors) +
                     coord_cartesian(xlim = c(0, 1)) +
                     theme_bw(base_size = 20) +
-                    labs(
-                        x = x_var_name, y = "Residualized Expression",
-                        color = "Genotype"
-                    )
+                    theme(plot.title = element_text(size = 20)) +
+                    labs(y = "Residualized Expression", color = "Genotype")
                 
                 #   Only want one title and legend, not 2
                 if (x_var_name == "tot.Hb") {
                     temp[[x_var_name]] = temp[[x_var_name]] +
-                        labs(title = this_title) +
+                        labs(x = "Habenula Fraction", title = this_title) +
                         theme(legend.position = "none")
                 } else {
                     temp[[x_var_name]] = temp[[x_var_name]] +
-                        labs(title = " ")
+                        labs(x = "Thalamus Fraction", title = " ")
                 }
             }
-            plot_list_fraction[[this_title]] = plot_grid(plotlist = temp, ncol = 2)
+            plot_list_fraction[[this_title]] = plot_grid(
+                plotlist = temp, ncol = 2, rel_widths = 4:5
+            )
         }
     }
 
