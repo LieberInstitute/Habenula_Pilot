@@ -19,7 +19,7 @@ eqtl_thal_path = here(
 
 #   Cache some temporary results from this script for quicker interactive testing
 eqtl_int_path = here(
-    'processed-data', '17_eQTL', 'tensorQTL_output', 'combined_interaaction_subset.csv'
+    'processed-data', '17_eQTL', 'tensorQTL_output', 'combined_interaction_subset.csv'
 )
 
 deg_path = here(
@@ -37,20 +37,73 @@ plot_dir = here('plots', '17_eQTL')
 
 sig_cutoff_deg = 0.1
 
+################################################################################
+#   Read in and preprocess data
+################################################################################
+
+#   FDR < 0.1 DEGs
 deg = read_tsv(deg_path, show_col_types = FALSE) |>
     filter(adj.P.Val < sig_cutoff_deg)
 
+#   ~20k "wide" GWAS SNPs
 gwas_wide = read_csv(gwas_wide_path, show_col_types = FALSE)
 
-#   Read in all significant independent eQTLs and keep a filtered copy to those
-#   overlapping either the wide GWAS or FDR < 0.1 DEGs
-eqtl_independent = read_csv(eqtl_independent_path, show_col_types = FALSE)
+#   Read in all significant independent eQTLs
+eqtl_independent = read_csv(eqtl_independent_path, show_col_types = FALSE) |>
+    mutate(pair_id = paste(phenotype_id, variant_id, sep = '_'))
+
+#   Read in the full set of interaction eQTLs (with habenula and thalamus
+#   fraction) and filter to those significant in independent model
+eqtl_hb = fread(eqtl_hb_path) |>
+    as_tibble() |>
+    mutate(
+        interaction_var = "hb",
+        pair_id = paste(phenotype_id, variant_id, sep = '_')
+    ) |>
+    filter(pair_id %in% eqtl_independent$pair_id)
+
+eqtl_thal = fread(eqtl_thal_path) |>
+    as_tibble() |>
+    mutate(
+        interaction_var = "thal",
+        pair_id = paste(phenotype_id, variant_id, sep = '_')
+    ) |>
+    filter(pair_id %in% eqtl_independent$pair_id)
+
+eqtl_int = rbind(eqtl_hb, eqtl_thal)
+write_csv(eqtl_int, eqtl_int_path)
+
+#   For quicker interactive testing
+# eqtl_int = read_csv(eqtl_int_path)
+
+#   Warn that not all eQTLs were present in interaction models
+message(
+    sprintf(
+        "Only %s of %s independent eQTLs observed in habenula interaction model",
+        nrow(eqtl_hb),
+        nrow(eqtl_independent)
+    )
+)
+message(
+    sprintf(
+        "Only %s of %s independent eQTLs observed in thalamus interaction model",
+        nrow(eqtl_thal),
+        nrow(eqtl_independent)
+    )
+)
+
+################################################################################
+#   Thalamus vs. habenula interaction plots for eQTLs overlapping DEGs or
+#   wide GWAS SNPs
+################################################################################
+
+#   Keep a filtered copy to those overlapping either the wide GWAS or FDR < 0.1
+#   DEGs
 filt_eqtl_independent = eqtl_independent |>
     filter(
         phenotype_id %in% deg$gencodeID | 
         variant_id %in% gwas_wide$variant_id
-    ) |>
-    mutate(pair_id = paste(phenotype_id, variant_id, sep = '_'))
+    )
 
 #   Note that there are 11 SNPs overlapping the GWAS data, but these SNPs appear
 #   in 13 eQTLs total
@@ -69,29 +122,8 @@ message(
         nrow()
 )
 
-#   Read in the full set of interaction eQTLs (with habenula and thalamus
-#   fraction) and individually filter SNPs that overlap in the independent set
-#   with the GWAS or DEGs (filtered one at a time to reduce memory usage)
-eqtl_hb = read_csv(eqtl_hb_path, show_col_types = FALSE) |>
-    mutate(
-        interaction_var = "hb",
-        pair_id = paste(phenotype_id, variant_id, sep = '_')
-    ) |>
-    filter(pair_id %in% filt_eqtl_independent$pair_id)
-eqtl_thal = read_csv(eqtl_thal_path, show_col_types = FALSE) |>
-    mutate(
-        interaction_var = "thal",
-        pair_id = paste(phenotype_id, variant_id, sep = '_')
-    ) |>
-    filter(pair_id %in% filt_eqtl_independent$pair_id)
-
-eqtl_int = rbind(eqtl_hb, eqtl_thal) |>
+eqtl_int_both = eqtl_int |>
     filter(pair_id %in% intersect(eqtl_hb$pair_id, eqtl_thal$pair_id))
-
-write_csv(eqtl_int, eqtl_int_path)
-
-#   For quicker interactive testing
-# eqtl_int = read_csv(eqtl_int_path)
 
 #   Make note of filtered independent pairs not measured in each interaction
 #   model
@@ -99,13 +131,13 @@ message(
     sprintf(
         "Pairs present in independent but absent from at least one interaction model: %s",
         paste(
-            setdiff(filt_eqtl_independent$pair_id, eqtl_int$pair_id),
+            setdiff(filt_eqtl_independent$pair_id, eqtl_int_both$pair_id),
             collapse = ', '
         )
     )
 )
 
-p = eqtl_int |>
+p = eqtl_int_both |>
     select(phenotype_id, variant_id, b_gi, pval_gi, interaction_var) |>
     mutate(
         source = factor(
