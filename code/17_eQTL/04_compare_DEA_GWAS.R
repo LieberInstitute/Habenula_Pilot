@@ -88,6 +88,9 @@ deg_covariates = c(
     'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
 )
 
+geno_colors = palette36[6:8]
+names(geno_colors) = c("0", "1", "2")
+
 lift_over_path = system('which liftOver', intern = TRUE)
 dir.create(plot_dir, showWarnings = FALSE)
 
@@ -202,6 +205,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                     vjust = 1
                 ) +
                 facet_wrap(~ snp_id) +
+                scale_color_manual(values = geno_colors) +
                 labs(
                     x = "Genotype", y = "Residualized Expression",
                     title = this_symbol
@@ -246,6 +250,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                     ) +
                     geom_point() +
                     geom_smooth(method = lm) +
+                    scale_color_manual(values = geno_colors) +
                     coord_cartesian(xlim = c(0, 1)) +
                     theme_bw(base_size = 20) +
                     labs(
@@ -287,9 +292,6 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
 
 #   Residualized expression vs. genotype boxplots faceted by SNP ID
 exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
-    geno_colors = palette36[6:8]
-    names(geno_colors) = levels(exp_df$genotype)
-
     label_df = eqtl |>
         filter(variant_id %in% exp_df$snp_id) |>
         mutate(sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))) |>
