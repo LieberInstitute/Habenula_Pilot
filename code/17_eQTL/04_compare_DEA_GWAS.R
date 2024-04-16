@@ -10,6 +10,8 @@ library(data.table)
 library(jaffelab)
 library(getopt)
 library(MRutils)
+library(Polychrome)
+data(palette36)
 
 #   Read in which tensorQTL run mode is being used
 spec <- matrix(
@@ -285,6 +287,9 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
 
 #   Residualized expression vs. genotype boxplots faceted by SNP ID
 exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
+    geno_colors = palette36[6:8]
+    names(geno_colors) = levels(exp_df$genotype)
+
     label_df = eqtl |>
         filter(variant_id %in% exp_df$snp_id) |>
         mutate(sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))) |>
@@ -310,6 +315,7 @@ exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
                 size = 6
             ) +
             facet_wrap(~ snp_id) +
+            scale_color_manual(values = geno_colors) +
             labs(x = "Genotype", y = "Residualized Expression") +
             theme_bw(base_size = 20) +
             theme(
