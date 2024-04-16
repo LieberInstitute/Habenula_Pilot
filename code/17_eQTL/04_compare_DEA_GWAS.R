@@ -283,6 +283,43 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
     dev.off()
 }
 
+#   Residualized expression vs. genotype boxplots faceted by SNP ID
+exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
+    label_df = eqtl |>
+        filter(variant_id %in% exp_df$snp_id) |>
+        mutate(sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))) |>
+        dplyr::rename(snp_id = variant_id)
+
+    p = exp_df |>
+        ggplot() +
+            geom_boxplot(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = genotype
+                ),
+                outlier.shape = NA) +
+            geom_jitter(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = genotype
+                )
+            ) +
+            geom_text(
+                data = label_df,
+                mapping = aes(label = sig_label, x = Inf, y = -Inf),
+                hjust = 1,
+                vjust = 0,
+                size = 6
+            ) +
+            facet_wrap(~ snp_id) +
+            labs(x = "Genotype", y = "Residualized Expression") +
+            theme_bw(base_size = 20) +
+            theme(
+                legend.position = "none", strip.text.x = element_text(size = 13)
+            )
+    pdf(file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)))
+    print(p)
+    dev.off()
+}
+
 ################################################################################
 #   Read in eQTL, DEA, and GWAS results, and the RSE
 ################################################################################
@@ -513,37 +550,7 @@ if (opt$mode == "independent") {
     dev.off()
 
     #   Expression by genotype for SNPs paired with DEGs
-    label_df = eqtl |>
-        filter(phenotype_id %in% deg$gencodeID) |>
-        mutate(sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))) |>
-        dplyr::rename(snp_id = variant_id)
-
-    p = exp_df |>
-        ggplot() +
-            geom_boxplot(
-                mapping = aes(
-                    x = genotype, y = resid_logcount_eqtl, color = genotype
-                ),
-                outlier.shape = NA) +
-            geom_jitter(
-                mapping = aes(
-                    x = genotype, y = resid_logcount_eqtl, color = genotype
-                )
-            ) +
-            geom_text(
-                data = label_df,
-                mapping = aes(label = sig_label, x = Inf, y = -Inf),
-                hjust = 1,
-                vjust = 0,
-                size = 6
-            ) +
-            facet_wrap(~ snp_id) +
-            labs(x = "Genotype", y = "Residualized Expression") +
-            theme_bw(base_size = 20) +
-            theme(legend.position = "none", strip.text.x = element_text(size = 13))
-    pdf(file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)))
-    print(p)
-    dev.off()
+    exp_vs_geno_manuscript_plot(eqtl, exp_df, plot_dir, plot_suffix)
 
     #---------------------------------------------------------------------------
     #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
@@ -570,8 +577,36 @@ if (opt$mode == "independent") {
         plot_prefix = "wide_gwas_eqtls"
     )
 
+    #---------------------------------------------------------------------------
     #   For a manuscript plot, we'll also want to sample 3 of these SNPs and
     #   produce an expression-by-genotype plot faceted by eQTL
+    #---------------------------------------------------------------------------
+
+    #   Grab GWAS SNPs that map to only one eQTL
+    single_eqtl_snps = eqtl |>
+        group_by(variant_id) |>
+        filter(n() == 1) |>
+        pull(variant_id)
+
+    gwas_3_snps = exp_df |>
+        filter(snp_id %in% single_eqtl_snps) |>
+        #   Grab all SNPs consisting of all 3 genotypes (this can't be the best
+        #   way...)
+        group_by(snp_id, genotype) |>
+        summarize(n = n()) |>
+        group_by(snp_id) |>
+        summarize(n = n()) |>
+        filter(n == 3) |>
+        #   Take the first 3 such SNPs
+        pull(snp_id) |>
+        head(3)
+    
+    exp_vs_geno_manuscript_plot(
+        eqtl,
+        exp_df |> filter(snp_id %in% gwas_3_snps),
+        plot_dir,
+        plot_suffix = '3_gwas_wide_manuscript.pdf'
+    )
 
     #---------------------------------------------------------------------------
     #   Also plot the top 10 (by significance) eQTLs for independent
