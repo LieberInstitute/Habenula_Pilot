@@ -32,6 +32,9 @@ gwas_wide_path = here(
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
+bsp2_dlpfc_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_eQTL_dlpfc_full.txt'
+bsp2_hippo_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_eQTL_hippo_full.txt'
+bsp2_snp_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_snp_annotation.txt'
 
 plot_dir = here('plots', '17_eQTL')
 
@@ -41,12 +44,20 @@ sig_cutoff_deg = 0.1
 #   Read in and preprocess data
 ################################################################################
 
+#-------------------------------------------------------------------------------
+#   DEGs and ~20k GWAS SNPs
+#-------------------------------------------------------------------------------
+
 #   FDR < 0.1 DEGs
 deg = read_tsv(deg_path, show_col_types = FALSE) |>
     filter(adj.P.Val < sig_cutoff_deg)
 
 #   ~20k "wide" GWAS SNPs
 gwas_wide = read_csv(gwas_wide_path, show_col_types = FALSE)
+
+#-------------------------------------------------------------------------------
+#   Independent and interaction habenula eQTLs
+#-------------------------------------------------------------------------------
 
 #   Read in all significant independent eQTLs
 eqtl_independent = read_csv(eqtl_independent_path, show_col_types = FALSE) |>
@@ -88,6 +99,53 @@ message(
     sprintf(
         "Only %s of %s independent eQTLs observed in thalamus interaction model",
         nrow(eqtl_thal),
+        nrow(eqtl_independent)
+    )
+)
+
+#-------------------------------------------------------------------------------
+#   BSP2 eQTLs
+#-------------------------------------------------------------------------------
+
+bsp2_snp = fread(bsp2_snp_path) |>
+    as_tibble() |>
+    #   Use the type of SNP ID used in the habenula analysis
+    mutate(
+        variant_id = sprintf(
+            '%s:%s:%s:%s', chr_hg38, pos_hg38, newref, newcount
+        )
+    )
+
+bsp2_dlpfc = fread(bsp2_dlpfc_path) |>
+    as_tibble() |>
+    filter(Type == 'gene') |>
+    mutate(
+        variant_id = bsp2_snp$variant_id[match(snp, bsp2_snp$snp)],
+        pair_id = paste(feature_id, variant_id, sep = '_')
+    ) |>
+    filter(pair_id %in% eqtl_independent$pair_id)
+
+bsp2_hippo = fread(bsp2_hippo_path) |>
+    as_tibble() |>
+    filter(Type == 'gene') |>
+    mutate(
+        variant_id = bsp2_snp$variant_id[match(snp, bsp2_snp$snp)],
+        pair_id = paste(feature_id, variant_id, sep = '_')
+    ) |>
+    filter(pair_id %in% eqtl_independent$pair_id)
+
+#   Warn that not all eQTLs were present in BSP2
+message(
+    sprintf(
+        "Only %s of %s independent eQTLs observed in BSP2 DLPFC",
+        nrow(bsp2_dlpfc),
+        nrow(eqtl_independent)
+    )
+)
+message(
+    sprintf(
+        "Only %s of %s independent eQTLs observed in BSP2 hippo",
+        nrow(bsp2_hippo),
         nrow(eqtl_independent)
     )
 )
@@ -155,3 +213,7 @@ p = eqtl_int_both |>
 pdf(file.path(plot_dir, 'interaction_beta.pdf'))
 print(p)
 dev.off()
+
+################################################################################
+#   SOMETHING
+################################################################################
