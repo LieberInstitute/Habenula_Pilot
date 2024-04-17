@@ -92,14 +92,14 @@ write_csv(eqtl_int, eqtl_int_path)
 message(
     sprintf(
         "Only %s of %s independent eQTLs observed in habenula interaction model",
-        nrow(eqtl_hb),
+        nrow(eqtl_int |> filter(interaction_var == "hb")),
         nrow(eqtl_independent)
     )
 )
 message(
     sprintf(
         "Only %s of %s independent eQTLs observed in thalamus interaction model",
-        nrow(eqtl_thal),
+        nrow(eqtl_int |> filter(interaction_var == "thal")),
         nrow(eqtl_independent)
     )
 )
@@ -181,8 +181,14 @@ message(
         nrow()
 )
 
+hb_pairs = eqtl_int |> filter(interaction_var == "hb") |> pull(pair_id)
+thal_pairs = eqtl_int |> filter(interaction_var == "thal") |> pull(pair_id)
 eqtl_int_both = eqtl_int |>
-    filter(pair_id %in% intersect(eqtl_hb$pair_id, eqtl_thal$pair_id))
+    dplyr::filter(
+        pair_id %in% hb_pairs,
+        pair_id %in% thal_pairs,
+        pair_id %in% filt_eqtl_independent$pair_id
+    )
 
 #   Make note of filtered independent pairs not measured in each interaction
 #   model
@@ -209,7 +215,12 @@ p = eqtl_int_both |>
     ggplot(mapping = aes(x = b_gi_hb, y = b_gi_thal, color = source)) +
         geom_point() +
         geom_hline(yintercept = 0) +
-        geom_vline(xintercept = 0)
+        geom_vline(xintercept = 0) +
+        theme_bw(base_size = 20) +
+        labs(
+            x = "Beta: habenula interaction", y = "Beta: thalamus interaction",
+            color = "eQTL overlap"
+        )
 
 pdf(file.path(plot_dir, 'interaction_beta.pdf'))
 print(p)
