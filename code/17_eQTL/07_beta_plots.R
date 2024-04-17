@@ -4,6 +4,7 @@ library(SummarizedExperiment)
 library(sessioninfo)
 library(data.table)
 library(jaffelab)
+library(cowplot)
 
 eqtl_independent_path = here(
     'processed-data', '17_eQTL', 'tensorQTL_output', 'independent', 'FDR05.csv'
@@ -215,5 +216,37 @@ print(p)
 dev.off()
 
 ################################################################################
-#   SOMETHING
+#   BSP2 vs habenula beta value plots at the same eQTLs
 ################################################################################
+
+p_dlpfc = bsp2_dlpfc |>
+    select(pair_id, beta) |>
+    dplyr::rename(beta_DLPFC = beta) |>
+    left_join(
+        eqtl_independent |>
+            select(pair_id, slope) |>
+            dplyr::rename(beta_habenula = slope),
+        by = "pair_id"
+    ) |>
+    ggplot(mapping = aes(x = beta_habenula, y = beta_DLPFC)) +
+        geom_point() +
+        theme_bw(base_size = 20)
+
+p_hippo = bsp2_hippo |>
+    select(pair_id, beta) |>
+    dplyr::rename(beta_hippo = beta) |>
+    left_join(
+        eqtl_independent |>
+            select(pair_id, slope) |>
+            dplyr::rename(beta_habenula = slope),
+        by = "pair_id"
+    ) |>
+    ggplot(mapping = aes(x = beta_habenula, y = beta_hippo)) +
+        geom_point() +
+        theme_bw(base_size = 20)
+
+pdf(file.path(plot_dir, 'BSP2_vs_habenula_beta.pdf'), width = 10, height = 6)
+print(plot_grid(plotlist = list(p_dlpfc, p_hippo)))
+dev.off()
+
+session_info()
