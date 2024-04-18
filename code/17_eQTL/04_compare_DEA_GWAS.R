@@ -166,6 +166,28 @@ merge_exp_df = function(
     return(exp_df)
 }
 
+#   Return a copy of 'exp_df' with an additional 'rs_id' column
+add_rs_id = function(exp_df) {
+    a = tibble(snp_id = unique(exp_df$snp_id)) |>
+        separate(
+            snp_id, into = c("chr", "pos", "A1", "A2"), sep = ":",
+            remove = FALSE
+        ) |>
+        mutate(chr = str_extract(chr, '^chr(.*)', group = 1))
+    
+    #   Individually search for rs IDs
+    a$rs_id = sapply(
+        seq(nrow(a)), function(i) {
+            get_rsid_from_position(
+                chrom = a$chr[i], pos = a$pos[i], ref = a$A1[i], alt = a$A2[i],
+                assembly = "hg38"
+            )
+        }
+    )
+
+    return(exp_df |> left_join(a |> select(snp_id, rs_id), by = "snp_id"))
+}
+
 plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
     #   Plot expression by genotype of each variant with one gene per page and
     #   potentially several variants per gene
@@ -292,37 +314,57 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
 
 #   Residualized expression vs. genotype boxplots faceted by SNP ID
 exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
-    label_df = eqtl |>
-        filter(variant_id %in% exp_df$snp_id) |>
-        mutate(sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))) |>
-        dplyr::rename(snp_id = variant_id)
-
-    p = exp_df |>
-        ggplot() +
-            geom_boxplot(
-                mapping = aes(
-                    x = genotype, y = resid_logcount_eqtl, color = genotype
+    a = exp_df |>
+        #   Add 'pval_nominal' column from 'eqtl'
+        left_join(
+            eqtl |>
+                dplyr::rename(snp_id = variant_id, gene_id = phenotype_id) |>
+                select(snp_id, gene_id, pval_nominal) |>
+                mutate(
+                    sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))
                 ),
-                outlier.shape = NA) +
-            geom_jitter(
-                mapping = aes(
-                    x = genotype, y = resid_logcount_eqtl, color = genotype
-                )
-            ) +
-            geom_text(
-                data = label_df,
-                mapping = aes(label = sig_label, x = Inf, y = -Inf),
-                hjust = 1,
-                vjust = 0,
-                size = 6
-            ) +
-            facet_wrap(~ snp_id) +
-            scale_color_manual(values = geno_colors) +
-            labs(x = "Genotype", y = "Residualized Expression") +
-            theme_bw(base_size = 20) +
-            theme(
-                legend.position = "none", strip.text.x = element_text(size = 13)
+            by = c("snp_id", "gene_id")
+        ) |>
+        #   Add informative facet title: include 2 forms of SNP IDs and gene
+        #   symbol
+        mutate(
+            anno_label = sprintf(
+                "SNP:  %s\n      %s\nGene: %s",
+                rs_id, snp_id, gene_symbol
             )
+        )
+    
+    #   Avoid duplicate labels
+    label_df = a |>
+        group_by(anno_label) |>
+        slice_head(n = 1) |>
+        ungroup()
+
+    p = ggplot(a) +
+        geom_boxplot(
+            mapping = aes(
+                x = genotype, y = resid_logcount_eqtl, color = genotype
+            ),
+            outlier.shape = NA) +
+        geom_jitter(
+            mapping = aes(
+                x = genotype, y = resid_logcount_eqtl, color = genotype
+            )
+        ) +
+        geom_text(
+            data = label_df,
+            mapping = aes(label = sig_label, x = Inf, y = -Inf),
+            hjust = 1,
+            vjust = 0,
+            size = 6
+        ) +
+        facet_wrap(~ anno_label) +
+        scale_color_manual(values = geno_colors) +
+        labs(x = "Genotype", y = "Residualized Expression") +
+        theme_bw(base_size = 20) +
+        theme(
+            legend.position = "none", strip.text.x = element_text(size = 13)
+        )
     pdf(
         file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)),
         width = 8, height = 6
@@ -572,7 +614,7 @@ if (opt$mode == "independent") {
     dev.off()
 
     #   Expression by genotype for SNPs paired with DEGs
-    exp_vs_geno_manuscript_plot(eqtl, exp_df, plot_dir, plot_suffix)
+    exp_vs_geno_manuscript_plot(eqtl, add_rs_id(exp_df), plot_dir, plot_suffix)
 
     #---------------------------------------------------------------------------
     #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
@@ -625,7 +667,7 @@ if (opt$mode == "independent") {
     
     exp_vs_geno_manuscript_plot(
         eqtl,
-        exp_df |> filter(snp_id %in% gwas_3_snps),
+        exp_df |> filter(snp_id %in% gwas_3_snps) |> add_rs_id(),
         plot_dir,
         plot_suffix = '3_gwas_wide_manuscript.pdf'
     )
