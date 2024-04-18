@@ -88,7 +88,7 @@ deg_covariates = c(
     'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
 )
 
-geno_colors = palette36[6:8]
+geno_colors = c(palette36[6], "#DB9813", palette36[8])
 names(geno_colors) = c("0", "1", "2")
 
 lift_over_path = system('which liftOver', intern = TRUE)
@@ -328,6 +328,14 @@ exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
         width = 8, height = 6
     )
     print(p)
+    dev.off()
+
+    #   Also plot a version where the y scale is free in the facet
+    pdf(
+        file.path(plot_dir, paste0('expr_by_geno_free_y_', plot_suffix)),
+        width = 8, height = 6
+    )
+    print(p + facet_wrap(~ snp_id, scales = "free_y"))
     dev.off()
 }
 
