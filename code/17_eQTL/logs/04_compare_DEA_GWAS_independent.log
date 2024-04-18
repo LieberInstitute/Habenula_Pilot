@@ -1,10 +1,11 @@
 **** Job starts ****
-Thu Apr 18 10:20:13 AM EDT 2024
+Thu Apr 18 03:30:51 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 4674525
+Job id: 4679553
 Job name: 04_compare_DEA_GWAS
-Node name: compute-093
+Node name: compute-107
+Unloading conda_R/4.3.x
 Loading conda_R/4.3.x
 Loading LIBD SLURM module for liftover/1.0
 here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
@@ -555,4 +556,4 @@ Warning messages:
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Thu Apr 18 10:30:27 AM EDT 2024
+Thu Apr 18 03:39:32 PM EDT 2024
