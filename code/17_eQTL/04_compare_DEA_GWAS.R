@@ -313,7 +313,9 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
 }
 
 #   Residualized expression vs. genotype boxplots faceted by SNP ID
-exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
+exp_vs_geno_manuscript_plot = function(
+        eqtl, exp_df, plot_dir, plot_suffix, note_risk_allele
+    ) {
     a = exp_df |>
         #   Add 'pval_nominal' column from 'eqtl'
         left_join(
@@ -324,15 +326,25 @@ exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
                     sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))
                 ),
             by = c("snp_id", "gene_id")
-        ) |>
-        #   Add informative facet title: include 2 forms of SNP IDs and gene
-        #   symbol
-        mutate(
+        )
+
+    #   Add informative facet title: include 2 forms of SNP IDs, gene
+    #   symbol, and if specified, the risk allele
+    if (note_risk_allele) {
+        a = a |> mutate(
             anno_label = sprintf(
-                "SNP:  %s\n      %s\nGene: %s",
+                "SNP: %s\n%s\n(risk allele: %s)\nGene: %s",
+                rs_id, snp_id, risk_allele, gene_symbol
+            )
+        )
+    } else {
+        a = a |> mutate(
+            anno_label = sprintf(
+                "SNP: %s\n%s\nGene: %s",
                 rs_id, snp_id, gene_symbol
             )
         )
+    }
     
     #   Avoid duplicate labels
     label_df = a |>
@@ -614,7 +626,9 @@ if (opt$mode == "independent") {
     dev.off()
 
     #   Expression by genotype for SNPs paired with DEGs
-    exp_vs_geno_manuscript_plot(eqtl, add_rs_id(exp_df), plot_dir, plot_suffix)
+    exp_vs_geno_manuscript_plot(
+        eqtl, add_rs_id(exp_df), plot_dir, plot_suffix, note_risk_allele = FALSE
+    )
 
     #---------------------------------------------------------------------------
     #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
@@ -665,11 +679,24 @@ if (opt$mode == "independent") {
         pull(snp_id) |>
         head(3)
     
+    a = exp_df |>
+        filter(snp_id %in% gwas_3_snps) |>
+        add_rs_id() |>
+        #   Grab risk allele from the GWAS data
+        left_join(
+            gwas_wide |>
+                mutate(risk_allele = ifelse(BETA > 0, A1, A2)) |>
+                dplyr::rename(snp_id = variant_id) |>
+                select(snp_id, risk_allele),
+            by = 'snp_id'
+        )
+    
     exp_vs_geno_manuscript_plot(
         eqtl,
-        exp_df |> filter(snp_id %in% gwas_3_snps) |> add_rs_id(),
+        a,
         plot_dir,
-        plot_suffix = '3_gwas_wide_manuscript.pdf'
+        plot_suffix = '3_gwas_wide_manuscript.pdf',
+        note_risk_allele = TRUE
     )
 
     #---------------------------------------------------------------------------
