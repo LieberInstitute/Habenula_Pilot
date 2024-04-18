@@ -241,6 +241,7 @@ p_dlpfc = bsp2_dlpfc |>
     ) |>
     ggplot(mapping = aes(x = beta_habenula, y = beta_DLPFC)) +
         geom_point() +
+        geom_abline(slope = 1) +
         theme_bw(base_size = 20) +
         labs(x = "Beta: Habenula", y = "Beta: DLPFC")
 
@@ -255,11 +256,21 @@ p_hippo = bsp2_hippo |>
     ) |>
     ggplot(mapping = aes(x = beta_habenula, y = beta_hippo)) +
         geom_point() +
+        geom_abline(slope = 1) +
         theme_bw(base_size = 20) +
         labs(x = "Beta: Habenula", y = "Beta: Hippocampus")
 
 pdf(file.path(plot_dir, 'BSP2_vs_habenula_beta.pdf'), width = 12, height = 6)
 print(plot_grid(plotlist = list(p_dlpfc, p_hippo)))
+dev.off()
+
+pdf(
+    file.path(plot_dir, 'BSP2_vs_habenula_beta_coord_fixed.pdf'),
+    width = 12, height = 6
+)
+print(
+    plot_grid(plotlist = list(p_dlpfc + coord_fixed(), p_hippo + coord_fixed()))
+)
 dev.off()
 
 session_info()
