@@ -213,16 +213,16 @@ p = eqtl_int_both |>
         values_from = c("b_gi", "pval_gi"), names_from = "interaction_var"
     ) |>
     ggplot(mapping = aes(x = b_gi_hb, y = b_gi_thal, color = source)) +
-        geom_point() +
+        geom_point(size = 3) +
         geom_hline(yintercept = 0) +
         geom_vline(xintercept = 0) +
         theme_bw(base_size = 20) +
         labs(
-            x = "Beta: habenula interaction", y = "Beta: thalamus interaction",
-            color = "eQTL overlap"
+            x = "Beta: Habenula Interaction", y = "Beta: Thalamus Interaction",
+            color = "eQTL Overlap"
         )
 
-pdf(file.path(plot_dir, 'interaction_beta.pdf'))
+pdf(file.path(plot_dir, 'interaction_beta.pdf'), width = 10, height = 7)
 print(p)
 dev.off()
 
@@ -241,7 +241,8 @@ p_dlpfc = bsp2_dlpfc |>
     ) |>
     ggplot(mapping = aes(x = beta_habenula, y = beta_DLPFC)) +
         geom_point() +
-        theme_bw(base_size = 20)
+        theme_bw(base_size = 20) +
+        labs(x = "Beta: Habenula", y = "Beta: DLPFC")
 
 p_hippo = bsp2_hippo |>
     select(pair_id, beta) |>
@@ -254,9 +255,10 @@ p_hippo = bsp2_hippo |>
     ) |>
     ggplot(mapping = aes(x = beta_habenula, y = beta_hippo)) +
         geom_point() +
-        theme_bw(base_size = 20)
+        theme_bw(base_size = 20) +
+        labs(x = "Beta: Habenula", y = "Beta: Hippocampus")
 
-pdf(file.path(plot_dir, 'BSP2_vs_habenula_beta.pdf'), width = 10, height = 6)
+pdf(file.path(plot_dir, 'BSP2_vs_habenula_beta.pdf'), width = 12, height = 6)
 print(plot_grid(plotlist = list(p_dlpfc, p_hippo)))
 dev.off()
 

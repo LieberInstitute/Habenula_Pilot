@@ -323,7 +323,10 @@ exp_vs_geno_manuscript_plot = function(eqtl, exp_df, plot_dir, plot_suffix) {
             theme(
                 legend.position = "none", strip.text.x = element_text(size = 13)
             )
-    pdf(file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)))
+    pdf(
+        file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)),
+        width = 8, height = 6
+    )
     print(p)
     dev.off()
 }
@@ -553,7 +556,10 @@ if (opt$mode == "independent") {
             labs(y = "Residualized Expression") +
             theme_bw(base_size = 20) +
             theme(legend.position = "none")
-    pdf(file.path(plot_dir, paste0('expr_by_dx_', plot_suffix)))
+    pdf(
+        file.path(plot_dir, paste0('expr_by_dx_', plot_suffix)),
+        width = 8, height = 6
+    )
     print(p)
     dev.off()
 
