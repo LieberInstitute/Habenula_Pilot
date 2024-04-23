@@ -36,6 +36,7 @@ rse_path = here(
 bsp2_dlpfc_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_eQTL_dlpfc_full.txt'
 bsp2_hippo_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_eQTL_hippo_full.txt'
 bsp2_snp_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_snp_annotation.txt'
+bsp2_geno_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_snp_genotype.txt'
 
 plot_dir = here('plots', '17_eQTL')
 
@@ -105,7 +106,7 @@ message(
 )
 
 #-------------------------------------------------------------------------------
-#   BSP2 eQTLs
+#   BSP2 eQTLs and genotypes
 #-------------------------------------------------------------------------------
 
 bsp2_snp = fread(bsp2_snp_path) |>
@@ -134,6 +135,17 @@ bsp2_hippo = fread(bsp2_hippo_path) |>
         pair_id = paste(feature_id, variant_id, sep = '_')
     ) |>
     filter(pair_id %in% eqtl_independent$pair_id)
+
+
+#   Read in genotypes for SNPs that in habenula have eQTLs paired with habenula
+#   DEGs
+deg_variants = eqtl_independent |>
+    filter(phenotype_id %in% deg$gencodeID) |>
+    pull(variant_id)
+
+bsp2_geno = fread(bsp2_geno_path) |>
+    mutate(variant_id = bsp2_snp$variant_id[match(V1, bsp2_snp$snp)]) |>
+    filter(variant_id %in% deg_variants)
 
 #   Warn that not all eQTLs were present in BSP2
 message(
@@ -272,5 +284,9 @@ print(
     plot_grid(plotlist = list(p_dlpfc + coord_fixed(), p_hippo + coord_fixed()))
 )
 dev.off()
+
+################################################################################
+#   BSP2 genotypes at DEG-paired significant independent habenula eQTLs
+################################################################################
 
 session_info()
