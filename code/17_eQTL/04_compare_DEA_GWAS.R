@@ -194,6 +194,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
     plot_list_geno = list()
     plot_list_dx = list()
     plot_list_fraction = list()
+    plot_list_fraction_no_labels = list()
     for (this_gene in unique(exp_df$gene_id)) {
         this_symbol = exp_df$gene_symbol[
             match(this_gene, exp_df$gene_id)
@@ -260,6 +261,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
         #   habenula and one for thalamus fraction
         for (this_snp_id in these_snp_ids) {
             temp = list()
+            temp_no_labels = list()
             this_title = sprintf('%s: %s', this_symbol, this_snp_id)
             for (x_var_name in c("tot.Hb", "tot.Thal")) {
                 temp[[x_var_name]] = exp_df |>
@@ -270,7 +272,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                             color = genotype
                         )
                     ) +
-                    geom_point() +
+                    geom_point(size = 3) +
                     geom_smooth(method = lm) +
                     scale_color_manual(values = geno_colors) +
                     coord_cartesian(xlim = c(0, 1)) +
@@ -287,9 +289,23 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                     temp[[x_var_name]] = temp[[x_var_name]] +
                         labs(x = "Thalamus Fraction", title = " ")
                 }
+
+                #   Create a version easier to plot as a large grid in
+                #   illustrator for some manuscript figures
+                temp_no_labels[[x_var_name]] = temp[[x_var_name]] +
+                    theme_bw(base_size = 30) +
+                    theme(
+                        axis.title.x = element_blank(),
+                        axis.title.y = element_blank(),
+                        legend.position = "none",
+                        plot.title = element_blank()
+                    )
             }
             plot_list_fraction[[this_title]] = plot_grid(
                 plotlist = temp, ncol = 2, rel_widths = 4:5
+            )
+            plot_list_fraction_no_labels[[this_title]] = plot_grid(
+                plotlist = temp_no_labels, ncol = 2
             )
         }
     }
@@ -309,6 +325,16 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
         width = 14, height = 7
     )
     print(plot_list_fraction)
+    dev.off()
+
+    pdf(
+        file.path(
+            plot_dir,
+            sprintf('expr_by_geno_fraction_%s_no_labels.pdf', plot_prefix)
+        ),
+        width = 14, height = 7
+    )
+    print(plot_list_fraction_no_labels)
     dev.off()
 }
 
