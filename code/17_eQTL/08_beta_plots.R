@@ -9,20 +9,9 @@ library(cowplot)
 eqtl_independent_path = here(
     'processed-data', '17_eQTL', 'tensorQTL_output', 'independent', 'FDR05.csv'
 )
-eqtl_hb_path = here(
-    'processed-data', '17_eQTL', 'tensorQTL_output', 'interaction_tot_Hb',
-    'all.csv'
-)
-eqtl_thal_path = here(
-    'processed-data', '17_eQTL', 'tensorQTL_output', 'interaction_tot_Thal',
-    'all.csv'
-)
-
-#   Cache some temporary results from this script for quicker interactive testing
 eqtl_int_path = here(
     'processed-data', '17_eQTL', 'tensorQTL_output', 'combined_interaction_subset.csv'
 )
-
 deg_path = here(
     'processed-data', '10_DEA', '04_DEA',
     'DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv'
@@ -33,10 +22,13 @@ gwas_wide_path = here(
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
-bsp2_dlpfc_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_eQTL_dlpfc_full.txt'
-bsp2_hippo_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_eQTL_hippo_full.txt'
-bsp2_snp_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_snp_annotation.txt'
-bsp2_geno_path = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser/BrainSeqPhaseII_snp_genotype.txt'
+bsp2_dir = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser'
+bsp2_dlpfc_eqtl_path = file.path(bsp2_dir, 'BrainSeqPhaseII_eQTL_dlpfc_full.txt')
+bsp2_hippo_eqtl_path = file.path(bsp2_dir, 'BrainSeqPhaseII_eQTL_hippo_full.txt')
+bsp2_snp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_snp_annotation.txt')
+bsp2_geno_path = file.path(bsp2_dir, 'BrainSeqPhaseII_snp_genotype.txt')
+bsp2_dlpfc_exp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_clean_expression_eqtl_dlpfc_gene.txt')
+bsp2_hippo_exp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_clean_expression_eqtl_hippo_gene.txt')
 
 plot_dir = here('plots', '17_eQTL')
 
@@ -65,29 +57,8 @@ gwas_wide = read_csv(gwas_wide_path, show_col_types = FALSE)
 eqtl_independent = read_csv(eqtl_independent_path, show_col_types = FALSE) |>
     mutate(pair_id = paste(phenotype_id, variant_id, sep = '_'))
 
-#   Read in the full set of interaction eQTLs (with habenula and thalamus
-#   fraction) and filter to those significant in independent model
-eqtl_hb = fread(eqtl_hb_path) |>
-    as_tibble() |>
-    mutate(
-        interaction_var = "hb",
-        pair_id = paste(phenotype_id, variant_id, sep = '_')
-    ) |>
-    filter(pair_id %in% eqtl_independent$pair_id)
-
-eqtl_thal = fread(eqtl_thal_path) |>
-    as_tibble() |>
-    mutate(
-        interaction_var = "thal",
-        pair_id = paste(phenotype_id, variant_id, sep = '_')
-    ) |>
-    filter(pair_id %in% eqtl_independent$pair_id)
-
-eqtl_int = rbind(eqtl_hb, eqtl_thal)
-write_csv(eqtl_int, eqtl_int_path)
-
-#   For quicker interactive testing
-# eqtl_int = read_csv(eqtl_int_path)
+#   The same eQTLs but taking stats from the interaction model
+eqtl_int = read_csv(eqtl_int_path)
 
 #   Warn that not all eQTLs were present in interaction models
 message(
@@ -118,7 +89,7 @@ bsp2_snp = fread(bsp2_snp_path) |>
         )
     )
 
-bsp2_dlpfc = fread(bsp2_dlpfc_path) |>
+bsp2_dlpfc = fread(bsp2_dlpfc_eqtl_path) |>
     as_tibble() |>
     filter(Type == 'gene') |>
     mutate(
@@ -127,7 +98,7 @@ bsp2_dlpfc = fread(bsp2_dlpfc_path) |>
     ) |>
     filter(pair_id %in% eqtl_independent$pair_id)
 
-bsp2_hippo = fread(bsp2_hippo_path) |>
+bsp2_hippo = fread(bsp2_hippo_eqtl_path) |>
     as_tibble() |>
     filter(Type == 'gene') |>
     mutate(
@@ -146,6 +117,8 @@ deg_variants = eqtl_independent |>
 bsp2_geno = fread(bsp2_geno_path) |>
     mutate(variant_id = bsp2_snp$variant_id[match(V1, bsp2_snp$snp)]) |>
     filter(variant_id %in% deg_variants)
+
+bsp2_exp_dlpfc = fread(bsp2_dlpfc_exp_path)
 
 #   Warn that not all eQTLs were present in BSP2
 message(
