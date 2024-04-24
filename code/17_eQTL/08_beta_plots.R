@@ -184,6 +184,7 @@ p_dlpfc = bsp2 |>
     ggplot(mapping = aes(x = beta_habenula, y = beta_DLPFC)) +
         geom_point() +
         geom_abline(slope = 1) +
+        geom_smooth(method = "lm", formula = y ~ x) +
         theme_bw(base_size = 20) +
         labs(x = "Beta: Habenula", y = "Beta: DLPFC")
 
@@ -200,6 +201,7 @@ p_hippo = bsp2 |>
     ggplot(mapping = aes(x = beta_habenula, y = beta_hippo)) +
         geom_point() +
         geom_abline(slope = 1) +
+        geom_smooth(method = "lm", formula = y ~ x) +
         theme_bw(base_size = 20) +
         labs(x = "Beta: Habenula", y = "Beta: Hippocampus")
 
