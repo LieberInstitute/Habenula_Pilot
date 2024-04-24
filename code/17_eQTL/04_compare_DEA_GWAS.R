@@ -344,7 +344,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
 
 #   Residualized expression vs. genotype boxplots faceted by SNP ID
 exp_vs_geno_manuscript_plot = function(
-        eqtl, exp_df, plot_dir, plot_suffix, note_risk_allele
+        eqtl, exp_df, plot_dir, plot_suffix, note_risk_allele, color_by_dx
     ) {
     a = exp_df |>
         #   Add 'pval_nominal', 'slope' columns from 'eqtl'
@@ -387,16 +387,6 @@ exp_vs_geno_manuscript_plot = function(
         ungroup()
 
     p = ggplot(a) +
-        geom_boxplot(
-            mapping = aes(
-                x = genotype, y = resid_logcount_eqtl, color = genotype
-            ),
-            outlier.shape = NA) +
-        geom_jitter(
-            mapping = aes(
-                x = genotype, y = resid_logcount_eqtl, color = genotype
-            )
-        ) +
         geom_text(
             data = label_df,
             mapping = aes(label = sig_label, x = Inf, y = -Inf),
@@ -405,12 +395,40 @@ exp_vs_geno_manuscript_plot = function(
             size = 6
         ) +
         facet_wrap(~ anno_label) +
-        scale_color_manual(values = geno_colors) +
         labs(x = "Genotype", y = "Residualized Expression") +
         theme_bw(base_size = 20) +
         theme(
             legend.position = "none", strip.text.x = element_text(size = 13)
         )
+    
+    #   Either color by genotype or diagnosis
+    if (color_by_dx) {
+        p = p +
+            geom_boxplot(
+                mapping = aes(x = genotype, y = resid_logcount_eqtl),
+                outlier.shape = NA
+            ) +
+            geom_jitter(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = PrimaryDx
+                )
+            ) +
+            scale_color_manual(values = dx_colors)
+    } else {
+        p = p +
+            geom_boxplot(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = genotype
+                ),
+                outlier.shape = NA) +
+            geom_jitter(
+                mapping = aes(
+                    x = genotype, y = resid_logcount_eqtl, color = genotype
+                )
+            ) +
+            scale_color_manual(values = geno_colors)
+    }
+
     pdf(
         file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)),
         width = 8, height = 6
@@ -662,7 +680,8 @@ if (opt$mode == "independent") {
 
     #   Expression by genotype for SNPs paired with DEGs
     exp_vs_geno_manuscript_plot(
-        eqtl, add_rs_id(exp_df), plot_dir, plot_suffix, note_risk_allele = FALSE
+        eqtl, add_rs_id(exp_df), plot_dir, plot_suffix, note_risk_allele = FALSE,
+        color_by_dx = TRUE
     )
 
     #---------------------------------------------------------------------------
@@ -731,7 +750,8 @@ if (opt$mode == "independent") {
         a,
         plot_dir,
         plot_suffix = '3_gwas_wide_manuscript.pdf',
-        note_risk_allele = TRUE
+        note_risk_allele = TRUE,
+        color_by_dx = FALSE
     )
 
     #---------------------------------------------------------------------------
