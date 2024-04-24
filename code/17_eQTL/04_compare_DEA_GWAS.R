@@ -343,13 +343,17 @@ exp_vs_geno_manuscript_plot = function(
         eqtl, exp_df, plot_dir, plot_suffix, note_risk_allele
     ) {
     a = exp_df |>
-        #   Add 'pval_nominal' column from 'eqtl'
+        #   Add 'pval_nominal', 'slope' columns from 'eqtl'
         left_join(
             eqtl |>
                 dplyr::rename(snp_id = variant_id, gene_id = phenotype_id) |>
-                select(snp_id, gene_id, pval_nominal) |>
+                select(snp_id, gene_id, pval_nominal, slope) |>
                 mutate(
-                    sig_label = sprintf("p = %s \n", signif(pval_nominal, 3))
+                    sig_label = sprintf(
+                        "beta = %s \np = %s \n",
+                        signif(slope, 3),
+                        signif(pval_nominal, 3)
+                    )
                 ),
             by = c("snp_id", "gene_id")
         )
