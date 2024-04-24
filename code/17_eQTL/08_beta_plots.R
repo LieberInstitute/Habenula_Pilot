@@ -22,13 +22,7 @@ gwas_wide_path = here(
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
-bsp2_dir = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainseq_phase2/browser'
-bsp2_dlpfc_eqtl_path = file.path(bsp2_dir, 'BrainSeqPhaseII_eQTL_dlpfc_full.txt')
-bsp2_hippo_eqtl_path = file.path(bsp2_dir, 'BrainSeqPhaseII_eQTL_hippo_full.txt')
-bsp2_snp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_snp_annotation.txt')
-bsp2_geno_path = file.path(bsp2_dir, 'BrainSeqPhaseII_snp_genotype.txt')
-bsp2_dlpfc_exp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_clean_expression_eqtl_dlpfc_gene.txt')
-bsp2_hippo_exp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_clean_expression_eqtl_hippo_gene.txt')
+bsp2_path = here('processed-data', '17_eQTL', 'BSP2_cleaned_expr_geno.csv')
 
 plot_dir = here('plots', '17_eQTL')
 
@@ -58,7 +52,7 @@ eqtl_independent = read_csv(eqtl_independent_path, show_col_types = FALSE) |>
     mutate(pair_id = paste(phenotype_id, variant_id, sep = '_'))
 
 #   The same eQTLs but taking stats from the interaction model
-eqtl_int = read_csv(eqtl_int_path)
+eqtl_int = read_csv(eqtl_int_path, show_col_types = FALSE)
 
 #   Warn that not all eQTLs were present in interaction models
 message(
@@ -77,61 +71,23 @@ message(
 )
 
 #-------------------------------------------------------------------------------
-#   BSP2 eQTLs and genotypes
+#   BSP2 eQTLs with genotypes
 #-------------------------------------------------------------------------------
 
-bsp2_snp = fread(bsp2_snp_path) |>
-    as_tibble() |>
-    #   Use the type of SNP ID used in the habenula analysis
-    mutate(
-        variant_id = sprintf(
-            '%s:%s:%s:%s', chr_hg38, pos_hg38, newref, newcount
-        )
-    )
-
-bsp2_dlpfc = fread(bsp2_dlpfc_eqtl_path) |>
-    as_tibble() |>
-    filter(Type == 'gene') |>
-    mutate(
-        variant_id = bsp2_snp$variant_id[match(snp, bsp2_snp$snp)],
-        pair_id = paste(feature_id, variant_id, sep = '_')
-    ) |>
-    filter(pair_id %in% eqtl_independent$pair_id)
-
-bsp2_hippo = fread(bsp2_hippo_eqtl_path) |>
-    as_tibble() |>
-    filter(Type == 'gene') |>
-    mutate(
-        variant_id = bsp2_snp$variant_id[match(snp, bsp2_snp$snp)],
-        pair_id = paste(feature_id, variant_id, sep = '_')
-    ) |>
-    filter(pair_id %in% eqtl_independent$pair_id)
-
-
-#   Read in genotypes for SNPs that in habenula have eQTLs paired with habenula
-#   DEGs
-deg_variants = eqtl_independent |>
-    filter(phenotype_id %in% deg$gencodeID) |>
-    pull(variant_id)
-
-bsp2_geno = fread(bsp2_geno_path) |>
-    mutate(variant_id = bsp2_snp$variant_id[match(V1, bsp2_snp$snp)]) |>
-    filter(variant_id %in% deg_variants)
-
-bsp2_exp_dlpfc = fread(bsp2_dlpfc_exp_path)
+bsp2 = read_csv(bsp2_path, show_col_types = FALSE)
 
 #   Warn that not all eQTLs were present in BSP2
 message(
     sprintf(
         "Only %s of %s independent eQTLs observed in BSP2 DLPFC",
-        nrow(bsp2_dlpfc),
+        sum(bsp2$region == "DLPFC"),
         nrow(eqtl_independent)
     )
 )
 message(
     sprintf(
         "Only %s of %s independent eQTLs observed in BSP2 hippo",
-        nrow(bsp2_hippo),
+        sum(bsp2$region == "Hippocampus"),
         nrow(eqtl_independent)
     )
 )
@@ -215,7 +171,8 @@ dev.off()
 #   BSP2 vs habenula beta value plots at the same eQTLs
 ################################################################################
 
-p_dlpfc = bsp2_dlpfc |>
+p_dlpfc = bsp2 |>
+    filter(region == "DLPFC") |>
     select(pair_id, beta) |>
     dplyr::rename(beta_DLPFC = beta) |>
     left_join(
@@ -230,7 +187,8 @@ p_dlpfc = bsp2_dlpfc |>
         theme_bw(base_size = 20) +
         labs(x = "Beta: Habenula", y = "Beta: DLPFC")
 
-p_hippo = bsp2_hippo |>
+p_hippo = bsp2 |>
+    filter(region == "Hippocampus") |>
     select(pair_id, beta) |>
     dplyr::rename(beta_hippo = beta) |>
     left_join(
