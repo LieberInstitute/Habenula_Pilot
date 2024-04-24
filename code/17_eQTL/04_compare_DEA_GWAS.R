@@ -91,6 +91,9 @@ deg_covariates = c(
 geno_colors = c(palette36[6], "#DB9813", palette36[8])
 names(geno_colors) = c("0", "1", "2")
 
+dx_colors = c("#242331", "#A27035")
+names(dx_colors) = c("Control", "SCZD")
+
 lift_over_path = system('which liftOver', intern = TRUE)
 dir.create(plot_dir, showWarnings = FALSE)
 
@@ -247,6 +250,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                 ) +
                 geom_boxplot(outlier.shape = NA) +
                 geom_jitter() +
+                scale_color_manual(values = dx_colors) +
                 labs(y = "Residualized Expression", title = this_symbol) +
                 theme_bw(base_size = 20) +
                 theme(legend.position = "none")
@@ -645,6 +649,7 @@ if (opt$mode == "independent") {
             geom_boxplot(outlier.shape = NA) +
             geom_jitter() +
             facet_wrap(~gene_symbol) +
+            scale_color_manual(values = dx_colors) +
             labs(y = "Residualized Expression") +
             theme_bw(base_size = 20) +
             theme(legend.position = "none")
