@@ -5,6 +5,7 @@ library(sessioninfo)
 library(data.table)
 library(jaffelab)
 library(cowplot)
+library(ggrepel)
 
 eqtl_independent_path = here(
     'processed-data', '17_eQTL', 'tensorQTL_output', 'independent', 'FDR05.csv'
@@ -31,6 +32,9 @@ sig_cutoff_deg = 0.1
 ################################################################################
 #   Read in and preprocess data
 ################################################################################
+
+#   For adding gene symbol
+rse_gene = get(load(rse_path))
 
 #-------------------------------------------------------------------------------
 #   DEGs and ~20k GWAS SNPs
@@ -146,6 +150,9 @@ message(
 p = eqtl_int_both |>
     select(phenotype_id, variant_id, b_gi, pval_gi, interaction_var) |>
     mutate(
+        gene_symbol = rowData(rse_gene)$Symbol[
+            match(phenotype_id, rowData(rse_gene)$gencodeID)
+        ],
         source = factor(
             ifelse(variant_id %in% gwas_wide$variant_id, "GWAS SNP", "DEG")
         )
@@ -157,6 +164,7 @@ p = eqtl_int_both |>
         geom_point(size = 3) +
         geom_hline(yintercept = 0) +
         geom_vline(xintercept = 0) +
+        geom_label_repel(aes(label = gene_symbol), max.overlaps = 15, show.legend = FALSE) +
         theme_bw(base_size = 20) +
         labs(
             x = "Beta: Habenula Interaction", y = "Beta: Thalamus Interaction",
