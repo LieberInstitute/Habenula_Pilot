@@ -91,7 +91,7 @@ deg_covariates = c(
 geno_colors = c(palette36[6], "#DB9813", palette36[8])
 names(geno_colors) = c("0", "1", "2")
 
-dx_colors = c("#003844", "#B88B4A")
+dx_colors = c("#2a9d8f", "#f77f00")
 names(dx_colors) = c("Control", "SCZD")
 
 lift_over_path = system('which liftOver', intern = TRUE)
