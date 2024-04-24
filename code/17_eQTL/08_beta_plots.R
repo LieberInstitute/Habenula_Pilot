@@ -160,12 +160,20 @@ p = eqtl_int_both |>
     pivot_wider(
         values_from = c("b_gi", "pval_gi"), names_from = "interaction_var"
     ) |>
+    mutate(
+        font_face = ifelse(
+            (b_gi_hb > 0) & (b_gi_thal < 0), "bold.italic", "plain"
+        )
+    ) |>
     ggplot(mapping = aes(x = b_gi_hb, y = b_gi_thal, color = source)) +
         geom_point(size = 3) +
         geom_hline(yintercept = 0) +
         geom_vline(xintercept = 0) +
-        geom_label_repel(aes(label = gene_symbol), max.overlaps = 15, show.legend = FALSE) +
-        theme_bw(base_size = 20) +
+        geom_label_repel(
+            aes(label = gene_symbol, fontface = font_face), max.overlaps = 15,
+            show.legend = FALSE
+        ) +
+        theme_bw(base_size = 23) +
         labs(
             x = "Beta: Habenula Interaction", y = "Beta: Thalamus Interaction",
             color = "eQTL Overlap"
