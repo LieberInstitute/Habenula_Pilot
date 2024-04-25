@@ -344,7 +344,8 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
 
 #   Residualized expression vs. genotype boxplots faceted by SNP ID
 exp_vs_geno_manuscript_plot = function(
-        eqtl, exp_df, plot_dir, plot_suffix, note_risk_allele, color_by_dx
+        eqtl, exp_df, plot_dir, plot_suffix, note_risk_allele, color_by_dx,
+        facet_nrow = 1, pdf_width = 8, pdf_height = 6
     ) {
     a = exp_df |>
         #   Add 'pval_nominal', 'slope' columns from 'eqtl'
@@ -394,7 +395,7 @@ exp_vs_geno_manuscript_plot = function(
             vjust = 0,
             size = 6
         ) +
-        facet_wrap(~ anno_label) +
+        facet_wrap(~ anno_label, nrow = facet_nrow) +
         labs(x = "Genotype", y = "Residualized Expression") +
         theme_bw(base_size = 20) +
         theme(
@@ -431,7 +432,7 @@ exp_vs_geno_manuscript_plot = function(
 
     pdf(
         file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)),
-        width = 8, height = 6
+        width = pdf_width, height = pdf_height
     )
     print(p)
     dev.off()
@@ -439,7 +440,7 @@ exp_vs_geno_manuscript_plot = function(
     #   Also plot a version where the y scale is free in the facet
     pdf(
         file.path(plot_dir, paste0('expr_by_geno_free_y_', plot_suffix)),
-        width = 8, height = 6
+        width = pdf_width, height = pdf_height
     )
     print(p + facet_wrap(~ snp_id, scales = "free_y"))
     dev.off()
@@ -713,8 +714,9 @@ if (opt$mode == "independent") {
     )
 
     #---------------------------------------------------------------------------
-    #   For a manuscript plot, we'll also want to sample 3 of these SNPs and
-    #   produce an expression-by-genotype plot faceted by eQTL
+    #   For a manuscript plot, we'll also want to sample 3 of these eQTLs and
+    #   produce an expression-by-genotype plot faceted by eQTL. The remaining
+    #   11 also become a supplementary figure
     #---------------------------------------------------------------------------
 
     #   Grab GWAS SNPs that map to only one eQTL
@@ -736,8 +738,7 @@ if (opt$mode == "independent") {
         pull(snp_id) |>
         head(3)
     
-    a = exp_df |>
-        filter(snp_id %in% gwas_3_snps) |>
+    exp_df_gwas = exp_df |>
         add_rs_id() |>
         #   Grab risk allele from the GWAS data
         left_join(
@@ -750,11 +751,23 @@ if (opt$mode == "independent") {
     
     exp_vs_geno_manuscript_plot(
         eqtl,
-        a,
+        exp_df_gwas |> filter(snp_id %in% gwas_3_snps),
         plot_dir,
         plot_suffix = '3_gwas_wide_manuscript.pdf',
         note_risk_allele = TRUE,
         color_by_dx = FALSE
+    )
+
+    exp_vs_geno_manuscript_plot(
+        eqtl,
+        exp_df_gwas |> filter(!(snp_id %in% gwas_3_snps)),
+        plot_dir,
+        plot_suffix = 'other_gwas_wide_manuscript.pdf',
+        note_risk_allele = TRUE,
+        color_by_dx = FALSE,
+        facet_nrow = 2,
+        pdf_width = 11,
+        pdf_height = 10
     )
 
     #---------------------------------------------------------------------------
