@@ -104,21 +104,12 @@ dir.create(plot_dir, showWarnings = FALSE)
 #   Return a merged tibble of genotyping data, residualized expression, and
 #   colData
 merge_exp_df = function(
-        rse_gene, dea_paired_variants, mod_deg, mod_eqtl, eqtl, plink,
-        mismatched_snps
+        rse_gene, mod_deg, mod_eqtl, eqtl, plink, mismatched_snps
     ) {
-    #   Grab vector of unique genes paired (via a significant eQTL) with the
-    #   variants of interest
-    dea_paired_genes = unique(
-        eqtl$phenotype_id[
-            match(dea_paired_variants, eqtl$variant_id)
-        ]
-    )
-
     #   Grab the expression for all genes paired with significant eQTLs;
     #   convert to long format. Residualize using both the tensorQTL and DEA
     #   models
-    express_eqtl = assays(rse_gene[dea_paired_genes,])$logcounts |>
+    express_eqtl = assays(rse_gene[unique(eqtl$phenotype_id),])$logcounts |>
         cleaningY(mod = mod_eqtl, P = 1) |>
         as.data.frame() |>
         rownames_to_column("gene_id") |>
@@ -126,7 +117,7 @@ merge_exp_df = function(
             cols = -gene_id, names_to = "sample_id",
             values_to = "resid_logcount_eqtl"
         )
-    express_deg = assays(rse_gene[dea_paired_genes,])$logcounts |>
+    express_deg = assays(rse_gene[unique(eqtl$phenotype_id),])$logcounts |>
         cleaningY(mod = mod_deg, P = 2) |>
         as.data.frame() |>
         rownames_to_column("gene_id") |>
@@ -134,9 +125,11 @@ merge_exp_df = function(
             cols = -gene_id, names_to = "sample_id",
             values_to = "resid_logcount_deg"
         )
-
-    #   Join genotyping data, expression, and colData
-    exp_df = plink$genotypes[, dea_paired_variants] |>
+    express_both = left_join(
+        express_eqtl, express_deg, by = c('gene_id', 'sample_id')
+    )
+    
+    geno_df = plink$genotypes[, unique(eqtl$variant_id)] |>
         as.data.frame() |>
         rownames_to_column("sample_id") |>
         pivot_longer(
@@ -151,20 +144,27 @@ merge_exp_df = function(
                     as.integer(genotype) - 1,
                     3 - as.integer(genotype)
                 )
-            ),
-            gene_id = eqtl$phenotype_id[match(snp_id, eqtl$variant_id)],
-            gene_symbol = rowData(rse_gene)$Symbol[
-                match(gene_id, rownames(rse_gene))
-            ]
-        ) |>
+            )
+        )
+
+    #   Join genotyping data, expression, and colData
+    exp_df = eqtl |>
+        dplyr::select(phenotype_id, variant_id) |>
+        dplyr::rename(gene_id = phenotype_id, snp_id = variant_id) |>
         #   Add expression data residualized from both models
-        left_join(express_eqtl, by = c('sample_id', 'gene_id')) |>
-        left_join(express_deg, by = c('sample_id', 'gene_id')) |>
+        full_join(express_both, by = 'gene_id') |>
+        #   Add genotypes for each SNP and sample
+        left_join(geno_df, by = c('snp_id', 'sample_id')) |>
         #   Add colData
         left_join(
             colData(rse_gene) |> as_tibble(), by = join_by(sample_id == BrNum)
         ) |>
-        filter(sample_id %in% express_eqtl$sample_id)
+        #   Add gene symbol
+        mutate(
+            gene_symbol = rowData(rse_gene)$Symbol[
+                match(gene_id, rownames(rse_gene))
+            ]
+        )
 
     return(exp_df)
 }
@@ -633,7 +633,11 @@ if (opt$mode == "nominal") {
 
 #   For all modes, plot any SNPs in an eQTL pair paired with a DEG
 exp_df = merge_exp_df(
-    rse_gene, dea_paired_variants, mod_deg, mod_eqtl, eqtl, plink,
+    rse_gene,
+    mod_deg,
+    mod_eqtl,
+    eqtl |> filter(phenotype_id %in% deg$gencodeID),
+    plink,
     mismatched_snps
 )
 plot_triad_exploratory(
@@ -686,7 +690,7 @@ if (opt$mode == "independent") {
 
     #---------------------------------------------------------------------------
     #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
-    #   (14) genes
+    #   (13) genes
     #---------------------------------------------------------------------------
 
     gwas_variants = gwas_wide |>
@@ -695,12 +699,11 @@ if (opt$mode == "independent") {
     
     exp_df = merge_exp_df(
         rse_gene = rse_gene,
-        dea_paired_variants = gwas_variants,
         mod_deg = mod_deg,
         mod_eqtl = mod_eqtl,
-        eqtl = eqtl,
+        eqtl = eqtl |> filter(variant_id %in% gwas_wide$variant_id),
         plink = plink,
-        mismatched_snps
+        mismatched_snps = mismatched_snps
     )
     plot_triad_exploratory(
         eqtl,
@@ -757,18 +760,12 @@ if (opt$mode == "independent") {
     #---------------------------------------------------------------------------
     #   Also plot the top 10 (by significance) eQTLs for independent
     #---------------------------------------------------------------------------
-
-    top_eqtls = eqtl |>
-        arrange(FDR) |>
-        slice_head(n = 10) |>
-        pull(variant_id)
     
     exp_df = merge_exp_df(
         rse_gene = rse_gene,
-        dea_paired_variants = top_eqtls,
         mod_deg = mod_deg,
         mod_eqtl = mod_eqtl,
-        eqtl = eqtl,
+        eqtl = eqtl |> arrange(FDR) |> slice_head(n = 10),
         plink = plink,
         mismatched_snps
     )
