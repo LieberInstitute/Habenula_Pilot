@@ -388,13 +388,6 @@ exp_vs_geno_manuscript_plot = function(
         ungroup()
 
     p = ggplot(a) +
-        geom_text(
-            data = label_df,
-            mapping = aes(label = sig_label, x = Inf, y = -Inf),
-            hjust = 1,
-            vjust = 0,
-            size = 6
-        ) +
         facet_wrap(~ anno_label, nrow = facet_nrow) +
         labs(x = "Genotype", y = "Residualized Expression") +
         theme_bw(base_size = 20) +
@@ -430,6 +423,17 @@ exp_vs_geno_manuscript_plot = function(
             scale_color_manual(values = geno_colors)
     }
 
+    #   Add text last to place it in front of points/ boxes in a couple
+    #   unavoidable cases of overlap
+    p = p +
+        geom_text(
+            data = label_df,
+            mapping = aes(label = sig_label, x = Inf, y = -Inf),
+            hjust = 1,
+            vjust = 0,
+            size = 6
+        )
+    
     pdf(
         file.path(plot_dir, paste0('expr_by_geno_', plot_suffix)),
         width = pdf_width, height = pdf_height
