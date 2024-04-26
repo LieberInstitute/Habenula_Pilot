@@ -838,4 +838,21 @@ if (opt$mode == "independent") {
         write_csv(rs_path)
 }
 
+################################################################################
+#   Add dummy plot with legend for genotype colors
+################################################################################
+
+if(opt$mode == 'independent') {
+    p = ggplot(
+            tibble(x = 1:3, y = 1:3, geno = as.character(0:2)),
+            mapping = aes(x = x, y = y, color = geno)
+        ) +
+        geom_point() +
+        scale_color_manual(values = geno_colors)
+    
+    pdf(file.path(plot_dir, 'geno_legend.pdf'))
+    print(p)
+    dev.off()
+}
+
 session_info()
