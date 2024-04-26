@@ -668,6 +668,12 @@ if (opt$mode == "independent") {
 
     #   Expression vs diagnosis for DEGs
     p = exp_df |>
+        #   Re-order genes to match geno plot below
+        mutate(
+            gene_symbol = factor(
+                gene_symbol, levels = c('RP11-624M8.1', 'ACCS', 'MYRFL')
+            )
+        ) |>
         ggplot(
                 mapping = aes(
                     x = PrimaryDx, y = resid_logcount_deg, color = PrimaryDx
