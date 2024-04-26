@@ -187,42 +187,39 @@ dev.off()
 #   BSP2 vs habenula beta value plots at the same eQTLs
 ################################################################################
 
-p_dlpfc = bsp2 |>
-    filter(region == "DLPFC") |>
-    select(pair_id, beta) |>
-    dplyr::rename(beta_DLPFC = beta) |>
-    left_join(
-        eqtl_independent |>
-            select(pair_id, slope) |>
-            dplyr::rename(beta_habenula = slope),
-        by = "pair_id"
-    ) |>
-    ggplot(mapping = aes(x = beta_habenula, y = beta_DLPFC)) +
+p_list = list()
+for (this_region in c("DLPFC", "Hippocampus")) {
+    this_bsp2 = bsp2 |>
+        filter(region == this_region) |>
+        select(pair_id, beta) |>
+        dplyr::rename(beta_bsp2 = beta) |>
+        left_join(
+            eqtl_independent |>
+                select(pair_id, slope) |>
+                dplyr::rename(beta_habenula = slope),
+            by = "pair_id"
+        )
+    this_bsp2_lm = lm(beta_bsp2 ~ beta_habenula, this_bsp2)
+    message(
+        sprintf(
+            'BSP2 %s: y = %sx + %s',
+            this_region,
+            signif(this_bsp2_lm$coefficients[2], 3),
+            signif(this_bsp2_lm$coefficients[1], 3)
+        )
+    )
+    p_list[[this_region]] = ggplot(
+            mapping = aes(x = beta_habenula, y = beta_bsp2)
+        ) +
         geom_point() +
         geom_abline(slope = 1) +
         geom_smooth(method = "lm", formula = y ~ x) +
         theme_bw(base_size = 20) +
-        labs(x = "Beta: Habenula", y = "Beta: DLPFC")
-
-p_hippo = bsp2 |>
-    filter(region == "Hippocampus") |>
-    select(pair_id, beta) |>
-    dplyr::rename(beta_hippo = beta) |>
-    left_join(
-        eqtl_independent |>
-            select(pair_id, slope) |>
-            dplyr::rename(beta_habenula = slope),
-        by = "pair_id"
-    ) |>
-    ggplot(mapping = aes(x = beta_habenula, y = beta_hippo)) +
-        geom_point() +
-        geom_abline(slope = 1) +
-        geom_smooth(method = "lm", formula = y ~ x) +
-        theme_bw(base_size = 20) +
-        labs(x = "Beta: Habenula", y = "Beta: Hippocampus")
+        labs(x = "Beta: Habenula", y = paste("Beta:", this_region))
+}
 
 pdf(file.path(plot_dir, 'BSP2_vs_habenula_beta.pdf'), width = 12, height = 6)
-print(plot_grid(plotlist = list(p_dlpfc, p_hippo)))
+print(plot_grid(plotlist = p_list))
 dev.off()
 
 pdf(
@@ -230,7 +227,12 @@ pdf(
     width = 12, height = 6
 )
 print(
-    plot_grid(plotlist = list(p_dlpfc + coord_fixed(), p_hippo + coord_fixed()))
+    plot_grid(
+        plotlist = list(
+            p_list[["DLPFC"]] + coord_fixed(),
+            p_list[["Hippocampus"]] + coord_fixed()
+        )
+    )
 )
 dev.off()
 
