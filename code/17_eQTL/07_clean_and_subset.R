@@ -101,6 +101,10 @@ bsp2 = rbind(bsp2_dlpfc, bsp2_hippo) |>
     dplyr::rename(gene_id = feature_id) |>
     select(gene_id, variant_id, pair_id, FDR, beta, region)
 
+write_csv(bsp2, bsp2_out_path)
+
+#   TODO: read in gene expression and genotype data below ----------------------
+
 bsp2_exp_dlpfc = fread(bsp2_dlpfc_exp_path)
 
 #   Read in genotypes for SNPs that in habenula have eQTLs paired with habenula
