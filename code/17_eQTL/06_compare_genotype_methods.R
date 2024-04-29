@@ -16,6 +16,9 @@ paired_variants_path = here(
 small_vcf_path = here(
     'processed-data', '17_eQTL', 'paired_DEA_eQTL_SNPs.vcf'
 )
+#   We'll also read just the MAF in for all SNPs to know for the manuscript
+#   how many SNPs remain after the MAF>0.05 cutoff
+big_vcf_path = here('processed-data', '08_bulk_snpPC', 'habenula_genotypes.vcf.gz')
 
 paired_variants = readLines(paired_variants_path)
 
@@ -63,3 +66,15 @@ combined_df_temp = combined_df |>
 
 #   Ok, that was easy
 all(combined_df_temp$genotype_a == combined_df_temp$genotype_b)
+
+#   Read in MAF for all SNPs to have the number passing the cutoff for the
+#   manuscript
+a = readInfo(big_vcf_path, x = 'MAF')
+message(
+    sprintf(
+        "%s of %s SNPs remain after MAF>0.05 cutoff applied.",
+        sum(a > 0.05),
+        length(a)
+    )
+)
+# 6763560 of 12393872 SNPs remain after MAF>0.05 cutoff applied.
