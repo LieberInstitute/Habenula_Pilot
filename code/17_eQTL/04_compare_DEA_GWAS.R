@@ -516,6 +516,9 @@ message(
     sprintf("%s significant SNP-gene pairs at FDR<0.05", nrow(eqtl))
 )
 message(
+    sprintf("%s unique SNPs from these eQTLs", length(unique(eqtl$variant_id)))
+)
+message(
     sprintf(
         "%s Genes total and median %s SNPs per gene",
         nrow(eqtl_gene),
