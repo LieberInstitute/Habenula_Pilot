@@ -24,6 +24,9 @@ rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
 bsp2_path = here('processed-data', '17_eQTL', 'BSP2_cleaned_expr_geno.csv')
+supp_tab_path = here(
+    'processed-data', '17_eQTL', 'independent_eqtl_supp_tab.csv'
+)
 
 plot_dir = here('plots', '17_eQTL')
 
@@ -148,7 +151,7 @@ message(
 )
 
 p = eqtl_int_both |>
-    select(phenotype_id, variant_id, b_gi, pval_gi, interaction_var) |>
+    dplyr::select(phenotype_id, variant_id, b_gi, pval_gi, interaction_var) |>
     mutate(
         gene_symbol = rowData(rse_gene)$Symbol[
             match(phenotype_id, rowData(rse_gene)$gencodeID)
@@ -237,7 +240,47 @@ print(
 dev.off()
 
 ################################################################################
-#   BSP2 genotypes at DEG-paired significant independent habenula eQTLs
+#   Supplementary table including significant independent eQTLs and interaction
+#   stats at those eQTLs as well
 ################################################################################
+
+eqtl_int_man = eqtl_int |>
+    #   Most of these columns will be identical with those found in the
+    #   independent SNPs, and need not be duplicated
+    dplyr::select(-c(pair_id, start_distance, ma_samples, ma_count, af)) |>
+    dplyr::rename(FDR_gi = FDR) |>
+    mutate(
+        interaction_var = ifelse(
+            interaction_var == "hb", "habenula", "thalamus"
+        )
+    ) |>
+    #   Pivot wider so thalamus and habenula interaction stats have their own
+    #   columns
+    pivot_wider(
+        values_from = !matches('^(phenotype_id|variant_id|interaction_var)$'),
+        names_from = "interaction_var",
+        names_glue = "{interaction_var}_{.value}"
+    ) |>
+    #   Clarify these stats come from interaction runs
+    rename_with(
+        ~ paste("inter", .x, sep = "_"),
+        !matches('^(phenotype_id|variant_id)$')
+    )
+
+eqtl_independent |>
+    #   Remove unnecessary columns and 'end_distance', which is just a duplicate
+    #   of 'start_distance'
+    dplyr::select(-c(`...1`, pair_id, end_distance)) |>
+    dplyr::rename(FDR_nominal = FDR) |>
+    #   Gene and SNP first
+    relocate(phenotype_id, variant_id) |>
+    #   Clarify which stats come from independent run
+    rename_with(
+        ~ paste("indep", .x, sep = "_"),
+        !matches('^(phenotype_id|variant_id|start_distance|af|ma_samples|ma_count)$')
+    ) |>
+    #   Add interaction stats, where they exist, at independent SNPs
+    left_join(eqtl_int_man, by = c('phenotype_id', 'variant_id')) |>
+    write_csv(supp_tab_path)
 
 session_info()
