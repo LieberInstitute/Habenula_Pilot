@@ -758,7 +758,7 @@ if (opt$mode == "independent") {
             gwas_wide |>
                 mutate(risk_allele = ifelse(BETA > 0, A1, A2)) |>
                 dplyr::rename(snp_id = variant_id) |>
-                select(snp_id, risk_allele),
+                dplyr::select(snp_id, risk_allele),
             by = 'snp_id'
         )
     
@@ -848,7 +848,7 @@ if (opt$mode == "independent") {
 }
 
 ################################################################################
-#   Add dummy plot with legend for genotype colors
+#   Add dummy plot with legends for genotype and diagnosis colors
 ################################################################################
 
 if(opt$mode == 'independent') {
@@ -860,6 +860,17 @@ if(opt$mode == 'independent') {
         scale_color_manual(values = geno_colors)
     
     pdf(file.path(plot_dir, 'geno_legend.pdf'))
+    print(p)
+    dev.off()
+
+    p = ggplot(
+            tibble(x = 1:2, y = 1:2, dx = c("Control", "SCZD")),
+            mapping = aes(x = x, y = y, color = dx)
+        ) +
+        geom_point() +
+        scale_color_manual(values = dx_colors)
+    
+    pdf(file.path(plot_dir, 'dx_legend.pdf'))
     print(p)
     dev.off()
 }
