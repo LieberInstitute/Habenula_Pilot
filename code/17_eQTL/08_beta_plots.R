@@ -271,7 +271,7 @@ eqtl_independent |>
     #   Remove unnecessary columns and 'end_distance', which is just a duplicate
     #   of 'start_distance'
     dplyr::select(-c(`...1`, pair_id, end_distance)) |>
-    dplyr::rename(FDR_nominal = FDR) |>
+    dplyr::rename(FDR_beta = FDR) |>
     #   Gene and SNP first
     relocate(phenotype_id, variant_id) |>
     #   Clarify which stats come from independent run
