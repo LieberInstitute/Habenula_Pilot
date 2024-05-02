@@ -28,10 +28,6 @@ bsp2_dir = '/dcs05/lieber/liebercentral/BrainSEQ_LIBD001/brainseq_phase2/brainse
 bsp2_dlpfc_eqtl_path = file.path(bsp2_dir, 'BrainSeqPhaseII_eQTL_dlpfc_full.txt')
 bsp2_hippo_eqtl_path = file.path(bsp2_dir, 'BrainSeqPhaseII_eQTL_hippo_full.txt')
 bsp2_snp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_snp_annotation.txt')
-bsp2_geno_path = file.path(bsp2_dir, 'BrainSeqPhaseII_snp_genotype.txt')
-bsp2_dlpfc_exp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_clean_expression_eqtl_dlpfc_gene.txt')
-bsp2_hippo_exp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_clean_expression_eqtl_hippo_gene.txt')
-bsp2_meta_path = file.path(bsp2_dir, 'BrainSeqPhaseII_sample_metadata.txt')
 
 bsp2_out_path = here('processed-data', '17_eQTL', 'BSP2_cleaned_expr_geno.csv')
 
@@ -103,17 +99,4 @@ bsp2 = rbind(bsp2_dlpfc, bsp2_hippo) |>
 
 write_csv(bsp2, bsp2_out_path)
 
-#   TODO: read in gene expression and genotype data below ----------------------
-
-bsp2_exp_dlpfc = fread(bsp2_dlpfc_exp_path)
-
-#   Read in genotypes for SNPs that in habenula have eQTLs paired with habenula
-#   DEGs
-deg_variants = eqtl_independent |>
-    filter(phenotype_id %in% deg$gencodeID) |>
-    pull(variant_id)
-
-bsp2_geno = fread(bsp2_geno_path) |>
-    mutate(variant_id = bsp2_snp$variant_id[match(V1, bsp2_snp$snp)]) |>
-    filter(variant_id %in% deg_variants)
-
+session_info()
