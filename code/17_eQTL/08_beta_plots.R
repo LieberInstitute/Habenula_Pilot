@@ -23,7 +23,7 @@ gwas_wide_path = here(
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
-bsp2_path = here('processed-data', '17_eQTL', 'BSP2_cleaned_expr_geno.csv')
+bsp2_path = here('processed-data', '17_eQTL', 'BSP2_cleaned_eqtl.csv')
 supp_tab_path = here(
     'processed-data', '17_eQTL', 'independent_eqtl_supp_tab.csv'
 )

@@ -29,7 +29,7 @@ bsp2_dlpfc_eqtl_path = file.path(bsp2_dir, 'BrainSeqPhaseII_eQTL_dlpfc_full.txt'
 bsp2_hippo_eqtl_path = file.path(bsp2_dir, 'BrainSeqPhaseII_eQTL_hippo_full.txt')
 bsp2_snp_path = file.path(bsp2_dir, 'BrainSeqPhaseII_snp_annotation.txt')
 
-bsp2_out_path = here('processed-data', '17_eQTL', 'BSP2_cleaned_expr_geno.csv')
+bsp2_out_path = here('processed-data', '17_eQTL', 'BSP2_cleaned_eqtl.csv')
 
 #-------------------------------------------------------------------------------
 #   Interaction habenula eQTLs
@@ -60,7 +60,7 @@ eqtl_thal = fread(eqtl_thal_path) |>
 rbind(eqtl_hb, eqtl_thal) |> write_csv(eqtl_int_path)
 
 #-------------------------------------------------------------------------------
-#   BSP2 eQTLs with genotypes
+#   BSP2 eQTLs that are significant independent eQTLs in habenula
 #-------------------------------------------------------------------------------
 
 #   Table of alternative SNP names
