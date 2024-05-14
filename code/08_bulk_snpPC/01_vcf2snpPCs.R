@@ -8,10 +8,13 @@ library("sessioninfo")
 
 ################################ Set up paths #################################
 
-vcf <- here("processed-data/08_bulk_snpPC/habenula_genotypes.vcf.gz")
+vcf <- '/dcs05/lieber/liebercentral/libdGenotype_LIBD001/BrainGenotyping/subsets/Habenula_n69/Hb_gt_merged_R.9_MAF.05_ann.vcf.gz'
+out_dir = here('processed-data', '08_bulk_snpPC')
 
-bedout <- sub(".vcf.gz", "", vcf, fixed = T)
-bedout_filt <- sub(".vcf.gz", "_filt", vcf, fixed = T)
+bedout <- file.path(out_dir, sub(".vcf.gz", "", basename(vcf), fixed = T))
+bedout_filt <- file.path(
+    out_dir, sub(".vcf.gz", "_filt", basename(vcf), fixed = T)
+)
 
 ###############################################################################
 
@@ -20,12 +23,10 @@ bedout_filt <- sub(".vcf.gz", "_filt", vcf, fixed = T)
 ############################ Convert to plink BED #############################
 
 cmd <- paste(
-    "plink --make-bed --output-chr chrM --keep-allele-order --vcf",
+    "plink --make-bed --output-chr chrM --keep-allele-order --geno 0.05 --hwe 1e-6 --maf 0.05 --vcf",
     vcf, "--out", bedout
 )
 system(cmd)
-
-indfile <- paste0(bedout, "_indep")
 
 ###############################################################################
 
