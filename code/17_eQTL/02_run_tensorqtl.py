@@ -30,9 +30,7 @@ else:
 #   Specify paths and global variables
 in_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_input"))
 out_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_output", out_dir_suffix))
-plink_prefix_path = str(
-    here("processed-data", '08_bulk_snpPC', "habenula_genotypes")
-)
+plink_prefix_path = "/dcs05/lieber/liebercentral/libdGenotype_LIBD001/BrainGenotyping/subsets/Habenula_n69/plink/Hb_gt.hwe_1e-6_geno_05_maf_05"
 covariates_file = str(in_dir / "covariates.txt")
 expression_bed = str(in_dir / "logcounts.bed.gz")
 
@@ -60,7 +58,7 @@ print("." *20 )
 print("Reading Plink files: " + plink_prefix_path)
 pr = genotypeio.PlinkReader(plink_prefix_path)
 print("Loading Genotypes...", end='')
-genotype_df = pr.load_genotypes()
+genotype_df = pr.load_genotypes().rename({'Br0983': 'Br983'}, axis = 1)
 variant_df = pr.bim.set_index('snp')[['chrom', 'pos']]
 print("Genotype dimensions:", end='')
 print(genotype_df.shape)
