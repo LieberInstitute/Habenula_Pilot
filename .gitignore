@@ -10,6 +10,8 @@ processed-data/09_trans_special_analysis/*
 processed-data/17_eQTL/tensorQTL_input/logcounts.bed.gz
 processed-data/17_eQTL/tensorQTL_output/*/*.parquet
 processed-data/17_eQTL/tensorQTL_output/interaction*/all.csv
+processed-data/17_eQTL/pre_geno_snapshot_2024_05_02
+plots/17_eQTL/pre_geno_snapshot_2024_05_02
 .Rhistory
 .Rproj.user
 .DS_Store
