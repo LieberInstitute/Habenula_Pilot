@@ -1,33 +1,34 @@
 #!/bin/bash
-#$ -cwd
-#$ -l mem_free=20G,h_vmem=20G,h_fsize=100G
-#$ -N vcf2snpPCs
-#$ -o logs/01_vcf2snpPCs.txt
-#$ -e logs/01_vcf2snpPCs.txt
-#$ -m e
+#SBATCH -p shared
+#SBATCH --mem=20G
+#SBATCH --job-name=01_vcf2snpPCs
+#SBATCH -c 1
+#SBATCH -t 2-00:00:00
+#SBATCH -o logs/01_vcf2snpPCs_rerun.txt
+#SBATCH -e logs/01_vcf2snpPCs_rerun.txt
+
+set -e
 
 echo "**** Job starts ****"
 date
 
 echo "**** JHPCE info ****"
 echo "User: ${USER}"
-echo "Job id: ${JOB_ID}"
-echo "Job name: ${JOB_NAME}"
-echo "Hostname: ${HOSTNAME}"
-echo "Task id: ${SGE_TASK_ID}"
+echo "Job id: ${SLURM_JOB_ID}"
+echo "Job name: ${SLURM_JOB_NAME}"
+echo "Node name: ${SLURMD_NODENAME}"
+echo "Task id: ${SLURM_ARRAY_TASK_ID}"
 
-## Load the R module (absent since the JHPCE upgrade to CentOS v7)
-module load conda_R/4.3
-module load plink/1.90b6.6
+module load conda_R/4.3.x
+module load plink/1.90b
 
 ## List current modules for reproducibility
 module list
 
-## Edit with your job command
 Rscript 01_vcf2snpPCs.R
 
 echo "**** Job ends ****"
 date
 
-## This script was made using sgejobs version 0.99.2
-## available from http://research.libd.org/sgejobs/
+## This script was made using slurmjobs version 1.2.1
+## available from http://research.libd.org/slurmjobs/
