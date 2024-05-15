@@ -9,6 +9,10 @@ rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
 pca_path = here('processed-data', '03_bulk_pca', 'PCs.rds')
+snp_pcs_path = here(
+    'processed-data', '08_bulk_snpPC',
+    'Hb_gt_merged_R.9_MAF.05_ann_filt.snpPCs.tab'
+)
 expected_covariates = c(
     "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5'
 )
@@ -52,6 +56,14 @@ rse_to_bed <- function(rse, assay_name = "logcounts") {
 ################################################################################
 
 rse = get(load(rse_path, verbose = TRUE))
+
+#   Overwrite SNP PCs with the most recent values computed from the properly
+#   filtered genotyping data
+colData(rse) = colData(rse) |>
+    as_tibble() |>
+    select(!matches('^snpPC')) |>
+    left_join(read_tsv(snp_pcs_path, show_col_types = FALSE), by = 'BrNum') |>
+    DataFrame()
 colnames(rse) = rse$BrNum
 
 #   Also write colData to CSV, to have easy access to potential interaction
