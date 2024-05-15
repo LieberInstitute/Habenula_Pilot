@@ -62,7 +62,12 @@ rse = get(load(rse_path, verbose = TRUE))
 colData(rse) = colData(rse) |>
     as_tibble() |>
     select(!matches('^snpPC')) |>
-    left_join(read_tsv(snp_pcs_path, show_col_types = FALSE), by = 'BrNum') |>
+    left_join(
+        read_tsv(snp_pcs_path, show_col_types = FALSE) |>
+            #   Fix the name of one donor
+            mutate(BrNum = ifelse(BrNum == "Br0983", "Br983", BrNum)),
+        by = 'BrNum'
+    ) |>
     DataFrame()
 colnames(rse) = rse$BrNum
 
