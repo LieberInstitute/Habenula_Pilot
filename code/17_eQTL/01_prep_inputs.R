@@ -14,7 +14,8 @@ snp_pcs_path = here(
     'Hb_gt_merged_R.9_MAF.05_ann_filt.snpPCs.tab'
 )
 expected_covariates = c(
-    "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5'
+    "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5',
+    paste0('PC', 1:12)
 )
 out_dir = here("processed-data", "17_eQTL", "tensorQTL_input")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
@@ -57,16 +58,21 @@ rse_to_bed <- function(rse, assay_name = "logcounts") {
 
 rse = get(load(rse_path, verbose = TRUE))
 
-#   Overwrite SNP PCs with the most recent values computed from the properly
-#   filtered genotyping data
 colData(rse) = colData(rse) |>
     as_tibble() |>
+    #   Overwrite SNP PCs with the most recent values computed from the properly
+    #   filtered genotyping data
     select(!matches('^snpPC')) |>
     left_join(
         read_tsv(snp_pcs_path, show_col_types = FALSE) |>
             #   Fix the name of one donor
             mutate(BrNum = ifelse(BrNum == "Br0983", "Br983", BrNum)),
         by = 'BrNum'
+    ) |>
+    #   Add in gene PCs
+    left_join(
+        readRDS(pca_path) |> as.data.frame() |> rownames_to_column("RNum"),
+        by = "RNum"
     ) |>
     DataFrame()
 colnames(rse) = rse$BrNum
@@ -79,28 +85,12 @@ write_csv(col_data, file.path(out_dir, 'colData.csv'))
 
 message(Sys.time(), " - Format covariates")
 
-#   Select PC columns in the order of rows present in 'rse'
-pca_tab = readRDS(pca_path)
-pcs = colData(rse) |>
-    as_tibble() |>
-    dplyr::select(BrNum, RNum) |>
-    left_join(
-        pca_tab |> as.data.frame() |> rownames_to_column("RNum"),
-        by = "RNum"
-    ) |>
-    dplyr::select(BrNum, starts_with("PC")) |>
-    column_to_rownames("BrNum")
-corner(pcs)
-
-#   Model non-PC covariates
+#   Model covariates and save
 pd = as.data.frame(colData(rse)[, expected_covariates])
-pd <- model.matrix(
+covars <- model.matrix(
         as.formula(paste('~', paste(expected_covariates, collapse = " + "))),
         data = pd
-    )[, 2:(1 + length(expected_covariates))]
-
-#   Combine all covariates and save
-covars = cbind(pd, pcs) |>
+    )[, 2:(1 + length(expected_covariates))] |>
     t() |>
     as.data.frame() |>
     rownames_to_column("id")
