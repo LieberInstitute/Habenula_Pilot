@@ -15,7 +15,7 @@ snp_pcs_path = here(
 )
 expected_covariates = c(
     "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5',
-    paste0('PC', 1:12)
+    paste0('PC', 1:14)
 )
 out_dir = here("processed-data", "17_eQTL", "tensorQTL_input")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
@@ -70,10 +70,7 @@ colData(rse) = colData(rse) |>
         by = 'BrNum'
     ) |>
     #   Add in gene PCs
-    left_join(
-        readRDS(pca_path) |> as.data.frame() |> rownames_to_column("RNum"),
-        by = "RNum"
-    ) |>
+    left_join(readRDS(pca_path), by = "RNum") |>
     DataFrame()
 colnames(rse) = rse$BrNum
 
