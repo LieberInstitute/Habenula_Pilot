@@ -1,10 +1,10 @@
 **** Job starts ****
-Thu May 16 09:03:17 AM EDT 2024
+Thu May 16 09:18:55 AM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 5534733
+Job id: 5534778
 Job name: 03_save_PCs
-Node name: compute-124
+Node name: compute-090
 Unloading conda_R/4.3.x
 Loading conda_R/4.3.x
 Loading required package: MatrixGenerics
@@ -236,4 +236,4 @@ Loading required package: BiocParallel
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Thu May 16 09:03:44 AM EDT 2024
+Thu May 16 09:19:51 AM EDT 2024

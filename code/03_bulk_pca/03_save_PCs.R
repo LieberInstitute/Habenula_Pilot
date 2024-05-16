@@ -16,6 +16,8 @@ snp_pcs_path = here(
     'Hb_gt_merged_R.9_MAF.05_ann_filt.snpPCs.tab'
 )
 
+set.seed(0)
+
 #   Load RSE and overwrite SNP PCs with the most recent values computed from the
 #   properly filtered genotyping data
 rse = get(load(rse_path))
@@ -38,6 +40,9 @@ mod <- model.matrix(
 pca <- prcomp(t(assays(rse)$logcounts))
 k <- num.sv(assays(rse)$logcounts, mod)
 
-saveRDS(pca$x[, seq(k)], out_path)
+pc_df = pca$x[, seq(k)] |>
+    as_tibble() |>
+    mutate(RNum = rse$RNum)
+saveRDS(pc_df, out_path)
 
 session_info()
