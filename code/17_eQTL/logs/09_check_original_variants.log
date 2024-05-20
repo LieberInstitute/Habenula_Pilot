@@ -1,0 +1,35 @@
+**** Job starts ****
+Mon May 20 01:41:47 PM EDT 2024
+**** JHPCE info ****
+User: neagles
+Job id: 5743776
+Job name: 09_check_original_variants
+Node name: compute-096
+Unloading LIBD SLURM module for tensorQTL/1.0.8
+Loading LIBD SLURM module for tensorQTL/1.0.8
+Mapping files:   0%|          | 0/3 [00:00<?, ?it/s]Mapping files:  33%|███▎      | 1/3 [00:10<00:20, 10.08s/it]Mapping files: 100%|██████████| 3/3 [00:13<00:00,  3.77s/it]Mapping files: 100%|██████████| 3/3 [00:13<00:00,  4.40s/it]
+Number of originally found significant independent variants measured in newly filtered genotyping data:
+variant_id
+True     604
+False    138
+Name: count, dtype: int64
+Number of originally found variants that overlap GWAS or DEA measured in newly filtered genotyping data:
+variant_id
+True     15
+False     1
+Name: count, dtype: int64
+Info about the overlapping eQTL that doesnt have a genotyped variant:
+         phenotype_id   symbol         variant_id        rs_id     source
+6  ENSG00000204257.14  HLA-DMA  chr6:32839713:C:T  rs114595701  gwas_wide
+-----
+genotypeio          NA
+pandas              2.1.1
+pyhere              1.0.0
+session_info        1.0.0
+-----
+Python 3.9.0 (default, Nov 15 2020, 14:28:56) [GCC 7.3.0]
+Linux-5.14.0-284.11.1.el9_2.x86_64-x86_64-with-glibc2.34
+-----
+Session information updated at 2024-05-20 13:42
+**** Job ends ****
+Mon May 20 01:42:30 PM EDT 2024
