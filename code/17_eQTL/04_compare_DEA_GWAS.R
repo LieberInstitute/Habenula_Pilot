@@ -53,6 +53,11 @@ gwas_wide_filt_path = here(
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
+gene_pcs_path = here('processed-data', '03_bulk_pca', 'PCs.rds')
+snp_pcs_path = here(
+    'processed-data', '08_bulk_snpPC',
+    'Hb_gt_merged_R.9_MAF.05_ann_filt.snpPCs.tab'
+)
 plink_path_prefix = here(
     "processed-data", '08_bulk_snpPC', "habenula_genotypes"
 )
@@ -80,7 +85,8 @@ sig_cutoff_gwas = 5e-8
 
 #   Covariates used in the model for tensorQTL and for DEA, respectively
 eqtl_covariates = c(
-    "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5'
+    "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5',
+    paste0('PC', 1:14)
 )
 deg_covariates = c(
     'PrimaryDx', 'AgeDeath', 'Flowcell', 'mitoRate', 'rRNA_rate', 'RIN',
@@ -459,6 +465,22 @@ eqtl = read_csv(eqtl_path, show_col_types = FALSE)
 deg_full = read_tsv(deg_path, show_col_types = FALSE)
 
 rse_gene = get(load(rse_path))
+
+colData(rse_gene) = colData(rse_gene) |>
+    as_tibble() |>
+    #   Overwrite SNP PCs with the most recent values computed from the properly
+    #   filtered genotyping data
+    select(!matches('^snpPC')) |>
+    left_join(
+        read_tsv(snp_pcs_path, show_col_types = FALSE) |>
+            #   Fix the name of one donor
+            mutate(BrNum = ifelse(BrNum == "Br0983", "Br983", BrNum)),
+        by = 'BrNum'
+    ) |>
+    #   Add in gene PCs
+    left_join(readRDS(gene_pcs_path), by = "RNum") |>
+    DataFrame()
+
 colnames(rse_gene) = rse_gene$BrNum
 rse_gene$PrimaryDx[rse_gene$PrimaryDx == "Schizo"] = "SCZD"
 
