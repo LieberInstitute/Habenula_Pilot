@@ -1,10 +1,10 @@
 **** Job starts ****
-Wed Apr 10 12:05:48 PM EDT 2024
+Mon May 20 03:25:08 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 4207022
+Job id: 5744831
 Job name: 04_compare_DEA_GWAS
-Node name: compute-097
+Node name: compute-089
 Loading conda_R/4.3.x
 Loading LIBD SLURM module for liftover/1.0
 here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
@@ -188,25 +188,26 @@ The following object is masked from ‘package:purrr’:
     transpose
 
 Loading required package: rafalib
-147744 significant SNP-gene pairs at FDR<0.05
-3163 Genes total and median 6 SNPs per gene
+132871 significant SNP-gene pairs at FDR<0.05
+99951 unique SNPs from these eQTLs
+2570 Genes total and median 8 SNPs per gene
 Number of narrow Trubetskoy et al. GWAS SNPs matching sig eQTLs:
 
 FALSE  TRUE 
-  301     7 
+  299     9 
 Genes paired with narrow-GWAS-significant eQTL SNPs:
-ANKRD45, BORCS7, RP11-182J1.14, DNM1P51, CORO7, LRRC37A, LRRC37A2, ALMS1P1, WBP2NL
+ANKRD45, BORCS7, USMG5, RP4-605O3.4, DNM1P51, CORO7, LRRC37A, LRRC37A2, ALMS1P1, WBP2NL
 Number of wide Trubetskoy et al. GWAS SNPs matching sig eQTLs:
 
 FALSE  TRUE 
-16161  4285 
+15942  4504 
 Genes paired with wide-GWAS-significant eQTL SNPs:
-BORCS7, RP11-182J1.14, DNM1P51, SMG1P5, LRRC37A4P, DND1P1, RP11-707O23.5, CRHR1-IT1, MAPT-AS1, KANSL1-AS1, KANSL1, LRRC37A, LRRC37A2, RP11-795F19.1, SUGP1, ALMS1P1, IFT52, WBP2NL, CYP2D6, RP4-669P10.19, RP4-669P10.20, PPM1M, GNL3, NEK4, HIST1H4D, BTN3A2, BTN2A1, ZNF602P, RP1-265C24.8, ZNF192P1, ZNF603P, ZSCAN12, ZSCAN23, HCG4, HLA-K, VARS2, HCG22, PSORS1C1, CCHCR1, TCF19, HCG27, HLA-C, LY6G5C, C4A, CYP21A1P, HCG23, HLA-DRB5, HLA-DRB6, HLA-DRB1, HLA-DQA1, HLA-DQB1, HLA-DQA2, HLA-DQB2, HLA-DMA, HLA-DPA1
+BORCS7, RP11-182J1.14, DNM1P51, LRRC37A4P, DND1P1, RP11-707O23.5, CRHR1-IT1, KANSL1-AS1, KANSL1, LRRC37A, LRRC37A2, RP11-795F19.1, CPT1C, ALMS1P1, WBP2NL, CYP2D6, RP4-669P10.19, RP4-669P10.20, PPM1M, NEK4, HIST1H4D, BTN3A2, BTN2A1, ABT1, ZNF391, ZNF192P1, ZNF603P, ZKSCAN3, ZSCAN12, ZSCAN23, HCG4, MCCD1P1, HLA-K, HCG4P5, VARS2, HCG22, PSORS1C1, TCF19, HLA-C, MICA, SNORA38, LY6G5C, C4A, HCG23, HLA-DRB5, HLA-DRB6, HLA-DRB1, HLA-DQB1, HLA-DQA2, HLA-DQB2, HLA-DMA
 Number and name of DE genes at FDR<0.1 implicated in any eQTLs:
 
 FALSE  TRUE 
-  150    23 
-MIR34A, IL12RB2, RP11-545A16.3, RNASEL, CCDC141, RP11-756P10.3, EXOC3, HAVCR1, RP11-624M8.1, SLC10A5, ACCS, C2CD2L, TSPAN11, OVOS2, SMAGP, DPY19L2, RP11-766N7.3, MYRFL, RP11-511B23.2, GNAL, TPM3P9, SLCO4A1, APOL2
+  155    18 
+MIR34A, IL12RB2, RP11-545A16.3, RNASEL, CCDC141, DRD5, HAVCR1, RP11-624M8.1, ANGPT2, TDRD1, ACCS, TSPAN11, SMAGP, DPY19L2, RP11-766N7.3, MYRFL, QPRT, TPM3P9
 Genes implicated in the narrow GWAS, DEA at FDR<0.1, and eQTLs:
 
 Genes implicated in the wide GWAS, DEA at FDR<0.1, and eQTLs:
@@ -214,8 +215,8 @@ Genes implicated in the wide GWAS, DEA at FDR<0.1, and eQTLs:
 Number and name of DE genes at FDR<0.05 implicated in any eQTLs:
 
 FALSE  TRUE 
-   40     5 
-CCDC141, HAVCR1, OVOS2, RP11-766N7.3, SLCO4A1
+   41     4 
+CCDC141, HAVCR1, RP11-766N7.3, QPRT
 Genes implicated in the narrow GWAS, DEA at FDR<0.05, and eQTLs:
 
 Genes implicated in the wide GWAS, DEA at FDR<0.05, and eQTLs:
@@ -228,6 +229,13 @@ dbl (71): CHR, (C)M, POS, Br1016_Br1016, Br1023_Br1023, Br1034_Br1034, Br109...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+In full_join(dplyr::rename(dplyr::select(eqtl, phenotype_id, variant_id),  :
+  Detected an unexpected many-to-many relationship between `x` and `y`.
+ℹ Row 1 of `x` matches multiple rows in `y`.
+ℹ Row 69 of `y` matches multiple rows in `x`.
+ℹ If a many-to-many relationship is expected, set `relationship =
+  "many-to-many"` to silence this warning.
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
@@ -300,67 +308,103 @@ dbl (71): CHR, (C)M, POS, Br1016_Br1016, Br1023_Br1023, Br1034_Br1034, Br109...
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
-$ENSG00000177359.17
-
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
 $ENSG00000255693.1
+
+$ENSG00000103485.17
 
 $ENSG00000163492.14
 
-$ENSG00000101187.15
-
 $ENSG00000113249.12
-
-$ENSG00000177359.17
 
 $ENSG00000255693.1
 
+$ENSG00000103485.17
+
 $ENSG00000163492.14
 
-$ENSG00000101187.15
-
 $ENSG00000113249.12
-
-$`OVOS2: chr12:31165106:T:C`
-
-$`OVOS2: chr12:31168911:T:C`
-
-$`OVOS2: chr12:31170059:C:T`
-
-$`OVOS2: chr12:31171817:G:A`
-
-$`OVOS2: chr12:31172020:G:A`
-
-$`OVOS2: chr12:31172424:C:G`
-
-$`OVOS2: chr12:31172815:C:A`
-
-$`OVOS2: chr12:31173735:A:T`
-
-$`OVOS2: chr12:31174135:C:T`
 
 $`RP11-766N7.3: chr12:64883750:A:T`
 
-$`CCDC141: chr2:178867323:C:T`
+$`QPRT: chr16:29343449:C:T`
 
-$`CCDC141: chr2:178867457:G:A`
+$`QPRT: chr16:29343461:C:T`
 
 $`CCDC141: chr2:178868270:A:T`
 
 $`CCDC141: chr2:178873542:C:T`
 
-$`CCDC141: chr2:178873778:T:C`
-
-$`CCDC141: chr2:178874756:A:G`
-
-$`CCDC141: chr2:178875282:T:C`
-
 $`CCDC141: chr2:178876621:A:G`
 
-$`CCDC141: chr2:178880651:T:C`
-
-$`CCDC141: chr2:178880653:C:T`
-
-$`CCDC141: chr2:178881595:G:A`
+$`CCDC141: chr2:178881190:A:C`
 
 $`CCDC141: chr2:178882663:G:C`
 
@@ -376,11 +420,13 @@ $`CCDC141: chr2:178884646:C:A`
 
 $`CCDC141: chr2:178885360:T:C`
 
-$`SLCO4A1: chr20:62355737:C:T`
+$`CCDC141: chr2:178892213:GTA:G`
 
 $`HAVCR1: chr5:157088395:C:G`
 
 $`HAVCR1: chr5:157096736:C:T`
+
+$`HAVCR1: chr5:157099320:A:G`
 
 $`HAVCR1: chr5:157099618:T:C`
 
@@ -388,13 +434,107 @@ $`HAVCR1: chr5:157099655:A:G`
 
 $`HAVCR1: chr5:157099924:G:A`
 
+$`HAVCR1: chr5:157111960:AATTTTATTT:A`
+
+$`HAVCR1: chr5:157112357:G:A`
+
+$`HAVCR1: chr5:157112755:C:T`
+
+$`HAVCR1: chr5:157113476:G:A`
+
+$`HAVCR1: chr5:157113541:G:C`
+
+$`HAVCR1: chr5:157113614:G:A`
+
+$`HAVCR1: chr5:157114512:TA:T`
+
+$`HAVCR1: chr5:157114922:T:C`
+
+$`HAVCR1: chr5:157115485:C:A`
+
+$`HAVCR1: chr5:157115502:A:T`
+
+$`HAVCR1: chr5:157116684:G:A`
+
+$`HAVCR1: chr5:157116886:T:A`
+
+$`HAVCR1: chr5:157119184:A:T`
+
+$`HAVCR1: chr5:157119431:A:G`
+
+$`RP11-766N7.3: chr12:64883750:A:T`
+
+$`QPRT: chr16:29343449:C:T`
+
+$`QPRT: chr16:29343461:C:T`
+
+$`CCDC141: chr2:178868270:A:T`
+
+$`CCDC141: chr2:178873542:C:T`
+
+$`CCDC141: chr2:178876621:A:G`
+
+$`CCDC141: chr2:178881190:A:C`
+
+$`CCDC141: chr2:178882663:G:C`
+
+$`CCDC141: chr2:178882694:T:C`
+
+$`CCDC141: chr2:178882703:T:C`
+
+$`CCDC141: chr2:178884325:G:C`
+
+$`CCDC141: chr2:178884605:C:T`
+
+$`CCDC141: chr2:178884646:C:A`
+
+$`CCDC141: chr2:178885360:T:C`
+
+$`CCDC141: chr2:178892213:GTA:G`
+
+$`HAVCR1: chr5:157088395:C:G`
+
+$`HAVCR1: chr5:157096736:C:T`
+
+$`HAVCR1: chr5:157099320:A:G`
+
+$`HAVCR1: chr5:157099618:T:C`
+
+$`HAVCR1: chr5:157099655:A:G`
+
+$`HAVCR1: chr5:157099924:G:A`
+
+$`HAVCR1: chr5:157111960:AATTTTATTT:A`
+
+$`HAVCR1: chr5:157112357:G:A`
+
+$`HAVCR1: chr5:157112755:C:T`
+
+$`HAVCR1: chr5:157113476:G:A`
+
+$`HAVCR1: chr5:157113541:G:C`
+
+$`HAVCR1: chr5:157113614:G:A`
+
+$`HAVCR1: chr5:157114512:TA:T`
+
+$`HAVCR1: chr5:157114922:T:C`
+
+$`HAVCR1: chr5:157115485:C:A`
+
+$`HAVCR1: chr5:157115502:A:T`
+
+$`HAVCR1: chr5:157116684:G:A`
+
+$`HAVCR1: chr5:157116886:T:A`
+
 $`HAVCR1: chr5:157119184:A:T`
 
 $`HAVCR1: chr5:157119431:A:G`
 
 null device 
           1 
-There were 24 warnings (use warnings() to see them)
+There were 48 warnings (use warnings() to see them)
 ─ Session info ───────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.2 Patched (2024-02-08 r85876)
@@ -405,7 +545,7 @@ There were 24 warnings (use warnings() to see them)
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2024-04-10
+ date     2024-05-20
  pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -470,6 +610,7 @@ There were 24 warnings (use warnings() to see them)
  nlme                   3.1-164    2023-11-27 [3] CRAN (R 4.3.2)
  pillar                 1.9.0      2023-03-22 [2] CRAN (R 4.3.2)
  pkgconfig              2.0.3      2019-09-22 [2] CRAN (R 4.3.2)
+ Polychrome           * 1.5.1      2022-05-03 [1] CRAN (R 4.3.2)
  purrr                * 1.0.2      2023-08-10 [2] CRAN (R 4.3.2)
  R6                     2.5.1      2021-08-19 [2] CRAN (R 4.3.2)
  rafalib              * 1.0.0      2015-08-09 [1] CRAN (R 4.3.2)
@@ -484,6 +625,7 @@ There were 24 warnings (use warnings() to see them)
  S4Arrays               1.2.0      2023-10-24 [2] Bioconductor
  S4Vectors            * 0.40.2     2023-11-23 [2] Bioconductor 3.18 (R 4.3.2)
  scales                 1.3.0      2023-11-28 [2] CRAN (R 4.3.2)
+ scatterplot3d          0.3-44     2023-05-05 [1] CRAN (R 4.3.2)
  segmented              2.0-3      2024-02-16 [1] CRAN (R 4.3.2)
  sessioninfo          * 1.2.2      2021-12-06 [2] CRAN (R 4.3.2)
  settings               0.2.7      2021-05-07 [1] CRAN (R 4.3.2)
@@ -515,4 +657,4 @@ There were 24 warnings (use warnings() to see them)
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Wed Apr 10 12:15:03 PM EDT 2024
+Mon May 20 03:35:59 PM EDT 2024
