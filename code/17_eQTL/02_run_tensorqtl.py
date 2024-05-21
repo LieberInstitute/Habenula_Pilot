@@ -35,7 +35,7 @@ covariates_file = str(in_dir / "covariates.txt")
 expression_bed = str(in_dir / "logcounts.bed.gz")
 
 prefix = "habenula"
-add_chr = False
+add_chr = True
 
 out_dir.mkdir(exist_ok = True)
 

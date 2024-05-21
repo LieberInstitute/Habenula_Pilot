@@ -1,0 +1,124 @@
+**** Job starts ****
+Fri May 17 04:34:48 PM EDT 2024
+**** JHPCE info ****
+User: neagles
+Job id: 5548737
+Job name: 02_run_tensorqtl
+Node name: compute-126
+Unloading LIBD SLURM module for tensorQTL/1.0.8
+Loading LIBD SLURM module for tensorQTL/1.0.8
+PyTorch 1.11.0+cu113
+Pandas 2.1.1
+Using 'run_mode'=nominal and 'interaction_cov'=none.
+Reading Expression file: /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/code/17_eQTL/../../processed-data/17_eQTL/tensorQTL_input/logcounts.bed.gz
+Phenotype dimensions:
+(22756, 68)
+....................
+Reading Plink files: /dcs05/lieber/liebercentral/libdGenotype_LIBD001/BrainGenotyping/subsets/Habenula_n69/plink/Hb_gt.hwe_1e-6_geno_05_maf_05
+Mapping files:   0%|          | 0/3 [00:00<?, ?it/s]Mapping files:  33%|███▎      | 1/3 [00:04<00:09,  4.69s/it]Mapping files: 100%|██████████| 3/3 [00:05<00:00,  1.66s/it]Mapping files: 100%|██████████| 3/3 [00:05<00:00,  1.96s/it]
+Loading Genotypes...Genotype dimensions:(5456909, 69)
+Excluding extra genotyped donors: Br5572
+Adding 'chr' to genotype positions
+Excluding phenotypes from these chromosomes:
+{'chrM', 'chrY'}
+Phenotypes with chr in variants: 
+chr
+True     22691
+False       65
+Name: count, dtype: int64
+cis-QTL mapping: nominal associations for all variant-phenotype pairs
+  * 68 samples
+  * 22691 phenotypes
+  * 20 covariates
+  * 5456909 variants
+  * applying in-sample 0.05 MAF filter
+  * cis-window: ±500,000
+  * checking phenotypes: 1000/22691  * checking phenotypes: 2000/22691  * checking phenotypes: 3000/22691  * checking phenotypes: 4000/22691  * checking phenotypes: 5000/22691  * checking phenotypes: 6000/22691  * checking phenotypes: 7000/22691  * checking phenotypes: 8000/22691  * checking phenotypes: 9000/22691  * checking phenotypes: 10000/22691  * checking phenotypes: 11000/22691  * checking phenotypes: 12000/22691  * checking phenotypes: 13000/22691  * checking phenotypes: 14000/22691  * checking phenotypes: 15000/22691  * checking phenotypes: 16000/22691  * checking phenotypes: 17000/22691  * checking phenotypes: 18000/22691  * checking phenotypes: 19000/22691  * checking phenotypes: 20000/22691  * checking phenotypes: 21000/22691  * checking phenotypes: 22000/22691  * checking phenotypes: 22691/22691
+    ** dropping 926 phenotypes without variants in cis-window
+  * Computing associations
+    Mapping chromosome chr1
+    time elapsed: 0.08 min
+    * writing output
+    Mapping chromosome chr2
+    time elapsed: 0.25 min
+    * writing output
+    Mapping chromosome chr3
+    time elapsed: 0.33 min
+    * writing output
+    Mapping chromosome chr4
+    time elapsed: 0.39 min
+    * writing output
+    Mapping chromosome chr5
+    time elapsed: 0.44 min
+    * writing output
+    Mapping chromosome chr6
+    time elapsed: 0.51 min
+    * writing output
+    Mapping chromosome chr7
+    time elapsed: 0.58 min
+    * writing output
+    Mapping chromosome chr8
+    time elapsed: 0.64 min
+    * writing output
+    Mapping chromosome chr9
+    time elapsed: 0.69 min
+    * writing output
+    Mapping chromosome chr10
+    time elapsed: 0.74 min
+    * writing output
+    Mapping chromosome chr11
+    time elapsed: 0.80 min
+    * writing output
+    Mapping chromosome chr12
+    time elapsed: 0.86 min
+    * writing output
+    Mapping chromosome chr13
+    time elapsed: 0.91 min
+    * writing output
+    Mapping chromosome chr14
+    time elapsed: 0.94 min
+    * writing output
+    Mapping chromosome chr15
+    time elapsed: 0.99 min
+    * writing output
+    Mapping chromosome chr16
+    time elapsed: 1.04 min
+    * writing output
+    Mapping chromosome chr17
+    time elapsed: 1.11 min
+    * writing output
+    Mapping chromosome chr18
+    time elapsed: 1.15 min
+    * writing output
+    Mapping chromosome chr19
+    time elapsed: 1.21 min
+    * writing output
+    Mapping chromosome chr20
+    time elapsed: 1.26 min
+    * writing output
+    Mapping chromosome chr21
+    time elapsed: 1.28 min
+    * writing output
+    Mapping chromosome chr22
+    time elapsed: 1.31 min
+    * writing output
+    Mapping chromosome chrX
+    time elapsed: 1.32 min
+    * writing output
+done.
+-----
+cis                 NA
+genotypeio          NA
+pandas              2.1.1
+pyhere              1.0.0
+session_info        1.0.0
+statsmodels         0.14.0
+tensorqtl           1.0.8
+torch               1.11.0+cu113
+-----
+Python 3.9.0 (default, Nov 15 2020, 14:28:56) [GCC 7.3.0]
+Linux-5.14.0-284.11.1.el9_2.x86_64-x86_64-with-glibc2.34
+-----
+Session information updated at 2024-05-17 16:42
+**** Job ends ****
+Fri May 17 04:42:53 PM EDT 2024

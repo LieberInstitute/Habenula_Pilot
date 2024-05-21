@@ -1,10 +1,10 @@
 **** Job starts ****
-Thu Apr 11 02:36:20 PM EDT 2024
+Tue May 21 01:53:05 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 4272768
+Job id: 5750824
 Job name: 03_adj_p_vals
-Node name: compute-152
+Node name: compute-129
 Loading conda_R/4.3.x
 ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
@@ -19,12 +19,12 @@ Loading conda_R/4.3.x
 Loading required package: rafalib
 here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
 qs 0.26.1
-n pairs: 43970983
-n pairs FDR<0.05: 186
+n pairs: 38540489
+n pairs FDR<0.05: 9
 [1] "Reproducibility information:"
-[1] "2024-04-11 14:39:03 EDT"
+[1] "2024-05-21 13:55:49 EDT"
    user  system elapsed 
-105.677  25.214 160.208 
+154.154  20.230 160.745 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.2 Patched (2024-02-08 r85876)
@@ -35,7 +35,7 @@ n pairs FDR<0.05: 186
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2024-04-11
+ date     2024-05-21
  pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -124,4 +124,4 @@ n pairs FDR<0.05: 186
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Thu Apr 11 02:39:03 PM EDT 2024
+Tue May 21 01:55:50 PM EDT 2024
