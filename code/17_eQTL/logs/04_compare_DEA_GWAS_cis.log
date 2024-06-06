@@ -1,10 +1,11 @@
 **** Job starts ****
-Wed Apr 10 01:16:32 PM EDT 2024
+Tue May 21 04:22:02 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 4208241
+Job id: 5752715
 Job name: 04_compare_DEA_GWAS
-Node name: compute-127
+Node name: compute-100
+Unloading conda_R/4.3.x
 Loading conda_R/4.3.x
 Loading LIBD SLURM module for liftover/1.0
 here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
@@ -188,8 +189,9 @@ The following object is masked from ‘package:purrr’:
     transpose
 
 Loading required package: rafalib
-728 significant SNP-gene pairs at FDR<0.05
-728 Genes total and median 1 SNPs per gene
+663 significant SNP-gene pairs at FDR<0.05
+641 unique SNPs from these eQTLs
+663 Genes total and median 1 SNPs per gene
 Number of narrow Trubetskoy et al. GWAS SNPs matching sig eQTLs:
 
 FALSE 
@@ -201,21 +203,21 @@ Number of wide Trubetskoy et al. GWAS SNPs matching sig eQTLs:
 FALSE  TRUE 
 20435    11 
 Genes paired with wide-GWAS-significant eQTL SNPs:
-NEK4, BTN3A2, ZNF192P1, ZNF603P, HLA-K, VARS2, HLA-DMA, RP11-182J1.14, LRRC37A4P, DND1P1, CRHR1-IT1, KANSL1-AS1, KANSL1
+NEK4, HIST1H4D, BTN3A2, ZNF192P1, ZNF603P, HLA-K, VARS2, PSORS1C1, LRRC37A4P, DND1P1, KANSL1-AS1, LRRC37A
 Number and name of DE genes at FDR<0.1 implicated in any eQTLs:
 
 FALSE  TRUE 
-  170     3 
-RP11-624M8.1, ACCS, MYRFL
+  166     7 
+RNASEL, RP11-624M8.1, ACCS, TSPAN11, DPY19L2, MYRFL, QPRT
 Genes implicated in the narrow GWAS, DEA at FDR<0.1, and eQTLs:
 
 Genes implicated in the wide GWAS, DEA at FDR<0.1, and eQTLs:
 
 Number and name of DE genes at FDR<0.05 implicated in any eQTLs:
 
-FALSE 
-   45 
-
+FALSE  TRUE 
+   44     1 
+QPRT
 Genes implicated in the narrow GWAS, DEA at FDR<0.05, and eQTLs:
 
 Genes implicated in the wide GWAS, DEA at FDR<0.05, and eQTLs:
@@ -234,23 +236,83 @@ dbl (71): CHR, (C)M, POS, Br1016_Br1016, Br1023_Br1023, Br1034_Br1034, Br109...
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+$ENSG00000135828.11
+
 $ENSG00000237742.6
 
 $ENSG00000110455.13
 
+$ENSG00000110900.14
+
+$ENSG00000177990.11
+
 $ENSG00000166268.10
+
+$ENSG00000103485.17
+
+$ENSG00000135828.11
 
 $ENSG00000237742.6
 
 $ENSG00000110455.13
 
+$ENSG00000110900.14
+
+$ENSG00000177990.11
+
 $ENSG00000166268.10
 
-$`RP11-624M8.1: chr6:125720018:C:T`
+$ENSG00000103485.17
+
+$`RNASEL: chr1:182607439:T:C`
+
+$`RP11-624M8.1: chr6:125747768:C:T`
 
 $`ACCS: chr11:44066439:G:T`
 
-$`MYRFL: chr12:69711278:C:T`
+$`TSPAN11: chr12:30877206:T:C`
+
+$`DPY19L2: chr12:63702177:A:T`
+
+$`MYRFL: chr12:69708386:T:C`
+
+$`QPRT: chr16:29343449:C:T`
+
+$`RNASEL: chr1:182607439:T:C`
+
+$`RP11-624M8.1: chr6:125747768:C:T`
+
+$`ACCS: chr11:44066439:G:T`
+
+$`TSPAN11: chr12:30877206:T:C`
+
+$`DPY19L2: chr12:63702177:A:T`
+
+$`MYRFL: chr12:69708386:T:C`
+
+$`QPRT: chr16:29343449:C:T`
 
 null device 
           1 
@@ -264,7 +326,7 @@ null device
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2024-04-10
+ date     2024-05-21
  pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -329,6 +391,7 @@ null device
  nlme                   3.1-164    2023-11-27 [3] CRAN (R 4.3.2)
  pillar                 1.9.0      2023-03-22 [2] CRAN (R 4.3.2)
  pkgconfig              2.0.3      2019-09-22 [2] CRAN (R 4.3.2)
+ Polychrome           * 1.5.1      2022-05-03 [1] CRAN (R 4.3.2)
  purrr                * 1.0.2      2023-08-10 [2] CRAN (R 4.3.2)
  R6                     2.5.1      2021-08-19 [2] CRAN (R 4.3.2)
  rafalib              * 1.0.0      2015-08-09 [1] CRAN (R 4.3.2)
@@ -343,6 +406,7 @@ null device
  S4Arrays               1.2.0      2023-10-24 [2] Bioconductor
  S4Vectors            * 0.40.2     2023-11-23 [2] Bioconductor 3.18 (R 4.3.2)
  scales                 1.3.0      2023-11-28 [2] CRAN (R 4.3.2)
+ scatterplot3d          0.3-44     2023-05-05 [1] CRAN (R 4.3.2)
  segmented              2.0-3      2024-02-16 [1] CRAN (R 4.3.2)
  sessioninfo          * 1.2.2      2021-12-06 [2] CRAN (R 4.3.2)
  settings               0.2.7      2021-05-07 [1] CRAN (R 4.3.2)
@@ -374,4 +438,4 @@ null device
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Wed Apr 10 01:21:21 PM EDT 2024
+Tue May 21 04:32:18 PM EDT 2024

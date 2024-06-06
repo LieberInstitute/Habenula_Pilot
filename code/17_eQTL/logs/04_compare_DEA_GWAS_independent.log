@@ -1,10 +1,10 @@
 **** Job starts ****
-Thu Apr 18 03:30:51 PM EDT 2024
+Tue May 21 04:23:16 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 4679553
+Job id: 5752724
 Job name: 04_compare_DEA_GWAS
-Node name: compute-107
+Node name: compute-124
 Unloading conda_R/4.3.x
 Loading conda_R/4.3.x
 Loading LIBD SLURM module for liftover/1.0
@@ -189,8 +189,9 @@ The following object is masked from ‘package:purrr’:
     transpose
 
 Loading required package: rafalib
-742 significant SNP-gene pairs at FDR<0.05
-728 Genes total and median 1 SNPs per gene
+670 significant SNP-gene pairs at FDR<0.05
+648 unique SNPs from these eQTLs
+663 Genes total and median 1 SNPs per gene
 Number of narrow Trubetskoy et al. GWAS SNPs matching sig eQTLs:
 
 FALSE 
@@ -202,21 +203,21 @@ Number of wide Trubetskoy et al. GWAS SNPs matching sig eQTLs:
 FALSE  TRUE 
 20435    11 
 Genes paired with wide-GWAS-significant eQTL SNPs:
-NEK4, BTN3A2, ZNF192P1, ZNF603P, HLA-K, VARS2, HLA-DMA, RP11-182J1.14, LRRC37A4P, DND1P1, CRHR1-IT1, KANSL1-AS1, KANSL1
+NEK4, HIST1H4D, BTN3A2, ZNF192P1, ZNF603P, HLA-K, VARS2, PSORS1C1, LRRC37A4P, DND1P1, KANSL1-AS1, LRRC37A
 Number and name of DE genes at FDR<0.1 implicated in any eQTLs:
 
 FALSE  TRUE 
-  170     3 
-RP11-624M8.1, ACCS, MYRFL
+  166     7 
+RNASEL, RP11-624M8.1, ACCS, TSPAN11, DPY19L2, MYRFL, QPRT
 Genes implicated in the narrow GWAS, DEA at FDR<0.1, and eQTLs:
 
 Genes implicated in the wide GWAS, DEA at FDR<0.1, and eQTLs:
 
 Number and name of DE genes at FDR<0.05 implicated in any eQTLs:
 
-FALSE 
-   45 
-
+FALSE  TRUE 
+   44     1 
+QPRT
 Genes implicated in the narrow GWAS, DEA at FDR<0.05, and eQTLs:
 
 Genes implicated in the wide GWAS, DEA at FDR<0.05, and eQTLs:
@@ -235,23 +236,83 @@ dbl (71): CHR, (C)M, POS, Br1016_Br1016, Br1023_Br1023, Br1034_Br1034, Br109...
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+$ENSG00000135828.11
+
 $ENSG00000237742.6
 
 $ENSG00000110455.13
 
+$ENSG00000110900.14
+
+$ENSG00000177990.11
+
 $ENSG00000166268.10
+
+$ENSG00000103485.17
+
+$ENSG00000135828.11
 
 $ENSG00000237742.6
 
 $ENSG00000110455.13
 
+$ENSG00000110900.14
+
+$ENSG00000177990.11
+
 $ENSG00000166268.10
 
-$`RP11-624M8.1: chr6:125720018:C:T`
+$ENSG00000103485.17
+
+$`RNASEL: chr1:182607439:T:C`
+
+$`RP11-624M8.1: chr6:125747768:C:T`
 
 $`ACCS: chr11:44066439:G:T`
 
-$`MYRFL: chr12:69711278:C:T`
+$`TSPAN11: chr12:30877206:T:C`
+
+$`DPY19L2: chr12:63702177:A:T`
+
+$`MYRFL: chr12:69708386:T:C`
+
+$`QPRT: chr16:29343449:C:T`
+
+$`RNASEL: chr1:182607439:T:C`
+
+$`RP11-624M8.1: chr6:125747768:C:T`
+
+$`ACCS: chr11:44066439:G:T`
+
+$`TSPAN11: chr12:30877206:T:C`
+
+$`DPY19L2: chr12:63702177:A:T`
+
+$`MYRFL: chr12:69708386:T:C`
+
+$`QPRT: chr16:29343449:C:T`
 
 null device 
           1 
@@ -277,71 +338,127 @@ null device
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
-$ENSG00000214425.7
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+$ENSG00000114904.12
 
-$ENSG00000214401.4
-
-$ENSG00000204650.13
-
-$ENSG00000226314.7
-
-$ENSG00000230795.3
+$ENSG00000277157.1
 
 $ENSG00000186470.13
 
-$ENSG00000216901.1
-
-$ENSG00000137411.16
-
-$ENSG00000204257.14
-
-$ENSG00000114904.12
-
-$ENSG00000259683.1
-
-$ENSG00000214425.7
-
-$ENSG00000214401.4
-
-$ENSG00000204650.13
-
 $ENSG00000226314.7
+
+$ENSG00000216901.1
 
 $ENSG00000230795.3
 
-$ENSG00000186470.13
-
-$ENSG00000216901.1
-
 $ENSG00000137411.16
 
-$ENSG00000204257.14
+$ENSG00000204540.10
+
+$ENSG00000214425.7
+
+$ENSG00000264070.1
+
+$ENSG00000214401.4
+
+$ENSG00000176681.14
 
 $ENSG00000114904.12
 
-$ENSG00000259683.1
+$ENSG00000277157.1
 
-$`LRRC37A4P: chr17:45910839:A:G`
+$ENSG00000186470.13
 
-$`KANSL1-AS1: chr17:46278268:C:A`
+$ENSG00000226314.7
 
-$`CRHR1-IT1: chr17:45868952:T:C`
+$ENSG00000216901.1
 
-$`ZNF192P1: chr6:28558878:A:C`
+$ENSG00000230795.3
 
-$`HLA-K: chr6:29861474:A:C`
+$ENSG00000137411.16
 
-$`BTN3A2: chr6:26353872:G:T`
+$ENSG00000204540.10
 
-$`ZNF603P: chr6:28207375:G:T`
+$ENSG00000214425.7
 
-$`VARS2: chr6:30932650:T:G`
+$ENSG00000264070.1
 
-$`HLA-DMA: chr6:32839713:C:T`
+$ENSG00000214401.4
+
+$ENSG00000176681.14
 
 $`NEK4: chr3:52550699:A:G`
 
-$`RP11-182J1.14: chr15:84592552:C:T`
+$`HIST1H4D: chr6:26183874:G:A`
+
+$`BTN3A2: chr6:26353872:G:T`
+
+$`ZNF192P1: chr6:28558878:A:C`
+
+$`ZNF603P: chr6:28207375:G:T`
+
+$`HLA-K: chr6:29861474:A:C`
+
+$`VARS2: chr6:30934095:C:G`
+
+$`PSORS1C1: chr6:31025536:C:T`
+
+$`LRRC37A4P: chr17:45910839:A:G`
+
+$`DND1P1: chr17:45910839:A:G`
+
+$`KANSL1-AS1: chr17:46278268:C:A`
+
+$`LRRC37A: chr17:46002201:C:T`
+
+$`NEK4: chr3:52550699:A:G`
+
+$`HIST1H4D: chr6:26183874:G:A`
+
+$`BTN3A2: chr6:26353872:G:T`
+
+$`ZNF192P1: chr6:28558878:A:C`
+
+$`ZNF603P: chr6:28207375:G:T`
+
+$`HLA-K: chr6:29861474:A:C`
+
+$`VARS2: chr6:30934095:C:G`
+
+$`PSORS1C1: chr6:31025536:C:T`
+
+$`LRRC37A4P: chr17:45910839:A:G`
+
+$`DND1P1: chr17:45910839:A:G`
+
+$`KANSL1-AS1: chr17:46278268:C:A`
+
+$`LRRC37A: chr17:46002201:C:T`
 
 `summarise()` has grouped output by 'snp_id'. You can override using the
 `.groups` argument.
@@ -365,73 +482,108 @@ $`RP11-182J1.14: chr15:84592552:C:T`
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
+`geom_smooth()` using formula = 'y ~ x'
 $ENSG00000271287.1
 
 $ENSG00000226278.1
 
-$ENSG00000121716.19
+$ENSG00000166435.15
 
-$ENSG00000278879.1
+$ENSG00000268117.1
 
-$ENSG00000250312.6
+$ENSG00000197728.9
 
-$ENSG00000218537.1
+$ENSG00000272787.1
 
-$ENSG00000164308.16
-
-$ENSG00000142856.16
+$ENSG00000272865.1
 
 $ENSG00000255374.3
 
-$ENSG00000183604.14
+$ENSG00000250312.6
+
+$ENSG00000142856.16
 
 $ENSG00000271287.1
 
 $ENSG00000226278.1
 
-$ENSG00000121716.19
+$ENSG00000166435.15
 
-$ENSG00000278879.1
+$ENSG00000268117.1
 
-$ENSG00000250312.6
+$ENSG00000197728.9
 
-$ENSG00000218537.1
+$ENSG00000272787.1
 
-$ENSG00000164308.16
-
-$ENSG00000142856.16
+$ENSG00000272865.1
 
 $ENSG00000255374.3
 
-$ENSG00000183604.14
+$ENSG00000250312.6
+
+$ENSG00000142856.16
 
 $`BCRP9: chr13:67724807:A:G`
 
 $`PSPHP1: chr7:55734370:T:C`
 
-$`PILRB: chr7:100297686:C:G`
+$`XRRA1: chr11:74984130:T:G`
 
-$`AP000560.3: chr11:74858894:G:A`
+$`VN1R84P: chr19:21725251:C:T`
 
-$`ZNF718: chr4:126451:T:C`
+$`RPS26: chr12:56007301:G:A`
 
-$`MIF-AS1: chr22:23924539:T:C`
+$`KB-226F1.2: chr22:23924539:T:C`
 
-$`ERAP2: chr5:96916728:G:A`
-
-$`ITGB3BP: chr1:63523233:G:A`
+$`RP11-561I11.4: chr1:242148188:A:G`
 
 $`TAS2R43: chr12:11055785:C:G`
 
-$`SMG1P5: chr16:30303778:C:T`
+$`ZNF718: chr4:126451:T:C`
 
-Warning messages:
-1: In qt((1 - level)/2, df) : NaNs produced
-2: In max(ids, na.rm = TRUE) :
-  no non-missing arguments to max; returning -Inf
-3: In qt((1 - level)/2, df) : NaNs produced
-4: In max(ids, na.rm = TRUE) :
-  no non-missing arguments to max; returning -Inf
+$`ITGB3BP: chr1:63523233:G:A`
+
+$`BCRP9: chr13:67724807:A:G`
+
+$`PSPHP1: chr7:55734370:T:C`
+
+$`XRRA1: chr11:74984130:T:G`
+
+$`VN1R84P: chr19:21725251:C:T`
+
+$`RPS26: chr12:56007301:G:A`
+
+$`KB-226F1.2: chr22:23924539:T:C`
+
+$`RP11-561I11.4: chr1:242148188:A:G`
+
+$`TAS2R43: chr12:11055785:C:G`
+
+$`ZNF718: chr4:126451:T:C`
+
+$`ITGB3BP: chr1:63523233:G:A`
+
+null device 
+          1 
 ─ Session info ───────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.2 Patched (2024-02-08 r85876)
@@ -442,7 +594,7 @@ Warning messages:
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2024-04-18
+ date     2024-05-21
  pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -556,4 +708,4 @@ Warning messages:
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Thu Apr 18 03:39:32 PM EDT 2024
+Tue May 21 04:32:31 PM EDT 2024
