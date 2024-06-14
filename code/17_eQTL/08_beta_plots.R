@@ -212,7 +212,7 @@ for (this_region in c("DLPFC", "Hippocampus")) {
         )
     )
     p_list[[this_region]] = ggplot(
-            mapping = aes(x = beta_habenula, y = beta_bsp2)
+            this_bsp2, mapping = aes(x = beta_habenula, y = beta_bsp2)
         ) +
         geom_point() +
         geom_abline(slope = 1) +
