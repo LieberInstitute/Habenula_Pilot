@@ -797,27 +797,20 @@ if (opt$mode == "independent") {
     #---------------------------------------------------------------------------
     #   For a manuscript plot, we'll also want to sample 3 of these eQTLs and
     #   produce an expression-by-genotype plot faceted by eQTL. The remaining
-    #   11 also become a supplementary figure
+    #   9 also become a supplementary figure
     #---------------------------------------------------------------------------
 
-    #   Grab GWAS SNPs that map to only one eQTL
-    single_eqtl_snps = eqtl |>
-        group_by(variant_id) |>
-        filter(n() == 1) |>
+    gwas_3_snps = eqtl |>
+        mutate(
+            gene_symbol = rowData(rse_gene)$Symbol[
+                match(phenotype_id, rowData(rse_gene)$gencodeID)
+            ]
+        ) |>
+        filter(
+            variant_id %in% gwas_wide$variant_id,
+            gene_symbol %in% c('DND1P1', 'NEK4', 'LRRC37A4P')
+        ) |>
         pull(variant_id)
-
-    gwas_3_snps = exp_df |>
-        filter(snp_id %in% single_eqtl_snps) |>
-        #   Grab all SNPs consisting of all 3 genotypes (this can't be the best
-        #   way...)
-        group_by(snp_id, genotype) |>
-        summarize(n = n()) |>
-        group_by(snp_id) |>
-        summarize(n = n()) |>
-        filter(n == 3) |>
-        #   Take the first 3 such SNPs
-        pull(snp_id) |>
-        head(3)
     
     exp_df_gwas = exp_df |>
         add_rs_id() |>
