@@ -682,35 +682,36 @@ plot_triad_exploratory(
 
 if (opt$mode == "independent") {
     #---------------------------------------------------------------------------
-    #   For DEGs paired with eQTLs, manually re-plot manuscript-ready
-    #   plot versions
+    #   Manuscript-ready plots for 3 DEG-paired eQTLs we want to showcase
     #---------------------------------------------------------------------------
 
+    showcase_degs = c('TSPAN11', 'QPRT', 'RNASEL')
+
     plot_suffix = sprintf(
-        'eqtls_paired_with_dea_genes_FDR%s.pdf',
+        'eqtls_3_dea_genes_manuscript_FDR%s.pdf',
         as.character(sig_cutoff_deg_plot) |> str_split_i('\\.', 2)
     )
-
-    #   Expression vs diagnosis for DEGs
-    p = exp_df |>
+    
+    this_exp_df = exp_df |>
+        filter(gene_symbol %in% showcase_degs) |>
         #   Re-order genes to match geno plot below
-        # mutate(
-        #     gene_symbol = factor(
-        #         gene_symbol, levels = c('RP11-624M8.1', 'ACCS', 'MYRFL')
-        #     )
-        # ) |>
-        ggplot(
-                mapping = aes(
-                    x = PrimaryDx, y = resid_logcount_deg, color = PrimaryDx
-                )
-            ) +
-            geom_boxplot(outlier.shape = NA) +
-            geom_jitter() +
-            facet_wrap(~gene_symbol) +
-            scale_color_manual(values = dx_colors) +
-            labs(y = "Residualized Expression") +
-            theme_bw(base_size = 20) +
-            theme(legend.position = "none")
+        mutate(gene_symbol = factor(gene_symbol, levels = showcase_degs)) |>
+        add_rs_id()
+    
+    #   Expression vs diagnosis for DEGs
+    p = ggplot(
+            this_exp_df,
+            mapping = aes(
+                x = PrimaryDx, y = resid_logcount_deg, color = PrimaryDx
+            )
+        ) +
+        geom_boxplot(outlier.shape = NA) +
+        geom_jitter() +
+        facet_wrap(~gene_symbol) +
+        scale_color_manual(values = dx_colors) +
+        labs(y = "Residualized Expression") +
+        theme_bw(base_size = 20) +
+        theme(legend.position = "none")
     pdf(
         file.path(plot_dir, paste0('expr_by_dx_', plot_suffix)),
         width = 8, height = 6
@@ -720,13 +721,58 @@ if (opt$mode == "independent") {
 
     #   Expression by genotype for SNPs paired with DEGs
     exp_vs_geno_manuscript_plot(
-        eqtl, add_rs_id(exp_df), plot_dir, plot_suffix, note_risk_allele = FALSE,
+        eqtl, this_exp_df, plot_dir, plot_suffix, note_risk_allele = FALSE,
         color_by_dx = TRUE
     )
 
     #---------------------------------------------------------------------------
+    #   Manuscript-ready supplementary plots for remaining 4 DEG-paired eQTLs
+    #---------------------------------------------------------------------------
+
+    plot_suffix = sprintf(
+        'eqtls_other_dea_genes_manuscript_FDR%s.pdf',
+        as.character(sig_cutoff_deg_plot) |> str_split_i('\\.', 2)
+    )
+
+    #   The names of the remaining 4 of 7 DEGs paired in eQTLs
+    showcase_degs = c('DPY19L2', 'RP11-624M8.1', 'ACCS', 'MYRFL')
+    
+    this_exp_df = exp_df |>
+        filter(gene_symbol %in% showcase_degs) |>
+        #   Re-order genes to match geno plot below
+        mutate(gene_symbol = factor(gene_symbol, levels = showcase_degs)) |>
+        add_rs_id()
+    
+    #   Expression vs diagnosis for DEGs
+    p = ggplot(
+            this_exp_df,
+            mapping = aes(
+                x = PrimaryDx, y = resid_logcount_deg, color = PrimaryDx
+            )
+        ) +
+        geom_boxplot(outlier.shape = NA) +
+        geom_jitter() +
+        facet_wrap(~gene_symbol, nrow = 1) +
+        scale_color_manual(values = dx_colors) +
+        labs(y = "Residualized Expression") +
+        theme_bw(base_size = 20) +
+        theme(legend.position = "none")
+    pdf(
+        file.path(plot_dir, paste0('expr_by_dx_', plot_suffix)),
+        width = 10, height = 6
+    )
+    print(p)
+    dev.off()
+
+    #   Expression by genotype for SNPs paired with DEGs
+    exp_vs_geno_manuscript_plot(
+        eqtl, this_exp_df, plot_dir, plot_suffix, note_risk_allele = FALSE,
+        color_by_dx = TRUE, pdf_width = 10
+    )
+
+    #---------------------------------------------------------------------------
     #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
-    #   (13) genes
+    #   (12) genes
     #---------------------------------------------------------------------------
 
     gwas_variants = gwas_wide |>
