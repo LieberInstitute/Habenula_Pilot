@@ -32,6 +32,9 @@ plot_dir = here('plots', '17_eQTL')
 
 sig_cutoff_deg = 0.1
 
+source_colors = c("#14599D", "#78574C")
+names(source_colors) = c("GWAS SNP", "DEG")
+
 ################################################################################
 #   Read in and preprocess data
 ################################################################################
@@ -177,6 +180,7 @@ p = eqtl_int_both |>
             aes(label = gene_symbol, fontface = font_face), max.overlaps = 15,
             show.legend = FALSE
         ) +
+        scale_color_manual(values = source_colors) +
         theme_bw(base_size = 23) +
         labs(
             x = "Beta: Habenula Interaction", y = "Beta: Thalamus Interaction",
