@@ -1,11 +1,10 @@
 **** Job starts ****
-Tue May 21 04:23:16 PM EDT 2024
+Mon Jun 17 05:17:34 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 5752724
+Job id: 7615845
 Job name: 04_compare_DEA_GWAS
-Node name: compute-124
-Unloading conda_R/4.3.x
+Node name: compute-127
 Loading conda_R/4.3.x
 Loading LIBD SLURM module for liftover/1.0
 here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
@@ -460,8 +459,6 @@ $`KANSL1-AS1: chr17:46278268:C:A`
 
 $`LRRC37A: chr17:46002201:C:T`
 
-`summarise()` has grouped output by 'snp_id'. You can override using the
-`.groups` argument.
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
 `geom_smooth()` using formula = 'y ~ x'
@@ -594,7 +591,7 @@ null device
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2024-05-21
+ date     2024-06-17
  pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -708,4 +705,4 @@ null device
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Tue May 21 04:32:31 PM EDT 2024
+Mon Jun 17 05:25:48 PM EDT 2024
