@@ -140,15 +140,16 @@ eqtl_int_both = eqtl_int |>
 
 #   Make note of filtered independent pairs not measured in each interaction
 #   model
-message(
-    sprintf(
-        "Pairs present in independent but absent from at least one interaction model: %s",
-        paste(
-            setdiff(filt_eqtl_independent$pair_id, eqtl_int_both$pair_id),
-            collapse = ', '
-        )
-    )
-)
+message("Pairs present in independent but absent from at least one interaction model:")
+filt_eqtl_independent |>
+    mutate(
+        symbol = rowData(rse_gene)$Symbol[
+            match(phenotype_id, rowData(rse_gene)$gencodeID)
+        ]
+    ) |>
+    filter(!pair_id%in% eqtl_int_both$pair_id) |>
+    select(symbol, variant_id) |>
+    print()
 
 p = eqtl_int_both |>
     dplyr::select(phenotype_id, variant_id, b_gi, pval_gi, interaction_var) |>
