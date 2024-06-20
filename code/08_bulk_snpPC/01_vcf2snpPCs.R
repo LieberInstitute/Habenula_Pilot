@@ -8,7 +8,7 @@ library("sessioninfo")
 
 ################################ Set up paths #################################
 
-vcf <- '/dcs05/lieber/liebercentral/libdGenotype_LIBD001/BrainGenotyping/subsets/Habenula_n69/Hb_gt_merged_R.9_MAF.05_ann.vcf.gz'
+vcf <- '/dcs05/lieber/liebercentral/libdGenotype_LIBD001/BrainGenotyping/subsets/habenula_new/habenula_R.9_MAF.05.RSann.vcf.gz'
 out_dir = here('processed-data', '08_bulk_snpPC')
 
 bedout <- file.path(out_dir, sub(".vcf.gz", "", basename(vcf), fixed = T))

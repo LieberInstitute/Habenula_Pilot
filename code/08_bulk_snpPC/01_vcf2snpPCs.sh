@@ -4,8 +4,8 @@
 #SBATCH --job-name=01_vcf2snpPCs
 #SBATCH -c 1
 #SBATCH -t 2-00:00:00
-#SBATCH -o logs/01_vcf2snpPCs_rerun.txt
-#SBATCH -e logs/01_vcf2snpPCs_rerun.txt
+#SBATCH -o logs/01_vcf2snpPCs_rerun2.txt
+#SBATCH -e logs/01_vcf2snpPCs_rerun2.txt
 
 set -e
 
