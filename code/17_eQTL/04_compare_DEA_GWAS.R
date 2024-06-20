@@ -239,7 +239,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                 facet_wrap(~ snp_id) +
                 scale_color_manual(values = geno_colors) +
                 labs(
-                    x = "Genotype", y = "Residualized Expression",
+                    x = "Genotype", y = "Residualized eQTL Expression",
                     title = this_symbol
                 ) +
                 theme_bw() +
@@ -257,7 +257,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                 geom_boxplot(outlier.shape = NA) +
                 geom_jitter() +
                 scale_color_manual(values = dx_colors) +
-                labs(y = "Residualized Expression", title = this_symbol) +
+                labs(y = "Residualized DEG Expression", title = this_symbol) +
                 theme_bw(base_size = 20) +
                 theme(legend.position = "none")
         
@@ -288,7 +288,7 @@ plot_triad_exploratory = function(eqtl, exp_df, plot_dir, plot_prefix) {
                     coord_cartesian(xlim = c(0, 1)) +
                     theme_bw(base_size = 20) +
                     theme(plot.title = element_text(size = 20)) +
-                    labs(y = "Residualized Expression", color = "Genotype")
+                    labs(y = "Residualized eQTL Expression", color = "Genotype")
                 
                 #   Only want one title and legend, not 2
                 if (x_var_name == "tot.Hb") {
@@ -395,7 +395,7 @@ exp_vs_geno_manuscript_plot = function(
 
     p = ggplot(a) +
         facet_wrap(~ anno_label, nrow = facet_nrow) +
-        labs(x = "Genotype", y = "Residualized Expression") +
+        labs(x = "Genotype", y = "Residualized eQTL Expression") +
         theme_bw(base_size = 20) +
         theme(
             legend.position = "none", strip.text.x = element_text(size = 13)
@@ -709,7 +709,7 @@ if (opt$mode == "independent") {
         geom_jitter() +
         facet_wrap(~gene_symbol) +
         scale_color_manual(values = dx_colors) +
-        labs(y = "Residualized Expression") +
+        labs(y = "Residualized DEG Expression") +
         theme_bw(base_size = 20) +
         theme(legend.position = "none")
     pdf(
@@ -754,7 +754,7 @@ if (opt$mode == "independent") {
         geom_jitter() +
         facet_wrap(~gene_symbol, nrow = 1) +
         scale_color_manual(values = dx_colors) +
-        labs(y = "Residualized Expression") +
+        labs(y = "Residualized DEG Expression") +
         theme_bw(base_size = 20) +
         theme(legend.position = "none")
     pdf(
