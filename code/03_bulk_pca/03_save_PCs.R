@@ -13,7 +13,7 @@ covariates = c(
 )
 snp_pcs_path = here(
     'processed-data', '08_bulk_snpPC',
-    'Hb_gt_merged_R.9_MAF.05_ann_filt.snpPCs.tab'
+    'habenula_R.9_MAF.05.RSann_filt.snpPCs.tab'
 )
 
 set.seed(0)
