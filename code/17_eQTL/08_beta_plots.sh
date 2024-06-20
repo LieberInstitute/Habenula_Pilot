@@ -18,6 +18,7 @@ echo "Job name: ${SLURM_JOB_NAME}"
 echo "Node name: ${SLURMD_NODENAME}"
 
 module load conda_R/4.3.x
+module load liftover/1.0
 Rscript 08_beta_plots.R
 
 echo "**** Job ends ****"

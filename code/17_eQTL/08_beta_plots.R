@@ -17,8 +17,12 @@ deg_path = here(
     'processed-data', '10_DEA', '04_DEA',
     'DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv'
 )
-gwas_wide_path = here(
+gwas_wide_filt_path = here(
     'processed-data', '17_eQTL', 'gwas_wide_filtered.csv'
+)
+gwas_wide_path = here(
+    "processed-data", "13_MAGMA","GWAS", "scz2022",
+    "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"
 )
 rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
@@ -34,6 +38,8 @@ sig_cutoff_deg = 0.1
 
 source_colors = c("#14599D", "#78574C")
 names(source_colors) = c("GWAS SNP", "DEG")
+
+lift_over_path = system('which liftOver', intern = TRUE)
 
 ################################################################################
 #   Read in and preprocess data
@@ -51,7 +57,7 @@ deg = read_tsv(deg_path, show_col_types = FALSE) |>
     filter(adj.P.Val < sig_cutoff_deg)
 
 #   ~20k "wide" GWAS SNPs
-gwas_wide = read_csv(gwas_wide_path, show_col_types = FALSE)
+gwas_wide = read_csv(gwas_wide_filt_path, show_col_types = FALSE)
 
 #-------------------------------------------------------------------------------
 #   Independent and interaction habenula eQTLs
@@ -272,6 +278,17 @@ eqtl_int_man = eqtl_int |>
         !matches('^(phenotype_id|variant_id)$')
     )
 
+#   Get variant ID and p value for all wide GWAS SNPs
+gwas_wide = fread(gwas_wide_path) |>
+    as_tibble() |>
+    dplyr::rename(chr = CHROM, pos = POS, GWAS_p_val = PVAL) |>
+    #   Map from hg19 to hg38 and drop anything that fails
+    snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
+    filter(!is.na(pos)) |>
+    #   Construct variant_id from SNP info
+    mutate(variant_id = sprintf('chr%s:%s:%s:%s', chr, pos, A1, A2)) |>
+    dplyr::select(GWAS_p_val, variant_id)
+
 eqtl_independent |>
     #   Remove unnecessary columns and 'end_distance', which is just a duplicate
     #   of 'start_distance'
@@ -286,6 +303,15 @@ eqtl_independent |>
     ) |>
     #   Add interaction stats, where they exist, at independent SNPs
     left_join(eqtl_int_man, by = c('phenotype_id', 'variant_id')) |>
+    #   Add FDR from differential expression for each gene
+    left_join(
+        read_tsv(deg_path, show_col_types = FALSE) |>
+            dplyr::rename(phenotype_id = gencodeID, DEG_FDR = adj.P.Val) |>
+            dplyr::select(phenotype_id, DEG_FDR),
+        by = 'phenotype_id'
+    ) |>
+    #   Add p value from GWAS for each SNP
+    left_join(gwas_wide, by = 'variant_id') |>
     write_csv(supp_tab_path)
 
 session_info()
