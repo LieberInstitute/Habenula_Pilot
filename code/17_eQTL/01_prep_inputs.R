@@ -11,11 +11,11 @@ rse_path = here(
 pca_path = here('processed-data', '03_bulk_pca', 'PCs.rds')
 snp_pcs_path = here(
     'processed-data', '08_bulk_snpPC',
-    'Hb_gt_merged_R.9_MAF.05_ann_filt.snpPCs.tab'
+    'habenula_R.9_MAF.05.RSann_filt.snpPCs.tab'
 )
 expected_covariates = c(
     "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5',
-    paste0('PC', 1:14)
+    paste0('PC', 1:13)
 )
 out_dir = here("processed-data", "17_eQTL", "tensorQTL_input")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
