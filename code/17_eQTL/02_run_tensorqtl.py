@@ -30,7 +30,7 @@ else:
 #   Specify paths and global variables
 in_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_input"))
 out_dir = Path(here("processed-data", "17_eQTL", "tensorQTL_output", out_dir_suffix))
-plink_prefix_path = "/dcs05/lieber/liebercentral/libdGenotype_LIBD001/BrainGenotyping/subsets/Habenula_n69/plink/Hb_gt.hwe_1e-6_geno_05_maf_05"
+plink_prefix_path = "/dcs05/lieber/liebercentral/libdGenotype_LIBD001/BrainGenotyping/subsets/habenula_new/plink/habenula_maf05"
 covariates_file = str(in_dir / "covariates.txt")
 expression_bed = str(in_dir / "logcounts.bed.gz")
 
