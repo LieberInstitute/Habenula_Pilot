@@ -86,7 +86,7 @@ sig_cutoff_gwas = 5e-8
 #   Covariates used in the model for tensorQTL and for DEA, respectively
 eqtl_covariates = c(
     "PrimaryDx", 'snpPC1', 'snpPC2', 'snpPC3', 'snpPC4', 'snpPC5',
-    paste0('PC', 1:14)
+    paste0('PC', 1:13)
 )
 deg_covariates = c(
     'PrimaryDx', 'AgeDeath', 'Flowcell', 'mitoRate', 'rRNA_rate', 'RIN',
