@@ -6,6 +6,7 @@ library(data.table)
 library(jaffelab)
 library(cowplot)
 library(ggrepel)
+library(bigsnpr)
 
 eqtl_independent_path = here(
     'processed-data', '17_eQTL', 'tensorQTL_output', 'independent', 'FDR05.csv'

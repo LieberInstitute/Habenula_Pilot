@@ -685,7 +685,7 @@ if (opt$mode == "independent") {
     #   Manuscript-ready plots for 3 DEG-paired eQTLs we want to showcase
     #---------------------------------------------------------------------------
 
-    showcase_degs = c('TSPAN11', 'QPRT', 'RNASEL')
+    showcase_degs = c('TSPAN11', 'RNASEL', 'MYRFL')
 
     plot_suffix = sprintf(
         'eqtls_3_dea_genes_manuscript_FDR%s.pdf',
@@ -735,7 +735,7 @@ if (opt$mode == "independent") {
     )
 
     #   The names of the remaining 4 of 7 DEGs paired in eQTLs
-    showcase_degs = c('DPY19L2', 'RP11-624M8.1', 'ACCS', 'MYRFL')
+    showcase_degs = c('DPY19L2', 'RP11-624M8.1', 'ACCS', 'SMAGP')
     
     this_exp_df = exp_df |>
         filter(gene_symbol %in% showcase_degs) |>
@@ -771,8 +771,8 @@ if (opt$mode == "independent") {
     )
 
     #---------------------------------------------------------------------------
-    #   For independent, plot (11) SNPs overlapping wider GWAS and their paired
-    #   (12) genes
+    #   For independent, plot (15) SNPs overlapping wider GWAS and their paired
+    #   (16) genes
     #---------------------------------------------------------------------------
 
     gwas_variants = gwas_wide |>
@@ -797,7 +797,7 @@ if (opt$mode == "independent") {
     #---------------------------------------------------------------------------
     #   For a manuscript plot, we'll also want to sample 3 of these eQTLs and
     #   produce an expression-by-genotype plot faceted by eQTL. The remaining
-    #   9 also become a supplementary figure
+    #   13 also become a supplementary figure
     #---------------------------------------------------------------------------
 
     gwas_3_snps = eqtl |>
@@ -808,7 +808,7 @@ if (opt$mode == "independent") {
         ) |>
         filter(
             variant_id %in% gwas_wide$variant_id,
-            gene_symbol %in% c('DND1P1', 'NEK4', 'LRRC37A4P')
+            gene_symbol %in% c('DND1P1', 'CRHR1-IT1', 'LRRC37A4P')
         ) |>
         pull(variant_id)
     
