@@ -839,9 +839,9 @@ if (opt$mode == "independent") {
         plot_suffix = 'other_gwas_wide_manuscript.pdf',
         note_risk_allele = TRUE,
         color_by_dx = FALSE,
-        facet_nrow = 2,
-        pdf_width = 11,
-        pdf_height = 10
+        facet_nrow = 3,
+        pdf_width = 12,
+        pdf_height = 12
     )
 
     #---------------------------------------------------------------------------
