@@ -40,6 +40,8 @@ sig_cutoff_deg = 0.1
 source_colors = c("#14599D", "#78574C")
 names(source_colors) = c("GWAS SNP", "DEG")
 
+larger_bsp2_colors = c("#808080", "#000000")
+
 lift_over_path = system('which liftOver', intern = TRUE)
 
 ################################################################################
@@ -213,6 +215,10 @@ for (this_region in c("DLPFC", "Hippocampus")) {
                 select(pair_id, slope) |>
                 dplyr::rename(beta_habenula = slope),
             by = "pair_id"
+        ) |>
+        mutate(
+            larger_bsp2 = (beta_bsp2 < abs(beta_habenula)) &
+                (sign(beta_bsp2) == sign(beta_habenula))
         )
     this_bsp2_lm = lm(beta_bsp2 ~ beta_habenula, this_bsp2)
     message(
@@ -224,11 +230,16 @@ for (this_region in c("DLPFC", "Hippocampus")) {
         )
     )
     p_list[[this_region]] = ggplot(
-            this_bsp2, mapping = aes(x = beta_habenula, y = beta_bsp2)
+            this_bsp2,
+            mapping = aes(x = beta_habenula, y = beta_bsp2)
         ) +
-        geom_point() +
-        geom_abline(slope = 1) +
+        geom_point(mapping = aes(color = larger_bsp2)) +
+        geom_abline(slope = 1, color = "#a98743") +
+        geom_hline(yintercept = 0) +
+        geom_vline(xintercept = 0) +
         geom_smooth(method = "lm", formula = y ~ x) +
+        scale_color_manual(values = larger_bsp2_colors) +
+        guides(color = "none") +
         theme_bw(base_size = 20) +
         labs(x = "Beta: Habenula", y = paste("Beta:", this_region))
 }
