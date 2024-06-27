@@ -10,7 +10,7 @@ rse_path = here(
 )
 pca_path = here('processed-data', '03_bulk_pca', 'PCs.rds')
 snp_pcs_path = here(
-    'processed-data', '08_bulk_snpPC',
+    'processed-data', '08_bulk_snpPC', 'v3',
     'habenula_R.9_MAF.05.RSann_filt.snpPCs.tab'
 )
 expected_covariates = c(
