@@ -16,7 +16,7 @@ We hope that this repository will be useful for your research. Please use the fo
 
 > Ege A. Yalcinbas, Bukola Ajanaku, Erik D. Nelson, Renee Garcia-Flores, Kelsey D. Montgomery, Joshua M. Stolz, Joshua Wu, Heena R. Divecha, Atharv Chandra, Rahul Bharadwaj, Svitlana Bach, Anandita Rajpurohit, Ran Tao, Joo-Heon Shin, Joel E. Kleinman, Thomas M. Hyde, Louise A. Huuki-Myers, Leonardo Collado-Torres, Kristen R. Maynard.
 
-> bioRxiv (TODO DOI); doi: <https://doi.org/10.1101/TODO>
+> bioRxiv (TODO DOI); doi: <https://doi.org/10.1101/2024.02.26.582081>
 
 ```
 @article {TODO (once we have a pre-print)
