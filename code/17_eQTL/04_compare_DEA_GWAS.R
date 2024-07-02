@@ -55,20 +55,21 @@ rse_path = here(
 )
 gene_pcs_path = here('processed-data', '03_bulk_pca', 'PCs.rds')
 snp_pcs_path = here(
-    'processed-data', '08_bulk_snpPC',
-    'Hb_gt_merged_R.9_MAF.05_ann_filt.snpPCs.tab'
+    'processed-data', '08_bulk_snpPC', 'v3',
+    'habenula_R.9_MAF.05.RSann_filt.snpPCs.tab'
 )
-plink_path_prefix = here(
-    "processed-data", '08_bulk_snpPC', "habenula_genotypes"
+plink_path = here(
+   'processed-data', '08_bulk_snpPC', 'v3', 'habenula_R.9_MAF.05.RSann.bed'
+)
+raw_geno_path = here(
+    'processed-data', '08_bulk_snpPC', 'v3',
+    'habenula_R.9_MAF.05.RSann_filt.traw'
 )
 paired_variants_path = here(
     "processed-data", "17_eQTL", "DEA_paired_variants.txt"
 )
 rs_path = here(
     "processed-data", "17_eQTL", "rsID_independent_deg_or_gwas_wide.csv"
-)
-raw_geno_path = here(
-    'processed-data', '08_bulk_snpPC', 'habenula_genotypes_filt.traw'
 )
 plot_dir = here('plots', '17_eQTL', opt$mode)
 
@@ -142,6 +143,7 @@ merge_exp_df = function(
             cols = -sample_id, names_to = "snp_id", values_to = "genotype"
         ) |>
         mutate(
+            sample_id = ifelse(sample_id == "Br0983", "Br983", sample_id),
             genotype = factor(
                 #   Ensure 0 is reference, 1 is heterozygous, and 2 is
                 #   homozygous for the ALT
@@ -622,10 +624,11 @@ for (sig_cutoff in sig_cutoff_deg_explore) {
 ################################################################################
 
 #   Read in genotypes
-plink = read.plink(paste0(plink_path_prefix, '.bed'))
+plink = read.plink(plink_path)
 
 #   Read in genotype metadata and line up with plink genotypes
 geno_raw = read_delim(raw_geno_path, delim = '\t')
+stopifnot(setequal(geno_raw$SNP, plink$map$snp.name))
 geno_raw = geno_raw[match(plink$map$snp.name, geno_raw$SNP),]
 
 #   Keep track of which genotypes should be flipped later, based on code from
