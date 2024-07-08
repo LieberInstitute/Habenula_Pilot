@@ -76,8 +76,8 @@ for (gene in all_genes[1:10]) {
         dplyr::rename(beta = beta_gwas, varbeta = varbeta_gwas) |>
         select(snp, beta, varbeta) |>
         as.list()
-    eqtl$type = "cc"
-    eqtl$s = prop_cases
+    gwas$type = "cc"
+    gwas$s = prop_cases
 
     saveRDS(
         list(eqtl = eqtl, gwas = gwas),
