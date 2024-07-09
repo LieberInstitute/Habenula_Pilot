@@ -15,6 +15,7 @@ out_dir = here("processed-data", "18_coloc", "temp_inputs")
 lift_over_path = system('which liftOver', intern = TRUE)
 dir.create(out_dir, showWarnings = FALSE)
 
+#   Read in full set of GWAS SNPs and lift to hg38
 gwas_wide = fread(gwas_wide_path) |>
     as_tibble() |>
     dplyr::rename(chr = CHROM, pos = POS) |>
@@ -61,7 +62,7 @@ writeLines(all_genes, file.path(dirname(out_dir), 'all_genes.txt'))
 #   Create one RDS file per gene containing a list with names 'eqtl' and 'gwas'.
 #   Each of these is a dataset directly usable as input to coloc (namely
 #   coloc.abf())
-for (gene in all_genes[1:10]) {
+for (gene in all_genes) {
     this_coloc_df = coloc_df |>
         filter(phenotype_id == gene)
 
