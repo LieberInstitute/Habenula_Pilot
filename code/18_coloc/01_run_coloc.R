@@ -63,6 +63,9 @@ coloc_df <- do.call("rbind", map(parquet_files, parquet_read)) |>
         by = 'snp'
     )
 
+rm(gwas_wide)
+gc()
+
 ################################################################################
 #   Run coloc and save results in individual RDS files per gene
 ################################################################################

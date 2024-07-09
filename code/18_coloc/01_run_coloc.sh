@@ -2,7 +2,7 @@
 
 #SBATCH -p shared
 #SBATCH -c 8
-#SBATCH --mem=15G
+#SBATCH --mem=60G
 #SBATCH --job-name=01_run_coloc
 #SBATCH -o logs/01_run_coloc.log
 #SBATCH -e logs/01_run_coloc.log
