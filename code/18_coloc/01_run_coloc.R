@@ -4,18 +4,25 @@ library(sessioninfo)
 library(data.table)
 library(bigsnpr)
 library(miniparquet)
+library(coloc)
+library(BiocParallel)
 
 gwas_wide_path = here(
     "processed-data", "13_MAGMA","GWAS", "scz2022",
     "PGC3_SCZ_wave3.european.autosome.public.v3.vcf.tsv.gz"
 )
 eqtl_dir = here("processed-data", "17_eQTL", "tensorQTL_output", "nominal")
-out_dir = here("processed-data", "18_coloc", "temp_inputs")
+out_path = here("processed-data", "18_coloc", "coloc_results.rds")
 
 lift_over_path = system('which liftOver', intern = TRUE)
-dir.create(out_dir, showWarnings = FALSE)
+n_cores = as.integer(Sys.getenv('SLURM_CPUS_PER_TASK'))
+
+################################################################################
+#   Prepare GWAS and eQTL data
+################################################################################
 
 #   Read in full set of GWAS SNPs and lift to hg38
+message(Sys.time(), ' | Reading in GWAS SNPs and lifting to hg38...')
 gwas_wide = fread(gwas_wide_path) |>
     as_tibble() |>
     dplyr::rename(chr = CHROM, pos = POS) |>
@@ -38,7 +45,7 @@ parquet_files <- list.files(
     pattern = "\\.parquet$",
     full.names = TRUE
 )
-
+message(Sys.time(), ' | Reading in eQTL results and merging with GWAS...')
 coloc_df <- do.call("rbind", map(parquet_files, parquet_read)) |>
     as_tibble() |>
     #   Only consider eQTLs whose SNPs are in GWAS data
@@ -56,13 +63,11 @@ coloc_df <- do.call("rbind", map(parquet_files, parquet_read)) |>
         by = 'snp'
     )
 
-all_genes = unique(coloc_df$phenotype_id)
-writeLines(all_genes, file.path(dirname(out_dir), 'all_genes.txt'))
+################################################################################
+#   Run coloc and save results in individual RDS files per gene
+################################################################################
 
-#   Create one RDS file per gene containing a list with names 'eqtl' and 'gwas'.
-#   Each of these is a dataset directly usable as input to coloc (namely
-#   coloc.abf())
-for (gene in all_genes) {
+run_coloc = function(gene, coloc_df) {
     this_coloc_df = coloc_df |>
         filter(phenotype_id == gene)
 
@@ -80,10 +85,21 @@ for (gene in all_genes) {
     gwas$type = "cc"
     gwas$s = prop_cases
 
-    saveRDS(
-        list(eqtl = eqtl, gwas = gwas),
-        file.path(out_dir, paste0(gene, '.rds'))
-    )
+    return(coloc.abf(eqtl, gwas))
 }
+
+message(Sys.time(), ' | Running coloc...')
+
+all_genes = unique(coloc_df$phenotype_id)
+
+results_list = bplapply(
+    all_genes,
+    run_coloc,
+    coloc_df = coloc_df,
+    BPPARAM = MulticoreParam(n_cores)
+)
+names(results_list) = all_genes
+
+saveRDS(results_list, out_path)
 
 session_info()

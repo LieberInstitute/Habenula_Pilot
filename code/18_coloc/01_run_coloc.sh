@@ -1,11 +1,11 @@
 #!/bin/bash
 
 #SBATCH -p shared
-#SBATCH -c 1
-#SBATCH --mem=10G
-#SBATCH --job-name=01_prep_data
-#SBATCH -o logs/01_prep_data.log
-#SBATCH -e logs/01_prep_data.log
+#SBATCH -c 8
+#SBATCH --mem=15G
+#SBATCH --job-name=01_run_coloc
+#SBATCH -o logs/01_run_coloc.log
+#SBATCH -e logs/01_run_coloc.log
 
 set -e
 
@@ -19,7 +19,7 @@ echo "Node name: ${SLURMD_NODENAME}"
 
 module load conda_R/4.3.x
 module load liftover/1.0
-Rscript 01_prep_data.R
+Rscript 01_run_coloc.R
 
 echo "**** Job ends ****"
 date
