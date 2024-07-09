@@ -19,6 +19,12 @@ rse_path = here(
 eqtl_overlap_path = here(
     "processed-data", "18_coloc", "eqtl_overlap.csv"
 )
+gwas_wide_filt_path = here(
+    'processed-data', '17_eQTL', 'gwas_wide_filtered.csv'
+)
+supp_tab_path = here(
+    "processed-data", "18_coloc", "supp_table.csv"
+)
 
 h4_cutoff = 0.8
 deg_sig_cutoff = 0.1
@@ -73,39 +79,39 @@ message(
 deg = read_tsv(deg_path, show_col_types = FALSE) |>
     filter(adj.P.Val < deg_sig_cutoff)
 
+results_df$is_gene_de = results_df$gene %in% deg$gencodeID
 message(
     sprintf(
         "Any coloc genes differentially expressed (FDR < %s)?", deg_sig_cutoff
     )
 )
-table(results_df$gene %in% deg$gencodeID)
-
-snp_map = tibble(snp_name = unique(eqtl$variant_id)) |>
-    mutate(
-        snp_rs_id = get_rsid_from_position(
-            chrom = sub('chr', '', str_split_i(snp_name, ':', 1)),
-            pos = str_split_i(snp_name, ':', 2),
-            ref = str_split_i(snp_name, ':', 3),
-            alt = str_split_i(snp_name, ':', 4),
-            assembly = "hg38"
-        )
-    )
+table(results_df$is_gene_de)
 
 #   Check for overlaps with eQTLs
-eqtl = read_csv(eqtl_path, show_col_types = FALSE) |>
-    mutate(
-        is_coloc = paste(phenotype_id, variant_id, sep = '_') %in%
-            paste(results_df$gene, results_df$snp, sep = '_'),
-        
-    )
+eqtl = read_csv(eqtl_path, show_col_types = FALSE)
+
+results_df$is_eqtl = paste(results_df$gene, results_df$snp, sep = '_') %in%
+    paste(eqtl$phenotype_id, eqtl$variant_id, sep = '_')
 
 message("Any coloc gene-SNP pairs also independent eQTLs?")
-table(eqtl$is_coloc)
+table(results_df$is_eqtl)
+
+#   Finally check SNP overlap with PGC3 risk SNPs
+gwas = read_csv(gwas_wide_filt_path, show_col_types = FALSE)
+
+results_df$is_risk_snp = results_df$snp %in% gwas$variant_id
+message("Are any coloc SNPs PGC3 risk SNPs?")
+table(results_df$is_risk_snp)
+
+write_csv(results_df |> select(-SNP.PP.H4), supp_tab_path)
 
 #   Write gene and SNP info for the colocalized gene-SNP pairs that overlap with
 #   independent eQTLs
 eqtl |>
-    filter(is_coloc) |>
+    filter(
+        paste(phenotype_id, variant_id, sep = '_') %in%
+        paste(results_df$gene, results_df$snp, sep = '_')
+    ) |>
     mutate(
         snp_rs_id = sapply(
             variant_id,
