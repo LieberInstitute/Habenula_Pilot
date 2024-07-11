@@ -1,13 +1,11 @@
 **** Job starts ****
-Tue Jun 25 02:17:48 PM EDT 2024
+Thu Jul 11 01:43:07 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 7684593
+Job id: 8568425
 Job name: 08_beta_plots
-Node name: compute-129
-Unloading conda_R/4.3.x
+Node name: compute-140
 Loading conda_R/4.3.x
-Unloading LIBD SLURM module for liftover/1.0
 Loading LIBD SLURM module for liftover/1.0
 here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
 ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
@@ -203,6 +201,15 @@ Mapping coordinates
 Reading liftover chains
 Mapping coordinates
 4967 variants have not been mapped.
+Trying to swap ref and alt in 
+Trying to swap ref and alt in 
+Warning message:
+There were 94 warnings in `mutate()`.
+The first warning was:
+ℹ In argument: `snp_rs_id = get_rsid_from_position_robust_fast(variant_id)`.
+Caused by warning in `open.connection()`:
+! cannot open URL 'https://api.ncbi.nlm.nih.gov/variation/v0/spdi/NC_000001.11:21440282:G:C/rsids': HTTP status was '404 Not Found'
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 93 remaining warnings. 
 ─ Session info ───────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.2 Patched (2024-02-08 r85876)
@@ -213,12 +220,13 @@ Mapping coordinates
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2024-06-25
+ date     2024-07-11
  pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package              * version    date (UTC) lib source
  abind                  1.4-5      2016-07-21 [2] CRAN (R 4.3.2)
+ assertthat             0.2.1      2019-03-21 [2] CRAN (R 4.3.2)
  bigassertr             0.1.6      2023-01-10 [1] CRAN (R 4.3.2)
  bigparallelr           0.3.2      2021-10-02 [1] CRAN (R 4.3.2)
  bigreadr               0.2.5      2022-12-06 [1] CRAN (R 4.3.2)
@@ -262,6 +270,7 @@ Mapping coordinates
  IRanges              * 2.36.0     2023-10-24 [2] Bioconductor
  iterators              1.0.14     2022-02-05 [2] CRAN (R 4.3.2)
  jaffelab             * 0.99.32    2024-02-26 [1] Github (LieberInstitute/jaffelab@21e6574)
+ jsonlite               1.8.8      2023-12-04 [2] CRAN (R 4.3.2)
  labeling               0.4.3      2023-08-29 [2] CRAN (R 4.3.2)
  lattice                0.22-5     2023-10-24 [3] CRAN (R 4.3.2)
  lifecycle              1.0.4      2023-11-07 [2] CRAN (R 4.3.2)
@@ -273,6 +282,7 @@ Mapping coordinates
  MatrixGenerics       * 1.14.0     2023-10-24 [2] Bioconductor
  matrixStats          * 1.2.0      2023-12-11 [2] CRAN (R 4.3.2)
  mgcv                   1.9-1      2023-12-21 [3] CRAN (R 4.3.2)
+ MRutils              * 0.2.1.0    2024-04-10 [1] Github (richardslab/MRutils@ebef21b)
  munsell                0.5.0      2018-06-12 [2] CRAN (R 4.3.2)
  nlme                   3.1-164    2023-11-27 [3] CRAN (R 4.3.2)
  parallelly             1.36.0     2023-05-26 [2] CRAN (R 4.3.2)
@@ -296,6 +306,7 @@ Mapping coordinates
  scales                 1.3.0      2023-11-28 [2] CRAN (R 4.3.2)
  segmented              2.0-3      2024-02-16 [1] CRAN (R 4.3.2)
  sessioninfo          * 1.2.2      2021-12-06 [2] CRAN (R 4.3.2)
+ settings               0.2.7      2021-05-07 [1] CRAN (R 4.3.2)
  SparseArray            1.2.3      2023-12-25 [2] Bioconductor 3.18 (R 4.3.2)
  statmod                1.5.0      2023-01-06 [2] CRAN (R 4.3.2)
  stringi                1.8.3      2023-12-11 [2] CRAN (R 4.3.2)
@@ -308,10 +319,12 @@ Mapping coordinates
  timechange             0.3.0      2024-01-18 [2] CRAN (R 4.3.2)
  tzdb                   0.4.0      2023-05-12 [2] CRAN (R 4.3.2)
  utf8                   1.2.4      2023-10-22 [2] CRAN (R 4.3.2)
+ validate               1.1.5      2024-02-14 [1] CRAN (R 4.3.2)
  vctrs                  0.6.5      2023-12-01 [2] CRAN (R 4.3.2)
  vroom                  1.6.5      2023-12-05 [2] CRAN (R 4.3.2)
  withr                  3.0.0      2024-01-16 [2] CRAN (R 4.3.2)
  XVector                0.42.0     2023-10-24 [2] Bioconductor
+ yaml                   2.3.8      2023-12-11 [2] CRAN (R 4.3.2)
  zlibbioc               1.48.0     2023-10-24 [2] Bioconductor
 
  [1] /users/neagles/R/4.3.x
@@ -320,4 +333,4 @@ Mapping coordinates
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Tue Jun 25 02:20:14 PM EDT 2024
+Thu Jul 11 02:42:00 PM EDT 2024

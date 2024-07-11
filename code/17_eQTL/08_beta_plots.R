@@ -338,27 +338,24 @@ eqtl_int_man = eqtl_int |>
 #   Get variant ID and p value for all wide GWAS SNPs
 gwas_wide = fread(gwas_wide_path) |>
     as_tibble() |>
-    dplyr::rename(chr = CHROM, pos = POS, GWAS_p_val = PVAL) |>
+    dplyr::rename(chr = CHROM, pos = POS, GWAS_p_val = PVAL, snp_rs_id = ID) |>
     #   Map from hg19 to hg38 and drop anything that fails
     snp_modifyBuild(lift_over_path, from = 'hg19', to = 'hg38') |>
     filter(!is.na(pos)) |>
     #   Construct variant_id from SNP info
     mutate(variant_id = sprintf('chr%s:%s:%s:%s', chr, pos, A1, A2)) |>
-    dplyr::select(GWAS_p_val, variant_id)
+    dplyr::select(GWAS_p_val, variant_id, snp_rs_id)
 
-eqtl_independent |>
+eqtl_independent = eqtl_independent |>
     #   Remove unnecessary columns and 'end_distance', which is just a duplicate
     #   of 'start_distance'
     dplyr::select(-c(`...1`, pair_id, end_distance)) |>
     dplyr::rename(FDR_beta = FDR) |>
     mutate(
-        snp_rs_id = get_rsid_from_position_robust_fast(variant_id),
         gene_symbol = rowData(rse_gene)$Symbol[
             match(phenotype_id, rownames(rse_gene))
         ]
     ) |>
-    #   Gene and SNP first
-    relocate(phenotype_id, gene_symbol, variant_id, snp_rs_id) |>
     #   Clarify which stats come from independent run
     rename_with(
         ~ paste("indep", .x, sep = "_"),
@@ -373,8 +370,26 @@ eqtl_independent |>
             dplyr::select(phenotype_id, DEG_FDR),
         by = 'phenotype_id'
     ) |>
-    #   Add p value from GWAS for each SNP
-    left_join(gwas_wide, by = 'variant_id') |>
+    #   Add p value from GWAS (and RS ID) for each SNP
+    left_join(gwas_wide, by = 'variant_id')
+
+#   Query RS ID where it's missing
+eqtl_independent$snp_rs_id[is.na(eqtl_independent$snp_rs_id)] =
+    get_rsid_from_position_robust_fast(
+        eqtl_independent$variant_id[is.na(eqtl_independent$snp_rs_id)]
+    )
+
+message(
+    sprintf(
+        '%s of %s RS IDs still missing.',
+        length(which(is.na(eqtl_independent$snp_rs_id))),
+        nrow(eqtl_independent)
+    )
+)
+
+eqtl_independent |>
+    #   Gene and SNP first
+    relocate(phenotype_id, gene_symbol, variant_id, snp_rs_id) |>
     write_csv(supp_tab_path)
 
 session_info()
