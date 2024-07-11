@@ -7,6 +7,7 @@ library(jaffelab)
 library(cowplot)
 library(ggrepel)
 library(bigsnpr)
+library(MRutils)
 
 eqtl_independent_path = here(
     'processed-data', '17_eQTL', 'tensorQTL_output', 'independent', 'FDR05.csv'
@@ -43,6 +44,50 @@ names(source_colors) = c("GWAS SNP", "DEG")
 larger_bsp2_colors = c("#808080", "#000000")
 
 lift_over_path = system('which liftOver', intern = TRUE)
+
+################################################################################
+#   Functions
+################################################################################
+
+# MRutils::get_rsid_from_position() sometimes fails due to temporary network
+# issues, and returns NULL instead of NA when this happens. Write a wrapper
+# which re-runs the function several times upon errors and returns a
+# character value or NA
+get_rsid_from_position_robust = function(variant_id, num_tries = 5) {
+    #   If the ref or alt is more than one basepair, it isn't a SNP and
+    #   therefore doesn't have an RS ID
+    ref = str_split_i(variant_id, ':', 3)
+    alt = str_split_i(variant_id, ':', 4)
+    if ((nchar(ref) > 1) || (nchar(alt) > 1)) {
+        return(NA)
+    }
+
+    rs_id = NULL
+    attempt_num = 0
+    while(is.null(rs_id) && attempt_num < num_tries) {
+        rs_id = get_rsid_from_position(
+            chrom = str_split_i(variant_id, ':', 1),
+            pos = as.integer(str_split_i(variant_id, ':', 2)),
+            ref = str_split_i(variant_id, ':', 3),
+            alt = str_split_i(variant_id, ':', 4),
+            assembly = "hg38"
+        )
+        attempt_num = attempt_num + 1
+    }
+    if (is.null(rs_id)) return(NA)
+    return(rs_id)
+}
+
+#   Since MRutils::get_rsid_from_position() is so slow, we can't afford to
+#   run it on the same SNP twice. Run on the unique set and then duplicate
+#   the results where necessary
+get_rsid_from_position_robust_fast = function(variant_id) {
+    rs_df = tibble(
+        variant_id = unique(variant_id),
+        rs_id = map_chr(unique(variant_id), get_rsid_from_position_robust)
+    )
+    return(rs_df$rs_id[match(variant_id, rs_df$variant_id)])
+}
 
 ################################################################################
 #   Read in and preprocess data
@@ -306,12 +351,18 @@ eqtl_independent |>
     #   of 'start_distance'
     dplyr::select(-c(`...1`, pair_id, end_distance)) |>
     dplyr::rename(FDR_beta = FDR) |>
+    mutate(
+        snp_rs_id = get_rsid_from_position_robust_fast(variant_id),
+        gene_symbol = rowData(rse_gene)$Symbol[
+            match(phenotype_id, rownames(rse_gene))
+        ]
+    ) |>
     #   Gene and SNP first
-    relocate(phenotype_id, variant_id) |>
+    relocate(phenotype_id, gene_symbol, variant_id, snp_rs_id) |>
     #   Clarify which stats come from independent run
     rename_with(
         ~ paste("indep", .x, sep = "_"),
-        !matches('^(phenotype_id|variant_id|start_distance|af|ma_samples|ma_count)$')
+        !matches('^(phenotype_id|gene_symbol|variant_id|snp_rs_id|start_distance|af|ma_samples|ma_count)$')
     ) |>
     #   Add interaction stats, where they exist, at independent SNPs
     left_join(eqtl_int_man, by = c('phenotype_id', 'variant_id')) |>

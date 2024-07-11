@@ -1,10 +1,10 @@
 **** Job starts ****
-Tue Jul  9 03:47:04 PM EDT 2024
+Thu Jul 11 12:10:20 PM EDT 2024
 **** JHPCE info ****
 User: neagles
-Job id: 8522600
+Job id: 8566974
 Job name: 02_explore_results
-Node name: compute-116
+Node name: compute-094
 Loading conda_R/4.3.x
 here() starts at /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula
 ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
@@ -150,6 +150,13 @@ Are any coloc SNPs PGC3 risk SNPs?
 
 FALSE  TRUE 
   137   123 
+Warning message:
+There were 2 warnings in `mutate()`.
+The first warning was:
+ℹ In argument: `snp_rs_id = map_chr(snp, get_rsid_from_position_robust)`.
+Caused by warning in `open.connection()`:
+! URL 'https://api.ncbi.nlm.nih.gov/variation/v0/spdi/NC_000003.12:136328346:A:G/rsids': status was 'SSL connect error'
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning. 
 ─ Session info ───────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.2 Patched (2024-02-08 r85876)
@@ -160,7 +167,7 @@ FALSE  TRUE
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2024-07-09
+ date     2024-07-11
  pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -237,4 +244,4 @@ FALSE  TRUE
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Tue Jul  9 03:51:57 PM EDT 2024
+Thu Jul 11 12:44:09 PM EDT 2024

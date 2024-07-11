@@ -5,7 +5,6 @@ library(SummarizedExperiment)
 library(MRutils)
 
 results_path = here("processed-data", "18_coloc", "coloc_results.rds")
-out_path = here("processed-data", "18_coloc", "filtered_results.csv")
 deg_path = here(
     'processed-data', '10_DEA', '04_DEA',
     'DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv'
@@ -29,7 +28,41 @@ supp_tab_path = here(
 h4_cutoff = 0.8
 deg_sig_cutoff = 0.1
 
+################################################################################
+#   Functions
+################################################################################
+
+# MRutils::get_rsid_from_position() sometimes fails due to temporary network
+# issues, and returns NULL instead of NA when this happens. Write a wrapper
+# which re-runs the function several times upon errors and returns a
+# character value or NA
+get_rsid_from_position_robust = function(variant_id, num_tries = 5) {
+    rs_id = NULL
+    attempt_num = 0
+    while(is.null(rs_id) && attempt_num < num_tries) {
+        rs_id = get_rsid_from_position(
+            chrom = str_split_i(variant_id, ':', 1),
+            pos = as.integer(str_split_i(variant_id, ':', 2)),
+            ref = str_split_i(variant_id, ':', 3),
+            alt = str_split_i(variant_id, ':', 4),
+            assembly = "hg38"
+        )
+        attempt_num = attempt_num + 1
+    }
+    if (is.null(rs_id)) return(NA)
+    return(rs_id)
+}
+
+################################################################################
+#   Main
+################################################################################
+
 results = readRDS(results_path)
+
+h4_vals = tibble(
+    gene = names(results),
+    PP.H4.abf = sapply(results, function(x) x$summary[['PP.H4.abf']])
+)
 
 shared_causal_variant = sapply(
     results, function(x) x$summary[['PP.H4.abf']] > h4_cutoff
@@ -57,10 +90,7 @@ results_df = do.call(rbind, results_df) |>
     mutate(h4_cumsum = cumsum(SNP.PP.H4)) |>
     filter(h4_cumsum <= 0.95) |>
     ungroup() |>
-    #   Save just the gene, SNP, and shared-causal-variant probability
-    select(gene, snp, SNP.PP.H4)
-
-write_csv(results_df, out_path)
+    select(-h4_cumsum)
 
 #   Load RSE just to get gene symbols
 rse_gene = get(load(rse_path))
@@ -103,7 +133,18 @@ results_df$is_risk_snp = results_df$snp %in% gwas$variant_id
 message("Are any coloc SNPs PGC3 risk SNPs?")
 table(results_df$is_risk_snp)
 
-write_csv(results_df |> select(-SNP.PP.H4), supp_tab_path)
+results_df |>
+    # Add gene symbol
+    mutate(
+        gene_symbol = rowData(rse_gene)$Symbol[
+            match(gene, rownames(rse_gene))
+        ],
+        snp_rs_id = map_chr(snp, get_rsid_from_position_robust)
+    ) |>
+    relocate(gene, gene_symbol, snp, snp_rs_id) |>
+    # Add PP.H4.abf column
+    left_join(h4_vals, by = 'gene') |>
+    write_csv(supp_tab_path)
 
 #   Write gene and SNP info for the colocalized gene-SNP pairs that overlap with
 #   independent eQTLs
@@ -113,18 +154,7 @@ eqtl |>
         paste(results_df$gene, results_df$snp, sep = '_')
     ) |>
     mutate(
-        snp_rs_id = sapply(
-            variant_id,
-            function(x) {
-                get_rsid_from_position(
-                    chrom = str_split_i(x, ':', 1),
-                    pos = as.integer(str_split_i(x, ':', 2)),
-                    ref = str_split_i(x, ':', 3),
-                    alt = str_split_i(x, ':', 4),
-                    assembly = "hg38"
-                )
-            }
-        ),
+        snp_rs_id = map_chr(variant_id, get_rsid_from_position_robust),
         gene_symbol = rowData(rse_gene)$Symbol[
             match(phenotype_id, rownames(rse_gene))
         ]
