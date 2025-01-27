@@ -867,6 +867,40 @@ if (opt$mode == "independent") {
     )
 
     #---------------------------------------------------------------------------
+    #   For eQTLs containing a DEG or a wide GWAS SNP, compare expression
+    #   residualized by the DEG vs. eQTL models 
+    #---------------------------------------------------------------------------
+
+    exp_df = merge_exp_df(
+            rse_gene,
+            mod_deg,
+            mod_eqtl,
+            eqtl |>
+                dplyr::filter(
+                    (variant_id %in% gwas_wide$variant_id) |
+                    (phenotype_id %in% deg$gencodeID)
+                ),
+            plink,
+            mismatched_snps
+        ) |>
+        mutate(
+            symbol = rowData(rse_gene)$Symbol[
+                match(gene_id, rownames(rse_gene))
+            ]
+        )
+
+    p = ggplot(exp_df, aes(x = resid_logcount_deg, y = resid_logcount_eqtl)) +
+        geom_point() +
+        theme_bw(base_size = 15) +
+        labs(
+            x = "Residualized DEG Expression",
+            y = "Residualized eQTL Expression"
+        )
+    pdf(file.path(plot_dir, 'resid_comparison.pdf'))
+    print(p)
+    dev.off()
+    
+    #---------------------------------------------------------------------------
     #   Next, find SNP ID ("rs ID") for SNPs overlapping the wide GWAS or
     #   paired with a DEG
     #---------------------------------------------------------------------------
