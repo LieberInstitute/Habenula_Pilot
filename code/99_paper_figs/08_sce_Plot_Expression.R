@@ -45,6 +45,25 @@ prop_dirty_sn <- as.data.frame(colData(sce)[,
   group_by(Sample) |>
   mutate(prop = n / sum(n))
 
+#### chi square ####
+
+ct_table <- table(sce$final_Annotations, sce$Sample)
+
+# H0: there is no association between cell type and Sample
+# H1: there is a significant association between cell type and Sample
+
+# Perform chi-square test
+chi_square_test <- chisq.test(ct_table)
+# Warning message: In chisq.test(ct_table) : Chi-squared approximation may be incorrect
+## maybe from many small values...
+
+print(chi_square_test)
+# data:  ct_table # all cell type
+# X-squared = 19655, df = 108, p-value < 2.2e-16
+
+## drop cell types
+# X-squared = 18252, df = 96, p-value < 2.2e-16
+
 # dropping the clusters we dropped
 sce_drop <- sce[, sce$final_Annotations != "OPC_noisy"]
 sce_drop <- sce_drop[, sce_drop$final_Annotations != "Excit.Neuron"]
@@ -125,7 +144,6 @@ prop_sn_sample |>
               n_01 = sum(prop > 0.10)) |>
     arrange(n_01)
 
-## chi-square
 
 ## composition plot
 comp_plot_sample <- ggplot(data = prop_sn_sample, aes(x = final_Annotations, y = prop,
@@ -148,6 +166,7 @@ comp_plot_sample <- ggplot(data = prop_sn_sample, aes(x = final_Annotations, y =
 
 ggsave(comp_plot_sample, file = here(plot_dir, "sce_Comp_Plot_Sample.png"), width = 8, height = 7)
 ggsave(comp_plot_sample, file = here(plot_dir, "sce_Comp_Plot_Sample.pdf"), width = 8, height = 7)
+
 
 ####### BULK COLLAPSE LEVEL ####################################################
 # creating bulk annotations level
