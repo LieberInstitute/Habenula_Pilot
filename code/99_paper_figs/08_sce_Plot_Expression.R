@@ -104,15 +104,31 @@ png(file = here(plot_dir, "sce_Comp_Plot_GRANULAR.png"), width = 7, height = 11,
   comp_plot_both_sn
 dev.off()
 
-### cell type sample breakdown - for reviews ##
-prop_clean_sample <- pd_sn[,c("final_Annotations", "Sample", "NeuN")] |>
+#### cell type sample breakdown - for reviews ####
+
+prop_sn_sample <- prop_dirty_sn |>
     group_by(Sample, final_Annotations, NeuN) |>
-    summarize(n = n()) |>
+    summarize(n = sum(n)) |>
     group_by(final_Annotations) |>
     mutate(prop = n / sum(n),
-           final_Annotations = factor(final_Annotations, levels = names(sn_colors)))
+           final_Annotations = factor(final_Annotations, levels = names(sn_colors)),
+           final_ct = ifelse(final_Annotations %in% c("OPC_noisy","Excit.Neuron"),
+                             "excluded",
+                             "included"))
 
-comp_plot_sample <- ggplot(data = prop_clean_sample, aes(x = final_Annotations, y = prop,
+prop_sn_sample |> arrange(-prop)
+prop_sn_sample |> filter(final_Annotations == "MHb.2")
+
+prop_sn_sample |>
+    group_by(final_Annotations) |>
+    summarize(n = n(),
+              n_01 = sum(prop > 0.10)) |>
+    arrange(n_01)
+
+## chi-square
+
+## composition plot
+comp_plot_sample <- ggplot(data = prop_sn_sample, aes(x = final_Annotations, y = prop,
                                                            fill = Sample)) +
     geom_bar(stat = "identity") +
     geom_text(
@@ -123,14 +139,15 @@ comp_plot_sample <- ggplot(data = prop_clean_sample, aes(x = final_Annotations, 
         position = position_stack(vjust = 0.5),
         color = "black"
     ) +
+    facet_grid(~final_ct, scales = "free_x", space = "free_x") +
     labs(y = "Proportion", x = "Cell Type", fill = "Sample") +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     guides(color = "none", fill = guide_legend(ncol = 1,
                                                reverse = TRUE))
 
-ggsave(comp_plot_sample, file = here(plot_dir, "sce_Comp_Plot_Sample.png"), width = 7, height = 7)
-ggsave(comp_plot_sample, file = here(plot_dir, "sce_Comp_Plot_Sample.pdf"), width = 7, height = 7)
+ggsave(comp_plot_sample, file = here(plot_dir, "sce_Comp_Plot_Sample.png"), width = 8, height = 7)
+ggsave(comp_plot_sample, file = here(plot_dir, "sce_Comp_Plot_Sample.pdf"), width = 8, height = 7)
 
 ####### BULK COLLAPSE LEVEL ####################################################
 # creating bulk annotations level
