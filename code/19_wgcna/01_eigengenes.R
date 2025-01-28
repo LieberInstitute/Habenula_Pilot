@@ -16,7 +16,7 @@ deg_covariates = c(
     'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
 )
 
-dir.create(tom_dir, showWarnings = FALSE)
+dir.create(tom_dir, recursive = TRUE, showWarnings = FALSE)
 
 #   Load gene expression data and filter genes by minimum mean RPKM
 rse_gene = get(load(rse_path))
