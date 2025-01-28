@@ -14,6 +14,8 @@ deg_covariates = c(
 )
 
 rse_gene = get(load(rse_path))
+geneRpkm = recount::getRPKM(rse_gene, length_var = 'Length')
+geneExprs = log2(geneRpkm+1)
 
 mod_deg <- model.matrix(
     as.formula(paste('~', paste(deg_covariates, collapse = " + "))),
@@ -21,3 +23,14 @@ mod_deg <- model.matrix(
 )
 
 exp_mat = t(cleaningY(assays(rse_gene)$logcounts, mod_deg, P = 3))
+
+# powers = c(c(1:10), seq(from = 12, to=20, by=2))
+# sftQsva = pickSoftThreshold(t(geneExprsQsva), 
+	# powerVector = powers, verbose = 5)
+
+# netQsva = blockwiseModules(t(geneExprsQsva), power = sftQsva$powerEstimate,
+	# TOMType = "unsigned", minModuleSize = 30,
+	# reassignThreshold = 0, mergeCutHeight = 0.25,
+	# numericLabels = TRUE, pamRespectsDendro = FALSE,
+	# saveTOMs = TRUE, 	verbose = 3, maxBlockSize = 30000,
+	# saveTOMFileBase = "rdas/DLPFC_gene_SVA")
