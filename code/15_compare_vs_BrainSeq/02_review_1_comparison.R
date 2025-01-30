@@ -58,6 +58,18 @@ to_cat_df = function(hab_de, other_de, region, max_x, num_samples) {
     return(cat_df)
 }
 
+t_stat_cor = function(hab_de, other_de, region) {
+    a = inner_join(hab_de, other_de, by = "ensemblID")
+
+    cor_obj = cor.test(a$t.x, a$t.y, method = "spearman")
+
+    cor_df = tibble(
+        region = region, rho = unname(cor_obj$estimate), p_val = cor_obj$p.value
+    )
+
+    return(cor_df)
+}
+
 ################################################################################
 #   Load and clean DE results for all brain regions
 ################################################################################
@@ -125,5 +137,22 @@ p = do.call(rbind, cat_df_list) |>
 pdf(file.path(plot_dir, "CAT_plots.pdf"))
 print(p)
 dev.off()
+
+################################################################################
+#   Concordance of t-statistics
+################################################################################
+
+cor_df_list = list()
+for (region in other_brain_regions) {
+    cor_df_list[[region]] = t_stat_cor(
+        hab_de = de_list[['habenula']],
+        other_de = de_list[[region]],
+        region = region
+    )
+}
+
+message("Concordance of t-statistics between habenula and other brain regions:")
+do.call(rbind, cor_df_list) |>
+    print()
 
 session_info()
