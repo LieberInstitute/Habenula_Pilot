@@ -10,7 +10,11 @@ rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
 plot_dir = here('plots', '19_wgcna')
-num_top_modules = 4
+deg_covariates = c(
+    'PrimaryDx', 'AgeDeath', 'Flowcell', 'mitoRate', 'rRNA_rate', 'RIN',
+    'totalAssignedGene', 'abs_ERCCsumLogErr', 'qSV1', 'qSV2', 'qSV3', 'qSV4',
+    'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
+)
 
 set.seed(0)
 dir.create(plot_dir, showWarnings = FALSE)
@@ -25,10 +29,10 @@ rse_gene = get(load(rse_path))
 me_df = net$MEs |>
     rownames_to_column('RNum') |>
     as_tibble() |>
+    select(-ME0) |>
     left_join(
         colData(rse_gene) |>
-            as_tibble() |>
-            select(RNum, PrimaryDx),
+            as_tibble(),
         by = 'RNum'
     ) |>
     mutate(
@@ -40,17 +44,20 @@ me_df = net$MEs |>
 
 plot_list = list()
 p_val_list = list()
-for (i in seq_len(ncol(me_df) - 2)) {
+for (i in seq_len(length(grep('^ME[0-9]+$', colnames(me_df))))) {
     #   Get p-value of linear relationship with diagnosis
     lin_mod = lm(
-        as.formula(paste0('ME', i - 1, ' ~ PrimaryDx')), data = me_df
+        as.formula(
+            paste0('ME', i, ' ~ ', paste(deg_covariates, collapse = " + "))
+        ),
+        data = me_df
     )
     p_val_list[[i]] = summary(lin_mod)$coef['PrimaryDxSCZD', 4]
     
     plot_list[[i]] = ggplot(
             me_df,
             aes(
-                x = PrimaryDx, y = !!sym(paste0('ME', i - 1)), color = PrimaryDx
+                x = PrimaryDx, y = !!sym(paste0('ME', i)), color = PrimaryDx
             )
         ) +
         geom_boxplot(outlier.shape = NA) +
@@ -60,7 +67,7 @@ for (i in seq_len(ncol(me_df) - 2)) {
             x = Inf, y = Inf, hjust = 1, vjust = 1, color = 'black', size = 8
         ) +
         guides(color = "none") +
-        labs(x = "Diagnosis", y = paste("Module", i - 1)) +
+        labs(x = "Diagnosis", y = paste("Module", i)) +
         theme_bw(base_size = 20)
 }
 
@@ -73,12 +80,12 @@ dev.off()
 ################################################################################
 
 top_modules = tibble(
-        module_num = as.integer(seq_len(length(p_val_list)) - 1),
+        module_num = as.integer(seq_len(length(p_val_list))),
         p_val = unlist(p_val_list)
     ) |>
     filter(p_val < 0.05)
 
-message("Top modules by p-value for linear relationship with diagnosis:")
+message("Significant modules by p-value for linear relationship with diagnosis:")
 print(top_modules)
 
 go_list = list()
@@ -97,8 +104,8 @@ for (module_num in top_modules$module_num) {
     )
 }
 
-#   Which modules have enough enriched GO terms?
-which_enriched = which(sapply(go_list, function(x) nrow(x@result)) >= 2)
+#   Which modules have any enriched GO terms?
+which_enriched = which(sapply(go_list, function(x) nrow(x@result)) >= 1)
 
 #   Create a 'compareClusterResult' object of modules with enriched GO terms
 go_list = go_list[which_enriched]
