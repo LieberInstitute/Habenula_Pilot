@@ -58,6 +58,8 @@ to_cat_df = function(hab_de, other_de, region, max_x, num_samples) {
     return(cat_df)
 }
 
+#   Given two tibbles of DE results, return a tibble containing Spearman
+#   correlation between the t-statistics
 t_stat_cor = function(hab_de, other_de, region) {
     a = inner_join(hab_de, other_de, by = "ensemblID")
 
