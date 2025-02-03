@@ -34,13 +34,15 @@ exp_mat = log2(assays(rse_gene)$rpkm + 1) |>
     t()
 
 powers = c(c(1:10), seq(from = 12, to = 20, by = 2))
-thres = pickSoftThreshold(exp_mat, powerVector = powers, verbose = 5)
+thres = pickSoftThreshold(
+    exp_mat, powerVector = powers, networkType = "signed", verbose = 5
+)
 
 net = blockwiseModules(
-    exp_mat, power = thres$powerEstimate, TOMType = "unsigned",
-    minModuleSize = 30, reassignThreshold = 0, mergeCutHeight = 0.25,
-	numericLabels = TRUE, pamRespectsDendro = FALSE, saveTOMs = TRUE,
-    verbose = 3, maxBlockSize = 30000,
+    exp_mat, power = thres$powerEstimate, networkType = "signed",
+    minModuleSize = 30, corType="bicor", reassignThreshold = 0,
+    mergeCutHeight = 0.25, numericLabels = TRUE, pamRespectsDendro = FALSE,
+    saveTOMs = TRUE, verbose = 5, maxBlockSize = 30000,
     saveTOMFileBase = file.path(tom_dir, 'gene')
 )
 save(net, file = out_path)
