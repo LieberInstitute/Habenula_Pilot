@@ -45,6 +45,6 @@ net = blockwiseModules(
     saveTOMs = TRUE, verbose = 5, maxBlockSize = 30000,
     saveTOMFileBase = file.path(tom_dir, 'gene')
 )
-save(net, file = out_path)
+saveRDS(net, out_path)
 
 session_info()

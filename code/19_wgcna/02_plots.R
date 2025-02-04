@@ -10,17 +10,17 @@ rse_path = here(
     'processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda'
 )
 plot_dir = here('plots', '19_wgcna')
-deg_covariates = c(
-    'PrimaryDx', 'AgeDeath', 'Flowcell', 'mitoRate', 'rRNA_rate', 'RIN',
-    'totalAssignedGene', 'abs_ERCCsumLogErr', 'qSV1', 'qSV2', 'qSV3', 'qSV4',
-    'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
-)
+protected_deg_covariates = c('PrimaryDx', 'AgeDeath')
 
 set.seed(0)
 dir.create(plot_dir, showWarnings = FALSE)
 
+#   Load WGCNA network and gene expression data, then filter genes by minimum
+#   mean RPKM
 net = readRDS(net_path)
 rse_gene = get(load(rse_path))
+assays(rse_gene)$rpkm = recount::getRPKM(rse_gene, length_var = 'Length')
+rse_gene = rse_gene[rowMeans(assays(rse_gene)$rpkm) > 0.25,]
 
 ################################################################################
 #   Plot module weights by diagnosis
@@ -48,7 +48,11 @@ for (i in seq_len(length(grep('^ME[0-9]+$', colnames(me_df))))) {
     #   Get p-value of linear relationship with diagnosis
     lin_mod = lm(
         as.formula(
-            paste0('ME', i, ' ~ ', paste(deg_covariates, collapse = " + "))
+            paste0(
+                'ME', i, ' ~ ', 
+                paste(protected_deg_covariates, collapse = " + "), 
+                ' - 1'
+            )
         ),
         data = me_df
     )
@@ -81,7 +85,7 @@ dev.off()
 
 top_modules = tibble(
         module_num = as.integer(seq_len(length(p_val_list))),
-        p_val = unlist(p_val_list)
+        p_val = p.adjust(unlist(p_val_list), "fdr")
     ) |>
     filter(p_val < 0.05)
 

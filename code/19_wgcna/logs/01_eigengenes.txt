@@ -1,10 +1,10 @@
 **** Job starts ****
-Tue Jan 28 10:06:15 AM EST 2025
+Mon Feb  3 02:24:21 PM EST 2025
 **** JHPCE info ****
 User: neagles
-Job id: 12681571
+Job id: 13128447
 Job name: 01_eigengenes
-Node name: compute-093
+Node name: compute-168
 Task id: 
 Loading conda_R/4.3.x
 
@@ -182,22 +182,22 @@ pickSoftThreshold: will use block size 2104.
    ..working on genes 16833 through 18936 of 21263
    ..working on genes 18937 through 21040 of 21263
    ..working on genes 21041 through 21263 of 21263
-   Power SFT.R.sq slope truncated.R.sq  mean.k. median.k. max.k.
-1      1   0.0389 -1.58          0.965 3060.000  3.04e+03 4440.0
-2      2   0.3450 -2.81          0.971  701.000  6.76e+02 1490.0
-3      3   0.6210 -2.85          0.980  207.000  1.89e+02  642.0
-4      4   0.8110 -2.55          0.987   73.400  6.14e+01  322.0
-5      5   0.9070 -2.42          0.989   30.000  2.23e+01  198.0
-6      6   0.9430 -2.33          0.987   13.800  8.78e+00  140.0
-7      7   0.9620 -2.18          0.988    7.080  3.69e+00  107.0
-8      8   0.9740 -2.00          0.989    3.960  1.64e+00   85.7
-9      9   0.9780 -1.87          0.987    2.390  7.67e-01   71.1
-10    10   0.9840 -1.76          0.992    1.540  3.74e-01   61.3
-11    12   0.9830 -1.62          0.992    0.747  9.82e-02   48.5
-12    14   0.9820 -1.52          0.994    0.422  2.84e-02   40.1
-13    16   0.9830 -1.45          0.993    0.265  8.90e-03   34.1
-14    18   0.9870 -1.39          0.997    0.179  2.99e-03   29.7
-15    20   0.9810 -1.35          0.991    0.128  1.06e-03   26.2
+   Power SFT.R.sq  slope truncated.R.sq  mean.k. median.k.  max.k.
+1      1  0.10000 10.100          0.974 10900.00  10900.00 11700.0
+2      2  0.03970  3.380          0.975  5720.00   5720.00  6740.0
+3      3  0.00224  0.527          0.973  3100.00   3090.00  4000.0
+4      4  0.00474 -0.549          0.967  1730.00   1710.00  2450.0
+5      5  0.06800 -1.560          0.965   987.00    969.00  1560.0
+6      6  0.24200 -2.530          0.968   578.00    560.00  1050.0
+7      7  0.39900 -2.950          0.966   347.00    331.00   729.0
+8      8  0.53400 -3.040          0.965   213.00    199.00   521.0
+9      9  0.65500 -3.000          0.967   133.00    122.00   381.0
+10    10  0.76200 -2.840          0.973    85.40     76.00   285.0
+11    12  0.89400 -2.810          0.981    37.40     30.80   184.0
+12    14  0.94400 -2.660          0.984    17.70     13.20   132.0
+13    16  0.96600 -2.450          0.988     9.08      5.92   102.0
+14    18  0.97700 -2.230          0.988     5.01      2.77    81.9
+15    20  0.97900 -2.060          0.987     2.96      1.34    68.4
 Warning message:
 executing %dopar% sequentially: no parallel backend registered 
  Calculating module eigengenes block-wise from all genes
@@ -214,29 +214,104 @@ executing %dopar% sequentially: no parallel backend registered
    ..saving TOM for block 1 into file /dcs04/lieber/lcolladotor/pilotHb_LIBD001/Roche_Habenula/processed-data/19_wgcna/TOM_files/gene-block.1.RData
  ....clustering..
  ....detecting modules..
+     ..done.
  ....calculating module eigengenes..
+     moduleEigengenes : Working on ME for module 1
+     moduleEigengenes : Working on ME for module 2
+     moduleEigengenes : Working on ME for module 3
+     moduleEigengenes : Working on ME for module 4
+     moduleEigengenes : Working on ME for module 5
+     moduleEigengenes : Working on ME for module 6
+     moduleEigengenes : Working on ME for module 7
+     moduleEigengenes : Working on ME for module 8
+     moduleEigengenes : Working on ME for module 9
+     moduleEigengenes : Working on ME for module 10
+     moduleEigengenes : Working on ME for module 11
+     moduleEigengenes : Working on ME for module 12
+     moduleEigengenes : Working on ME for module 13
+     moduleEigengenes : Working on ME for module 14
+     moduleEigengenes : Working on ME for module 15
+     moduleEigengenes : Working on ME for module 16
+     moduleEigengenes : Working on ME for module 17
+     moduleEigengenes : Working on ME for module 18
+     moduleEigengenes : Working on ME for module 19
+     moduleEigengenes : Working on ME for module 20
+     moduleEigengenes : Working on ME for module 21
+     moduleEigengenes : Working on ME for module 22
+     moduleEigengenes : Working on ME for module 23
+     moduleEigengenes : Working on ME for module 24
+     moduleEigengenes : Working on ME for module 25
+     moduleEigengenes : Working on ME for module 26
+     moduleEigengenes : Working on ME for module 27
+     moduleEigengenes : Working on ME for module 28
+     moduleEigengenes : Working on ME for module 29
+     moduleEigengenes : Working on ME for module 30
+     moduleEigengenes : Working on ME for module 31
+     moduleEigengenes : Working on ME for module 32
+     moduleEigengenes : Working on ME for module 33
+     moduleEigengenes : Working on ME for module 34
+     moduleEigengenes : Working on ME for module 35
+     moduleEigengenes : Working on ME for module 36
+     moduleEigengenes : Working on ME for module 37
+     moduleEigengenes : Working on ME for module 38
+     moduleEigengenes : Working on ME for module 39
+     moduleEigengenes : Working on ME for module 40
+     moduleEigengenes : Working on ME for module 41
+     moduleEigengenes : Working on ME for module 42
+     moduleEigengenes : Working on ME for module 43
+     moduleEigengenes : Working on ME for module 44
+     moduleEigengenes : Working on ME for module 45
+     moduleEigengenes : Working on ME for module 46
+     moduleEigengenes : Working on ME for module 47
+     moduleEigengenes : Working on ME for module 48
+     moduleEigengenes : Working on ME for module 49
+     moduleEigengenes : Working on ME for module 50
+     moduleEigengenes : Working on ME for module 51
+     moduleEigengenes : Working on ME for module 52
+     moduleEigengenes : Working on ME for module 53
+     moduleEigengenes : Working on ME for module 54
+     moduleEigengenes : Working on ME for module 55
+     moduleEigengenes : Working on ME for module 56
+     moduleEigengenes : Working on ME for module 57
  ....checking kME in modules..
-     ..removing 162 genes from module 1 because their KME is too low.
-     ..removing 245 genes from module 2 because their KME is too low.
-     ..removing 178 genes from module 3 because their KME is too low.
-     ..removing 99 genes from module 4 because their KME is too low.
-     ..removing 165 genes from module 5 because their KME is too low.
-     ..removing 208 genes from module 6 because their KME is too low.
-     ..removing 103 genes from module 7 because their KME is too low.
-     ..removing 32 genes from module 8 because their KME is too low.
-     ..removing 82 genes from module 9 because their KME is too low.
-     ..removing 42 genes from module 10 because their KME is too low.
-     ..removing 32 genes from module 11 because their KME is too low.
-     ..removing 14 genes from module 13 because their KME is too low.
-     ..removing 12 genes from module 14 because their KME is too low.
-     ..removing 2 genes from module 17 because their KME is too low.
-     ..removing 1 genes from module 18 because their KME is too low.
-     ..removing 1 genes from module 27 because their KME is too low.
-     ..removing 2 genes from module 30 because their KME is too low.
-     ..removing 1 genes from module 42 because their KME is too low.
+     ..removing 726 genes from module 1 because their KME is too low.
+     ..removing 356 genes from module 2 because their KME is too low.
+     ..removing 311 genes from module 3 because their KME is too low.
+     ..removing 168 genes from module 4 because their KME is too low.
+     ..removing 90 genes from module 5 because their KME is too low.
+     ..removing 166 genes from module 6 because their KME is too low.
+     ..removing 202 genes from module 7 because their KME is too low.
+     ..removing 34 genes from module 8 because their KME is too low.
+     ..removing 135 genes from module 9 because their KME is too low.
+     ..removing 66 genes from module 10 because their KME is too low.
+     ..removing 7 genes from module 11 because their KME is too low.
+     ..removing 50 genes from module 12 because their KME is too low.
+     ..removing 102 genes from module 13 because their KME is too low.
+     ..removing 17 genes from module 14 because their KME is too low.
+     ..removing 17 genes from module 15 because their KME is too low.
+     ..removing 1 genes from module 16 because their KME is too low.
+     ..removing 1 genes from module 17 because their KME is too low.
+     ..removing 10 genes from module 18 because their KME is too low.
+     ..removing 2 genes from module 19 because their KME is too low.
+     ..removing 5 genes from module 20 because their KME is too low.
+     ..removing 2 genes from module 23 because their KME is too low.
+     ..removing 4 genes from module 28 because their KME is too low.
+     ..removing 1 genes from module 53 because their KME is too low.
  ..merging modules that are too close..
      mergeCloseModules: Merging modules whose distance is less than 0.25
+       multiSetMEs: Calculating module MEs.
+         Working on set 1 ...
+         moduleEigengenes: Calculating 58 module eigengenes in given set.
+       multiSetMEs: Calculating module MEs.
+         Working on set 1 ...
+         moduleEigengenes: Calculating 50 module eigengenes in given set.
+       multiSetMEs: Calculating module MEs.
+         Working on set 1 ...
+         moduleEigengenes: Calculating 49 module eigengenes in given set.
        Calculating new MEs...
+       multiSetMEs: Calculating module MEs.
+         Working on set 1 ...
+         moduleEigengenes: Calculating 49 module eigengenes in given set.
 ─ Session info ───────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.3.2 Patched (2024-02-08 r85876)
@@ -247,7 +322,7 @@ executing %dopar% sequentially: no parallel backend registered
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2025-01-28
+ date     2025-02-03
  pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/ (via rmarkdown)
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -407,4 +482,4 @@ executing %dopar% sequentially: no parallel backend registered
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Tue Jan 28 12:08:30 PM EST 2025
+Mon Feb  3 03:46:41 PM EST 2025
