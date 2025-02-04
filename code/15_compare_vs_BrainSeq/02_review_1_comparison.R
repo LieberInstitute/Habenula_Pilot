@@ -7,6 +7,7 @@ library(tidyverse)
 library(BiocFileCache)
 library(readxl)
 library(sessioninfo)
+library(cowplot)
 
 plot_dir = here("plots", "15_compare_vs_BrainSeq", "review_round_1")
 hab_de_path = here(
@@ -58,18 +59,30 @@ to_cat_df = function(hab_de, other_de, region, max_x, num_samples) {
     return(cat_df)
 }
 
-#   Given two tibbles of DE results, return a tibble containing Spearman
-#   correlation between the t-statistics
-t_stat_cor = function(hab_de, other_de, region) {
-    a = inner_join(hab_de, other_de, by = "ensemblID")
+#   Given two tibbles of DE results, return a scatterplot of t-statistics
+#   across brain regions (habenula and 'region')
+t_stat_plot = function(hab_de, other_de, region) {
+    shared_de = inner_join(hab_de, other_de, by = "ensemblID")
 
-    cor_obj = cor.test(a$t.x, a$t.y, method = "spearman")
-
-    cor_df = tibble(
-        region = region, rho = unname(cor_obj$estimate), p_val = cor_obj$p.value
+    cor_obj = cor.test(shared_de$t.x, shared_de$t.y, method = "spearman")
+    anno_text = sprintf(
+        "rho = %s \np = %s \n",
+        signif(cor_obj$estimate, 3),
+        signif(cor_obj$p.value, 3)
     )
+    
+    p = ggplot(shared_de, aes(x = t.x, y = t.y)) +
+        geom_bin2d(bins = 70) +
+        geom_text(
+            label = anno_text, x = Inf, y = -Inf, hjust = 1, vjust = 0,
+            size = 4
+        ) +
+        scale_fill_viridis_c() +
+        labs(x = "Habenula t-stat", y = paste(region, "t-stat")) +
+        theme_bw(base_size = 15) +
+        theme(legend.key.size = unit(0.35, 'cm'))
 
-    return(cor_df)
+    return(p)
 }
 
 ################################################################################
@@ -144,17 +157,16 @@ dev.off()
 #   Concordance of t-statistics
 ################################################################################
 
-cor_df_list = list()
+plot_list = list()
 for (region in other_brain_regions) {
-    cor_df_list[[region]] = t_stat_cor(
+    plot_list[[region]] = t_stat_plot(
         hab_de = de_list[['habenula']],
         other_de = de_list[[region]],
         region = region
     )
 }
-
-message("Concordance of t-statistics between habenula and other brain regions:")
-do.call(rbind, cor_df_list) |>
-    print()
+pdf(file.path(plot_dir, "t_stat_comparison.pdf"), width = 10)
+plot_grid(plotlist = plot_list, ncol = 2)
+dev.off()
 
 session_info()
