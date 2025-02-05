@@ -232,6 +232,47 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
   xggPairData$cor_value[row_index] <<- cor_value
 
   cor_label <- glue("R: **{cor_value}**, p: **{signif(p_val, 2)}**")
+
+  p_x_col = gsub("t_", "P.Value_", x_col)
+  p_y_col = gsub("t_", "P.Value_", y_col)
+  adj_p_x_col = gsub("t_", "adj.P.Val_", x_col)
+  adj_p_y_col = gsub("t_", "adj.P.Val_", y_col)
+
+  # Compute replication statistics based on pi1, using each dataset as the
+  # discovery set. Among significant genes in one set, what fraction in the
+  # other are expected to be DE?
+  p = data[[p_y_col]][data[[adj_p_x_col]] < fdr]
+  if (length(p) > 0) {
+    #   Compute pi1, adding a dummy p value of 1 if there's an error
+    pi_discovery_x = tryCatch(
+      1 - qvalue(p)$pi0,
+      error = function(e) {
+        1 - qvalue(c(1, p))$pi0
+      }
+    )
+  } else {
+    pi_discovery_x = 0
+  }
+
+  p = data[[p_x_col]][data[[adj_p_y_col]] < fdr]
+  if (length(p) > 0) {
+    #   Compute pi1, adding a dummy p value of 1 if there's an error
+    pi_discovery_y = tryCatch(
+      1 - qvalue(p)$pi0,
+      error = function(e) {
+        1 - qvalue(c(1, p))$pi0
+      }
+    )
+  } else {
+    pi_discovery_y = 0
+  }
+
+  rep_label = sprintf(
+    "Rep. x->y: **%s%%**; y->x: **%s%%**",
+    signif(100 * pi_discovery_x, 3),
+    signif(100 * pi_discovery_y, 3)
+  )
+
   # Calculate plot limits
   x_range <- range(data[[x_col]], na.rm = TRUE)
   y_range <- range(data[[y_col]], na.rm = TRUE)
@@ -288,6 +329,10 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
     geom_richtext(data = data.frame(x = x_range[1], y = y_range[2]),
                   aes(x = x, y = y, label = cor_label), hjust = 0.2, vjust = 0.2,
                   fill = NA, label.color = NA, size = 3.4, color = "gray30" ) +
+    # Add replication text at the bottom
+    geom_richtext(data = data.frame(x = x_range[1], y = y_range[1]),
+                  aes(x = x, y = y, label = rep_label), hjust = 0.2, vjust = 0.7,
+                  fill = NA, label.color = NA, size = 2, color = "gray30" ) +
     coord_cartesian(xlim = x_limits, ylim = y_limits, expand = FALSE)
 }
 
