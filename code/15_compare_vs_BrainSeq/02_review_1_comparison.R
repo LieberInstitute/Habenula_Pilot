@@ -179,20 +179,6 @@ dev.off()
 #   Combined ggpairs plots
 ################################################################################
 
-#   Estimate the size of the average intersection of DE genes across brain
-#   regions
-pi1_habenula = 1 - qvalue(de_list[['habenula']]$P.Value)$pi0
-pi1_prod_other = pi1_habenula * sapply(
-    de_list[other_brain_regions],
-    function(x) {
-        nrow(x) * (1 - qvalue(x$P.Value)$pi0)
-    }
-)
-pi1_prod = pi1_prod_other |>
-    mean() |>
-    round() |>
-    as.integer()
-
 de_list = lapply(
     de_list,
     function(x) {
@@ -202,7 +188,7 @@ de_list = lapply(
     }
 )
 
-p = xggpairs(de_list, CAT.top = pi1_prod * 2)
+p = xggpairs(de_list, CAT.top = 1000)
 p_size = 1.5 * length(de_list)
 ggsave(file.path(plot_dir, "xggpairs.png"), p, width = p_size, height = p_size)
 
