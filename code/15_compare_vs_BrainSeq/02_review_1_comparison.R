@@ -9,6 +9,8 @@ library(readxl)
 library(sessioninfo)
 library(cowplot)
 
+source(here("code", "15_compare_vs_BrainSeq", "xggpairs.R"))
+
 plot_dir = here("plots", "15_compare_vs_BrainSeq", "review_round_1")
 hab_de_path = here(
     "processed-data", "10_DEA", "04_DEA",
@@ -93,20 +95,20 @@ de_list = list()
 
 #   Habenula
 de_list[['habenula']] = read_tsv(hab_de_path, show_col_types = FALSE) |>
-    select(ensemblID, t, P.Value, adj.P.Val)
+    select(ensemblID, t, P.Value, adj.P.Val, logFC)
 
 #   BSP2 DLPFC
 load(bsp2_dlpfc_de_path, verbose = TRUE)
 de_list[['DLPFC']] = outGene |>
     as_tibble() |>
-    select(ensemblID, t, P.Value, adj.P.Val)
+    select(ensemblID, t, P.Value, adj.P.Val, logFC)
 rm(outGene0, outGeneNoAdj, outGene)
 
 #   BSP2 Hippocampus
 load(bsp2_hippo_de_path, verbose = TRUE)
 de_list[['Hippo']] = outGene |>
     as_tibble() |>
-    select(ensemblID, t, P.Value, adj.P.Val)
+    select(ensemblID, t, P.Value, adj.P.Val, logFC)
 rm(outGene0, outGeneNoAdj, outGene)
 
 #   BSP3 Caudate
@@ -116,12 +118,15 @@ bsp3_caudate_file <- bfcrpath(
 )
 de_list[['Caudate']] = read_tsv(bsp3_caudate_file, show_col_types = FALSE) |>
     filter(Type == "Gene") |>
-    select(ensemblID, t, P.Value, adj.P.Val)
+    select(ensemblID, t, P.Value, adj.P.Val, logFC)
 
 #   DG
 de_list[['DG']] = read_xlsx(dg_de_path, sheet = "Table_S10") |>
-    select(ensemblID, SZ_t, SZ_P.Value, SZ_adj.P.Val) |>
-    rename(t = SZ_t, P.Value = SZ_P.Value, adj.P.Val = SZ_adj.P.Val)
+    select(ensemblID, SZ_t, SZ_P.Value, SZ_adj.P.Val, SZ_logFC) |>
+    rename(
+        t = SZ_t, P.Value = SZ_P.Value, adj.P.Val = SZ_adj.P.Val,
+        logFC = SZ_logFC
+    )
 
 ################################################################################
 #   Concordance-at-the-top plots
@@ -168,5 +173,22 @@ for (region in other_brain_regions) {
 pdf(file.path(plot_dir, "t_stat_comparison.pdf"), width = 10)
 plot_grid(plotlist = plot_list, ncol = 2)
 dev.off()
+
+################################################################################
+#   Combined ggpairs plots
+################################################################################
+
+de_list = lapply(
+    de_list,
+    function(x) {
+        x |>
+            as.data.frame() |>
+            column_to_rownames("ensemblID")
+    }
+)
+
+p = xggpairs(de_list)
+p_size = 1.5 * length(de_list)
+ggsave(file.path(plot_dir, "xggpairs.png"), p, width = p_size, height = p_size)
 
 session_info()
