@@ -328,7 +328,7 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
     # Add correlation text at the top, shifted right to align with x_range[1]
     geom_richtext(data = data.frame(x = x_range[1], y = y_range[2]),
                   aes(x = x, y = y, label = cor_label), hjust = 0.2, vjust = 0.2,
-                  fill = NA, label.color = NA, size = 3.4, color = "gray30" ) +
+                  fill = NA, label.color = NA, size = 3, color = "gray30" ) +
     # Add replication text at the bottom
     geom_richtext(data = data.frame(x = x_range[1], y = y_range[1]),
                   aes(x = x, y = y, label = rep_label), hjust = 0.2, vjust = 0.7,
