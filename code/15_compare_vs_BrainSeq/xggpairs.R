@@ -172,7 +172,7 @@ ggCATplot <- function(vec1, vec2, maxrank = 3000, x_col=0, y_col=0, fdr_overlap=
     scale_y_continuous(breaks = y_breaks, labels = y_breaks, limits = c(min_y, max_y)) +
     theme_minimal() +  theme(axis.ticks.y = element_blank(), panel.grid.minor = element_blank(),
                 panel.grid.major = element_line(color="#F4F4F4"),
-                axis.text.y = element_blank(), axis.text.x = element_blank(),
+                axis.text.y = element_blank(), # axis.text.x = element_blank(),
                 panel.border = element_rect(color = borderColor, fill=NA, linewidth=1)) +
     annotate("text", x = -x_left_extension, y = y_breaks_label,
              label = sprintf(showdec, y_breaks_label), hjust = -0.2, size = 3, color = "gray60") +
@@ -221,16 +221,17 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
                                      "gray50")))
   data$color <- fifelse(is.na(data$color), "gray20", data$color)
   # Calculate correlation
-  cor_value <- round(cor(data[[x_col]], data[[y_col]], use = "pairwise.complete.obs"), 2)
-
-  # Update global data frame
+  #cor_value <- round(cor(data[[x_col]], data[[y_col]], use = "pairwise.complete.obs"), 2)
+  cor_test <- cor.test(data[[x_col]], data[[y_col]], method = "spearman", use = "pairwise.complete.obs")
+  cor_value <- round(cor_test$estimate, 2)
+  p_val <- cor_test$p.value  # Update global data frame
   x_index <- as.numeric(gsub("t_", "", x_col))
   y_index <- as.numeric(gsub("t_", "", y_col))
   row_index <- which((xggPairData$x == x_index & xggPairData$y == y_index) |
                        (xggPairData$x == y_index & xggPairData$y == x_index))
   xggPairData$cor_value[row_index] <<- cor_value
 
-  cor_label <- glue("R = **{cor_value}**")
+  cor_label <- glue("R: **{cor_value}**, p: **{signif(p_val, 2)}**")
   # Calculate plot limits
   x_range <- range(data[[x_col]], na.rm = TRUE)
   y_range <- range(data[[y_col]], na.rm = TRUE)
@@ -238,7 +239,7 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
   ext_f_left <- 0.22
   ext_f_right <- 0.1
   ext_f_bot <- 0.15
-  ext_f_top <- 0.16
+  ext_f_top <- 0.17
 
   yax <- x_range[1] - 0.05*diff(x_range) # shifted y-axis position
   xay <- y_range[1] - 0.08*diff(y_range) # shifted x-axis position
@@ -285,8 +286,8 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
               hjust = 1, vjust = 0.5, size = 2.8, color = "gray60") +
     # Add correlation text at the top, shifted right to align with x_range[1]
     geom_richtext(data = data.frame(x = x_range[1], y = y_range[2]),
-                  aes(x = x, y = y, label = cor_label), hjust = 0.35, vjust = 0.4,
-                  fill = NA, label.color = NA, size = 3.6, color = "gray30" ) +
+                  aes(x = x, y = y, label = cor_label), hjust = 0.2, vjust = 0.2,
+                  fill = NA, label.color = NA, size = 3.4, color = "gray30" ) +
     coord_cartesian(xlim = x_limits, ylim = y_limits, expand = FALSE)
 }
 
