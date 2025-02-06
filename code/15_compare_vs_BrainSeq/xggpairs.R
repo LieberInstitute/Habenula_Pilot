@@ -231,7 +231,7 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
                        (xggPairData$x == y_index & xggPairData$y == x_index))
   xggPairData$cor_value[row_index] <<- cor_value
 
-  cor_label <- glue("R: **{cor_value}**, p: **{signif(p_val, 2)}**")
+  cor_label <- glue("R: **{cor_value}**, p: **{sprintf('%.2e', p_val)}**")
 
   p_x_col = gsub("t_", "P.Value_", x_col)
   p_y_col = gsub("t_", "P.Value_", y_col)
@@ -279,7 +279,7 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
   # Define extension factors
   ext_f_left <- 0.22
   ext_f_right <- 0.1
-  ext_f_bot <- 0.15
+  ext_f_bot <- 0.22
   ext_f_top <- 0.17
 
   yax <- x_range[1] - 0.05*diff(x_range) # shifted y-axis position
@@ -331,8 +331,8 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
                   fill = NA, label.color = NA, size = 3, color = "gray30" ) +
     # Add replication text at the bottom
     geom_richtext(data = data.frame(x = x_range[1], y = y_range[1]),
-                  aes(x = x, y = y, label = rep_label), hjust = 0.2, vjust = 0.7,
-                  fill = NA, label.color = NA, size = 2, color = "gray30" ) +
+                  aes(x = x, y = y, label = rep_label), hjust = 0.2, vjust = 1,
+                  fill = NA, label.color = NA, size = 2.1, color = "gray30" ) +
     coord_cartesian(xlim = x_limits, ylim = y_limits, expand = FALSE)
 }
 
