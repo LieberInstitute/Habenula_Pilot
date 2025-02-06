@@ -188,7 +188,7 @@ de_list = lapply(
     }
 )
 
-p = xggpairs(de_list, CAT.top = 1000)
+p = xggpairs(de_list, CAT.top = 1000, no.p = TRUE)
 p_size = 1.5 * length(de_list)
 ggsave(file.path(plot_dir, "xggpairs.png"), p, width = p_size, height = p_size)
 
