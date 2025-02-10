@@ -92,32 +92,39 @@ top_modules = tibble(
 message("Significant modules by p-value for linear relationship with diagnosis:")
 print(top_modules)
 
-go_list = list()
-univ = rowData(rse_gene)$EntrezID[!is.na(rowData(rse_gene)$EntrezID)]
+univ = as.character(
+    rowData(rse_gene)$EntrezID[!is.na(rowData(rse_gene)$EntrezID)]
+)
+for (ont_type in c("BP", "MF", "CC")) {
+    go_list = list()
 
-for (module_num in top_modules$module_num) {
-    genes = rowData(rse_gene)$EntrezID[net$colors == module_num]
-    genes = genes[!is.na(genes)]
+    for (module_num in top_modules$module_num) {
+        genes = rowData(rse_gene)$EntrezID[net$colors == module_num]
+        genes = genes[!is.na(genes)]
 
-    go_list = append(
-        go_list,
-        enrichGO(
-            genes, univ = univ, OrgDb = "org.Hs.eg.db", ont = "ALL",
-            readable = TRUE, pvalueCutoff = 1, qvalueCutoff = 0.05
+        go_list = append(
+            go_list,
+            enrichGO(
+                genes, univ = univ, OrgDb = "org.Hs.eg.db", ont = ont_type,
+                readable = TRUE, pvalueCutoff = 1, qvalueCutoff = 0.05
+            )
         )
+    }
+
+    #   Which modules have any enriched GO terms?
+    which_enriched = which(sapply(go_list, function(x) nrow(x@result)) >= 1)
+
+    #   Create a 'compareClusterResult' object of modules with enriched GO terms
+    go_list = go_list[which_enriched]
+    names(go_list) = top_modules$module_num[which_enriched]
+    go_list = merge_result(go_list)
+
+    pdf(
+        file.path(plot_dir, sprintf('GO_module_enrichment_%s.pdf', ont_type)),
+        height = 14
     )
+    print(dotplot(go_list, showCategory = 20))
+    dev.off()
 }
-
-#   Which modules have any enriched GO terms?
-which_enriched = which(sapply(go_list, function(x) nrow(x@result)) >= 1)
-
-#   Create a 'compareClusterResult' object of modules with enriched GO terms
-go_list = go_list[which_enriched]
-names(go_list) = top_modules$module_num[which_enriched]
-go_list = merge_result(go_list)
-
-pdf(file.path(plot_dir, 'GO_module_enrichment.pdf'))
-dotplot(go_list, showCategory = 20)
-dev.off()
 
 session_info()
