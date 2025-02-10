@@ -92,6 +92,7 @@ deLst_ggwide <- function(deres_lst) {
 ggCATplot <- function(vec1, vec2, maxrank = 3000, x_col=0, y_col=0, fdr_overlap=NULL,
                 pval_overlap=NULL, no.p=FALSE, xlab=NULL, ylab=NULL,
                 standalone=FALSE) {
+  fdr = 0.1
   # Sort vectors and get names
   vec1 <- names(sort(vec1))
   vec2 <- names(sort(vec2))
@@ -188,7 +189,7 @@ ggCATplot <- function(vec1, vec2, maxrank = 3000, x_col=0, y_col=0, fdr_overlap=
              label = sprintf("n = %d",maxrank), hjust = 1.06, vjust=-0.3, size = 2.9, color = "gray45")
   if (!is.null(fdr_overlap)) {
     gp <- gp + annotate("text", x = maxrank/2, y = yovl,
-            label = sprintf("%d \u2229 FDR<.05", fdr_overlap),
+            label = sprintf("%d \u2229 FDR<%s", fdr_overlap, fdr),
             hjust = 0.45, vjust = -0.12, size = 3.2, color = "gray40")
   }
   if (!no.p & !is.null(pval_overlap)) {
@@ -203,7 +204,7 @@ ggCATplot <- function(vec1, vec2, maxrank = 3000, x_col=0, y_col=0, fdr_overlap=
   return(gp)
 }
 
-ggScatter <- function(data, mapping, fdr = 0.05) {
+ggScatter <- function(data, mapping, fdr = 0.1) {
   x_col <- quo_name(mapping$x)
   y_col <- quo_name(mapping$y)
 
@@ -336,7 +337,7 @@ ggScatter <- function(data, mapping, fdr = 0.05) {
     coord_cartesian(xlim = x_limits, ylim = y_limits, expand = FALSE)
 }
 
-ggVolcano <- function(data, source_name, x_col, no.p=FALSE) {
+ggVolcano <- function(data, source_name, x_col, no.p=FALSE, fdr = 0.1) {
   logFC_col <- paste0("logFC_", source_name)
   P.Value_col <- paste0("P.Value_", source_name)
   adj.P.Val_col <- paste0("adj.P.Val_", source_name)
@@ -344,7 +345,7 @@ ggVolcano <- function(data, source_name, x_col, no.p=FALSE) {
   # Remove rows with NAs for data.frame
   data <- data[!is.na(data[[logFC_col]]) & !is.na(data[[P.Value_col]]), ]
 
-  significant <- data[[adj.P.Val_col]] < 0.05
+  significant <- data[[adj.P.Val_col]] < fdr
 
   n_significant <- sum(significant)
   n_p_low <- sum(data[[P.Value_col]] < 0.001)
@@ -376,7 +377,7 @@ ggVolcano <- function(data, source_name, x_col, no.p=FALSE) {
   # Calculate position for y-axis labels
   yax <- x_range[1] - 0.05 * diff(x_limits)
   xay <- y_range[1] - 0.05 * diff(y_limits)
-  n_label = glue("FDR<.05: **{n_significant}**")
+  n_label = glue("FDR<{fdr}: **{n_significant}**")
   n_plabel = glue("p<.001: {n_p_low}")
   gp <- ggplot(data, aes(x = .data[[logFC_col]], y = -log10(.data[[P.Value_col]]))) +
     geom_hline(yintercept = -log10(0.001), linetype = "dashed", linewidth = 0.3, color = "gray20") +
@@ -425,6 +426,7 @@ ggVolcano <- function(data, source_name, x_col, no.p=FALSE) {
 
 ##xggpairs <- function(wide_data, column_labels, CAT.top=3000, no.p=FALSE) {
 xggpairs <- function(deres_lst, CAT.top=3000, no.p=FALSE) {
+  fdr = 0.1
   ## push column_labels into the global var to be used by ggVolcano()
   column_labels <- names(deres_lst)
   xggColumnLabels <<- column_labels
@@ -465,7 +467,7 @@ xggpairs <- function(deres_lst, CAT.top=3000, no.p=FALSE) {
             adj_pval_y_col <- gsub("t_", "adj.P.Val_", y_col)
 
             # Calculate overlap counts
-            fdr_overlap <- sum(wide_data[[adj_pval_x_col]] < 0.05 & wide_data[[adj_pval_y_col]] < 0.05, na.rm = TRUE)
+            fdr_overlap <- sum(wide_data[[adj_pval_x_col]] < fdr & wide_data[[adj_pval_y_col]] < fdr, na.rm = TRUE)
             if (no.p) {
               pval_overlap <- 0
             } else {
