@@ -3,6 +3,7 @@ library(tidyverse)
 library(SummarizedExperiment)
 library(jaffelab)
 library(clusterProfiler)
+library(rrvgo)
 library(sessioninfo)
 
 net_path = here('processed-data', '19_wgcna', 'modules.rds')
@@ -119,11 +120,38 @@ for (ont_type in c("BP", "MF", "CC")) {
     names(go_list) = top_modules$module_num[which_enriched]
     go_list = merge_result(go_list)
 
+    #   Dot plots
     pdf(
-        file.path(plot_dir, sprintf('GO_module_enrichment_%s.pdf', ont_type)),
+        file.path(
+            plot_dir, sprintf('GO_module_enrichment_%s.pdf', ont_type)
+        ),
         height = 14
     )
     print(dotplot(go_list, showCategory = 20))
+    dev.off()
+    
+    #   Tree maps using semantic similarity of GO terms
+    go_df = as.data.frame(go_list) |>
+        as_tibble()
+    
+    sim_matrix = calculateSimMatrix(
+        go_df$ID,
+        orgdb = "org.Hs.eg.db",
+        ont = ont_type,
+        method = "Rel"
+    )
+
+    scores = -log10(go_df$qvalue)
+    names(scores) = go_df$ID
+    reduced_terms = reduceSimMatrix(
+        sim_matrix,
+        scores,
+        threshold = 0.7,
+        orgdb="org.Hs.eg.db"
+    )
+
+    pdf(file.path(plot_dir, sprintf('GO_treemap_%s.pdf', ont_type)))
+    print(treemapPlot(reduced_terms))
     dev.off()
 }
 
