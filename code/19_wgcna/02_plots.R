@@ -80,6 +80,41 @@ pdf(file.path(plot_dir, 'modules_by_dx.pdf'))
 print(plot_list)
 dev.off()
 
+#   For modules associated with both diagnosis and GO MF results, plot
+#   manuscript-ready boxplots
+label_df = tibble(
+        module_num = factor(
+            c("Module 5", "Module 34"), levels = c("Module 5", "Module 34")
+        ),
+        label = c(p_val_list[[5]], p_val_list[[34]])
+    ) |>
+    mutate(label = paste('\np =', signif(label, 2), ''))
+
+p = me_df |>
+    select(RNum, PrimaryDx, ME5, ME34) |>
+    pivot_longer(c(ME5, ME34), names_to = "module_num", values_to = "weight") |>
+    mutate(
+        module_num = factor(
+            ifelse(module_num == "ME5", "Module 5", "Module 34"),
+            levels = c("Module 5", "Module 34")
+        )
+    ) |>
+    ggplot(aes(x = PrimaryDx, y = weight, color = PrimaryDx)) +
+        geom_boxplot(outlier.shape = NA) +
+        facet_wrap(~module_num) +
+        geom_jitter() +
+        geom_text(
+            data = label_df,
+            aes(label = label),
+            x = Inf, y = Inf, hjust = 1, vjust = 1, color = 'black', size = 7
+        ) +
+        guides(color = "none") +
+        labs(x = "Diagnosis", y = "Weight") +
+        theme_bw(base_size = 20)
+pdf(file.path(plot_dir, 'clean_boxplots_MF_modules.pdf'))
+print(p)
+dev.off()
+
 ################################################################################
 #   Gene ontology for genes within diagnosis-associated modules
 ################################################################################
