@@ -179,7 +179,7 @@ dev.off()
 #   Combined ggpairs plots
 ################################################################################
 
-de_list = lapply(
+de_list_df = lapply(
     de_list,
     function(x) {
         x |>
@@ -188,8 +188,27 @@ de_list = lapply(
     }
 )
 
-p = xggpairs(de_list, CAT.top = 1000, no.p = TRUE)
-p_size = 1.5 * length(de_list)
+p = xggpairs(de_list_df, CAT.top = 1000, no.p = TRUE)
+p_size = 1.5 * length(de_list_df)
 ggsave(file.path(plot_dir, "xggpairs.png"), p, width = p_size, height = p_size)
+
+################################################################################
+#   Miscellaneous stats to compute for the paper
+################################################################################
+
+hab_des = de_list[['habenula']] |>
+    filter(adj.P.Val < 0.1) |>
+    pull(ensemblID)
+other_des = do.call(rbind, de_list[other_brain_regions]) |>
+    filter(adj.P.Val < 0.1) |>
+    pull(ensemblID) |>
+    unique()
+message(
+    sprintf(
+        "%s genes (%s%%) are unique to habenula.",
+        length(setdiff(hab_des, other_des)),
+        signif(100 * length(setdiff(hab_des, other_des)) / length(hab_des), 2)
+    )
+)
 
 session_info()
