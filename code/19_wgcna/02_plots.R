@@ -75,15 +75,16 @@ p = cor_df |>
             levels = c(
                 top_genes |> filter(module == "5") |> pull(gene_id),
                 top_genes |> filter(module == "34") |> pull(gene_id)
-            ) |> rev()
+            )
         )
     ) |>
-    ggplot(aes(x = module, y = gene_id, fill = cor_val)) +
+    ggplot(aes(x = gene_id, y = module, fill = cor_val)) +
         geom_tile() +
         scale_fill_viridis_c() +
-        theme_bw(base_size = 20) +
-        labs(x = "Module", y = "Gene Symbol", fill = "Module\nMembership")
-pdf(file.path(plot_dir, 'top_genes_heatmap.pdf'), width = 5)
+        theme_bw(base_size = 25) +
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
+        labs(x = "Gene Symbol", y = "Module", fill = "Module\nMembership")
+pdf(file.path(plot_dir, 'top_genes_heatmap.pdf'), height = 4, width = 10)
 print(p)
 dev.off()
 
