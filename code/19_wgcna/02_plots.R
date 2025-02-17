@@ -12,6 +12,11 @@ rse_path = here(
 )
 plot_dir = here('plots', '19_wgcna')
 protected_deg_covariates = c('PrimaryDx', 'AgeDeath')
+deg_covariates = c(
+    'PrimaryDx', 'AgeDeath', 'Flowcell', 'mitoRate', 'rRNA_rate', 'RIN',
+    'totalAssignedGene', 'abs_ERCCsumLogErr', 'qSV1', 'qSV2', 'qSV3', 'qSV4',
+    'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
+)
 
 set.seed(0)
 dir.create(plot_dir, showWarnings = FALSE)
@@ -22,6 +27,65 @@ net = readRDS(net_path)
 rse_gene = get(load(rse_path))
 assays(rse_gene)$rpkm = recount::getRPKM(rse_gene, length_var = 'Length')
 rse_gene = rse_gene[rowMeans(assays(rse_gene)$rpkm) > 0.25,]
+
+################################################################################
+#   Heatmap of top-correlated genes with select module eigengenes
+################################################################################
+
+mod_deg <- model.matrix(
+    as.formula(paste('~', paste(deg_covariates, collapse = " + "))),
+    data = colData(rse_gene)
+)
+
+#   Log transform expression, regress out covariates, and transpose
+exp_mat = log2(assays(rse_gene)$rpkm + 1) |>
+    cleaningY(mod_deg, P = 3) |>
+    t()
+
+#   Correlate select MEs with gene expression to calculate "module membership".
+#   Use gene symbol and format for plotting later
+cor_df = cor(net$MEs[, c('ME5', 'ME34')], exp_mat) |>
+    abs() |>
+    t() |>
+    as.data.frame() |>
+    rownames_to_column('gene_id') |>
+    as_tibble() |>
+    pivot_longer(c(ME5, ME34), names_to = "module", values_to = "cor_val") |>
+    mutate(
+        gene_id = rowData(rse_gene[gene_id,])$Symbol,
+        module = factor(
+            ifelse(module == "ME5", "5", "34"),
+            levels = c("5", "34")
+        )
+    )
+
+#   Grab genes with highest module membership for each module
+top_genes = cor_df |>
+    group_by(module) |>
+    arrange(desc(cor_val)) |>
+    slice_head(n = 5) |>
+    ungroup()
+
+#   Plot heatmap
+p = cor_df |>
+    filter(gene_id %in% top_genes$gene_id) |>
+    mutate(
+        gene_id = factor(
+            gene_id,
+            levels = c(
+                top_genes |> filter(module == "5") |> pull(gene_id),
+                top_genes |> filter(module == "34") |> pull(gene_id)
+            ) |> rev()
+        )
+    ) |>
+    ggplot(aes(x = module, y = gene_id, fill = cor_val)) +
+        geom_tile() +
+        scale_fill_viridis_c() +
+        theme_bw(base_size = 20) +
+        labs(x = "Module", y = "Gene Symbol", fill = "Module\nMembership")
+pdf(file.path(plot_dir, 'top_genes_heatmap.pdf'), width = 5)
+print(p)
+dev.off()
 
 ################################################################################
 #   Plot module weights by diagnosis
