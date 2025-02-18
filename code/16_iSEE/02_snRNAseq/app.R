@@ -42,40 +42,20 @@ initial[["ReducedDimensionPlot1"]] <- new(
   SelectionAlpha = 0.1,
   ZoomData = numeric(0),
   BrushData = list(
-    xmin = 97.971656170844,
-    xmax = 112.24228661805,
-    ymin = -28.754901934858,
-    ymax = 37.770993498102,
-    coords_css = list(
-      xmin = 683.199999809265,
-      xmax = 720.199999809265,
-      ymin = 129.799995422363,
-      ymax = 215.799995422363
-    ),
-    coords_img = list(
-      xmin = 1707.99999952316,
-      xmax = 1800.49999952316,
-      ymin = 324.499988555908,
-      ymax = 539.499988555908
-    ),
-    img_css_ratio = list(x = 2.5, y = 2.5),
+    lasso = NULL,
+    closed = TRUE,
+    panelvar1 = NULL,
+    panelvar2 = NULL,
     mapping = list(x = "X", y = "Y", colour = "ColorBy"),
-    domain = list(
-      left = -148.420638687221,
-      right = 214.343073489101,
-      bottom = -139.50748746747,
-      top = 119.180968334431
-    ),
-    range = list(
-      left = 110.923587328767,
-      right = 2462.30136986301,
-      bottom = 897.432876712329,
-      top = 61.3972602739727
-    ),
-    log = list(x = NULL, y = NULL),
-    direction = "xy",
-    brushId = "ReducedDimensionPlot1_Brush",
-    outputId = "ReducedDimensionPlot1"
+    coord = structure(
+      c(
+        99.6346363101789,
+        99.6346363101789,
+        -59.6971788804212,
+        -59.6971788804212
+      ),
+      dim = c(2L, 2L)
+    )
   ),
   VisualBoxOpen = FALSE,
   VisualChoices = "Color",
@@ -126,7 +106,7 @@ initial[["ComplexHeatmapPlot1"]] <- new(
   "ComplexHeatmapPlot",
   Assay = "logcounts",
   CustomRows = TRUE,
-  CustomRowsText = "POU4F1\nGPR151\nCHRNB4\nHTR2C\nLYPD6B\nADARB2\nRORB\nSYT1\nSLC17A6\nGAD1\nMOBP\nPDGFRA\nAQP4\nITIH5\nCSF1R",
+  CustomRowsText = "ADARB2\nAQP4\nCHRNB4\nCSF1R\nGAD1\nGPR151\nHTR2C\nITIH5\nLYPD6B\nMOBP\nPDGFRA\nPOU4F1\nRORB\nSLC17A6\nSYT1",
   ClusterRows = TRUE,
   ClusterRowsDistance = "spearman",
   ClusterRowsMethod = "ward.D2",
