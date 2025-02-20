@@ -1,5 +1,6 @@
 library("SingleCellExperiment")
 library("here")
+library("tidyverse")
 library("lobstr")
 library("sessioninfo")
 
@@ -17,6 +18,34 @@ metadata(sce) <- list()
 sce$path <- NULL
 sce$total <- NULL
 
+#### Add MeanRatio Marker Gene Details ####
+marker_stats <- readxl::read_xlsx(here("plots", "99_paper_figs", "10c_snResolution_Top_Markers", "snResolution_top50MarkerGenes.xlsx"))
+marker_stats |> dplyr::count(cellType.target)
+any(duplicated(marker_stats$gene))
+
+marker_anno <- marker_stats |>
+    select(gene,
+           cellType.target = cellType.target,
+           MeanRatio.rank = rank_ratio,
+           MeanRatio = ratio,
+           MeanRatio.anno = anno_ratio) |>
+    column_to_rownames("gene")
+
+rowData(sce) <- cbind(rowData(sce), marker_anno[rownames(sce),])
+
+rowData(sce)[which(rowData(sce)$MeanRatio.rank ==1),]
+
+## modeling results
+# load(here("processed-data", "05_explore_sce","04_sce_1vALL_modeling","sce_modeling_final_Annotations.Rdata"), verbose = TRUE)
+# head(sce_modeling_final_Annotations$enrichment)
+#
+# enrichment_data <- sce_modeling_final_Annotations$enrichment[match(rowData(sce)$ID, rownames(sce_modeling_final_Annotations$enrichment)),]
+# enrichment_data[, c("ensembl", "gene")] <- NULL
+# colnames(enrichment_data) <- paste0("enrich_", colnames(enrichment_data))
+#
+# head(enrichment_data)
+
+
 # sourcing official color palette
 source(
     file = here("code", "99_paper_figs", "source_colors.R"),
@@ -25,7 +54,7 @@ source(
 
 ## Check final size
 lobstr::obj_size(sce)
-# 988.31 MB
+# 989.46 MB
 
 saveRDS(sce, file = here("code", "16_iSEE", "02_snRNAseq", "sce.rds"))
 saveRDS(sn_colors, file = here("code", "16_iSEE", "02_snRNAseq", "sn_colors.rds"))
