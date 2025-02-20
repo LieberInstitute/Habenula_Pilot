@@ -17,9 +17,14 @@ deg_covariates = c(
     'totalAssignedGene', 'abs_ERCCsumLogErr', 'qSV1', 'qSV2', 'qSV3', 'qSV4',
     'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
 )
+fdr_cutoff = 0.1
 
 set.seed(0)
 dir.create(plot_dir, showWarnings = FALSE)
+
+################################################################################
+#   Preprocess net and expression data
+################################################################################
 
 #   Load WGCNA network and gene expression data, then filter genes by minimum
 #   mean RPKM
@@ -27,10 +32,6 @@ net = readRDS(net_path)
 rse_gene = get(load(rse_path))
 assays(rse_gene)$rpkm = recount::getRPKM(rse_gene, length_var = 'Length')
 rse_gene = rse_gene[rowMeans(assays(rse_gene)$rpkm) > 0.25,]
-
-################################################################################
-#   Heatmap of top-correlated genes with select module eigengenes
-################################################################################
 
 mod_deg <- model.matrix(
     as.formula(paste('~', paste(deg_covariates, collapse = " + "))),
@@ -42,54 +43,8 @@ exp_mat = log2(assays(rse_gene)$rpkm + 1) |>
     cleaningY(mod_deg, P = 3) |>
     t()
 
-#   Correlate select MEs with gene expression to calculate "module membership".
-#   Use gene symbol and format for plotting later
-cor_df = cor(net$MEs[, c('ME5', 'ME34')], exp_mat) |>
-    abs() |>
-    t() |>
-    as.data.frame() |>
-    rownames_to_column('gene_id') |>
-    as_tibble() |>
-    pivot_longer(c(ME5, ME34), names_to = "module", values_to = "cor_val") |>
-    mutate(
-        gene_id = rowData(rse_gene[gene_id,])$Symbol,
-        module = factor(
-            ifelse(module == "ME5", "5", "34"),
-            levels = c("5", "34")
-        )
-    )
-
-#   Grab genes with highest module membership for each module
-top_genes = cor_df |>
-    group_by(module) |>
-    arrange(desc(cor_val)) |>
-    slice_head(n = 5) |>
-    ungroup()
-
-#   Plot heatmap
-p = cor_df |>
-    filter(gene_id %in% top_genes$gene_id) |>
-    mutate(
-        gene_id = factor(
-            gene_id,
-            levels = c(
-                top_genes |> filter(module == "5") |> pull(gene_id),
-                top_genes |> filter(module == "34") |> pull(gene_id)
-            )
-        )
-    ) |>
-    ggplot(aes(x = gene_id, y = module, fill = cor_val)) +
-        geom_tile() +
-        scale_fill_viridis_c() +
-        theme_bw(base_size = 25) +
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
-        labs(x = "Gene Symbol", y = "Module", fill = "Module\nMembership")
-pdf(file.path(plot_dir, 'top_genes_heatmap.pdf'), height = 4, width = 10)
-print(p)
-dev.off()
-
 ################################################################################
-#   Plot module weights by diagnosis
+#   Plot module weights by diagnosis (not manuscript ready)
 ################################################################################
 
 me_df = net$MEs |>
@@ -145,41 +100,6 @@ pdf(file.path(plot_dir, 'modules_by_dx.pdf'))
 print(plot_list)
 dev.off()
 
-#   For modules associated with both diagnosis and GO MF results, plot
-#   manuscript-ready boxplots
-label_df = tibble(
-        module_num = factor(
-            c("Module 5", "Module 34"), levels = c("Module 5", "Module 34")
-        ),
-        label = c(p_val_list[[5]], p_val_list[[34]])
-    ) |>
-    mutate(label = paste('\np =', signif(label, 2), ''))
-
-p = me_df |>
-    select(RNum, PrimaryDx, ME5, ME34) |>
-    pivot_longer(c(ME5, ME34), names_to = "module_num", values_to = "weight") |>
-    mutate(
-        module_num = factor(
-            ifelse(module_num == "ME5", "Module 5", "Module 34"),
-            levels = c("Module 5", "Module 34")
-        )
-    ) |>
-    ggplot(aes(x = PrimaryDx, y = weight, color = PrimaryDx)) +
-        geom_boxplot(outlier.shape = NA) +
-        facet_wrap(~module_num) +
-        geom_jitter() +
-        geom_text(
-            data = label_df,
-            aes(label = label),
-            x = Inf, y = Inf, hjust = 1, vjust = 1, color = 'black', size = 7
-        ) +
-        guides(color = "none") +
-        labs(x = "Diagnosis", y = "Weight") +
-        theme_bw(base_size = 20)
-pdf(file.path(plot_dir, 'clean_boxplots_MF_modules.pdf'))
-print(p)
-dev.off()
-
 ################################################################################
 #   Gene ontology for genes within diagnosis-associated modules
 ################################################################################
@@ -188,7 +108,7 @@ top_modules = tibble(
         module_num = as.integer(seq_len(length(p_val_list))),
         p_val = p.adjust(unlist(p_val_list), "fdr")
     ) |>
-    filter(p_val < 0.05)
+    filter(p_val < fdr_cutoff)
 
 message("Significant modules by p-value for linear relationship with diagnosis:")
 print(top_modules)
@@ -207,13 +127,16 @@ for (ont_type in c("BP", "MF", "CC")) {
             go_list,
             enrichGO(
                 genes, univ = univ, OrgDb = "org.Hs.eg.db", ont = ont_type,
-                readable = TRUE, pvalueCutoff = 1, qvalueCutoff = 0.05
+                readable = TRUE, pvalueCutoff = 1, qvalueCutoff = fdr_cutoff
             )
         )
     }
 
     #   Which modules have any enriched GO terms?
     which_enriched = which(sapply(go_list, function(x) nrow(x@result)) >= 1)
+    if (ont_type == "MF") {
+        sig_modules = top_modules$module_num[which_enriched]
+    }
 
     #   Create a 'compareClusterResult' object of modules with enriched GO terms
     go_list = go_list[which_enriched]
@@ -254,5 +177,107 @@ for (ont_type in c("BP", "MF", "CC")) {
     print(treemapPlot(reduced_terms))
     dev.off()
 }
+
+################################################################################
+#   Plot module weights by diagnosis (manuscript ready)
+################################################################################
+
+#   For modules associated with both diagnosis and GO MF results, plot
+#   manuscript-ready boxplots
+label_df = tibble(
+        module_num = factor(
+            paste("Module", sig_modules),
+            levels = paste("Module", sort(sig_modules))
+        ),
+        label = unlist(p_val_list[sig_modules]),
+    ) |>
+    mutate(label = paste('\np =', signif(label, 2), ''))
+
+p = me_df |>
+    select(RNum, PrimaryDx, all_of(paste0("ME", sig_modules))) |>
+    pivot_longer(
+        all_of(paste0("ME", sig_modules)), 
+        names_to = "module_num", values_to = "weight"
+    ) |>
+    mutate(
+        module_num = factor(
+            str_replace(module_num, '^ME', 'Module '),
+            levels = paste("Module", sort(sig_modules))
+        )
+    ) |>
+    ggplot(aes(x = PrimaryDx, y = weight, color = PrimaryDx)) +
+        geom_boxplot(outlier.shape = NA) +
+        facet_wrap(~module_num) +
+        geom_jitter() +
+        geom_text(
+            data = label_df,
+            aes(label = label),
+            x = Inf, y = Inf, hjust = 1, vjust = 0.5, color = 'black', size = 7
+        ) +
+        guides(color = "none") +
+        labs(x = "Diagnosis", y = "Weight") +
+        theme_bw(base_size = 20)
+pdf(file.path(plot_dir, 'clean_boxplots_MF_modules.pdf'), height = 10)
+print(p)
+dev.off()
+
+################################################################################
+#   Heatmap of top-correlated genes with select module eigengenes
+################################################################################
+
+#   Correlate select MEs with gene expression to calculate "module membership".
+#   Use gene symbol and format for plotting later
+cor_df = cor(net$MEs[, paste0("ME", sig_modules)], exp_mat) |>
+    abs() |>
+    t() |>
+    as.data.frame() |>
+    rownames_to_column('gene_id') |>
+    as_tibble() |>
+    pivot_longer(
+        all_of(paste0("ME", sig_modules)),
+        names_to = "module", values_to = "cor_val"
+    ) |>
+    mutate(
+        gene_id = rowData(rse_gene[gene_id,])$Symbol,
+        module = factor(
+            str_replace(module, '^ME', ''),
+            levels = as.character(sort(sig_modules))
+        )
+    )
+
+#   Grab genes with highest module membership for each module
+top_genes = cor_df |>
+    group_by(module) |>
+    arrange(desc(cor_val)) |>
+    slice_head(n = 5) |>
+    ungroup()
+
+#   Plot heatmap
+p = cor_df |>
+    filter(gene_id %in% top_genes$gene_id) |>
+    mutate(
+        gene_id = factor(
+            gene_id,
+            levels = unlist(
+                lapply(
+                    levels(module),
+                    function(x) {
+                        top_genes |>
+                            filter(module == x) |>
+                            pull(gene_id)
+                    }
+                )
+            )
+        )
+    ) |>
+    ggplot(aes(x = gene_id, y = module, fill = cor_val)) +
+        geom_tile() +
+        scale_fill_viridis_c() +
+        theme_bw(base_size = 25) +
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
+        labs(x = "Gene Symbol", y = "Module", fill = "Module\nMembership")
+pdf(file.path(plot_dir, 'top_genes_heatmap.pdf'), height = 4.5, width = 10)
+print(p)
+dev.off()
 
 session_info()
