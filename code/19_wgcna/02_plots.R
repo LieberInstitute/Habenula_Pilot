@@ -217,7 +217,7 @@ p = me_df |>
         guides(color = "none") +
         labs(x = "Diagnosis", y = "Weight") +
         theme_bw(base_size = 20)
-pdf(file.path(plot_dir, 'clean_boxplots_MF_modules.pdf'), height = 10)
+pdf(file.path(plot_dir, 'clean_boxplots_MF_modules.pdf'))
 print(p)
 dev.off()
 
