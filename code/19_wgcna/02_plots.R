@@ -135,7 +135,7 @@ for (ont_type in c("BP", "MF", "CC")) {
     #   Which modules have any enriched GO terms?
     which_enriched = which(sapply(go_list, function(x) nrow(x@result)) >= 1)
     if (ont_type == "MF") {
-        sig_modules = top_modules$module_num[which_enriched]
+        sig_modules = top_modules[which_enriched,]
     }
 
     #   Create a 'compareClusterResult' object of modules with enriched GO terms
@@ -186,23 +186,23 @@ for (ont_type in c("BP", "MF", "CC")) {
 #   manuscript-ready boxplots
 label_df = tibble(
         module_num = factor(
-            paste("Module", sig_modules),
-            levels = paste("Module", sort(sig_modules))
+            paste("Module", sig_modules$module_num),
+            levels = paste("Module", sort(sig_modules$module_num))
         ),
-        label = unlist(p_val_list[sig_modules]),
+        label = sig_modules$p_val,
     ) |>
-    mutate(label = paste('\np =', signif(label, 2), ''))
+    mutate(label = paste('\nFDR =', signif(label, 2), ''))
 
 p = me_df |>
-    select(RNum, PrimaryDx, all_of(paste0("ME", sig_modules))) |>
+    select(RNum, PrimaryDx, all_of(paste0("ME", sig_modules$module_num))) |>
     pivot_longer(
-        all_of(paste0("ME", sig_modules)), 
+        all_of(paste0("ME", sig_modules$module_num)), 
         names_to = "module_num", values_to = "weight"
     ) |>
     mutate(
         module_num = factor(
             str_replace(module_num, '^ME', 'Module '),
-            levels = paste("Module", sort(sig_modules))
+            levels = paste("Module", sort(sig_modules$module_num))
         )
     ) |>
     ggplot(aes(x = PrimaryDx, y = weight, color = PrimaryDx)) +
@@ -227,21 +227,21 @@ dev.off()
 
 #   Correlate select MEs with gene expression to calculate "module membership".
 #   Use gene symbol and format for plotting later
-cor_df = cor(net$MEs[, paste0("ME", sig_modules)], exp_mat) |>
+cor_df = cor(net$MEs[, paste0("ME", sig_modules$module_num)], exp_mat) |>
     abs() |>
     t() |>
     as.data.frame() |>
     rownames_to_column('gene_id') |>
     as_tibble() |>
     pivot_longer(
-        all_of(paste0("ME", sig_modules)),
+        all_of(paste0("ME", sig_modules$module_num)),
         names_to = "module", values_to = "cor_val"
     ) |>
     mutate(
         gene_id = rowData(rse_gene[gene_id,])$Symbol,
         module = factor(
             str_replace(module, '^ME', ''),
-            levels = as.character(sort(sig_modules))
+            levels = as.character(sort(sig_modules$module_num))
         )
     )
 
