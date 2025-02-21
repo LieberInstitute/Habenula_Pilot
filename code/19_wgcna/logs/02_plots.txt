@@ -1,10 +1,10 @@
 **** Job starts ****
-Thu Jan 30 01:09:48 PM EST 2025
+Thu Feb 20 04:45:54 PM EST 2025
 **** JHPCE info ****
 User: neagles
-Job id: 12891885
+Job id: 14127402
 Job name: 02_plots
-Node name: compute-169
+Node name: compute-166
 Task id: 
 Loading conda_R/4.3.x
 
@@ -166,6 +166,8 @@ The following object is masked from ‘package:stats’:
 
     filter
 
+Setting options('download.file.method.GEOquery'='auto')
+Setting options('GEOquery.inmemory.gpl'=FALSE)
 [[1]]
 
 [[2]]
@@ -234,20 +236,1358 @@ The following object is masked from ‘package:stats’:
 
 [[34]]
 
+[[35]]
+
+[[36]]
+
+[[37]]
+
+[[38]]
+
+[[39]]
+
+[[40]]
+
+[[41]]
+
+[[42]]
+
+[[43]]
+
+[[44]]
+
+[[45]]
+
+[[46]]
+
+[[47]]
+
+[[48]]
+
 null device 
           1 
 Significant modules by p-value for linear relationship with diagnosis:
-# A tibble: 7 × 2
+# A tibble: 5 × 2
   module_num   p_val
        <int>   <dbl>
-1          9 0.0276 
-2         10 0.0248 
-3         12 0.0435 
-4         14 0.00785
-5         16 0.00316
-6         26 0.0166 
-7         28 0.00221
+1          5 0.00202
+2          9 0.0941 
+3         34 0.00731
+4         39 0.00361
+5         42 0.0921 
 
+preparing gene to GO mapping data...
+preparing IC data...
+'select()' returned 1:many mapping between keys and columns
+$tm
+                       parentTerm
+1   actin filament polymerization
+2   actin filament polymerization
+3   actin filament polymerization
+4   actin filament polymerization
+5   actin filament polymerization
+6   actin filament polymerization
+7   actin filament polymerization
+8   actin filament polymerization
+9   actin filament polymerization
+10       adaptive immune response
+11       adaptive immune response
+12       adaptive immune response
+13       adaptive immune response
+14       adaptive immune response
+15       adaptive immune response
+16       adaptive immune response
+17       adaptive immune response
+18       adaptive immune response
+19       adaptive immune response
+20       adaptive immune response
+21       adaptive immune response
+22       adaptive immune response
+23       adaptive immune response
+24       adaptive immune response
+25       adaptive immune response
+26       adaptive immune response
+27       adaptive immune response
+28       adaptive immune response
+29       adaptive immune response
+30       adaptive immune response
+31       adaptive immune response
+32       adaptive immune response
+33       adaptive immune response
+34       adaptive immune response
+35       adaptive immune response
+36       adaptive immune response
+37       adaptive immune response
+38       adaptive immune response
+39       adaptive immune response
+40       adaptive immune response
+41       adaptive immune response
+42       adaptive immune response
+43       adaptive immune response
+44       adaptive immune response
+45       adaptive immune response
+46       adaptive immune response
+47       adaptive immune response
+48       adaptive immune response
+49       adaptive immune response
+50       adaptive immune response
+51       adaptive immune response
+52       adaptive immune response
+53       adaptive immune response
+54       adaptive immune response
+55       adaptive immune response
+56       adaptive immune response
+57       adaptive immune response
+58       adaptive immune response
+59       adaptive immune response
+60       adaptive immune response
+61       adaptive immune response
+62       adaptive immune response
+63       adaptive immune response
+64       adaptive immune response
+65       adaptive immune response
+66       adaptive immune response
+67       adaptive immune response
+68       adaptive immune response
+69       adaptive immune response
+70       adaptive immune response
+71       adaptive immune response
+72       adaptive immune response
+73       adaptive immune response
+74       adaptive immune response
+75       adaptive immune response
+76       adaptive immune response
+77       adaptive immune response
+78       adaptive immune response
+79       adaptive immune response
+80       adaptive immune response
+81       adaptive immune response
+82       adaptive immune response
+83       adaptive immune response
+84       adaptive immune response
+85       adaptive immune response
+86       adaptive immune response
+87       adaptive immune response
+88       adaptive immune response
+89       adaptive immune response
+90       adaptive immune response
+91       adaptive immune response
+92       adaptive immune response
+93       adaptive immune response
+94       adaptive immune response
+95       adaptive immune response
+96       adaptive immune response
+97       adaptive immune response
+98       adaptive immune response
+99       adaptive immune response
+100      adaptive immune response
+101      adaptive immune response
+102      adaptive immune response
+103      adaptive immune response
+104      adaptive immune response
+105      adaptive immune response
+106      adaptive immune response
+107      adaptive immune response
+108      adaptive immune response
+109      adaptive immune response
+110      adaptive immune response
+111      adaptive immune response
+112      adaptive immune response
+113      adaptive immune response
+114      adaptive immune response
+115      adaptive immune response
+116      adaptive immune response
+117      adaptive immune response
+118      adaptive immune response
+119      adaptive immune response
+120      adaptive immune response
+121      adaptive immune response
+122      adaptive immune response
+123      adaptive immune response
+124      adaptive immune response
+125      adaptive immune response
+                                                                                                                                                term
+1                                                                                                                     actin filament bundle assembly
+2                                                                                                                 actin filament bundle organization
+3                                                                                                                        actin filament organization
+4                                                                                                                      actin filament polymerization
+5                                                                                                                                   actin nucleation
+6                                                                                                           actin polymerization or depolymerization
+7                                                                                                                                               <NA>
+8                                                                                                          regulation of actin filament organization
+9                                                                                                    regulation of supramolecular fiber organization
+10                                                                                                                     activation of immune response
+11                         adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains
+12                                                                                                                          adaptive immune response
+13                                                                                          alpha-beta T cell activation involved in immune response
+14                                                                                     alpha-beta T cell differentiation involved in immune response
+15                                                                                                                    antibacterial humoral response
+16                                                                                                       antigen receptor-mediated signaling pathway
+17                                                                           antimicrobial humoral immune response mediated by antimicrobial peptide
+18                                                                                                                    antimicrobial humoral response
+19                                                                                                     B cell activation involved in immune response
+20                                                                                                                          B cell mediated immunity
+21                                                                                                                 B cell receptor signaling pathway
+22                                                                                               CD4-positive, alpha-beta T cell cytokine production
+23                                                                       CD4-positive, alpha-beta T cell differentiation involved in immune response
+24                                                                                                       cell activation involved in immune response
+25                                                                                       cell surface pattern recognition receptor signaling pathway
+26                                                                                                                             complement activation
+27                                                                                                          complement activation, classical pathway
+28                                                                                                   cytokine production involved in immune response
+29                                                                                                                dendritic cell cytokine production
+30                                                                                                Fc receptor mediated stimulatory signaling pathway
+31                                                                                                                     Fc receptor signaling pathway
+32                                                                                                             Fc-epsilon receptor signaling pathway
+33                                                                                                               Fc-gamma receptor signaling pathway
+34                                                                                    humoral immune response mediated by circulating immunoglobulin
+35                                                                                                                           humoral immune response
+36                                                                                                                           immune effector process
+37                                                                                immune response-activating cell surface receptor signaling pathway
+38                                                                                                      immune response-activating signaling pathway
+39                                                                                immune response-regulating cell surface receptor signaling pathway
+40                                                                                                      immune response-regulating signaling pathway
+41                                                                                                           immunoglobulin mediated immune response
+42                                                                     immunoglobulin production involved in immunoglobulin-mediated immune response
+43                                                                                                                         immunoglobulin production
+44                                                                                                                      immunological memory process
+45                                                                         innate immune response activating cell surface receptor signaling pathway
+46                                                                                                  leukocyte activation involved in immune response
+47                                                                                                                       leukocyte mediated immunity
+48                                                                                                 lymphocyte activation involved in immune response
+49                                                                                                                      lymphocyte mediated immunity
+50                                                                                                                    macrophage cytokine production
+51                                                                                                                           mast cell degranulation
+52                                                                                                                       mast cell mediated immunity
+53                                                                                                             myeloid leukocyte cytokine production
+54                                                                                                               myeloid leukocyte mediated immunity
+55                                                                                                                                              <NA>
+56                                                                                                         natural killer cell mediated cytotoxicity
+57                                                                                                             natural killer cell mediated immunity
+58  negative regulation of adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains
+59                                                                                                   negative regulation of adaptive immune response
+60                                                                                negative regulation of antigen receptor-mediated signaling pathway
+61                                                                            negative regulation of cytokine production involved in immune response
+62                                                                                                    negative regulation of humoral immune response
+63                                                                                                    negative regulation of immune effector process
+64                                                                                                            negative regulation of immune response
+65                                                                                                      negative regulation of immune system process
+66                                                                                                negative regulation of leukocyte mediated immunity
+67                                                                                               negative regulation of lymphocyte mediated immunity
+68                                                                                  negative regulation of natural killer cell mediated cytotoxicity
+69                                                                                      negative regulation of natural killer cell mediated immunity
+70                                                                        negative regulation of production of molecular mediator of immune response
+71                                                                                                   negative regulation of T cell mediated immunity
+72                                                                                          negative regulation of T cell receptor signaling pathway
+73                                                                                                                      neutrophil mediated immunity
+74                                                                                                          organ or tissue specific immune response
+75  positive regulation of adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains
+76                                                                                                   positive regulation of adaptive immune response
+77                                                                                                   positive regulation of B cell mediated immunity
+78                                                                            positive regulation of cytokine production involved in immune response
+79                                                                                                    positive regulation of immune effector process
+80                                                                                    positive regulation of immunoglobulin mediated immune response
+81                                                                                                  positive regulation of immunoglobulin production
+82                                                                                                positive regulation of leukocyte mediated immunity
+83                                                                                               positive regulation of lymphocyte mediated immunity
+84                                                                                             positive regulation of macrophage cytokine production
+85                                                          positive regulation of myeloid leukocyte cytokine production involved in immune response
+86                                                                                        positive regulation of myeloid leukocyte mediated immunity
+87                                                                        positive regulation of production of molecular mediator of immune response
+88                                                                                                 positive regulation of T cell cytokine production
+89                                                                                               positive regulation of T cell mediated cytotoxicity
+90                                                                                                   positive regulation of T cell mediated immunity
+91                                                                                            positive regulation of T-helper 1 type immune response
+92                                                                                           positive regulation of T-helper 17 type immune response
+93                                                                                     positive regulation of toll-like receptor 4 signaling pathway
+94                                                                                                     positive regulation of type 2 immune response
+95                                                                                               production of molecular mediator of immune response
+96           regulation of adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains
+97                                                                                                            regulation of adaptive immune response
+98                                                                                         regulation of antigen receptor-mediated signaling pathway
+99                                                                                                            regulation of B cell mediated immunity
+100                                                                                                              regulation of complement activation
+101                                                                                    regulation of cytokine production involved in immune response
+102                                                                                                 regulation of dendritic cell cytokine production
+103                                                                                 regulation of Fc receptor mediated stimulatory signaling pathway
+104                                                                                                            regulation of humoral immune response
+105                                                                                                            regulation of immune effector process
+106                                                                                            regulation of immunoglobulin mediated immune response
+107                                                                                                          regulation of immunoglobulin production
+108                                                                                                        regulation of leukocyte mediated immunity
+109                                                                                                       regulation of lymphocyte mediated immunity
+110                                                                                                     regulation of macrophage cytokine production
+111                                                                                                regulation of myeloid leukocyte mediated immunity
+112                                                                                          regulation of natural killer cell mediated cytotoxicity
+113                                                                                              regulation of natural killer cell mediated immunity
+114                                                                                regulation of production of molecular mediator of immune response
+115                                                                                                         regulation of T cell cytokine production
+116                                                                                                       regulation of T cell mediated cytotoxicity
+117                                                                                                           regulation of T cell mediated immunity
+118                                                                                                  regulation of T cell receptor signaling pathway
+119                                                                                                    regulation of T-helper 1 type immune response
+120                                                                                                   regulation of T-helper 17 type immune response
+121                                                                                                    regulation of T-helper 2 cell differentiation
+122                                                                                             regulation of toll-like receptor 2 signaling pathway
+123                                                                                             regulation of toll-like receptor 4 signaling pathway
+124                                                                                                             regulation of type 2 immune response
+125                                                                                                    T cell activation involved in immune response
+         vSize vColor     stdErr vColorValue level         x0        y0
+1     1.163233      1   1.163233          NA     2 0.91840647 0.2004165
+2     1.163233      1   1.163233          NA     2 0.93341116 0.2004165
+3     2.464581      1   2.464581          NA     2 0.88931645 0.2004165
+4     4.309252      1   4.309252          NA     2 0.88931645 0.2368775
+5     1.561804      1   1.561804          NA     2 0.91840647 0.2163451
+6     4.087704      1   4.087704          NA     2 0.91964580 0.2368775
+7    18.884477      8  18.884477          NA     1 0.88931645 0.2004165
+8     2.697605      1   2.697605          NA     2 0.88931645 0.2178241
+9     1.437064      1   1.437064          NA     2 0.93403530 0.2163451
+10   26.692165      1  26.692165          NA     2 0.29638482 0.9135513
+11   21.208804      1  21.208804          NA     2 0.00000000 0.5911378
+12   34.960852      1  34.960852          NA     2 0.00000000 0.9135513
+13    4.300118      1   4.300118          NA     2 0.39547416 0.7022797
+14    4.300118      1   4.300118          NA     2 0.21895801 0.6734678
+15    1.387734      1   1.387734          NA     2 0.35130120 0.5365502
+16    8.940004      1   8.940004          NA     2 0.13075514 0.6493265
+17    2.090371      1   2.090371          NA     2 0.32789391 0.5710444
+18    2.933542      1   2.933542          NA     2 0.30321648 0.5993720
+19    1.961369      1   1.961369          NA     2 0.32789391 0.5365502
+20    8.520685      1   8.520685          NA     2 0.13075514 0.5736359
+21    6.978958      1   6.978958          NA     2 0.17796213 0.6975449
+22    1.711187      1   1.711187          NA     2 0.38842453 0.6082485
+23    4.300118      1   4.300118          NA     2 0.21895801 0.6446560
+24   26.494427      1  26.494427          NA     2 0.35982483 0.9135513
+25    6.939841      1   6.939841          NA     2 0.17796213 0.6627635
+26    3.521721      1   3.521721          NA     2 0.27814674 0.6472688
+27    2.321540      1   2.321540          NA     2 0.35195443 0.6284572
+28   10.216782      1  10.216782          NA     2 0.32792528 0.8085446
+29    1.595452      1   1.595452          NA     2 0.35130120 0.5901741
+30    2.318458      1   2.318458          NA     2 0.39920230 0.6284572
+31    3.593437      1   3.593437          NA     2 0.39455823 0.6761319
+32    2.133819      1   2.133819          NA     2 0.32789391 0.5893933
+33    3.271109      1   3.271109          NA     2 0.32806042 0.6486484
+34    3.164787      1   3.164787          NA     2 0.37652034 0.6486484
+35   10.538884      1  10.538884          NA     2 0.23107482 0.8085446
+36   34.770285      1  34.770285          NA     2 0.08309243 0.9135513
+37   18.373838      1  18.373838          NA     2 0.13914897 0.8527988
+38   23.430244      1  23.430244          NA     2 0.00000000 0.7096067
+39   19.772592      1  19.772592          NA     2 0.00000000 0.5365502
+40   25.663609      1  25.663609          NA     2 0.00000000 0.8426998
+41    8.520685      1   8.520685          NA     2 0.13075514 0.5365502
+42    1.020806      1   1.020806          NA     2 0.40594493 0.5365502
+43    1.126893      1   1.126893          NA     2 0.38752316 0.5365502
+44    1.837828      1   1.837828          NA     2 0.35130120 0.6082485
+45    8.515081      1   8.515081          NA     2 0.17796213 0.7681647
+46   26.909944      1  26.909944          NA     2 0.23242721 0.9135513
+47   28.061811      1  28.061811          NA     2 0.16573193 0.9135513
+48   13.486835      1  13.486835          NA     2 0.07442299 0.8036072
+49   19.138342      1  19.138342          NA     2 0.07442299 0.8527988
+50    3.738650      1   3.738650          NA     2 0.24962331 0.5634811
+51    3.933856      1   3.933856          NA     2 0.24962331 0.6453684
+52    3.758461      1   3.758461          NA     2 0.24962331 0.5904120
+53    3.323182      1   3.323182          NA     2 0.27814674 0.5637861
+54   11.039025      1  11.039025          NA     2 0.13075514 0.8085446
+55  953.661866    128 953.661866          NA     1 0.00000000 0.5365502
+56    7.111604      1   7.111604          NA     2 0.38660887 0.7681647
+57    7.111604      1   7.111604          NA     2 0.17796213 0.7325224
+58    3.870790      1   3.870790          NA     2 0.24962331 0.6174856
+59    4.328386      1   4.328386          NA     2 0.36797386 0.7022797
+60    1.450381      1   1.450381          NA     2 0.35130120 0.5537134
+61    2.662947      1   2.662947          NA     2 0.30321648 0.5772002
+62    1.244110      1   1.244110          NA     2 0.40518559 0.5756579
+63   10.568413      1  10.568413          NA     2 0.18200747 0.8085446
+64   13.395303      1  13.395303          NA     2 0.07442299 0.7056149
+65   16.793001      1  16.793001          NA     2 0.26258901 0.8527988
+66   11.301166      1  11.301166          NA     2 0.07442299 0.5777646
+67    6.934119      1   6.934119          NA     2 0.17796213 0.6280108
+68    6.063605      1   6.063605          NA     2 0.17796213 0.5669400
+69    6.063605      1   6.063605          NA     2 0.17796213 0.5365502
+70    1.968330      1   1.968330          NA     2 0.32789391 0.5537667
+71    3.442349      1   3.442349          NA     2 0.27814674 0.6190562
+72    1.245525      1   1.245525          NA     2 0.38755628 0.5756579
+73    4.839645      1   4.839645          NA     2 0.25013138 0.7022797
+74    1.177681      1   1.177681          NA     2 0.40535292 0.5617848
+75   11.755979      1  11.755979          NA     2 0.07442299 0.6189843
+76   11.995425      1  11.995425          NA     2 0.07442299 0.6618629
+77    3.738650      1   3.738650          NA     2 0.24962331 0.5365502
+78    7.902336      1   7.902336          NA     2 0.30628425 0.7681647
+79   18.125227      1  18.125227          NA     2 0.20128939 0.8527988
+80    3.738650      1   3.738650          NA     2 0.27814674 0.6761319
+81    2.364443      1   2.364443          NA     2 0.32789391 0.6284572
+82   11.299726      1  11.299726          NA     2 0.07442299 0.5365502
+83    8.351980      1   8.351980          NA     2 0.22128944 0.7681647
+84    4.044220      1   4.044220          NA     2 0.21895801 0.5901433
+85    3.625632      1   3.625632          NA     2 0.36606860 0.6761319
+86    6.121671      1   6.121671          NA     2 0.17796213 0.5973299
+87    8.869760      1   8.869760          NA     2 0.13075514 0.6107215
+88    2.321540      1   2.321540          NA     2 0.37557836 0.6284572
+89    4.675010      1   4.675010          NA     2 0.28087995 0.7022797
+90    5.854130      1   5.854130          NA     2 0.25549111 0.7346187
+91    3.211002      1   3.211002          NA     2 0.35251506 0.6486484
+92    1.244110      1   1.244110          NA     2 0.36791413 0.5626220
+93    1.244110      1   1.244110          NA     2 0.36791413 0.5495861
+94    2.316476      1   2.316476          NA     2 0.32789391 0.6081236
+95    7.883798      1   7.883798          NA     2 0.34649372 0.7681647
+96   14.736343      1  14.736343          NA     2 0.37295647 0.8527988
+97   15.840733      1  15.840733          NA     2 0.31938303 0.8527988
+98    1.813464      1   1.813464          NA     2 0.36998672 0.6082485
+99    3.323182      1   3.323182          NA     2 0.27814674 0.5365502
+100   2.450846      1   2.450846          NA     2 0.30321648 0.5567944
+101  10.216782      1  10.216782          NA     2 0.37536007 0.8085446
+102   1.595452      1   1.595452          NA     2 0.36943787 0.5901741
+103   1.244110      1   1.244110          NA     2 0.36791413 0.5365502
+104   3.024999      1   3.024999          NA     2 0.40018013 0.6486484
+105  24.778391      1  24.778391          NA     2 0.00000000 0.7742923
+106   3.323182      1   3.323182          NA     2 0.30321648 0.6486484
+107   1.561804      1   1.561804          NA     2 0.38757454 0.5901741
+108  21.702659      1  21.702659          NA     2 0.00000000 0.6496906
+109  13.471142      1  13.471142          NA     2 0.07442299 0.7544727
+110   3.738650      1   3.738650          NA     2 0.30752444 0.6761319
+111   9.681417      1   9.681417          NA     2 0.13075514 0.7664069
+112   5.146982      1   5.146982          NA     2 0.35974568 0.7346187
+113   5.146982      1   5.146982          NA     2 0.39127027 0.7346187
+114   8.955674      1   8.955674          NA     2 0.13075514 0.6882373
+115   3.966788      1   3.966788          NA     2 0.21895801 0.5365502
+116   5.964715      1   5.964715          NA     2 0.21895801 0.7346187
+117   9.004325      1   9.004325          NA     2 0.13075514 0.7272162
+118   1.203867      1   1.203867          NA     2 0.38752316 0.5617848
+119   3.420570      1   3.420570          NA     2 0.27814674 0.5910221
+120   1.048657      1   1.048657          NA     2 0.40594493 0.5489977
+121   1.135619      1   1.135619          NA     2 0.38752316 0.5491188
+122   2.984818      1   2.984818          NA     2 0.30321648 0.6237967
+123   2.431431      1   2.431431          NA     2 0.30321648 0.5365502
+124   1.387734      1   1.387734          NA     2 0.36791413 0.5756579
+125  10.321333      1  10.321333          NA     2 0.28000508 0.8085446
+             w          h   color
+1   0.01500470 0.01592860 #DF4958
+2   0.01500470 0.01592860 #DF4951
+3   0.02909002 0.01740753 #DF494A
+4   0.03032935 0.02919287 #DF4F49
+5   0.01562883 0.02053233 #DF5649
+6   0.02877006 0.02919287 #DF5E49
+7   0.05909941 0.06565380 #F8766D
+8   0.02909002 0.01905340 #DF6549
+9   0.01438056 0.02053233 #DF6C49
+10  0.06344001 0.08644872 #DC3D3A
+11  0.07442299 0.05855272 #DC3D3A
+12  0.08309243 0.08644872 #DC3E3A
+13  0.02732070 0.03233899 #DC3E3A
+14  0.03066529 0.02881186 #DC3F3A
+15  0.01661293 0.01716319 #DC3F3A
+16  0.04720699 0.03891074 #DC3F3A
+17  0.02340729 0.01834891 #DC403A
+18  0.02467743 0.02442476 #DC403A
+19  0.02340729 0.01721655 #DC413A
+20  0.04720699 0.03708568 #DC413A
+21  0.04099588 0.03497747 #DC423A
+22  0.01739794 0.02020867 #DC423A
+23  0.03066529 0.02881186 #DC423A
+24  0.06297004 0.08644872 #DC433A
+25  0.04099588 0.03478142 #DC433A
+26  0.02506974 0.02886311 #DC443A
+27  0.02362393 0.02019119 #DC443A
+28  0.04743479 0.04425427 #DC443A
+29  0.01813667 0.01807441 #DC453A
+30  0.02359257 0.02019119 #DC453A
+31  0.02823664 0.02614779 #DC463A
+32  0.02340729 0.01873029 #DC463A
+33  0.02445464 0.02748348 #DC473A
+34  0.02365979 0.02748348 #DC473A
+35  0.04893026 0.04425427 #DC473A
+36  0.08263950 0.08644872 #DC483A
+37  0.06214042 0.06075244 #DC483A
+38  0.07442299 0.06468561 #DC493A
+39  0.07442299 0.05458766 #DC493A
+40  0.07442299 0.07085143 #DC4A3A
+41  0.04720699 0.03708568 #DC4A3A
+42  0.01684994 0.01244752 #DC4A3A
+43  0.01842177 0.01256867 #DC4B3A
+44  0.01868552 0.02020867 #DC4B3A
+45  0.04332731 0.04037988 #DC4C3A
+46  0.06395761 0.08644872 #DC4C3A
+47  0.06669528 0.08644872 #DC4D3A
+48  0.05633215 0.04919169 #DC4D3A
+49  0.06472598 0.06075244 #DC4D3A
+50  0.02852344 0.02693090 #DC4E3A
+51  0.02852344 0.02833705 #DC4E3A
+52  0.02852344 0.02707361 #DC4F3A
+53  0.02506974 0.02723594 #DC4F3A
+54  0.05125233 0.04425427 #DC503A
+55  0.42279487 0.46344982 #F47A5E
+56  0.03618599 0.04037988 #DC503A
+57  0.04099588 0.03564227 #DC503A
+58  0.02852344 0.02788276 #DC513A
+59  0.02750030 0.03233899 #DC513A
+60  0.01661293 0.01793799 #DC523A
+61  0.02467743 0.02217178 #DC523A
+62  0.01760928 0.01451627 #DC533A
+63  0.04906735 0.04425427 #DC533A
+64  0.05633215 0.04885784 #DC533A
+65  0.05679402 0.06075244 #DC543A
+66  0.05633215 0.04121971 #DC543A
+67  0.04099588 0.03475274 #DC553A
+68  0.04099588 0.03038986 #DC553A
+69  0.04099588 0.03038986 #DC563A
+70  0.02340729 0.01727765 #DC563A
+71  0.02506974 0.02821260 #DC563A
+72  0.01762931 0.01451627 #DC573A
+73  0.03074858 0.03233899 #DC573A
+74  0.01744195 0.01387301 #DC583A
+75  0.05633215 0.04287859 #DC583A
+76  0.05633215 0.04375194 #DC583A
+77  0.02852344 0.02693090 #DC593A
+78  0.04020947 0.04037988 #DC593A
+79  0.06129962 0.06075244 #DC5A3A
+80  0.02937770 0.02614779 #DC5A3A
+81  0.02406052 0.02019119 #DC5B3A
+82  0.05633215 0.04121446 #DC5B3A
+83  0.04249740 0.04037988 #DC5B3A
+84  0.03066529 0.02709728 #DC5C3A
+85  0.02848963 0.02614779 #DC5C3A
+86  0.04099588 0.03068088 #DC5D3A
+87  0.04720699 0.03860500 #DC5D3A
+88  0.02362393 0.02019119 #DC5E3A
+89  0.02970257 0.03233899 #DC5E3A
+90  0.03585578 0.03354603 #DC5E3A
+91  0.02400529 0.02748348 #DC5F3A
+92  0.01960902 0.01303589 #DC5F3A
+93  0.01960902 0.01303589 #DC603A
+94  0.02340729 0.02033362 #DC603A
+95  0.04011515 0.04037988 #DC613A
+96  0.04983839 0.06075244 #DC613A
+97  0.05357344 0.06075244 #DC613A
+98  0.01843781 0.02020867 #DC623A
+99  0.02506974 0.02723594 #DC623A
+100 0.02467743 0.02040582 #DC633A
+101 0.04743479 0.04425427 #DC633A
+102 0.01813667 0.01807441 #DC643A
+103 0.01960902 0.01303589 #DC643A
+104 0.02261474 0.02748348 #DC643A
+105 0.07442299 0.06840754 #DC653A
+106 0.02484394 0.02748348 #DC653A
+107 0.01775418 0.01807441 #DC663A
+108 0.07442299 0.05991614 #DC663A
+109 0.05633215 0.04913445 #DC673A
+110 0.02937770 0.02614779 #DC673A
+111 0.04720699 0.04213768 #DC673A
+112 0.03152459 0.03354603 #DC683A
+113 0.03152459 0.03354603 #DC683A
+114 0.04720699 0.03897894 #DC693A
+115 0.03066529 0.02657846 #DC693A
+116 0.03653310 0.03354603 #DC693A
+117 0.04720699 0.03919069 #DC6A3A
+118 0.01782977 0.01387301 #DC6A3A
+119 0.02506974 0.02803411 #DC6B3A
+120 0.01684994 0.01278714 #DC6B3A
+121 0.01842177 0.01266599 #DC6C3A
+122 0.02467743 0.02485169 #DC6C3A
+123 0.02467743 0.02024417 #DC6C3A
+124 0.01964215 0.01451627 #DC6D3A
+125 0.04792020 0.04425427 #DC6D3A
+ [ reached 'max' / getOption("max.print") -- omitted 932 rows ]
+
+$type
+[1] "index"
+
+$vSize
+[1] "score"
+
+$vColor
+[1] NA
+
+$stdErr
+[1] "score"
+
+$algorithm
+[1] "pivotSize"
+
+$vpCoorX
+[1] 0.02812148 0.97187852
+
+$vpCoorY
+[1] 0.01406074 0.98593926
+
+$aspRatio
+[1] 0.9710648
+
+$range
+[1] NA
+
+$mapping
+[1] NA NA NA
+
+$draw
+[1] TRUE
+
+preparing gene to GO mapping data...
+preparing IC data...
+'select()' returned 1:many mapping between keys and columns
+$tm
+                                                       parentTerm
+1                                 acid-amino acid ligase activity
+2                                 acid-amino acid ligase activity
+3                                                 antigen binding
+4                                                 antigen binding
+5                                                 antigen binding
+6                                            carbohydrate binding
+7                                            carbohydrate binding
+8                                         cargo receptor activity
+9                                         cargo receptor activity
+10                    core promoter sequence-specific DNA binding
+11                    core promoter sequence-specific DNA binding
+12                                               cytokine binding
+13                                               cytokine binding
+14                   DNA-binding transcription repressor activity
+15                   DNA-binding transcription repressor activity
+16                   DNA-binding transcription repressor activity
+17                   DNA-binding transcription repressor activity
+18                   DNA-binding transcription repressor activity
+19                                    double-stranded RNA binding
+20                                    double-stranded RNA binding
+21                                    histone deacetylase binding
+22                                    histone deacetylase binding
+23                                          Hsp90 protein binding
+24                                          Hsp90 protein binding
+25                                       immune receptor activity
+26                                       immune receptor activity
+27                                       immune receptor activity
+28                                       immune receptor activity
+29                                       immune receptor activity
+30                                       immune receptor activity
+31                                       immune receptor activity
+32                                       immune receptor activity
+33                                    MHC protein complex binding
+34                                    MHC protein complex binding
+35                                    MHC protein complex binding
+36                                    MHC protein complex binding
+37                                    MHC protein complex binding
+38                                    MHC protein complex binding
+39                                    MHC protein complex binding
+40                                    MHC protein complex binding
+41                                  NAD(P)+ nucleosidase activity
+42                                  NAD(P)+ nucleosidase activity
+43                                  NAD(P)+ nucleosidase activity
+44                                  NAD(P)+ nucleosidase activity
+45                   NAD+-protein ADP-ribosyltransferase activity
+46                   NAD+-protein ADP-ribosyltransferase activity
+47                   nucleoside-triphosphatase regulator activity
+48                   nucleoside-triphosphatase regulator activity
+49                   nucleoside-triphosphatase regulator activity
+50                   nucleoside-triphosphatase regulator activity
+51                   nucleoside-triphosphatase regulator activity
+52                   nucleoside-triphosphatase regulator activity
+53                   nucleoside-triphosphatase regulator activity
+54                   nucleoside-triphosphatase regulator activity
+55                   nucleoside-triphosphatase regulator activity
+56 oxidoreductase activity, acting on NAD(P)H, oxygen as acceptor
+57 oxidoreductase activity, acting on NAD(P)H, oxygen as acceptor
+58                                                peptide binding
+59                                                peptide binding
+60                                                peptide binding
+61                                         phosphoprotein binding
+62                                         phosphoprotein binding
+63                                         phosphoprotein binding
+64                                         phosphoprotein binding
+65   quaternary ammonium group transmembrane transporter activity
+66   quaternary ammonium group transmembrane transporter activity
+67   quaternary ammonium group transmembrane transporter activity
+68                                             SH2 domain binding
+69                                             SH2 domain binding
+70                                             SH2 domain binding
+71                                            sialic acid binding
+72                                            sialic acid binding
+73                                            sialic acid binding
+74                                            sialic acid binding
+75                          single-stranded DNA helicase activity
+76                          single-stranded DNA helicase activity
+77                                    STAT family protein binding
+78                                    STAT family protein binding
+79                                    STAT family protein binding
+80                                    STAT family protein binding
+81                                    STAT family protein binding
+82                                     Toll-like receptor binding
+83                                     Toll-like receptor binding
+84                                     Toll-like receptor binding
+85                                     Toll-like receptor binding
+86                                     Toll-like receptor binding
+87                                     Toll-like receptor binding
+88                                     Toll-like receptor binding
+89                                     Toll-like receptor binding
+90                                     Toll-like receptor binding
+                                                                           term
+1                                               acid-amino acid ligase activity
+2                                                                          <NA>
+3                                                               antigen binding
+4                                                                          <NA>
+5                                                       peptide antigen binding
+6                                                          carbohydrate binding
+7                                                                          <NA>
+8                                                       cargo receptor activity
+9                                                                          <NA>
+10                                  core promoter sequence-specific DNA binding
+11                                                                         <NA>
+12                                                             cytokine binding
+13                                                                         <NA>
+14                                 DNA-binding transcription activator activity
+15     DNA-binding transcription activator activity, RNA polymerase II-specific
+16                                 DNA-binding transcription repressor activity
+17     DNA-binding transcription repressor activity, RNA polymerase II-specific
+18                                                                         <NA>
+19                                                  double-stranded RNA binding
+20                                                                         <NA>
+21                                                  histone deacetylase binding
+22                                                                         <NA>
+23                                                        Hsp90 protein binding
+24                                                                         <NA>
+25                                                  chemokine receptor activity
+26                                                   cytokine receptor activity
+27                          G protein-coupled chemoattractant receptor activity
+28                                                     immune receptor activity
+29                                                                         <NA>
+30                                                 nucleotide receptor activity
+31                                        pattern recognition receptor activity
+32                                      purinergic nucleotide receptor activity
+33                                                       actin filament binding
+34                                                        chromatin DNA binding
+35                                                       immunoglobulin binding
+36                                     low-density lipoprotein particle binding
+37                                         MHC class II protein complex binding
+38                                                  MHC protein complex binding
+39                                                                         <NA>
+40                                                      nucleosomal DNA binding
+41                                                                         <NA>
+42                                                NAD(P)+ nucleosidase activity
+43                                                   NAD+ nucleosidase activity
+44                              NAD+ nucleotidase, cyclic ADP-ribose generating
+45                                                                         <NA>
+46                                 NAD+-protein ADP-ribosyltransferase activity
+47 cysteine-type endopeptidase activator activity involved in apoptotic process
+48                               cysteine-type endopeptidase inhibitor activity
+49 cysteine-type endopeptidase regulator activity involved in apoptotic process
+50                                                    GTPase activator activity
+51                                                    GTPase regulator activity
+52                                                                         <NA>
+53                                 nucleoside-triphosphatase regulator activity
+54                   peptidase activator activity involved in apoptotic process
+55                                                 peptidase regulator activity
+56                                                                         <NA>
+57               oxidoreductase activity, acting on NAD(P)H, oxygen as acceptor
+58                                                                amide binding
+59                                                                         <NA>
+60                                                              peptide binding
+61                                                                         <NA>
+62                                                       phosphoprotein binding
+63                                              phosphotyrosine residue binding
+64                                    protein phosphorylated amino acid binding
+65                                                                         <NA>
+66                            organic cation transmembrane transporter activity
+67                 quaternary ammonium group transmembrane transporter activity
+68                                                          CARD domain binding
+69                                                                         <NA>
+70                                                           SH2 domain binding
+71                                                   lipopolysaccharide binding
+72                                                                         <NA>
+73                                                         proteoglycan binding
+74                                                          sialic acid binding
+75                                                                         <NA>
+76                                        single-stranded DNA helicase activity
+77                                     DNA-binding transcription factor binding
+78                                                                         <NA>
+79                                                  STAT family protein binding
+80                                            transcription coactivator binding
+81                                            transcription coregulator binding
+82                                                           chemokine activity
+83                                                   chemokine receptor binding
+84                                                            cytokine activity
+85                                                    cytokine receptor binding
+86                                                  MHC class I protein binding
+87                                                          MHC protein binding
+88                                                                         <NA>
+89                                                   Toll-like receptor binding
+90                                       tumor necrosis factor receptor binding
+       vSize vColor    stdErr vColorValue level        x0         y0          w
+1   1.524193      1  1.524193          NA     2 0.8425262 0.20794135 0.07959427
+2   1.524193      1  1.524193          NA     1 0.8425262 0.20794135 0.07959427
+3  10.084744      1 10.084744          NA     2 0.7541918 0.74802085 0.24580815
+4  19.862773      2 19.862773          NA     1 0.7541918 0.50370532 0.24580815
+5   9.778029      1  9.778029          NA     2 0.7541918 0.50370532 0.24580815
+6   1.103563      1  1.103563          NA     2 0.9448600 0.00000000 0.05513999
+7   1.103563      1  1.103563          NA     1 0.9448600 0.00000000 0.05513999
+8   1.735485      1  1.735485          NA     2 0.7518981 0.20794135 0.09062806
+9   1.735485      1  1.735485          NA     1 0.7518981 0.20794135 0.09062806
+10  1.166825      1  1.166825          NA     2 0.9157094 0.12292113 0.08429065
+11  1.166825      1  1.166825          NA     1 0.9157094 0.12292113 0.08429065
+12  3.435865      1  3.435865          NA     2 0.7656380 0.32555403 0.11845219
+13  3.435865      1  3.435865          NA     1 0.7656380 0.32555403 0.11845219
+14  1.224434      1  1.224434          NA     2 0.5063013 0.08156213 0.09220254
+15  1.224434      1  1.224434          NA     2 0.5063013 0.00000000 0.09220254
+16  1.684955      1  1.684955          NA     2 0.3928404 0.07191521 0.11346094
+17  1.328529      1  1.328529          NA     2 0.3928404 0.00000000 0.11346094
+18  5.462352      4  5.462352          NA     1 0.3928404 0.00000000 0.20566348
+19  1.295836      1  1.295836          NA     2 0.7518981 0.10397068 0.07654826
+20  1.295836      1  1.295836          NA     1 0.7518981 0.10397068 0.07654826
+21  1.207970      1  1.207970          NA     2 0.8284464 0.12292113 0.08726297
+22  1.207970      1  1.207970          NA     1 0.8284464 0.12292113 0.08726297
+23  1.166825      1  1.166825          NA     2 0.8284464 0.06136125 0.11641363
+24  1.166825      1  1.166825          NA     1 0.8284464 0.06136125 0.11641363
+25  1.295836      1  1.295836          NA     2 0.3302113 0.58880223 0.09352601
+26  5.185451      1  5.185451          NA     2 0.3260742 0.67389915 0.09766312
+27  1.295836      1  1.295836          NA     2 0.3302113 0.50370532 0.09352601
+28 17.313002      1 17.313002          NA     2 0.0000000 0.67389915 0.32607422
+29 34.240519      7 34.240519          NA     1 0.0000000 0.50370532 0.42373734
+30  2.066611      1  2.066611          NA     2 0.1810553 0.58880223 0.14915606
+31  5.017171      1  5.017171          NA     2 0.0000000 0.50370532 0.18105527
+32  2.066611      1  2.066611          NA     2 0.1810553 0.50370532 0.14915606
+33  1.295836      1  1.295836          NA     2 0.6490657 0.64758179 0.10512618
+34  1.684955      1  1.684955          NA     2 0.6490657 0.72328867 0.10512618
+35  2.746522      1  2.746522          NA     2 0.4237373 0.50370532 0.22532833
+36  1.295836      1  1.295836          NA     2 0.6490657 0.57187492 0.10512618
+37  8.921019      1  8.921019          NA     2 0.4237373 0.57856764 0.22532833
+38  9.591713      1  9.591713          NA     2 0.4237373 0.82172907 0.33045451
+39 26.702706      7 26.702706          NA     1 0.4237373 0.50370532 0.33045451
+40  1.166825      1  1.166825          NA     2 0.6490657 0.50370532 0.10512618
+41  3.096864      3  3.096864          NA     1 0.5985038 0.20155765 0.15339427
+42  1.032288      1  1.032288          NA     2 0.5985038 0.26355584 0.10226285
+43  1.032288      1  1.032288          NA     2 0.5985038 0.20155765 0.10226285
+44  1.032288      1  1.032288          NA     2 0.7007667 0.20155765 0.05113142
+45  1.295836      1  1.295836          NA     1 0.7518981 0.00000000 0.07654826
+46  1.295836      1  1.295836          NA     2 0.7518981 0.00000000 0.07654826
+47  1.241127      1  1.241127          NA     2 0.2480179 0.00000000 0.07906306
+48  1.295836      1  1.295836          NA     2 0.2480179 0.09641369 0.07241126
+49  2.066611      1  2.066611          NA     2 0.1392874 0.08958882 0.10873049
+50  1.586022      1  1.586022          NA     2 0.1392874 0.00000000 0.10873049
+51  2.339572      1  2.339572          NA     2 0.0000000 0.10316222 0.13928736
+52 13.196864      8 13.196864          NA     1 0.0000000 0.00000000 0.39284036
+53  2.339572      1  2.339572          NA     2 0.0000000 0.00000000 0.13928736
+54  1.032288      1  1.032288          NA     2 0.3270809 0.00000000 0.06575945
+55  1.295836      1  1.295836          NA     2 0.3204291 0.09641369 0.07241126
+56  1.491357      1  1.491357          NA     1 0.9221205 0.20794135 0.07787955
+57  1.491357      1  1.491357          NA     2 0.9221205 0.20794135 0.07787955
+58  1.295509      1  1.295509          NA     2 0.8840902 0.32555403 0.11590981
+59  3.362120      2  3.362120          NA     1 0.8840902 0.32555403 0.11590981
+60  2.066611      1  2.066611          NA     2 0.8840902 0.39420018 0.11590981
+61  5.656053      3  5.656053          NA     1 0.3928404 0.16312425 0.20566348
+62  2.214210      1  2.214210          NA     2 0.3928404 0.24466674 0.15565776
+63  2.066611      1  2.066611          NA     2 0.3928404 0.16312425 0.15565776
+64  1.375232      1  1.375232          NA     2 0.5484981 0.16312425 0.05000573
+65  2.621742      2  2.621742          NA     1 0.5985038 0.09658485 0.15339427
+66  1.224434      1  1.224434          NA     2 0.6802583 0.09658485 0.07163985
+67  1.397308      1  1.397308          NA     2 0.5985038 0.09658485 0.08175443
+68  1.103563      1  1.103563          NA     2 0.6817228 0.00000000 0.07017529
+69  2.412249      2  2.412249          NA     1 0.5985038 0.00000000 0.15339427
+70  1.308686      1  1.308686          NA     2 0.5985038 0.00000000 0.08321898
+71  1.763843      1  1.763843          NA     2 0.6859314 0.36779212 0.07970662
+72  4.847950      3  4.847950          NA     1 0.5985038 0.32555403 0.16713416
+73  1.149406      1  1.149406          NA     2 0.5985038 0.32555403 0.16713416
+74  1.934701      1  1.934701          NA     2 0.5985038 0.36779212 0.08742753
+75  1.163060      1  1.163060          NA     1 0.8284464 0.00000000 0.11641363
+76  1.163060      1  1.163060          NA     2 0.8284464 0.00000000 0.11641363
+77  1.017759      1  1.017759          NA     2 0.5203474 0.33203306 0.07815640
+78  5.748589      4  5.748589          NA     1 0.3928404 0.33203306 0.20566348
+79  2.339572      1  2.339572          NA     2 0.3928404 0.39101202 0.12750708
+80  1.166825      1  1.166825          NA     2 0.5203474 0.41201214 0.07815640
+81  1.224434      1  1.224434          NA     2 0.3928404 0.33203306 0.12750708
+82  1.431419      1  1.431419          NA     2 0.1890455 0.20632444 0.12305070
+83  1.914200      1  1.914200          NA     2 0.1890455 0.27777056 0.12305070
+84  2.214210      1  2.214210          NA     2 0.1890455 0.37331363 0.10429533
+85  3.967970      1  3.967970          NA     2 0.0000000 0.20632444 0.18904553
+86  1.032288      1  1.032288          NA     2 0.3120962 0.20632444 0.08074413
+87  2.112393      1  2.112393          NA     2 0.2933409 0.37331363 0.09949950
+88 19.020990      8 19.020990          NA     1 0.0000000 0.20632444 0.39284036
+89  5.185451      1  5.185451          NA     2 0.0000000 0.33523782 0.18904553
+90  1.163060      1  1.163060          NA     2 0.3120962 0.28484546 0.08074413
+            h   color
+1  0.11761268 #F8766D
+2  0.11761268 #F8766D
+3  0.25197915 #D54118
+4  0.49629468 #ED813E
+5  0.24431553 #D58018
+6  0.12292113 #DE8C00
+7  0.12292113 #DE8C00
+8  0.11761268 #CD9600
+9  0.11761268 #CD9600
+10 0.08502022 #B79F00
+11 0.08502022 #B79F00
+12 0.17815129 #9DA700
+13 0.17815129 #9DA700
+14 0.08156213 #8A9D00
+15 0.08156213 #789D00
+16 0.09120904 #679D00
+17 0.07191521 #569D00
+18 0.16312425 #7CAE00
+19 0.10397068 #49B500
+20 0.10397068 #49B500
+21 0.08502022 #00BA38
+22 0.08502022 #00BA38
+23 0.06155989 #00BE67
+24 0.06155989 #00BE67
+25 0.08509691 #00AD60
+26 0.32610085 #00AD6A
+27 0.08509691 #00AD73
+28 0.32610085 #00AD7D
+29 0.49629468 #00C08B
+30 0.08509691 #00AD87
+31 0.17019383 #00AD90
+32 0.08509691 #00AD9A
+33 0.07570688 #00AE7B
+34 0.09844040 #00AE85
+35 0.07486232 #00AE8E
+36 0.07570688 #00AE98
+37 0.24316143 #00AEA2
+38 0.17827093 #00AEAB
+39 0.49629468 #00C1A9
+40 0.06816960 #00A6AE
+41 0.12399637 #00BFC4
+42 0.06199819 #00B097
+43 0.06199819 #00ACB0
+44 0.12399637 #008FB0
+45 0.10397068 #00BBDC
+46 0.10397068 #00BBDC
+47 0.09641369 #00C6D8
+48 0.10991074 #00BCD8
+49 0.11673562 #00B1D8
+50 0.08958882 #00A7D8
+51 0.10316222 #009DD8
+52 0.20632444 #00B4F0
+53 0.10316222 #0093D8
+54 0.09641369 #0088D8
+55 0.10991074 #007ED8
+56 0.11761268 #00A9FF
+57 0.11761268 #00A9FF
+58 0.06864615 #3B97E6
+59 0.17815129 #619CFF
+60 0.10950514 #3B5EE6
+61 0.16890880 #9F8CFF
+62 0.08736632 #6969E6
+63 0.08154249 #7E69E6
+64 0.16890880 #9369E6
+65 0.10497280 #C77CFF
+66 0.10497280 #9158E6
+67 0.10497280 #C158E6
+68 0.09658485 #B04BDD
+69 0.09658485 #E36EF6
+70 0.09658485 #DD4BD9
+71 0.13591320 #D640DD
+72 0.17815129 #F564E3
+73 0.04223809 #DD40C9
+74 0.13591320 #DD40AF
+75 0.06136125 #FF61CC
+76 0.06136125 #FF61CC
+77 0.07997908 #E63EAC
+78 0.17167226 #FF64B0
+79 0.11269330 #E63E99
+80 0.09169318 #E63E87
+81 0.05897896 #E63E74
+82 0.07144613 #E64789
+83 0.09554307 #E64782
+84 0.13039169 #E6477A
+85 0.12891338 #E64772
+86 0.07852102 #E6476B
+87 0.13039169 #E64763
+88 0.29738088 #FF6C91
+89 0.16846750 #E6475C
+90 0.08846817 #E64754
+
+$type
+[1] "index"
+
+$vSize
+[1] "score"
+
+$vColor
+[1] NA
+
+$stdErr
+[1] "score"
+
+$algorithm
+[1] "pivotSize"
+
+$vpCoorX
+[1] 0.02812148 0.97187852
+
+$vpCoorY
+[1] 0.01406074 0.98593926
+
+$aspRatio
+[1] 0.9710648
+
+$range
+[1] NA
+
+$mapping
+[1] NA NA NA
+
+$draw
+[1] TRUE
+
+preparing gene to GO mapping data...
+preparing IC data...
+'select()' returned 1:many mapping between keys and columns
+$tm
+                                   parentTerm
+1                              axon cytoplasm
+2                              axon cytoplasm
+3                              axon cytoplasm
+4                              axon cytoplasm
+5                              axon cytoplasm
+6                              axon cytoplasm
+7              canonical inflammasome complex
+8              canonical inflammasome complex
+9                chromosome, telomeric region
+10               chromosome, telomeric region
+11               chromosome, telomeric region
+12                                  desmosome
+13                                  desmosome
+14                          endocytic vesicle
+15                          endocytic vesicle
+16                          endocytic vesicle
+17                          endocytic vesicle
+18                          endocytic vesicle
+19                          endocytic vesicle
+20                          endocytic vesicle
+21                          endocytic vesicle
+22                          endocytic vesicle
+23                          endocytic vesicle
+24                          endocytic vesicle
+25                          endocytic vesicle
+26                          endocytic vesicle
+27                          endocytic vesicle
+28                          endocytic vesicle
+29                          endocytic vesicle
+30                          endocytic vesicle
+31                          endocytic vesicle
+32                          endocytic vesicle
+33                          endocytic vesicle
+34                          endocytic vesicle
+35                          endocytic vesicle
+36                          endocytic vesicle
+37                          endocytic vesicle
+38                          endocytic vesicle
+39                          endocytic vesicle
+40                          endocytic vesicle
+41                          endocytic vesicle
+42                      immunological synapse
+43                      immunological synapse
+44                     lytic vacuole membrane
+45                     lytic vacuole membrane
+46                     lytic vacuole membrane
+47                     lytic vacuole membrane
+48                     lytic vacuole membrane
+49                     lytic vacuole membrane
+50                     lytic vacuole membrane
+51                     lytic vacuole membrane
+52                              membrane raft
+53                              membrane raft
+54                              membrane raft
+55                        MHC protein complex
+56                        MHC protein complex
+57                        MHC protein complex
+58                        MHC protein complex
+59                        MHC protein complex
+60             microtubule associated complex
+61             microtubule associated complex
+62             microtubule associated complex
+63             microtubule associated complex
+64             microtubule associated complex
+65                             phagocytic cup
+66                             phagocytic cup
+67 plasma membrane signaling receptor complex
+68 plasma membrane signaling receptor complex
+69 plasma membrane signaling receptor complex
+70 plasma membrane signaling receptor complex
+71                           side of membrane
+72                           side of membrane
+73                           side of membrane
+74                           side of membrane
+75                           side of membrane
+76                           side of membrane
+77                           side of membrane
+78                           side of membrane
+79               trans-Golgi network membrane
+80               trans-Golgi network membrane
+                                                         term      vSize vColor
+1                                              axon cytoplasm   1.860390      1
+2                                          cytoplasmic region   1.219401      1
+3                                          dendrite cytoplasm   1.134175      1
+4                                                        <NA>   7.086605      5
+5                                 neuron projection cytoplasm   1.599843      1
+6           plasma membrane bounded cell projection cytoplasm   1.272797      1
+7                              canonical inflammasome complex   3.548435      1
+8                                                        <NA>   3.548435      1
+9                                chromosome, telomeric region   1.419446      1
+10                                                       <NA>   2.548807      2
+11                                         site of DNA damage   1.129362      1
+12                                                  desmosome   1.272797      1
+13                                                       <NA>   1.272797      1
+14                 clathrin-coated endocytic vesicle membrane   3.143695      1
+15                          clathrin-coated endocytic vesicle   2.413320      1
+16                           clathrin-coated vesicle membrane   1.498453      1
+17                                    clathrin-coated vesicle   1.148865      1
+18                                    coated vesicle membrane   2.574232      1
+19                                             coated vesicle   2.141467      1
+20                 COPII-coated ER to Golgi transport vesicle   4.707205      1
+21                                  cytoplasmic vesicle lumen   3.324828      1
+22                                 endocytic vesicle membrane   7.644849      1
+23                                          endocytic vesicle   9.988344      1
+24                     ER to Golgi transport vesicle membrane   6.335372      1
+25                            ficolin-1-rich granule membrane   2.882262      1
+26                                     ficolin-1-rich granule   2.838755      1
+27                                     late endosome membrane   1.890281      1
+28                                              late endosome   1.370052      1
+29                                                       <NA> 109.114657     27
+30                                phagocytic vesicle membrane   3.959476      1
+31                                         phagocytic vesicle   8.750310      1
+32                                    secretory granule lumen   3.372904      1
+33                                 secretory granule membrane   7.861374      1
+34                                     specific granule lumen   1.995101      1
+35                                  specific granule membrane   2.969395      1
+36                                           specific granule   5.339899      1
+37                                     tertiary granule lumen   1.412394      1
+38                                  tertiary granule membrane   6.283114      1
+39                                           tertiary granule   8.690372      1
+40                                 transport vesicle membrane   1.269041      1
+41                                              vesicle lumen   3.309297      1
+42                                      immunological synapse   1.860199      1
+43                                                       <NA>   1.860199      1
+44                                    azurophil granule lumen   1.498514      1
+45                                          azurophil granule   2.543589      1
+46                                               endolysosome   1.148865      1
+47                                         lysosomal membrane   5.442999      1
+48                                     lytic vacuole membrane   5.442999      1
+49                                                       <NA>  23.444508      7
+50                                           primary lysosome   2.543589      1
+51                                          vacuolar membrane   4.823953      1
+52                                       membrane microdomain   2.492487      1
+53                                              membrane raft   2.508631      1
+54                                                       <NA>   5.001117      2
+55                               MHC class II protein complex  11.983083      1
+56                                        MHC protein complex  15.011657      1
+57                                                       <NA>  37.194113      4
+58                                      NADPH oxidase complex   5.131404      1
+59                            plasma membrane protein complex   5.067968      1
+60                                             actin filament   1.269041      1
+61                             microtubule associated complex   1.272797      1
+62                                            mitotic spindle   1.238009      1
+63                                                       <NA>   5.017856      4
+64                                                    spindle   1.238009      1
+65                                                       <NA>   1.995101      1
+66                                             phagocytic cup   1.995101      1
+67                                           integrin complex   1.731136      1
+68                                                       <NA>   7.710691      3
+69                 plasma membrane signaling receptor complex   3.372904      1
+70                                           receptor complex   2.606651      1
+71                               cytoplasmic side of membrane   2.168029      1
+72                        cytoplasmic side of plasma membrane   1.412394      1
+73                           external side of plasma membrane   9.313777      1
+74 extrinsic component of cytoplasmic side of plasma membrane   1.052515      1
+75             lumenal side of endoplasmic reticulum membrane   8.078265      1
+76                                   lumenal side of membrane   6.296426      1
+77                                                       <NA>  39.939439      7
+78                                           side of membrane  11.618033      1
+79                                                       <NA>   1.731136      1
+80                               trans-Golgi network membrane   1.731136      1
+       stdErr vColorValue level        x0         y0          w          h
+1    1.860390          NA     2 0.6945266 0.31158649 0.08732391 0.08609068
+2    1.219401          NA     2 0.7818505 0.28763289 0.09151670 0.05384327
+3    1.134175          NA     2 0.7818505 0.23755279 0.09151670 0.05008011
+4    7.086605          NA     1 0.6945266 0.23755279 0.17884062 0.16012439
+5    1.599843          NA     2 0.6945266 0.23755279 0.08732391 0.07403370
+6    1.272797          NA     2 0.7818505 0.34147617 0.09151670 0.05620101
+7    3.548435          NA     2 0.6945266 0.00000000 0.14543491 0.09859471
+8    3.548435          NA     1 0.6945266 0.00000000 0.14543491 0.09859471
+9    1.419446          NA     2 0.8399615 0.17365699 0.08977013 0.06389580
+10   2.548807          NA     1 0.8399615 0.12281920 0.08977013 0.11473359
+11   1.129362          NA     2 0.8399615 0.12281920 0.08977013 0.05083779
+12   1.272797          NA     2 0.9581227 0.00000000 0.04187725 0.12281920
+13   1.272797          NA     1 0.9581227 0.00000000 0.04187725 0.12281920
+14   3.143695          NA     2 0.3335659 0.59259701 0.12131324 0.10471709
+15   2.413320          NA     2 0.6465798 0.58321061 0.08546759 0.11410350
+16   1.498453          NA     2 0.6493263 0.51001032 0.08272102 0.07320028
+17   1.148865          NA     2 0.6450679 0.39767717 0.08697951 0.05337495
+18   2.574232          NA     2 0.5554135 0.58321061 0.09116626 0.11410350
+19   2.141467          NA     2 0.4548792 0.48716150 0.09009556 0.09604911
+20   4.707205          NA     2 0.1840206 0.39767717 0.14954533 0.12719666
+21   3.324828          NA     2 0.5427677 0.69731410 0.09486140 0.14163320
+22   7.644849          NA     2 0.3812701 0.83894730 0.19181665 0.16105270
+23   9.988344          NA     2 0.0000000 0.78066274 0.18402061 0.21933726
+24   6.335372          NA     2 0.5730867 0.83894730 0.15896061 0.16105270
+25   2.882262          NA     2 0.3335659 0.39767717 0.12131324 0.09600872
+26   2.838755          NA     2 0.4548792 0.58321061 0.10053433 0.11410350
+27   1.890281          NA     2 0.5449747 0.51001032 0.10435160 0.07320028
+28   1.370052          NA     2 0.5449747 0.39767717 0.10009311 0.05531184
+29 109.114657          NA     1 0.0000000 0.39767717 0.73204736 0.60232283
+30   3.959476          NA     2 0.3335659 0.69731410 0.11296868 0.14163320
+31   8.750310          NA     2 0.0000000 0.58851185 0.18402061 0.19215089
+32   3.372904          NA     2 0.4465346 0.69731410 0.09623307 0.14163320
+33   7.861374          NA     2 0.1840206 0.83894730 0.19724949 0.16105270
+34   1.995101          NA     2 0.4548792 0.39767717 0.09009556 0.08948432
+35   2.969395          NA     2 0.3335659 0.49368589 0.12131324 0.09891112
+36   5.339899          NA     2 0.1840206 0.52487383 0.14954533 0.14429310
+37   1.412394          NA     2 0.5449747 0.45298902 0.10009311 0.05702131
+38   6.283114          NA     2 0.1840206 0.66916693 0.14954533 0.16978037
+39   8.690372          NA     2 0.0000000 0.39767717 0.18402061 0.19083468
+40   1.269041          NA     2 0.6450679 0.45105212 0.08697951 0.05895820
+41   3.309297          NA     2 0.6376291 0.69731410 0.09441828 0.14163320
+42   1.860199          NA     2 0.8399615 0.05920270 0.11816123 0.06361650
+43   1.860199          NA     1 0.8399615 0.05920270 0.11816123 0.06361650
+44   1.498514          NA     2 0.5249436 0.09842228 0.09599021 0.06308401
+45   2.543589          NA     2 0.5249436 0.16150629 0.08479149 0.12122162
+46   1.148865          NA     2 0.6209338 0.09842228 0.07359278 0.06308401
+47   5.442999          NA     2 0.3779453 0.24804973 0.14699832 0.14962745
+48   5.442999          NA     2 0.3779453 0.09842228 0.14699832 0.14962745
+49  23.444508          NA     1 0.3779453 0.09842228 0.31658131 0.29925489
+50   2.543589          NA     2 0.6097351 0.16150629 0.08479149 0.12122162
+51   4.823953          NA     2 0.5249436 0.28272790 0.16958299 0.11494927
+52   2.492487          NA     2 0.7674788 0.09859471 0.07248272 0.13895807
+53   2.508631          NA     2 0.6945266 0.09859471 0.07295219 0.13895807
+54   5.001117          NA     1 0.6945266 0.09859471 0.14543491 0.13895807
+55  11.983083          NA     2 0.2101737 0.10905106 0.16777157 0.28862611
+56  15.011657          NA     2 0.0000000 0.10905106 0.21017373 0.28862611
+57  37.194113          NA     1 0.0000000 0.00000000 0.37794530 0.39767717
+58   5.131404          NA     2 0.0000000 0.00000000 0.19014797 0.10905106
+59   5.067968          NA     2 0.1901480 0.00000000 0.18779733 0.10905106
+60   1.269041          NA     2 0.9367772 0.31656479 0.06322284 0.08111238
+61   1.272797          NA     2 0.8733672 0.31656479 0.06340994 0.08111238
+62   1.238009          NA     2 0.8733672 0.23755279 0.06331639 0.07901201
+63   5.017856          NA     1 0.8733672 0.23755279 0.12663278 0.16012439
+64   1.238009          NA     2 0.9366836 0.23755279 0.06331639 0.07901201
+65   1.995101          NA     1 0.9297316 0.12281920 0.07026835 0.11473359
+66   1.995101          NA     2 0.9297316 0.12281920 0.07026835 0.11473359
+67   1.731136          NA     2 0.6234506 0.00000000 0.07107602 0.09842228
+68   7.710691          NA     1 0.3779453 0.00000000 0.31658131 0.09842228
+69   3.372904          NA     2 0.3779453 0.00000000 0.13848284 0.09842228
+70   2.606651          NA     2 0.5164281 0.00000000 0.10702245 0.09842228
+71   2.168029          NA     2 0.7320474 0.39767717 0.12539108 0.06986890
+72   1.412394          NA     2 0.8574384 0.39767717 0.08168785 0.06986890
+73   9.313777          NA     2 0.7320474 0.68432939 0.26795264 0.14046017
+74   1.052515          NA     2 0.9391263 0.39767717 0.06087372 0.06986890
+75   8.078265          NA     2 0.7320474 0.46754608 0.15058358 0.21678332
+76   6.296426          NA     2 0.8826309 0.46754608 0.11736906 0.21678332
+77  39.939439          NA     1 0.7320474 0.39767717 0.26795264 0.60232283
+78  11.618033          NA     2 0.7320474 0.82478956 0.26795264 0.17521044
+79   1.731136          NA     1 0.8399615 0.00000000 0.11816123 0.05920270
+80   1.731136          NA     2 0.8399615 0.00000000 0.11816123 0.05920270
+     color
+1  #DF4958
+2  #DF494C
+3  #DF5349
+4  #F8766D
+5  #DF5F49
+6  #DF6C49
+7  #E38900
+8  #E38900
+9  #B06D00
+10 #C49A00
+11 #B0A800
+12 #99A800
+13 #99A800
+14 #66A200
+15 #64A200
+16 #62A200
+17 #5FA200
+18 #5DA200
+19 #5BA200
+20 #59A200
+21 #57A200
+22 #55A200
+23 #53A200
+24 #51A200
+25 #4FA200
+26 #4DA200
+27 #4BA200
+28 #49A200
+29 #53B400
+30 #47A200
+31 #44A200
+32 #42A200
+33 #40A200
+34 #3EA200
+35 #3CA200
+36 #3AA200
+37 #38A200
+38 #36A200
+39 #34A200
+40 #32A200
+41 #30A200
+42 #00BC56
+43 #00BC56
+44 #00AD68
+45 #00AD72
+46 #00AD7C
+47 #00AD85
+48 #00AD8F
+49 #00C094
+50 #00AD98
+51 #00ADA2
+52 #00B097
+53 #008FB0
+54 #00BFC4
+55 #00C7D3
+56 #00B0D3
+57 #00B6EB
+58 #0098D3
+59 #0081D3
+60 #00B8E6
+61 #009EE6
+62 #0085E6
+63 #06A4FF
+64 #006BE6
+65 #A58AFF
+66 #A58AFF
+67 #AC4CDF
+68 #DF70F8
+69 #C44CDF
+70 #DD4CDF
+71 #E23CD7
+72 #E23CCE
+73 #E23CC4
+74 #E23CBB
+75 #E23CB2
+76 #E23CA9
+77 #FB61D7
+78 #E23C9F
+79 #FF66A8
+80 #FF66A8
+
+$type
+[1] "index"
+
+$vSize
+[1] "score"
+
+$vColor
+[1] NA
+
+$stdErr
+[1] "score"
+
+$algorithm
+[1] "pivotSize"
+
+$vpCoorX
+[1] 0.02812148 0.97187852
+
+$vpCoorY
+[1] 0.01406074 0.98593926
+
+$aspRatio
+[1] 0.9710648
+
+$range
+[1] NA
+
+$mapping
+[1] NA NA NA
+
+$draw
+[1] TRUE
+
+Warning message:
+In calculateSimMatrix(go_df$ID, orgdb = "org.Hs.eg.db", ont = ont_type,  :
+  Removed 10 terms that were not found in orgdb for BP
+null device 
+          1 
 null device 
           1 
 ─ Session info ───────────────────────────────────────────────────────────────
@@ -260,137 +1600,207 @@ null device
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2025-01-30
- pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/pandoc
+ date     2025-02-20
+ pandoc   3.1.3 @ /jhpce/shared/community/core/conda_R/4.3.x/bin/ (via rmarkdown)
 
 ─ Packages ───────────────────────────────────────────────────────────────────
- package              * version    date (UTC) lib source
- abind                  1.4-5      2016-07-21 [2] CRAN (R 4.3.2)
- AnnotationDbi          1.64.1     2023-11-03 [2] Bioconductor
- ape                    5.8-1      2024-12-16 [1] CRAN (R 4.3.2)
- aplot                  0.2.4      2024-12-17 [1] CRAN (R 4.3.2)
- Biobase              * 2.62.0     2023-10-24 [2] Bioconductor
- BiocGenerics         * 0.48.1     2023-11-01 [2] Bioconductor
- BiocParallel           1.36.0     2023-10-24 [2] Bioconductor
- Biostrings             2.70.2     2024-01-28 [2] Bioconductor 3.18 (R 4.3.2)
- bit                    4.0.5      2022-11-15 [2] CRAN (R 4.3.2)
- bit64                  4.0.5      2020-08-30 [2] CRAN (R 4.3.2)
- bitops                 1.0-7      2021-04-24 [2] CRAN (R 4.3.2)
- blob                   1.2.4      2023-03-17 [2] CRAN (R 4.3.2)
- cachem                 1.0.8      2023-05-01 [2] CRAN (R 4.3.2)
- cli                    3.6.2      2023-12-11 [2] CRAN (R 4.3.2)
- clusterProfiler      * 4.10.1     2024-03-08 [1] Bioconductor 3.18 (R 4.3.2)
- codetools              0.2-19     2023-02-01 [3] CRAN (R 4.3.2)
- colorspace             2.1-0      2023-01-23 [2] CRAN (R 4.3.2)
- cowplot                1.1.3      2024-01-22 [2] CRAN (R 4.3.2)
- crayon                 1.5.2      2022-09-29 [2] CRAN (R 4.3.2)
- data.table             1.15.0     2024-01-30 [2] CRAN (R 4.3.2)
- DBI                    1.2.1      2024-01-12 [2] CRAN (R 4.3.2)
- DelayedArray           0.28.0     2023-10-24 [2] Bioconductor
- digest                 0.6.34     2024-01-11 [2] CRAN (R 4.3.2)
- DOSE                   3.28.2     2023-12-10 [1] Bioconductor 3.18 (R 4.3.2)
- dplyr                * 1.1.4      2023-11-17 [2] CRAN (R 4.3.2)
- enrichplot             1.22.0     2023-10-24 [1] Bioconductor
- fansi                  1.0.6      2023-12-08 [2] CRAN (R 4.3.2)
- farver                 2.1.1      2022-07-06 [2] CRAN (R 4.3.2)
- fastmap                1.1.1      2023-02-24 [2] CRAN (R 4.3.2)
- fastmatch              1.1-4      2023-08-18 [2] CRAN (R 4.3.2)
- fgsea                  1.28.0     2023-10-24 [2] Bioconductor
- forcats              * 1.0.0      2023-01-29 [2] CRAN (R 4.3.2)
- fs                     1.6.3      2023-07-20 [2] CRAN (R 4.3.2)
- gargle                 1.5.2      2023-07-20 [2] CRAN (R 4.3.2)
- generics               0.1.3      2022-07-05 [2] CRAN (R 4.3.2)
- GenomeInfoDb         * 1.38.5     2023-12-28 [2] Bioconductor 3.18 (R 4.3.2)
- GenomeInfoDbData       1.2.11     2024-02-09 [2] Bioconductor
- GenomicRanges        * 1.54.1     2023-10-29 [2] Bioconductor
- ggforce                0.4.1      2022-10-04 [2] CRAN (R 4.3.2)
- ggfun                  0.1.8      2024-12-03 [1] CRAN (R 4.3.2)
- ggplot2              * 3.5.0      2024-02-23 [1] CRAN (R 4.3.2)
- ggplotify              0.1.2      2023-08-09 [1] CRAN (R 4.3.2)
- ggraph                 2.1.0      2022-10-09 [2] CRAN (R 4.3.2)
- ggrepel                0.9.5      2024-01-10 [2] CRAN (R 4.3.2)
- ggtree                 3.10.1     2024-02-25 [1] Bioconductor 3.18 (R 4.3.2)
- glue                   1.7.0      2024-01-09 [2] CRAN (R 4.3.2)
- GO.db                  3.18.0     2024-02-09 [2] Bioconductor
- googledrive            2.1.1      2023-06-11 [2] CRAN (R 4.3.2)
- GOSemSim               2.28.1     2024-01-17 [1] Bioconductor 3.18 (R 4.3.2)
- graphlayouts           1.1.0      2024-01-19 [2] CRAN (R 4.3.2)
- gridExtra              2.3        2017-09-09 [2] CRAN (R 4.3.2)
- gridGraphics           0.5-1      2020-12-13 [1] CRAN (R 4.3.2)
- gson                   0.1.0      2023-03-07 [1] CRAN (R 4.3.2)
- gtable                 0.3.4      2023-08-21 [2] CRAN (R 4.3.2)
- HDO.db                 0.99.1     2025-01-28 [1] Bioconductor
- here                 * 1.0.1      2020-12-13 [2] CRAN (R 4.3.2)
- hms                    1.1.3      2023-03-21 [2] CRAN (R 4.3.2)
- httr                   1.4.7      2023-08-15 [2] CRAN (R 4.3.2)
- igraph                 2.0.1.9008 2024-02-09 [2] Github (igraph/rigraph@39158c6)
- IRanges              * 2.36.0     2023-10-24 [2] Bioconductor
- jaffelab             * 0.99.32    2024-02-26 [1] Github (LieberInstitute/jaffelab@21e6574)
- jsonlite               1.8.8      2023-12-04 [2] CRAN (R 4.3.2)
- KEGGREST               1.42.0     2023-10-24 [2] Bioconductor
- labeling               0.4.3      2023-08-29 [2] CRAN (R 4.3.2)
- lattice                0.22-5     2023-10-24 [3] CRAN (R 4.3.2)
- lazyeval               0.2.2      2019-03-15 [2] CRAN (R 4.3.2)
- lifecycle              1.0.4      2023-11-07 [2] CRAN (R 4.3.2)
- limma                  3.58.1     2023-10-31 [2] Bioconductor
- lubridate            * 1.9.3      2023-09-27 [2] CRAN (R 4.3.2)
- magrittr               2.0.3      2022-03-30 [2] CRAN (R 4.3.2)
- MASS                   7.3-60.0.1 2024-01-13 [3] CRAN (R 4.3.2)
- Matrix                 1.6-5      2024-01-11 [3] CRAN (R 4.3.2)
- MatrixGenerics       * 1.14.0     2023-10-24 [2] Bioconductor
- matrixStats          * 1.2.0      2023-12-11 [2] CRAN (R 4.3.2)
- memoise                2.0.1      2021-11-26 [2] CRAN (R 4.3.2)
- munsell                0.5.0      2018-06-12 [2] CRAN (R 4.3.2)
- nlme                   3.1-164    2023-11-27 [3] CRAN (R 4.3.2)
- org.Hs.eg.db           3.18.0     2024-02-09 [2] Bioconductor
- patchwork              1.2.0      2024-01-08 [2] CRAN (R 4.3.2)
- pillar                 1.9.0      2023-03-22 [2] CRAN (R 4.3.2)
- pkgconfig              2.0.3      2019-09-22 [2] CRAN (R 4.3.2)
- plyr                   1.8.9      2023-10-02 [2] CRAN (R 4.3.2)
- png                    0.1-8      2022-11-29 [2] CRAN (R 4.3.2)
- polyclip               1.10-6     2023-09-27 [2] CRAN (R 4.3.2)
- purrr                * 1.0.2      2023-08-10 [2] CRAN (R 4.3.2)
- qvalue                 2.34.0     2023-10-24 [2] Bioconductor
- R6                     2.5.1      2021-08-19 [2] CRAN (R 4.3.2)
- rafalib              * 1.0.0      2015-08-09 [1] CRAN (R 4.3.2)
- RColorBrewer           1.1-3      2022-04-03 [2] CRAN (R 4.3.2)
- Rcpp                   1.0.12     2024-01-09 [2] CRAN (R 4.3.2)
- RCurl                  1.98-1.14  2024-01-09 [2] CRAN (R 4.3.2)
- readr                * 2.1.5      2024-01-10 [2] CRAN (R 4.3.2)
- reshape2               1.4.4      2020-04-09 [2] CRAN (R 4.3.2)
- rlang                  1.1.3      2024-01-10 [2] CRAN (R 4.3.2)
- rprojroot              2.0.4      2023-11-05 [2] CRAN (R 4.3.2)
- RSQLite                2.3.5      2024-01-21 [2] CRAN (R 4.3.2)
- S4Arrays               1.2.0      2023-10-24 [2] Bioconductor
- S4Vectors            * 0.40.2     2023-11-23 [2] Bioconductor 3.18 (R 4.3.2)
- scales                 1.3.0      2023-11-28 [2] CRAN (R 4.3.2)
- scatterpie             0.2.4      2024-08-28 [1] CRAN (R 4.3.2)
- segmented              2.0-3      2024-02-16 [1] CRAN (R 4.3.2)
- sessioninfo          * 1.2.2      2021-12-06 [2] CRAN (R 4.3.2)
- shadowtext             0.1.4      2024-07-18 [1] CRAN (R 4.3.2)
- SparseArray            1.2.3      2023-12-25 [2] Bioconductor 3.18 (R 4.3.2)
- statmod                1.5.0      2023-01-06 [2] CRAN (R 4.3.2)
- stringi                1.8.3      2023-12-11 [2] CRAN (R 4.3.2)
- stringr              * 1.5.1      2023-11-14 [2] CRAN (R 4.3.2)
- SummarizedExperiment * 1.32.0     2023-10-24 [2] Bioconductor
- tibble               * 3.2.1      2023-03-20 [2] CRAN (R 4.3.2)
- tidygraph              1.3.1      2024-01-30 [2] CRAN (R 4.3.2)
- tidyr                * 1.3.1      2024-01-24 [2] CRAN (R 4.3.2)
- tidyselect             1.2.0      2022-10-10 [2] CRAN (R 4.3.2)
- tidytree               0.4.6      2023-12-12 [1] CRAN (R 4.3.2)
- tidyverse            * 2.0.0      2023-02-22 [2] CRAN (R 4.3.2)
- timechange             0.3.0      2024-01-18 [2] CRAN (R 4.3.2)
- treeio                 1.26.0     2023-10-24 [1] Bioconductor
- tweenr                 2.0.2      2022-09-06 [2] CRAN (R 4.3.2)
- tzdb                   0.4.0      2023-05-12 [2] CRAN (R 4.3.2)
- utf8                   1.2.4      2023-10-22 [2] CRAN (R 4.3.2)
- vctrs                  0.6.5      2023-12-01 [2] CRAN (R 4.3.2)
- viridis                0.6.5      2024-01-29 [2] CRAN (R 4.3.2)
- viridisLite            0.4.2      2023-05-02 [2] CRAN (R 4.3.2)
- withr                  3.0.0      2024-01-16 [2] CRAN (R 4.3.2)
- XVector                0.42.0     2023-10-24 [2] Bioconductor
- yulab.utils            0.1.9      2025-01-07 [1] CRAN (R 4.3.2)
- zlibbioc               1.48.0     2023-10-24 [2] Bioconductor
+ package              * version     date (UTC) lib source
+ abind                  1.4-5       2016-07-21 [2] CRAN (R 4.3.2)
+ AnnotationDbi          1.64.1      2023-11-03 [2] Bioconductor
+ ape                    5.8-1       2024-12-16 [1] CRAN (R 4.3.2)
+ aplot                  0.2.4       2024-12-17 [1] CRAN (R 4.3.2)
+ askpass                1.2.0       2023-09-03 [2] CRAN (R 4.3.2)
+ backports              1.4.1       2021-12-13 [2] CRAN (R 4.3.2)
+ base64enc              0.1-3       2015-07-28 [2] CRAN (R 4.3.2)
+ Biobase              * 2.62.0      2023-10-24 [2] Bioconductor
+ BiocFileCache          2.10.1      2023-10-26 [2] Bioconductor
+ BiocGenerics         * 0.48.1      2023-11-01 [2] Bioconductor
+ BiocIO                 1.12.0      2023-10-24 [2] Bioconductor
+ BiocParallel           1.36.0      2023-10-24 [2] Bioconductor
+ biomaRt                2.58.2      2024-01-30 [2] Bioconductor 3.18 (R 4.3.2)
+ Biostrings             2.70.2      2024-01-28 [2] Bioconductor 3.18 (R 4.3.2)
+ bit                    4.0.5       2022-11-15 [2] CRAN (R 4.3.2)
+ bit64                  4.0.5       2020-08-30 [2] CRAN (R 4.3.2)
+ bitops                 1.0-7       2021-04-24 [2] CRAN (R 4.3.2)
+ blob                   1.2.4       2023-03-17 [2] CRAN (R 4.3.2)
+ BSgenome               1.70.1      2023-11-01 [2] Bioconductor
+ bumphunter             1.44.0      2023-10-24 [2] Bioconductor
+ cachem                 1.0.8       2023-05-01 [2] CRAN (R 4.3.2)
+ checkmate              2.3.1       2023-12-04 [2] CRAN (R 4.3.2)
+ cli                    3.6.2       2023-12-11 [2] CRAN (R 4.3.2)
+ cluster                2.1.6       2023-12-01 [3] CRAN (R 4.3.2)
+ clusterProfiler      * 4.10.1      2024-03-08 [1] Bioconductor 3.18 (R 4.3.2)
+ codetools              0.2-19      2023-02-01 [3] CRAN (R 4.3.2)
+ colorspace             2.1-0       2023-01-23 [2] CRAN (R 4.3.2)
+ cowplot                1.1.3       2024-01-22 [2] CRAN (R 4.3.2)
+ crayon                 1.5.2       2022-09-29 [2] CRAN (R 4.3.2)
+ curl                   5.2.0       2023-12-08 [2] CRAN (R 4.3.2)
+ data.table             1.15.0      2024-01-30 [2] CRAN (R 4.3.2)
+ DBI                    1.2.1       2024-01-12 [2] CRAN (R 4.3.2)
+ dbplyr                 2.4.0       2023-10-26 [2] CRAN (R 4.3.2)
+ DelayedArray           0.28.0      2023-10-24 [2] Bioconductor
+ derfinder              1.36.0      2023-10-24 [2] Bioconductor
+ derfinderHelper        1.36.0      2023-10-24 [2] Bioconductor
+ digest                 0.6.34      2024-01-11 [2] CRAN (R 4.3.2)
+ doRNG                  1.8.6       2023-01-16 [2] CRAN (R 4.3.2)
+ DOSE                   3.28.2      2023-12-10 [1] Bioconductor 3.18 (R 4.3.2)
+ downloader             0.4         2015-07-09 [2] CRAN (R 4.3.2)
+ dplyr                * 1.1.4       2023-11-17 [2] CRAN (R 4.3.2)
+ ellipsis               0.3.2       2021-04-29 [2] CRAN (R 4.3.2)
+ enrichplot             1.22.0      2023-10-24 [1] Bioconductor
+ evaluate               0.23        2023-11-01 [2] CRAN (R 4.3.2)
+ fansi                  1.0.6       2023-12-08 [2] CRAN (R 4.3.2)
+ farver                 2.1.1       2022-07-06 [2] CRAN (R 4.3.2)
+ fastmap                1.1.1       2023-02-24 [2] CRAN (R 4.3.2)
+ fastmatch              1.1-4       2023-08-18 [2] CRAN (R 4.3.2)
+ fgsea                  1.28.0      2023-10-24 [2] Bioconductor
+ filelock               1.0.3       2023-12-11 [2] CRAN (R 4.3.2)
+ forcats              * 1.0.0       2023-01-29 [2] CRAN (R 4.3.2)
+ foreach                1.5.2       2022-02-02 [2] CRAN (R 4.3.2)
+ foreign                0.8-86      2023-11-28 [3] CRAN (R 4.3.2)
+ Formula                1.2-5       2023-02-24 [2] CRAN (R 4.3.2)
+ fs                     1.6.3       2023-07-20 [2] CRAN (R 4.3.2)
+ gargle                 1.5.2       2023-07-20 [2] CRAN (R 4.3.2)
+ generics               0.1.3       2022-07-05 [2] CRAN (R 4.3.2)
+ GenomeInfoDb         * 1.38.5      2023-12-28 [2] Bioconductor 3.18 (R 4.3.2)
+ GenomeInfoDbData       1.2.11      2024-02-09 [2] Bioconductor
+ GenomicAlignments      1.38.2      2024-01-16 [2] Bioconductor 3.18 (R 4.3.2)
+ GenomicFeatures        1.54.3      2024-01-31 [2] Bioconductor 3.18 (R 4.3.2)
+ GenomicFiles           1.38.0      2023-10-24 [2] Bioconductor
+ GenomicRanges        * 1.54.1      2023-10-29 [2] Bioconductor
+ GEOquery               2.70.0      2023-10-24 [2] Bioconductor
+ ggforce                0.4.1       2022-10-04 [2] CRAN (R 4.3.2)
+ ggfun                  0.1.8       2024-12-03 [1] CRAN (R 4.3.2)
+ ggplot2              * 3.5.0       2024-02-23 [1] CRAN (R 4.3.2)
+ ggplotify              0.1.2       2023-08-09 [1] CRAN (R 4.3.2)
+ ggraph                 2.1.0       2022-10-09 [2] CRAN (R 4.3.2)
+ ggrepel                0.9.5       2024-01-10 [2] CRAN (R 4.3.2)
+ ggtree                 3.10.1      2024-02-25 [1] Bioconductor 3.18 (R 4.3.2)
+ glue                   1.7.0       2024-01-09 [2] CRAN (R 4.3.2)
+ GO.db                  3.18.0      2024-02-09 [2] Bioconductor
+ googledrive            2.1.1       2023-06-11 [2] CRAN (R 4.3.2)
+ GOSemSim               2.28.1      2024-01-17 [1] Bioconductor 3.18 (R 4.3.2)
+ graphlayouts           1.1.0       2024-01-19 [2] CRAN (R 4.3.2)
+ gridBase               0.4-7       2014-02-24 [1] CRAN (R 4.3.2)
+ gridExtra              2.3         2017-09-09 [2] CRAN (R 4.3.2)
+ gridGraphics           0.5-1       2020-12-13 [1] CRAN (R 4.3.2)
+ gson                   0.1.0       2023-03-07 [1] CRAN (R 4.3.2)
+ gtable                 0.3.4       2023-08-21 [2] CRAN (R 4.3.2)
+ HDO.db                 0.99.1      2025-01-28 [1] Bioconductor
+ here                 * 1.0.1       2020-12-13 [2] CRAN (R 4.3.2)
+ Hmisc                  5.1-1       2023-09-12 [2] CRAN (R 4.3.2)
+ hms                    1.1.3       2023-03-21 [2] CRAN (R 4.3.2)
+ htmlTable              2.4.2       2023-10-29 [2] CRAN (R 4.3.2)
+ htmltools              0.5.7       2023-11-03 [2] CRAN (R 4.3.2)
+ htmlwidgets            1.6.4       2023-12-06 [2] CRAN (R 4.3.2)
+ httpuv                 1.6.14      2024-01-26 [2] CRAN (R 4.3.2)
+ httr                   1.4.7       2023-08-15 [2] CRAN (R 4.3.2)
+ igraph                 2.0.1.9008  2024-02-09 [2] Github (igraph/rigraph@39158c6)
+ IRanges              * 2.36.0      2023-10-24 [2] Bioconductor
+ iterators              1.0.14      2022-02-05 [2] CRAN (R 4.3.2)
+ jaffelab             * 0.99.32     2024-02-26 [1] Github (LieberInstitute/jaffelab@21e6574)
+ jsonlite               1.8.8       2023-12-04 [2] CRAN (R 4.3.2)
+ KEGGREST               1.42.0      2023-10-24 [2] Bioconductor
+ knitr                  1.45        2023-10-30 [2] CRAN (R 4.3.2)
+ labeling               0.4.3       2023-08-29 [2] CRAN (R 4.3.2)
+ later                  1.3.2       2023-12-06 [2] CRAN (R 4.3.2)
+ lattice                0.22-5      2023-10-24 [3] CRAN (R 4.3.2)
+ lazyeval               0.2.2       2019-03-15 [2] CRAN (R 4.3.2)
+ lifecycle              1.0.4       2023-11-07 [2] CRAN (R 4.3.2)
+ limma                  3.58.1      2023-10-31 [2] Bioconductor
+ locfit                 1.5-9.8     2023-06-11 [2] CRAN (R 4.3.2)
+ lubridate            * 1.9.3       2023-09-27 [2] CRAN (R 4.3.2)
+ magrittr               2.0.3       2022-03-30 [2] CRAN (R 4.3.2)
+ MASS                   7.3-60.0.1  2024-01-13 [3] CRAN (R 4.3.2)
+ Matrix                 1.6-5       2024-01-11 [3] CRAN (R 4.3.2)
+ MatrixGenerics       * 1.14.0      2023-10-24 [2] Bioconductor
+ matrixStats          * 1.2.0       2023-12-11 [2] CRAN (R 4.3.2)
+ memoise                2.0.1       2021-11-26 [2] CRAN (R 4.3.2)
+ mime                   0.12        2021-09-28 [2] CRAN (R 4.3.2)
+ munsell                0.5.0       2018-06-12 [2] CRAN (R 4.3.2)
+ nlme                   3.1-164     2023-11-27 [3] CRAN (R 4.3.2)
+ NLP                    0.3-2       2024-11-20 [1] CRAN (R 4.3.2)
+ nnet                   7.3-19      2023-05-03 [3] CRAN (R 4.3.2)
+ openssl                2.1.1       2023-09-25 [2] CRAN (R 4.3.2)
+ org.Hs.eg.db           3.18.0      2024-02-09 [2] Bioconductor
+ patchwork              1.2.0       2024-01-08 [2] CRAN (R 4.3.2)
+ pheatmap               1.0.12      2019-01-04 [2] CRAN (R 4.3.2)
+ pillar                 1.9.0       2023-03-22 [2] CRAN (R 4.3.2)
+ pkgconfig              2.0.3       2019-09-22 [2] CRAN (R 4.3.2)
+ plyr                   1.8.9       2023-10-02 [2] CRAN (R 4.3.2)
+ png                    0.1-8       2022-11-29 [2] CRAN (R 4.3.2)
+ polyclip               1.10-6      2023-09-27 [2] CRAN (R 4.3.2)
+ prettyunits            1.2.0       2023-09-24 [2] CRAN (R 4.3.2)
+ progress               1.2.3       2023-12-06 [2] CRAN (R 4.3.2)
+ promises               1.2.1       2023-08-10 [2] CRAN (R 4.3.2)
+ purrr                * 1.0.2       2023-08-10 [2] CRAN (R 4.3.2)
+ qvalue                 2.34.0      2023-10-24 [2] Bioconductor
+ R6                     2.5.1       2021-08-19 [2] CRAN (R 4.3.2)
+ rafalib              * 1.0.0       2015-08-09 [1] CRAN (R 4.3.2)
+ rappdirs               0.3.3       2021-01-31 [2] CRAN (R 4.3.2)
+ RColorBrewer           1.1-3       2022-04-03 [2] CRAN (R 4.3.2)
+ Rcpp                   1.0.12      2024-01-09 [2] CRAN (R 4.3.2)
+ RCurl                  1.98-1.14   2024-01-09 [2] CRAN (R 4.3.2)
+ readr                * 2.1.5       2024-01-10 [2] CRAN (R 4.3.2)
+ recount                1.28.0      2023-10-24 [2] Bioconductor
+ rentrez                1.2.3       2020-11-10 [2] CRAN (R 4.3.2)
+ reshape2               1.4.4       2020-04-09 [2] CRAN (R 4.3.2)
+ restfulr               0.0.15      2022-06-16 [2] CRAN (R 4.3.2)
+ reticulate             1.35.0      2024-01-31 [2] CRAN (R 4.3.2)
+ rjson                  0.2.21      2022-01-09 [2] CRAN (R 4.3.2)
+ rlang                  1.1.3       2024-01-10 [2] CRAN (R 4.3.2)
+ rmarkdown              2.25        2023-09-18 [2] CRAN (R 4.3.2)
+ rngtools               1.5.2       2021-09-20 [2] CRAN (R 4.3.2)
+ rpart                  4.1.23      2023-12-05 [3] CRAN (R 4.3.2)
+ rprojroot              2.0.4       2023-11-05 [2] CRAN (R 4.3.2)
+ rrvgo                * 1.14.2      2024-03-11 [1] Bioconductor 3.18 (R 4.3.2)
+ Rsamtools              2.18.0      2023-10-24 [2] Bioconductor
+ RSpectra               0.16-1      2022-04-24 [2] CRAN (R 4.3.2)
+ RSQLite                2.3.5       2024-01-21 [2] CRAN (R 4.3.2)
+ rstudioapi             0.15.0      2023-07-07 [2] CRAN (R 4.3.2)
+ rtracklayer            1.62.0      2023-10-24 [2] Bioconductor
+ S4Arrays               1.2.0       2023-10-24 [2] Bioconductor
+ S4Vectors            * 0.40.2      2023-11-23 [2] Bioconductor 3.18 (R 4.3.2)
+ scales                 1.3.0       2023-11-28 [2] CRAN (R 4.3.2)
+ scatterpie             0.2.4       2024-08-28 [1] CRAN (R 4.3.2)
+ segmented              2.0-3       2024-02-16 [1] CRAN (R 4.3.2)
+ sessioninfo          * 1.2.2       2021-12-06 [2] CRAN (R 4.3.2)
+ shadowtext             0.1.4       2024-07-18 [1] CRAN (R 4.3.2)
+ shiny                  1.8.0       2023-11-17 [2] CRAN (R 4.3.2)
+ slam                   0.1-55      2024-11-13 [1] CRAN (R 4.3.2)
+ SparseArray            1.2.3       2023-12-25 [2] Bioconductor 3.18 (R 4.3.2)
+ statmod                1.5.0       2023-01-06 [2] CRAN (R 4.3.2)
+ stringi                1.8.3       2023-12-11 [2] CRAN (R 4.3.2)
+ stringr              * 1.5.1       2023-11-14 [2] CRAN (R 4.3.2)
+ SummarizedExperiment * 1.32.0      2023-10-24 [2] Bioconductor
+ tibble               * 3.2.1       2023-03-20 [2] CRAN (R 4.3.2)
+ tidygraph              1.3.1       2024-01-30 [2] CRAN (R 4.3.2)
+ tidyr                * 1.3.1       2024-01-24 [2] CRAN (R 4.3.2)
+ tidyselect             1.2.0       2022-10-10 [2] CRAN (R 4.3.2)
+ tidytree               0.4.6       2023-12-12 [1] CRAN (R 4.3.2)
+ tidyverse            * 2.0.0       2023-02-22 [2] CRAN (R 4.3.2)
+ timechange             0.3.0       2024-01-18 [2] CRAN (R 4.3.2)
+ tm                     0.7-15      2024-11-18 [1] CRAN (R 4.3.2)
+ treeio                 1.26.0      2023-10-24 [1] Bioconductor
+ treemap                2.4-4       2023-05-25 [1] CRAN (R 4.3.2)
+ tweenr                 2.0.2       2022-09-06 [2] CRAN (R 4.3.2)
+ tzdb                   0.4.0       2023-05-12 [2] CRAN (R 4.3.2)
+ umap                   0.2.10.0    2023-02-01 [1] CRAN (R 4.3.2)
+ utf8                   1.2.4       2023-10-22 [2] CRAN (R 4.3.2)
+ VariantAnnotation      1.48.1      2023-11-15 [2] Bioconductor
+ vctrs                  0.6.5       2023-12-01 [2] CRAN (R 4.3.2)
+ viridis                0.6.5       2024-01-29 [2] CRAN (R 4.3.2)
+ viridisLite            0.4.2       2023-05-02 [2] CRAN (R 4.3.2)
+ withr                  3.0.0       2024-01-16 [2] CRAN (R 4.3.2)
+ wordcloud              2.6         2018-08-24 [1] CRAN (R 4.3.2)
+ xfun                   0.42        2024-02-08 [2] CRAN (R 4.3.2)
+ XML                    3.99-0.16.1 2024-01-22 [2] CRAN (R 4.3.2)
+ xml2                   1.3.6       2023-12-04 [2] CRAN (R 4.3.2)
+ xtable                 1.8-4       2019-04-21 [2] CRAN (R 4.3.2)
+ XVector                0.42.0      2023-10-24 [2] Bioconductor
+ yaml                   2.3.8       2023-12-11 [2] CRAN (R 4.3.2)
+ yulab.utils            0.1.9       2025-01-07 [1] CRAN (R 4.3.2)
+ zlibbioc               1.48.0      2023-10-24 [2] Bioconductor
 
  [1] /users/neagles/R/4.3.x
  [2] /jhpce/shared/community/core/conda_R/4.3.x/R/lib64/R/site-library
@@ -398,4 +1808,4 @@ null device
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Thu Jan 30 01:12:56 PM EST 2025
+Thu Feb 20 04:48:11 PM EST 2025
