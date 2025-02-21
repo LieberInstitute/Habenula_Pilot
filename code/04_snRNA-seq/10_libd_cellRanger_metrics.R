@@ -4,6 +4,7 @@
 library("tidyverse")
 library("here")
 library("ggrepel")
+library("SingleCellExperiment")
 
 ## prep dirs ##
 plot_dir <- here("plots", "04_snRNA-seq", "10_libd_cellRanger_metrics")
@@ -75,5 +76,59 @@ quality_boxplot <- qc_long |>
     labs( y = "Cell Ranger Metric Value")
 
 ggsave(quality_boxplot, filename = here(plot_dir, "quality_boxplot.png"))
+
+#### Final quality metrics ####
+
+load(here("processed-data", "99_paper_figs", "sce_objects",  "sce_Habenula_Pilot.Rdata"), verbose = TRUE)
+
+pd <- as.data.frame(colData(sce))
+
+rm(sce)
+
+post_qc_metrics <- pd |>
+    group_by(Sample) |>
+    summarize(Median.Genes.per.Cell = median(detected),
+              Median.UMI.Counts.per.Cell = median(sum)) |>
+    mutate(NeuN_sorted = Sample %in% c("Br1092", "Br1204", "Br5555", "Br5558"))
+
+post_qc_long <- post_qc_metrics  |>
+    pivot_longer(!c("Sample","NeuN_sorted"), names_to = "qc_metric", values_to = "qc_value_postQC") |>
+    mutate(concern_sample = Sample %in% concern_samples)
+
+post_qc_quality_boxplot <- post_qc_long |>
+    ggplot(aes(x = NeuN_sorted, y = qc_value_postQC, color = NeuN_sorted)) +
+    # geom_boxplot(outlier.shape = NULL) +
+    geom_boxplot() +
+    # geom_jitter() +
+    geom_text(aes(label = ifelse(concern_sample, Sample, "")),
+              color = "black", size = 2) +
+    theme_bw() +
+    facet_wrap(~qc_metric, scales = "free_y") +
+    labs( y = "Post Quality Control Metric Value")
+
+ggsave(post_qc_quality_boxplot, filename = here(plot_dir, "quality_boxplot_post_qc.png"))
+
+
+#### Compare ####
+
+qc_compare <- post_qc_long |>
+    dplyr::rename(sample_id = Sample) |>
+    left_join(qc_long |> select(sample_id, qc_metric, qc_value)) |>
+    pivot_longer(!c("sample_id","NeuN_sorted","qc_metric","concern_sample"), names_to = "qc_state", values_to = "qc_value") |>
+    mutate(qc_state = factor(ifelse(grepl("postQC", qc_state), "postQC","preQC"),
+                             levels = c("preQC","postQC")))
+
+qc_compare_boxplot <- qc_compare |>
+    ggplot(aes(x = qc_state, y = qc_value, color = NeuN_sorted)) +
+    geom_boxplot(outlier.shape = NULL) +
+    geom_line(aes(group = sample_id), color = "black") +
+    geom_point() +
+    geom_text(aes(label = ifelse(concern_sample, sample_id, "")),
+              color = "black", size = 2) +
+    theme_bw() +
+    facet_wrap(~qc_metric+NeuN_sorted, scales = "free_y") +
+    labs( y = "Post Quality Control Metric Value")
+
+ggsave(qc_compare_boxplot, filename = here(plot_dir, "quality_boxplot_comapre.png"))
 
 
