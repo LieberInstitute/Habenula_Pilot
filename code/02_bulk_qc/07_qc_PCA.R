@@ -31,7 +31,8 @@ sum_Prop <- prop_long |>
 
 ## grab QC values
 pd <- as.data.frame(colData(rse_gene)) |>
-    left_join(sum_Prop)
+    left_join(sum_Prop) |>
+    mutate(PrimaryDx =  gsub("Schizo", "SCZD", PrimaryDx))
 
 qc_variables <- c("numReads", "numMapped", "numUnmapped", "overallMapRate", "concordMapRate", "totalMapped", "mitoMapped", "mitoRate", "rRNA_rate", "totalAssignedGene","Thal_sum")
 
@@ -51,6 +52,21 @@ pca_vars_labs<- paste0("PC", seq(along = pca_vars), ": ",
                        pca_vars, "% Var Expl")
 
 colnames(pca$x) <- pca_vars_labs
+
+## PC1 vs PC2
+
+pc1v2 <- pca$x |>
+    as_tibble()|>
+    add_column(PrimaryDx = pd$PrimaryDx,
+               BrNum = pd$BrNum) |>
+    ggplot(aes(x = `PC1: 16.7% Var Expl`, y = `PC2: 8.61% Var Expl`)) +
+    geom_point(aes(color = PrimaryDx)) +
+    geom_text_repel(aes(label = ifelse(BrNum %in% c("Br5572", "Br5459"), BrNum, ""))) +
+    theme_bw() +
+    coord_equal()
+
+ggsave(pc1v2, filename= here(plot_dir, "pc1v2.png"), height = 5)
+
 
 pca_long <- reshape2::melt(pca$x[,1:10]) |>
     rename(RNum = Var1, PCA = Var2, pca_value = value) |>
