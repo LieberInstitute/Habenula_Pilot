@@ -331,6 +331,47 @@ dev.off()
 #  barplot_n_nuc_bulk_tot
 # dev.off()
 
+
+#### Consistent neurons ####
+# Check snRNAseq number of habenula neurons recovered is consistent with the
+# predicted proportion of Hb neurons from bulk-RNAseq by deconvolution
+rm(sce)
+load(here("processed-data", "rse_objects", "rse_gene_Habenula_Pilot.rda"), verbose = TRUE)
+colData(rse_gene)
+
+bulk_Hb <- colData(rse_gene) |>
+    as.data.frame() |>
+    select(Sample = BrNum, Hb_fraction_bulk = tot.Hb)
+
+sn_Hb <- prop_ambig_plus_bulk |>
+    filter(Drop == "Post-drop",
+           grepl("Hb", ct_levels)) |>
+    group_by(Sample, NeuN) |>
+    summarize(Hb_fraction_sn = sum(prop)) |>
+    ungroup() |>
+    add_row(Sample = "Br5558", NeuN = "NeuN.Sorted", Hb_fraction_sn = 0)
+
+fraction_Hb <- left_join(sn_Hb, bulk_Hb)
+# Sample NeuN          Hb_fraction_sn Hb_fraction_bulk
+# <chr>  <chr>                  <dbl>            <dbl>
+# 1 Br1092 NeuN.Sorted      0.0662            0.138
+# 2 Br1204 NeuN.Sorted          0.690             0.383
+# 3 Br1469 NeuN.Unsorted        0.0144            0.312
+# 4 Br1735 NeuN.Unsorted        0.0832            0.299
+# 5 Br5555 NeuN.Sorted          0.499             0.328
+# 6 Br5639 NeuN.Unsorted        0.00490           0.0954
+# 7 Br5558 NeuN.Sorted          0                 0.0291
+
+fraction_Hb_scater <- fraction_Hb |>
+    ggplot(aes(Hb_fraction_sn, Hb_fraction_bulk, color = NeuN)) +
+    geom_point() +
+    geom_text(aes(label = Sample), color = "black", size = 2, vjust = -1) +
+    geom_abline(color = "red", linetype = "dashed") +
+    theme_bw() +
+    labs(x = "Prop Hb snRNA-seq", y = "Predicted Prop Hb Bulk")
+
+ggsave(fraction_Hb_scater, file = here(plot_dir, "fraction_Hb_scater.png"), height = 5)
+
 sessioninfo::session_info()
 
 # ─ Session info ──────────────────────────────────────────────────────────────────────────────
