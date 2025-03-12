@@ -214,16 +214,17 @@ hex_copies_max <- halo_copies_long |>
     ) +
     # scale_fill_continuous(type = "viridis") + ## top value of 100 for visualization
     scale_fill_gradientn(
-        name = "Max Copies\n(1:200)",
+        name = "Max Copies\n(capped at 200)",
         colors = rev(viridisLite::rocket(21)),
         na.value = "#CCCCCC50",
         limits = c(1,200) ## cap color scale don't filter data
     )+ coord_equal() +
     theme_bw() +
-    facet_grid(Sample~probe2)
+    facet_grid(Sample~probe2) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.png")), height = 6, width = 9)
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.pdf")), height = 6, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.png")), height = 9, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.pdf")), height = 9, width = 9)
 
 hex_copies_max_Br5422 <- halo_copies_long |>
     filter(Sample == "Br5422") |>
