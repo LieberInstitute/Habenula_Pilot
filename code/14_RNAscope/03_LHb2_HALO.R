@@ -9,40 +9,53 @@ library("sessioninfo")
 plot_dir <- here("plots", "14_RNAscope", "03_LHb2_HALO")
 if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
-##local
-datadir <- "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp2/"
 ## JHPCE
-# datadir <- here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp1")
+datadir <- here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2")
 
 ## local
 list.files(datadir, recursive = TRUE)
-# [1] "Br6462/LHbExperiment_Br6462_secondpass.xls"
-# [2] "Br8112/LHbExperiment2_Br8112_thirdtoleft_20x_Sample1881__object_RESULTS.csv"
 
-
-halo <- list(
-    Br6462 = read_csv(paste0(datadir, "Br6462/NEWLHbExperiment2_Br6462_rightslice_20x_job1895_object_RESULTS.csv")) |> mutate(Sample = "Br6462"),
-    Br8112 = read_csv(paste0(datadir, "Br8112/LHbExperiment2_Br8112_thirdtoleft_20x_job1881__object_RESULTS.csv")) |> mutate(Sample = "Br8112")
+halo_fn <- list(
+    Br6462 = here(datadir, "Br6462", "NEWLHbExperiment2_Br6462_rightslice_20x_job1895_object_RESULTS.csv"),
+    Br8112 = here(datadir, "Br8112", "LHbExperiment2_Br8112_thirdtoleft_20x_job1881__object_RESULTS.csv"),
+    Br8433 = here("processed-data","14_RNAscope","HALO_data","revision_2025_03","HALO_Output_Br8433_LHb_Panel2_ESRP1_CRH_MCOLN3_POU4F1.csv"), ## review data
+    Br9090 = here("processed-data","14_RNAscope","HALO_data","revision_2025_03","HALO_Output_Br9090_LHb_Panel2_CRH_MCOLN3_ESRP1_POU4F1.csv")
     )
+
+map_lgl(halo_fn, file.exists)
+
+halo <- map2(halo_fn, names(halo_fn), ~read_csv(.x, show_col_types = FALSE) |> mutate(Sample = .y))
 
 map_int(halo, ncol)
 map_int(halo, nrow)
-# Br6462 Br8112
-# 19554  15395
+# Br6462 Br8112 Br8433 Br9090
+# 19554  15395  17405  19871
 
 # ## flip y for Br8112
 halo$Br8112$YMax <- max(halo$Br8112$YMax) - halo$Br8112$YMax
 halo$Br8112$YMin <- max(halo$Br8112$YMax) - halo$Br8112$YMin
 
-# halo$Br8112 |>
-#     ggplot() +
-#     geom_rect(aes(
-#         xmin = XMin, xmax = XMax,
-#         ymin = YMin, ymax = YMax
-#     ))
+map(halo, ~.x |>
+        ggplot() +
+        geom_rect(aes(
+            xmin = XMin, xmax = XMax,
+            ymin = YMin, ymax = YMax
+        )) +
+        coord_equal())
+
+
+map(halo, colnames)
+
+## match colnames in old and new data
+colnames(halo$Br6462) <- gsub(".*?Opal ", "" ,colnames(halo$Br6462))
+colnames(halo$Br8112) <- gsub(".*?Opal ", "" ,colnames(halo$Br8112))
+colnames(halo$Br8433) <- gsub(" - ", "", gsub("POU4F1|CRH|MCOLN3|ESRP1", "", colnames(halo$Br8433)))
+colnames(halo$Br9090) <- gsub(" - ", "", gsub("POU4F1|CRH|MCOLN3|ESRP1", "", colnames(halo$Br9090)))
 
 ## subset to common colnames
-common_colnames <- intersect(colnames(halo$Br6462), colnames(halo$Br8112))
+common_colnames <- map(halo, colnames)
+common_colnames <- Reduce("intersect", common_colnames)
+
 halo <- map(halo, ~.x[,common_colnames])
 ## rbind tables
 halo <- do.call("rbind", halo)
@@ -66,8 +79,10 @@ experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
 halo_copies_long <- halo |>
   select(Sample, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
   pivot_longer(!c(Sample, `Object Id`, XMin, XMax, YMin, YMax), names_to = "probe", values_to = "copies") |>
-  mutate(probe = factor(gsub("^2.*Opal (\\d+) Copies", "\\1", probe))) |>
+  mutate(probe = factor(gsub("(\\d+) Copies", "\\1", probe))) |>
   left_join(experiment)
+
+halo_copies_long |> count(Sample, probe2)
 
 #### ggpairs ####
 halo_copies_wide <- halo_copies_long |>
@@ -129,8 +144,6 @@ ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb2_cell_count_quant
 
 #### distribution
 copies_density <- halo_copies_long_quant |>
-  # filter(Sample == "Sample1862") |>
-  # filter(copies != 0) |>
   ggplot(aes(x = copies, fill = copy_quant)) +
   geom_histogram(binwidth = 1) +
   theme_bw() +
@@ -164,7 +177,6 @@ hex_copies_max <- halo_copies_long |>
     stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
                      fun = max, bins = 100
     ) +
-    # scale_fill_continuous(type = "viridis") + ## top value of 100 for visualization
     scale_fill_gradientn(
         name = "Max Copies\n(capped at 200)",
         colors = rev(viridisLite::rocket(21)),
@@ -173,10 +185,10 @@ hex_copies_max <- halo_copies_long |>
     )+ coord_equal() +
     theme_bw() +
     facet_grid(Sample~probe2) +
-    theme(legend.position = "bottom")
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb2_hex_copies_max_facet.png")), height = 5, width = 7)
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb2_hex_copies_max_facet.pdf")), height = 5, width = 7)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb2_hex_copies_max_facet.png")), height = 10, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb2_hex_copies_max_facet.pdf")), height = 10, width = 9)
 
 
 ## max quant cell_max_quant <- halo_copies_long_quant |>
@@ -260,15 +272,15 @@ confusion_top100 <- halo_copies_cat2 |>
     ggplot(aes(cat.x, cat.y, fill = n)) +
     geom_tile() +
     geom_text(aes(label = n), color = "white") +
-    facet_wrap(~Sample) +
+    facet_wrap(~Sample, nrow = 1) +
     # scale_fill_gradient(name = "count", trans = "log") +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90),
           axis.title.x=element_blank(),
           axis.title.y=element_blank())
 
-ggsave(confusion_top100, filename = here(plot_dir, "LHb2_confusion_top100.png"), height = 4, width = 8)
-ggsave(confusion_top100, filename = here(plot_dir, "LHb2_confusion_top100.pdf"), height = 4, width = 8)
+ggsave(confusion_top100, filename = here(plot_dir, "LHb2_confusion_top100.png"), height = 4, width = 9)
+ggsave(confusion_top100, filename = here(plot_dir, "LHb2_confusion_top100.pdf"), height = 4, width = 9)
 
 
 #### cell plots ####
@@ -347,9 +359,9 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
                                   "690 ESRP1 (LHb.6)" = "#008080"), "Top100 Nuclei") +
     coord_equal()+
     theme_void() +
-    facet_wrap(~Sample)
+    facet_wrap(~Sample, ncol = 1)
 
-ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadow.pdf")), height = 3, width = 9)
+ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadow.pdf")), height = 10, width = 5)
 
 ## for main fig
 halo_copies_rank_cut_shadow_Br8112 <- halo_copies_rank |>
@@ -400,4 +412,11 @@ ggsave(halo_copies_rank_cut_shadowIN_Br8112, filename = here(plot_dir, paste0("L
 
 halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "LHb_top10_nuclei.csv"))
 
+# slurmjobs::job_single(name = "03_LHb2_HALO", memory = "10G", cores = 1, create_shell = TRUE, command = "Rscript 03_LHb2_HALO.R")
 
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
