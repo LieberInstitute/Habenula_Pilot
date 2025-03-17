@@ -207,6 +207,7 @@ hex_copies_median <- ggplot(halo_copies_long) +
 ggsave(hex_copies_median, filename = here(plot_dir, paste0("MHb_hex_copies_median_facet.png")), height = 6, width = 9)
 
 hex_copies_max <- halo_copies_long |>
+    filter(Sample %in% c("Br5422", "Br8433")) |>
     mutate(copies = ifelse(copies > 200, 200, copies)) |> # cap data at 200 counts for visualization
     ggplot() +
     stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
@@ -223,8 +224,8 @@ hex_copies_max <- halo_copies_long |>
     facet_grid(Sample~probe2) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.png")), height = 9, width = 9)
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.pdf")), height = 9, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.png")), height = 7, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.pdf")), height = 7, width = 9)
 
 hex_copies_max_Br5422 <- halo_copies_long |>
     filter(Sample == "Br5422") |>
@@ -259,9 +260,10 @@ hex_copies_max_Br8112 <- halo_copies_long |>
     )+ coord_equal() +
     theme_bw() +
     facet_grid(Sample~probe2) +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(hex_copies_max_Br8112, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet_Br8112.pdf")), height = 5, width = 8)
+ggsave(hex_copies_max_Br8112, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet_Br8112.pdf")), height = 5, width = 5)
 
 
 
