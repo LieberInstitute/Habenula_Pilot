@@ -399,7 +399,7 @@ halo_copies_rank_cut_shadow_Br8433 <- halo_copies_rank |>
     geom_rect(aes(
         xmin = XMin, xmax = XMax,
         ymin = YMin, ymax = YMax,
-        fill = copies > 1
+        fill = copies > 10
     )) +
     geom_point(data = halo_copies_rank_ID |>
                    filter(Sample == "Br8433"),
@@ -426,7 +426,7 @@ halo_copies_rank_cut_shadowIN_Br8433 <- halo_copies_rank |>
     geom_rect(aes(
         xmin = XMin-adj, xmax = XMax+adj,
         ymin = YMin-(adj*2), ymax = YMax+(adj*2),
-        fill = copies > 2
+        fill = copies > 10
     )) +
     scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black")) +
     coord_equal()+
