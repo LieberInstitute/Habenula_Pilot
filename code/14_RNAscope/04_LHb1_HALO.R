@@ -31,8 +31,8 @@ halo$Br8112$YMax <- max(halo$Br8112$YMax) - halo$Br8112$YMax
 halo$Br8112$YMin <- max(halo$Br8112$YMax) - halo$Br8112$YMin
 
 ## flip y for Br8433
-halo$BrBr8433$YMax <- max(halo$Br8433$YMax) - halo$BrBr8433$YMax
-halo$BrBr8433$YMin <- max(halo$Br8433$YMax) - halo$BrBr8433$YMin
+halo$Br8433$YMax <- max(halo$Br8433$YMax) - halo$Br8433$YMax
+halo$Br8433$YMin <- max(halo$Br8433$YMax) - halo$Br8433$YMin
 
 ## test
 map(halo, ~.x |>
