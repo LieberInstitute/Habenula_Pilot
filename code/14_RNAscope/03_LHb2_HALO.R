@@ -364,9 +364,9 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
 ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadow.pdf")), height = 10, width = 5)
 
 ## for main fig
-halo_copies_rank_cut_shadow_Br8112 <- halo_copies_rank |>
+halo_copies_rank_cut_shadow_Br8433 <- halo_copies_rank |>
     filter(probe == 520,
-           Sample == "Br8112") |>
+           Sample == "Br8433") |>
     ggplot() +
     geom_rect(aes(
         xmin = XMin, xmax = XMax,
@@ -374,7 +374,7 @@ halo_copies_rank_cut_shadow_Br8112 <- halo_copies_rank |>
         fill = copies > 10
     )) +
     geom_point(data = halo_copies_rank_ID |>
-               filter(Sample == "Br8112"),
+               filter(Sample == "Br8433"),
                aes(x = XMax,
                    y = YMax,
                    color = probe2
@@ -387,13 +387,13 @@ halo_copies_rank_cut_shadow_Br8112 <- halo_copies_rank |>
     theme_void() +
     facet_wrap(~Sample)
 
-ggsave(halo_copies_rank_cut_shadow_Br8112, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadow_Br8112.pdf")), height = 4, width = 4)
+ggsave(halo_copies_rank_cut_shadow_Br8433, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadow_Br8433.pdf")), height = 4, width = 4)
 
 ## just POU4F1 inset
 adj = 15
-halo_copies_rank_cut_shadowIN_Br8112 <- halo_copies_rank |>
+halo_copies_rank_cut_shadowIN_Br8433 <- halo_copies_rank |>
     filter(probe == 520,
-           Sample == "Br8112") |>
+           Sample == "Br8433") |>
     ggplot() +
     geom_rect(aes(
         xmin = XMin-adj, xmax = XMax+adj,
@@ -405,7 +405,7 @@ halo_copies_rank_cut_shadowIN_Br8112 <- halo_copies_rank |>
     theme_void() +
     theme(legend.position = "None")
 
-ggsave(halo_copies_rank_cut_shadowIN_Br8112, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadowIN_Br8112.pdf")), height = 1, width = 1)
+ggsave(halo_copies_rank_cut_shadowIN_Br8433, filename = here(plot_dir, paste0("LHb2_cell_count_rank_cut_facet_shadowIN_Br8433.pdf")), height = 1, width = 1)
 
 
 #### Export top objects ####
