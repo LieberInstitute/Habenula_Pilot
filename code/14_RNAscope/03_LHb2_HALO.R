@@ -19,7 +19,7 @@ halo_fn <- list(
     Br6462 = here(datadir, "Br6462", "NEWLHbExperiment2_Br6462_rightslice_20x_job1895_object_RESULTS.csv"),
     Br8112 = here(datadir, "Br8112", "LHbExperiment2_Br8112_thirdtoleft_20x_job1881__object_RESULTS.csv"),
     Br8433 = here("processed-data","14_RNAscope","HALO_data","revision_2025_03","HALO_Output_Br8433_LHb_Panel2_ESRP1_CRH_MCOLN3_POU4F1.csv"), ## review data
-    Br9090 = here("processed-data","14_RNAscope","HALO_data","revision_2025_03","HALO_Output_Br9090_LHb_Panel2_CRH_MCOLN3_ESRP1_POU4F1.csv")
+    Br9090 = here("processed-data","14_RNAscope","HALO_data","revision_2025_03","HALO_Output_REDO_BVRemoved_Br9090_LHb_Panel2_CRH_MCOLN3_ESRP1_POU4F1.csv")
     )
 
 map_lgl(halo_fn, file.exists)
@@ -410,7 +410,7 @@ ggsave(halo_copies_rank_cut_shadowIN_Br8433, filename = here(plot_dir, paste0("L
 
 #### Export top objects ####
 
-halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "LHb_top10_nuclei.csv"))
+halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "LHb2_top10_nuclei.csv"))
 
 # slurmjobs::job_single(name = "03_LHb2_HALO", memory = "10G", cores = 1, create_shell = TRUE, command = "Rscript 03_LHb2_HALO.R")
 
