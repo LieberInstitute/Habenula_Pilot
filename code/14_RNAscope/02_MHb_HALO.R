@@ -473,12 +473,11 @@ top_specific_nuc <- map_dfr(probe_list, function(target_probe){
     return(top_specific_nuc)
 })
 
-
 top_specific_nuc |>
-    arrange(probe, copies) |>
+    arrange(probe, -copies) |>
     mutate(specific_rank = row_number()) |>
     left_join(halo_copies_wide) |>
-    select(Sample, `Object Id`, target_propbe = probe2, copies_rank, specific_rank, `520 POU4F1 (Hb)`:`690 CCK (MHb.1)`) |>
+    select(Sample, `Object Id`, target_probe = probe2, copies_rank, specific_rank, `520 POU4F1 (Hb)`:`690 CCK (MHb.1)`) |>
     write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp", "MHb_top10_nuclei_specific_Br8433.csv"))
 
 
