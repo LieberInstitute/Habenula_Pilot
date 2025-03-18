@@ -412,6 +412,44 @@ ggsave(halo_copies_rank_cut_shadowIN_Br8433, filename = here(plot_dir, paste0("L
 
 halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "LHb2_top10_nuclei.csv"))
 
+## find top specific nuc
+probe_list <- experiment |> pull(probe2)
+
+probe_list <- probe_list[!grepl("POU4F1", probe_list)]
+
+top_specific_nuc <- map_dfr(probe_list, function(target_probe){
+    non_target_probe = probe_list[probe_list != target_probe]
+
+    no_expression_non_target <- halo_copies_rank |>
+        filter(Sample == "Br8433",
+               probe2 %in% non_target_probe,
+               copies == 0) |>
+        ungroup() |>
+        count(`Object Id`) |>
+        filter(n==2) |>
+        pull(`Object Id`)
+
+    message(length(no_expression_non_target))
+
+    top_specific_nuc <- halo_copies_rank |>
+        filter(Sample == "Br8433",
+               probe2 == target_probe,
+               `Object Id` %in% no_expression_non_target) |>
+        arrange(copies_rank) |>
+        slice(1:10)
+
+    return(top_specific_nuc)
+})
+
+
+top_specific_nuc |>
+    arrange(probe, -copies) |>
+    mutate(specific_rank = row_number()) |>
+    left_join(halo_copies_wide) |>
+    select(Sample, `Object Id`, target_probe = probe2, copies_rank, specific_rank, `520 POU4F1 (Hb)`:`690 ESRP1 (LHb.6)`) |>
+    write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp2", "LHb2_top10_nuclei_specific_Br8433.csv"))
+
+
 # slurmjobs::job_single(name = "03_LHb2_HALO", memory = "10G", cores = 1, create_shell = TRUE, command = "Rscript 03_LHb2_HALO.R")
 
 ## Reproducibility information
