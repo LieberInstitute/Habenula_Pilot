@@ -372,14 +372,14 @@ halo_copies_rank_ID  <- halo_copies_rank |>
 halo_copies_rank_ID |> count() |> filter(n>1)
 
 halo_copies_rank_cut_shadow <- halo_copies_rank |>
-    filter(probe == 520) |>
+    filter(probe == 520 , Sample %in% c("Br5422","Br8433")) |>
     ggplot() +
     geom_rect(aes(
         xmin = XMin, xmax = XMax,
         ymin = YMin, ymax = YMax,
         fill = copies > 1
     )) +
-    geom_point(data = halo_copies_rank_ID,
+    geom_point(data = halo_copies_rank_ID |> filter(Sample %in% c("Br5422","Br8433")),
                aes(x = XMax,
                    y = YMax,
                    color = probe2
@@ -392,8 +392,31 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
     theme_void() +
     facet_wrap(~Sample)
 
-ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 7)
+ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 5)
 
+## seperate Br8112 - different probes
+halo_copies_rank_cut_shadow_Br8112 <- halo_copies_rank |>
+    filter(probe == 520, Sample == "Br8112") |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = copies > 10
+    )) +
+    geom_point(data = halo_copies_rank_ID |>
+                   filter(Sample == "Br8112"),
+               aes(x = XMax,
+                   y = YMax,
+                   color = probe2
+               ), size = 0.7) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "CHRNB4 Copy > 2") +
+    scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
+                                  "570 CHAT (Mhb.2)" = "#FAA0A0"), "Top100 Nuclei") +
+    coord_equal()+
+    theme_void() +
+    facet_wrap(~Sample)
+
+ggsave(halo_copies_rank_cut_shadow_Br8112, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow_Br8112.pdf")), height = 3, width = 4)
 
 halo_copies_rank_cut_shadow_Br8433 <- halo_copies_rank |>
     filter(probe == 520, Sample == "Br8433") |>
