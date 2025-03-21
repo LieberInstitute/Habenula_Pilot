@@ -66,7 +66,7 @@ experiment <- rbind(
        Sample = "Br5422"),
     tibble(probe = factor(c(690, 620, 570, 520)),
            marker = c("CCK", "BHLHE22","CHAT","CHRNB4"), ## * alt probes used in Josh's run
-           cluster = c("MHb.1", "Mhb.3", "Mhb.2", "Hb"),
+           cluster = c("MHb.1", "Mhb.3", "Mhb.2", "MHb"),
            Sample = "Br8112")) |>
     rbind(tibble(probe = factor(c(690, 620, 570, 520)), ## additional sample for review
                  marker = c("CCK", "EBF3","CHAT","POU4F1"),
@@ -263,7 +263,7 @@ hex_copies_max_Br8112 <- halo_copies_long |>
     theme(legend.position = "bottom") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(hex_copies_max_Br8112, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet_Br8112.pdf")), height = 5, width = 5)
+ggsave(hex_copies_max_Br8112, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet_Br8112.pdf")), height = 5, width = 6)
 
 
 
@@ -377,14 +377,14 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
     geom_rect(aes(
         xmin = XMin, xmax = XMax,
         ymin = YMin, ymax = YMax,
-        fill = copies > 1
+        fill = copies > 10
     )) +
     geom_point(data = halo_copies_rank_ID |> filter(Sample %in% c("Br5422","Br8433")),
                aes(x = XMax,
                    y = YMax,
                    color = probe2
                ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "Hb marker Copy > 2") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy > 10") +
     scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
                                   "570 CHAT (Mhb.2)" = "#FAA0A0",
                                   "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
@@ -432,7 +432,7 @@ halo_copies_rank_cut_shadow_Br8433 <- halo_copies_rank |>
                    y = YMax,
                    color = probe2
                ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy > 2") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy > 10") +
     scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
                                   "570 CHAT (Mhb.2)" = "#FAA0A0",
                                   "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
