@@ -7,6 +7,7 @@ library(edgeR)
 library(limma)
 library(tidyverse)
 library(readxl)
+library(qvalue)
 library(sessioninfo)
 
 rse_path = here('processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda')
@@ -22,6 +23,7 @@ covars = c(
     'qSV5', 'qSV6', 'qSV7', 'qSV8', 'tot.Hb', 'tot.Thal'
 )
 coef_variable = 'nicotine_toxTRUE'
+fdr = 0.1
 
 dir.create(plot_dir, showWarnings = FALSE)
 
@@ -82,6 +84,9 @@ top_genes = topTable(
     ) |>
     as_tibble()
 
+#   There are no DEGs
+stopifnot(!any(top_genes$adj.P.Val < fdr))
+
 ## Histogram of p values
 pdf(file.path(plot_dir, 'p_val_hist.pdf'))
 hist(top_genes$P.Value, xlab = "p-value", main = "")
@@ -90,6 +95,16 @@ dev.off()
 #   Read in case-control DEA results
 dx_dea = read_tsv(dx_dea_path, show_col_types = FALSE)
 stopifnot(identical(dx_dea$ensemblID, top_genes$ensemblID))
+
+#   Compute replication statistics based on pi1. Among case-control DEGs, what
+#   fraction are expected to be nicotine DEGs? Note there are no nicotine DEGs
+#   to ask the reverse question
+
+#   Compute pi1, adding a dummy p value of 1 if there's an error
+p = top_genes$P.Value[dx_dea$adj.P.Val < fdr]
+pi1 = tryCatch(
+    1 - qvalue(p)$pi0, error = function(e) 1 - qvalue(c(1, p))$pi0
+)
 
 #   Gather nicotine and case-control t-stats
 dea_df = tibble(
@@ -100,9 +115,10 @@ dea_df = tibble(
 
 cor_obj = cor.test(dea_df$t_nicotine, dea_df$t_dx, method = "spearman")
 anno_text = sprintf(
-    "rho = %s \np = %s \n",
+    "rho = %s \np = %s \nRep. y->x: %s%% \n",
     signif(cor_obj$estimate, 3),
-    signif(cor_obj$p.value, 3)
+    signif(cor_obj$p.value, 3),
+    signif(100 * pi1, 3)
 )
 
 #   Is signal for nicotine status among controls correlated with
