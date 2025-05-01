@@ -23,6 +23,8 @@ coef_variable = 'nicotine_toxTRUE'
 dir.create(plot_dir, showWarnings = FALSE)
 
 rse_gene = get(load(rse_path))
+rse_gene = rse_gene[, rse_gene$PrimaryDx == 'Control']
+
 supp_df = read_excel(supp_path, sheet = 'Table S1') |>
     select(BrNum, `Nicotine Tox`) |>
     rename(nicotine_tox = `Nicotine Tox`)
