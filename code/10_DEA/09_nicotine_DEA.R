@@ -1,3 +1,6 @@
+#   For the second round of manuscript reviews, examine if nicotine toxicology
+#   results confound case-control signal
+
 library(here)
 library(SummarizedExperiment)
 library(edgeR)
@@ -102,6 +105,8 @@ anno_text = sprintf(
     signif(cor_obj$p.value, 3)
 )
 
+#   Is signal for nicotine status among controls correlated with
+#   case-control signal?
 p = ggplot(dea_df, aes(x = t_nicotine, y = t_dx)) +
     geom_bin2d(bins = 70) +
     geom_text(
