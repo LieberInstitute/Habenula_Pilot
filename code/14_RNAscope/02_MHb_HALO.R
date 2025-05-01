@@ -10,8 +10,6 @@ plot_dir <- here("plots", "14_RNAscope", "02_MHb_HALO")
 if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
 ## load data
-## local
-# datadir <- "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Medial_exp"
 
 ## jhpce
 datadir <- here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp")
@@ -21,13 +19,17 @@ list.files(datadir, recursive = TRUE)
 # [2] "Josh Ege Redo/MHb_ExperimentJ_Br8112_20x_EgeRedo_Sample1883_object_RESULTS.csv"
 
 fn <- list(Br5422 = "/Br5422/MHbExperiment_Br5422_middleslice_20x_multistitchimage_maxIP_unmixed.nd2_job1871MHbExperiment_Br5422_middle_secondpass_object_results.csv",
-           Br8112 = "/Br8112/NEW_MHbExperimentEAY_Br5422_middleslice_20x_job1901_object_RESULTS.csv"
+           Br8112 = "/Br8112/MHb_ExperimentJ_Br8112_20x_EgeRedo_job1883_object_RESULTS.csv"
 )
 
 fn <- map(fn, ~paste0(datadir, .x))
 
-map(fn, file.exists)
-halo <- map2(fn, names(fn), ~read_csv(.x) |> mutate(Sample = .y))
+## revision data
+fn <- c(fn, Br8433 = here("processed-data","14_RNAscope","HALO_data","revision_2025_03","HALO_Output_Br8433_MHb_CHAT_CCK_EBF3_POU4F1.csv"))
+
+map_lgl(fn, file.exists)
+
+halo <- map2(fn, names(fn), ~read_csv(.x, show_col_types = FALSE) |> mutate(Sample = .y))
 
 map(halo, dim)
 # $Br5422
@@ -35,9 +37,21 @@ map(halo, dim)
 #
 # $Br8112
 # [1] 3098   55
+#
+# $Br8433
+# [1] 17052    55
+
+map(halo, colnames)
+
+## match colnames in old and new data
+colnames(halo$Br5422) <- gsub(".*?Opal ", "" ,colnames(halo$Br5422))
+colnames(halo$Br8112) <- gsub(".*?Opal ", "" ,colnames(halo$Br8112))
+colnames(halo$Br8433) <- gsub(" - ", "", gsub("POU4F1|EBF3|CCK|CHAT", "", colnames(halo$Br8433)))
 
 ## subset to common colnames
-common_colnames <- intersect(colnames(halo$Br5422), colnames(halo$Br8112))
+common_colnames <- map(halo, colnames)
+common_colnames <- Reduce("intersect", common_colnames)
+
 halo <- map(halo, ~.x[,common_colnames])
 
 halo <- do.call("rbind", halo)
@@ -52,8 +66,12 @@ experiment <- rbind(
        Sample = "Br5422"),
     tibble(probe = factor(c(690, 620, 570, 520)),
            marker = c("CCK", "BHLHE22","CHAT","CHRNB4"), ## * alt probes used in Josh's run
-           cluster = c("MHb.1", "Mhb.3", "Mhb.2", "Hb"),
+           cluster = c("MHb.1", "Mhb.3", "Mhb.2", "MHb"),
            Sample = "Br8112")) |>
+    rbind(tibble(probe = factor(c(690, 620, 570, 520)), ## additional sample for review
+                 marker = c("CCK", "EBF3","CHAT","POU4F1"),
+                 cluster = c("MHb.1", "Mhb.3", "Mhb.2", "Hb"),
+                 Sample = "Br8433")) |>
     mutate(probe2 = paste0(probe, " ", marker, " (", cluster,")"))
 
 # probe marker  cluster Sample probe2
@@ -70,14 +88,14 @@ experiment <- rbind(
 write.csv(experiment, file = here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp", "Probes_MHb.csv"))
 
 halo_copies_long <- halo |>
-    select(Sample, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
+    dplyr::select(Sample, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
     pivot_longer(!c(Sample, `Object Id`, XMin, XMax, YMin, YMax), names_to = "probe", values_to = "copies") |>
-    mutate(probe = factor(gsub("^2.*Opal (\\d+) Copies", "\\1", probe))) |>
+    mutate(probe = factor(gsub("(\\d+) Copies", "\\1", probe))) |>
     left_join(experiment) |>
     filter((Sample != "Br8112" | probe !=  620)) ## this channel failed for this Sample
 
 halo_copies_long |> count(Sample, probe2)
-#   Sample probe2               n
+# Sample probe2               n
 # <chr>  <chr>            <int>
 # 1 Br5422 520 POU4F1 (Hb)  18418
 # 2 Br5422 570 CHAT (Mhb.2) 18418
@@ -86,6 +104,10 @@ halo_copies_long |> count(Sample, probe2)
 # 5 Br8112 520 CHRNB4 (Hb)   3098
 # 6 Br8112 570 CHAT (Mhb.2)  3098
 # 7 Br8112 690 CCK (MHb.1)   3098
+# 8 Br8433 520 POU4F1 (Hb)  17052
+# 9 Br8433 570 CHAT (Mhb.2) 17052
+# 10 Br8433 620 EBF3 (Mhb.3) 17052
+# 11 Br8433 690 CCK (MHb.1)  17052
 
 #### ggpairs ####
 halo_copies_wide <- halo_copies_long |>
@@ -94,11 +116,13 @@ halo_copies_wide <- halo_copies_long |>
 
 # copies_tab |> count(sum == 0)
 # copies_tab |> count(Sample, sum == 0)
-
-halo_copies_wide |>
-    filter(Sample == "Br5422") |>
-    ggpairs(3:6) |> ## not all markers exist in both samples
-    ggsave(filename = here(plot_dir, "MHb_gg_copies_Br5422.png"), height = 12, width = 12)
+map(c("Br5422", "Br8433"),
+    ~halo_copies_wide |>
+        filter(Sample == .x) |>
+        ggpairs(3:6) |> ## not all markers exist in both samples
+        ggsave(filename = here(plot_dir,
+                               sprintf("MHb_gg_copies_%s.png", .x)),
+               height = 12, width = 12))
 
 halo_copies_wide |>
     filter(Sample == "Br8112") |>
@@ -146,7 +170,8 @@ cell_count_quant <- halo_copies_long_quant  |>
   scale_fill_manual(values = copy_quant_colors, "Copy Quantile") +
   coord_equal()+
   theme_bw() +
-  facet_grid(Sample~probe2)
+  facet_grid(Sample~probe2) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(cell_count_quant, filename = here(plot_dir, paste0("MHb_cell_count_quant_facet.png")), height = 7, width = 9)
 ggsave(cell_count_quant, filename = here(plot_dir, paste0("MHb_cell_count_quant_facet.pdf")), height = 7, width = 9)
@@ -154,8 +179,6 @@ ggsave(cell_count_quant, filename = here(plot_dir, paste0("MHb_cell_count_quant_
 
 #### distribution
 copies_density <- halo_copies_long_quant  |>
-  # filter(Sample == "Sample1862") |>
-  # filter(copies != 0) |>
   ggplot(aes(x = copies, fill = copy_quant)) +
   geom_histogram(binwidth = 1) +
   theme_bw() +
@@ -178,11 +201,13 @@ hex_copies_median <- ggplot(halo_copies_long) +
     )+
     coord_equal() +
     theme_bw() +
-    facet_grid(Sample~probe2)
+    facet_grid(Sample~probe2) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(hex_copies_median, filename = here(plot_dir, paste0("MHb_hex_copies_median_facet.png")), height = 6, width = 9)
 
 hex_copies_max <- halo_copies_long |>
+    filter(Sample %in% c("Br5422", "Br8433")) |>
     mutate(copies = ifelse(copies > 200, 200, copies)) |> # cap data at 200 counts for visualization
     ggplot() +
     stat_summary_hex(aes(x = XMax, y = YMax, z = copies),
@@ -190,16 +215,17 @@ hex_copies_max <- halo_copies_long |>
     ) +
     # scale_fill_continuous(type = "viridis") + ## top value of 100 for visualization
     scale_fill_gradientn(
-        name = "Max Copies\n(1:200)",
+        name = "Max Copies\n(capped at 200)",
         colors = rev(viridisLite::rocket(21)),
         na.value = "#CCCCCC50",
         limits = c(1,200) ## cap color scale don't filter data
     )+ coord_equal() +
     theme_bw() +
-    facet_grid(Sample~probe2)
+    facet_grid(Sample~probe2) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.png")), height = 6, width = 9)
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.pdf")), height = 6, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.png")), height = 7, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet.pdf")), height = 7, width = 9)
 
 hex_copies_max_Br5422 <- halo_copies_long |>
     filter(Sample == "Br5422") |>
@@ -234,9 +260,10 @@ hex_copies_max_Br8112 <- halo_copies_long |>
     )+ coord_equal() +
     theme_bw() +
     facet_grid(Sample~probe2) +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(hex_copies_max_Br8112, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet_Br8112.pdf")), height = 5, width = 8)
+ggsave(hex_copies_max_Br8112, filename = here(plot_dir, paste0("MHb_hex_copies_max_facet_Br8112.pdf")), height = 5, width = 6)
 
 
 
@@ -298,8 +325,8 @@ confusion_top100 <- halo_copies_cat2 |>
                   axis.title.y=element_blank())
     )
 
-ggsave(confusion_top100[[1]] + confusion_top100[[2]], filename = here(plot_dir, "MHb_confusion_top100.png"), height = 5, width = 11)
-ggsave(confusion_top100[[1]] + confusion_top100[[2]], filename = here(plot_dir, "MHb_confusion_top100.pdf"), height = 5, width = 11)
+ggsave(confusion_top100[[1]] + confusion_top100[[2]] + confusion_top100[[3]], filename = here(plot_dir, "MHb_confusion_top100.png"), height = 5, width = 11)
+ggsave(confusion_top100[[1]] + confusion_top100[[2]] + confusion_top100[[3]], filename = here(plot_dir, "MHb_confusion_top100.pdf"), height = 5, width = 14)
 
 #### cell plots ####
 copy_cut_colors <- c(`(300,400]` = "#FECC5C", `(200,300]` = "#FD8D3C", `(100,200]` = "#F03B20", `(0,100]` = "#BD0026")
@@ -345,19 +372,19 @@ halo_copies_rank_ID  <- halo_copies_rank |>
 halo_copies_rank_ID |> count() |> filter(n>1)
 
 halo_copies_rank_cut_shadow <- halo_copies_rank |>
-    filter(probe == 520) |>
+    filter(probe == 520 , Sample %in% c("Br5422","Br8433")) |>
     ggplot() +
     geom_rect(aes(
         xmin = XMin, xmax = XMax,
         ymin = YMin, ymax = YMax,
-        fill = copies > 1
+        fill = copies > 10
     )) +
-    geom_point(data = halo_copies_rank_ID,
+    geom_point(data = halo_copies_rank_ID |> filter(Sample %in% c("Br5422","Br8433")),
                aes(x = XMax,
                    y = YMax,
                    color = probe2
                ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "Hb marker Copy > 2") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy > 10") +
     scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
                                   "570 CHAT (Mhb.2)" = "#FAA0A0",
                                   "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
@@ -365,24 +392,47 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
     theme_void() +
     facet_wrap(~Sample)
 
-ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 7)
+ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow.pdf")), height = 5, width = 5)
 
-
-halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
-    filter(probe == 520, Sample == "Br5422") |>
+## seperate Br8112 - different probes
+halo_copies_rank_cut_shadow_Br8112 <- halo_copies_rank |>
+    filter(probe == 520, Sample == "Br8112") |>
     ggplot() +
     geom_rect(aes(
         xmin = XMin, xmax = XMax,
         ymin = YMin, ymax = YMax,
-        fill = copies > 1
+        fill = copies > 10
     )) +
     geom_point(data = halo_copies_rank_ID |>
-                   filter(Sample == "Br5422"),
+                   filter(Sample == "Br8112"),
                aes(x = XMax,
                    y = YMax,
                    color = probe2
                ), size = 0.7) +
-    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy > 2") +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "CHRNB4 Copy > 2") +
+    scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
+                                  "570 CHAT (Mhb.2)" = "#FAA0A0"), "Top100 Nuclei") +
+    coord_equal()+
+    theme_void() +
+    facet_wrap(~Sample)
+
+ggsave(halo_copies_rank_cut_shadow_Br8112, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow_Br8112.pdf")), height = 3, width = 4)
+
+halo_copies_rank_cut_shadow_Br8433 <- halo_copies_rank |>
+    filter(probe == 520, Sample == "Br8433") |>
+    ggplot() +
+    geom_rect(aes(
+        xmin = XMin, xmax = XMax,
+        ymin = YMin, ymax = YMax,
+        fill = copies > 10
+    )) +
+    geom_point(data = halo_copies_rank_ID |>
+                   filter(Sample == "Br8433"),
+               aes(x = XMax,
+                   y = YMax,
+                   color = probe2
+               ), size = 0.7) +
+    scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black"), "POU4F1 Copy > 10") +
     scale_color_manual(values = c("690 CCK (MHb.1)" = "#FF00FF", ## cell type colors
                                   "570 CHAT (Mhb.2)" = "#FAA0A0",
                                   "620 EBF3 (Mhb.3)" = "#fa246a"), "Top100 Nuclei") +
@@ -390,28 +440,75 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
     theme_void() +
     facet_wrap(~Sample)
 
-ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow_Br5422.pdf")), height = 4, width = 4)
+ggsave(halo_copies_rank_cut_shadow_Br8433, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadow_Br8433.pdf")), height = 4, width = 4)
 
 ## just POU4F1 inset
 adj = 10
-halo_copies_rank_cut_shadowIN_Br5422 <- halo_copies_rank |>
+halo_copies_rank_cut_shadowIN_Br8433 <- halo_copies_rank |>
     filter(probe == 520,
-           Sample == "Br5422") |>
+           Sample == "Br8433") |>
     ggplot() +
     geom_rect(aes(
         xmin = XMin-adj, xmax = XMax+adj,
         ymin = YMin-(adj*2), ymax = YMax+(adj*2),
-        fill = copies > 2
+        fill = copies > 10
     )) +
     scale_fill_manual(values = c(`FALSE`="#CCCCCC80", `TRUE` = "black")) +
     coord_equal()+
     theme_void() +
     theme(legend.position = "None")
 
-ggsave(halo_copies_rank_cut_shadowIN_Br5422, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadowIN_Br5422.pdf")), height = 1, width = 1)
+ggsave(halo_copies_rank_cut_shadowIN_Br8433, filename = here(plot_dir, paste0("MHb_cell_count_rank_cut_facet_shadowIN_Br8433.pdf")), height = 1, width = 1)
 
 
 #### Export top objects ####
 halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp", "MHb_top10_nuclei.csv"))
 
+## find top specific nuc
+probe_list <- experiment |>
+    filter(Sample == "Br8433", cluster != "hb") |>
+    pull(probe2)
 
+probe_list <- probe_list[!grepl("POU4F1", probe_list)]
+
+
+top_specific_nuc <- map_dfr(probe_list, function(target_probe){
+    non_target_probe = probe_list[probe_list != target_probe]
+
+    no_expression_non_target <- halo_copies_rank |>
+        filter(Sample == "Br8433",
+               probe2 %in% non_target_probe,
+               copies == 0) |>
+        ungroup() |>
+        count(`Object Id`) |>
+        filter(n==2) |>
+        pull(`Object Id`)
+
+    message(length(no_expression_non_target))
+
+    top_specific_nuc <- halo_copies_rank |>
+        filter(Sample == "Br8433",
+               probe2 == target_probe,
+               `Object Id` %in% no_expression_non_target) |>
+        arrange(copies_rank) |>
+        slice(1:10)
+
+    return(top_specific_nuc)
+})
+
+top_specific_nuc |>
+    arrange(probe, -copies) |>
+    mutate(specific_rank = row_number()) |>
+    left_join(halo_copies_wide) |>
+    select(Sample, `Object Id`, target_probe = probe2, copies_rank, specific_rank, `520 POU4F1 (Hb)`:`690 CCK (MHb.1)`) |>
+    write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Medial_exp", "MHb_top10_nuclei_specific_Br8433.csv"))
+
+
+# slurmjobs::job_single(name = "02_MHb_HALO", memory = "10G", cores = 1, create_shell = TRUE, command = "Rscript 02_MHb_HALO.R")
+
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()

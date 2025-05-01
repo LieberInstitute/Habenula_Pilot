@@ -10,20 +10,18 @@ plot_dir <- here("plots", "14_RNAscope", "04_LHb1_HALO")
 if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
 ## load data
-## local
-list.files("~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/", recursive = TRUE)
-# [1] "Br5422/LHb_Experiment1_Br5422_middleslice_job1879_object_RESULTS.csv"
-# [2] "Br6462/LHb_Experiment1_Br6462_rightslice_20x_job1886_object_RESULTS.csv"
-# [3] "Br8112/LHbExperiment1_Br8112_thirdtoleft_20x_job1889_object_RESULTS.csv"
-## TODO fix to here notation/JHPCE paths
-fn <- list(Br5422 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br5422/LHb_Experiment1_Br5422_middleslice_job1879_object_RESULTS.csv",
-           Br6462 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br6462/LHb_Experiment1_Br6462_rightslice_20x_job1886_object_RESULTS.csv",
-           Br8112 = "~/OneDrive - Johns Hopkins/habenulaPilot-paper/HALO_data/Lateral_exp1/Br8112/LHbExperiment1_Br8112_thirdtoleft_20x_job1889_object_RESULTS.csv"
+datadir <- here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp1")
+list.files(datadir, recursive = TRUE)
+
+fn <- list(Br5422 = here(datadir, "Br5422/LHb_Experiment1_Br5422_middleslice_job1879_object_RESULTS.csv"),
+           Br6462 = here(datadir, "Br6462/LHb_Experiment1_Br6462_rightslice_20x_job1886_object_RESULTS.csv"),
+           Br8112 = here(datadir, "Br8112/LHbExperiment1_Br8112_thirdtoleft_20x_job1889_object_RESULTS.csv"),
+           Br8433 = here("processed-data","14_RNAscope","HALO_data","revision_2025_03","HALO_Output_Br8433_LHb_Panel1_ONECUT2_TLE2_SEMA3D_POU4F1.csv") ## review data
            )
 
-map(fn, file.exists)
-# halo <- map2(fn, names(fn), ~read_excel(.x) |> mutate(Sample = .y))
-halo <- map2(fn, names(fn), ~read_csv(.x) |> mutate(Sample = .y))
+map_lgl(fn, file.exists)
+
+halo <- map2(fn, names(fn), ~read_csv(.x, show_col_types = FALSE) |> mutate(Sample = .y))
 
 map_int(halo, ncol)
 map_int(halo, nrow)
@@ -32,14 +30,32 @@ map_int(halo, nrow)
 halo$Br8112$YMax <- max(halo$Br8112$YMax) - halo$Br8112$YMax
 halo$Br8112$YMin <- max(halo$Br8112$YMax) - halo$Br8112$YMin
 
-## test
-# halo$Br8112 |>
-#     ggplot() +
-#     geom_rect(aes(
-#         xmin = XMin, xmax = XMax,
-#         ymin = YMin, ymax = YMax
-#     ))
+## flip y for Br8433
+halo$Br8433$YMax <- max(halo$Br8433$YMax) - halo$Br8433$YMax
+halo$Br8433$YMin <- max(halo$Br8433$YMin) - halo$Br8433$YMin
 
+## test
+map(halo, ~.x |>
+        ggplot() +
+        geom_rect(aes(
+            xmin = XMin, xmax = XMax,
+            ymin = YMin, ymax = YMax
+        )) +
+        coord_equal())
+
+map(halo, colnames)
+
+## match colnames in old and new data
+colnames(halo$Br5422) <- gsub(".*?Opal ", "" ,colnames(halo$Br5422))
+colnames(halo$Br6462) <- gsub(".*?Opal ", "" ,colnames(halo$Br6462))
+colnames(halo$Br8112) <- gsub(".*?Opal ", "" ,colnames(halo$Br8112))
+colnames(halo$Br8433) <- gsub(" - ", "", gsub("POU4F1|SEMA3D|TLE2|ONECUT2", "", colnames(halo$Br8433)))
+
+## subset to common colnames
+common_colnames <- map(halo, colnames)
+common_colnames <- Reduce("intersect", common_colnames)
+
+halo <- map(halo, ~.x[,common_colnames])
 ## rbind tables
 halo <- do.call("rbind", halo)
 colnames(halo) <- gsub(" \\(µm.*\\)", "", colnames(halo))
@@ -62,9 +78,11 @@ experiment <- tibble(probe = factor(c(690, 620, 570, 520)),
 halo_copies_long <- halo |>
   select(Sample, `Object Id`, XMin, XMax, YMin, YMax, ends_with("Copies")) |>
   pivot_longer(!c(Sample, `Object Id`, XMin, XMax, YMin, YMax), names_to = "probe", values_to = "copies") |>
-  mutate(probe = factor(gsub("^2.*Opal (\\d+) Copies", "\\1", probe))) |>
+  mutate(probe = factor(gsub("(\\d+) Copies", "\\1", probe))) |>
   left_join(experiment)
   # mutate(probe = extract_numeric(probe))
+
+halo_copies_long |> count(Sample, probe2)
 
 #### ggpairs ####
 halo_copies_wide <- halo_copies_long |>
@@ -139,8 +157,6 @@ ggsave(cell_count_quant, filename = here(plot_dir, paste0("LHb1_cell_count_quant
 
 #### distribution
 copies_density <- halo_copies_long_quant |>
-  # filter(Sample == "Sample1862") |>
-  # filter(copies != 0) |>
   ggplot(aes(x = copies, fill = copy_quant)) +
   geom_histogram(binwidth = 1) +
   theme_bw() +
@@ -183,10 +199,10 @@ hex_copies_max <- halo_copies_long |>
     ) + coord_equal() +
     theme_bw() +
     facet_grid(Sample~probe2) +
-    theme(legend.position = "bottom")
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.png")), height = 6, width = 9)
-ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.pdf")), height = 7, width = 7)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.png")), height = 8, width = 9)
+ggsave(hex_copies_max, filename = here(plot_dir, paste0("LHb1_hex_copies_max_facet.pdf")), height = 8, width = 9)
 
 ## max quant cell_max_quant <- halo_copies_long_quant |>
 cell_max_quant <- halo_copies_long_quant |>
@@ -293,7 +309,7 @@ confusion_top100 <- halo_copies_cat2 |>
     ggplot(aes(cat.x, cat.y, fill = n)) +
     geom_tile() +
     geom_text(aes(label = n), color = "white") +
-    facet_wrap(~Sample) +
+    facet_wrap(~Sample, nrow = 1) +
     # scale_fill_gradient(name = "count", trans = "log") +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90),
@@ -437,7 +453,7 @@ halo_copies_rank_cut_shadow <- halo_copies_rank |>
     #                              "570 SEMA3D (LHb.5/1)" ="orange"), "Top100 Nuclei") +
     coord_equal()+
     theme_void() +
-    facet_wrap(~Sample)
+    facet_wrap(~Sample, nrow = 1)
 
 ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow.pdf")), height = 3, width = 9)
 
@@ -478,9 +494,9 @@ ggsave(halo_copies_rank_cut_shadow, filename = here(plot_dir, paste0("LHb1_cell_
 # ggsave(halo_copies_rank_cut_shadow2, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow2.pdf")), height = 6, width = 10)
 
 ## main figure plot
-halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
+halo_copies_rank_cut_shadow_Br8433 <- halo_copies_rank |>
     filter(probe == 520,
-           Sample == "Br5422") |>
+           Sample == "Br8433") |>
     ggplot() +
     geom_rect(aes(
         xmin = XMin, xmax = XMax,
@@ -488,7 +504,7 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
         fill = copies > 10
     )) +
     geom_point(data = halo_copies_rank_ID |>
-                   filter(Sample == "Br5422"),
+                   filter(Sample == "Br8433"),
                aes(x = XMax,
                    y = YMax,
                    color = probe2
@@ -501,13 +517,13 @@ halo_copies_rank_cut_shadow_Br5422 <- halo_copies_rank |>
     theme_void() +
     facet_wrap(~Sample)
 
-ggsave(halo_copies_rank_cut_shadow_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow_Br5422.pdf")), height = 4, width = 4)
+ggsave(halo_copies_rank_cut_shadow_Br8433, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadow_Br8433.pdf")), height = 4, width = 4)
 
 ## just POU4F1 inset
 adj = 10
-halo_copies_rank_cut_shadowIN_Br5422 <- halo_copies_rank |>
+halo_copies_rank_cut_shadowIN_Br8433 <- halo_copies_rank |>
     filter(probe == 520,
-           Sample == "Br5422") |>
+           Sample == "Br8433") |>
     ggplot() +
     geom_rect(aes(
         xmin = XMin-adj, xmax = XMax+adj,
@@ -519,7 +535,7 @@ halo_copies_rank_cut_shadowIN_Br5422 <- halo_copies_rank |>
     theme_void() +
     theme(legend.position = "None")
 
-ggsave(halo_copies_rank_cut_shadowIN_Br5422, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadowIN_Br5422.pdf")), height = 1, width = 1)
+ggsave(halo_copies_rank_cut_shadowIN_Br8433, filename = here(plot_dir, paste0("LHb1_cell_count_rank_cut_facet_shadowIN_Br8433.pdf")), height = 1, width = 1)
 
 
 
@@ -527,4 +543,49 @@ ggsave(halo_copies_rank_cut_shadowIN_Br5422, filename = here(plot_dir, paste0("L
 
 halo_copies_rank |> group_by(probe, Sample) |> filter(copies_rank <= 10) |> arrange(probe,copies_rank) |> write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp1", "LHb1_top10_nuclei.csv"))
 
+## find top specific nuc
+probe_list <- experiment |> pull(probe2)
 
+probe_list <- probe_list[!grepl("POU4F1", probe_list)]
+
+top_specific_nuc <- map_dfr(probe_list, function(target_probe){
+    non_target_probe = probe_list[probe_list != target_probe]
+
+    no_expression_non_target <- halo_copies_rank |>
+        filter(Sample == "Br8433",
+               probe2 %in% non_target_probe,
+               copies == 0) |>
+        ungroup() |>
+        count(`Object Id`) |>
+        filter(n==2) |>
+        pull(`Object Id`)
+
+    message(length(no_expression_non_target))
+
+    top_specific_nuc <- halo_copies_rank |>
+        filter(Sample == "Br8433",
+               probe2 == target_probe,
+               `Object Id` %in% no_expression_non_target) |>
+        arrange(copies_rank) |>
+        slice(1:10)
+
+    return(top_specific_nuc)
+})
+
+
+top_specific_nuc |>
+    arrange(probe, -copies) |>
+    mutate(specific_rank = row_number()) |>
+    left_join(halo_copies_wide) |>
+    select(Sample, `Object Id`, target_probe = probe2, copies_rank, specific_rank, `520 POU4F1 (Hb)`:`690 ONECUT2 (LHb.1)`) |>
+    write_csv(file = here("processed-data", "14_RNAscope", "HALO_data", "Lateral_exp1", "LHb1_top10_nuclei_specific_Br8433.csv"))
+
+
+# slurmjobs::job_single(name = "04_LHb1_HALO", memory = "10G", cores = 1, create_shell = TRUE, command = "Rscript 04_LHb1_HALO.R")
+
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
