@@ -115,7 +115,7 @@ dea_df = tibble(
 
 cor_obj = cor.test(dea_df$t_nicotine, dea_df$t_dx, method = "spearman")
 anno_text = sprintf(
-    "rho = %s \np = %s \nRep. y->x: %s%% \n",
+    " rho = %s\n p = %s\n Rep. y->x: %s%%\n",
     signif(cor_obj$estimate, 3),
     signif(cor_obj$p.value, 3),
     signif(100 * pi1, 3)
@@ -126,7 +126,7 @@ anno_text = sprintf(
 p = ggplot(dea_df, aes(x = t_nicotine, y = t_dx)) +
     geom_bin2d(bins = 70) +
     geom_text(
-        label = anno_text, x = Inf, y = -Inf, hjust = 1, vjust = 0,
+        label = anno_text, x = -Inf, y = -Inf, hjust = 0, vjust = 0,
         size = 6
     ) +
     scale_fill_viridis_c() +
