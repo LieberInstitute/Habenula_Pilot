@@ -8,6 +8,10 @@ library(sessioninfo)
 
 rse_path = here('processed-data', 'rse_objects', 'rse_gene_Habenula_Pilot.rda')
 supp_path = here('processed-data', '10_DEA', 'submission6_supp_tables.xlsx')
+dx_dea_path = here(
+    'processed-data', '10_DEA', '04_DEA', 
+    'DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv'
+)
 plot_dir = here('plots', '10_DEA', '09_nicotine_DEA')
 covars = c(
     'nicotine_tox', 'AgeDeath', 'Flowcell', 'mitoRate', 'rRNA_rate', 'RIN',
@@ -76,6 +80,37 @@ top_genes = topTable(
 ## Histogram of p values
 pdf(file.path(plot_dir, 'p_val_hist.pdf'))
 hist(top_genes$P.Value, xlab = "p-value", main = "")
+dev.off()
+
+#   Read in case-control DEA results
+dx_dea = read_tsv(dx_dea_path, show_col_types = FALSE)
+stopifnot(identical(dx_dea$ensemblID, top_genes$ensemblID))
+
+#   Gather nicotine and case-control t-stats
+dea_df = tibble(
+    gene = top_genes$ensemblID,
+    t_nicotine = top_genes$t,
+    t_dx = dx_dea$t
+)
+
+cor_obj = cor.test(dea_df$t_nicotine, dea_df$t_dx, method = "spearman")
+anno_text = sprintf(
+    "rho = %s \np = %s \n",
+    signif(cor_obj$estimate, 3),
+    signif(cor_obj$p.value, 3)
+)
+
+p = ggplot(dea_df, aes(x = t_nicotine, y = t_dx)) +
+    geom_bin2d(bins = 70) +
+    geom_text(
+        label = anno_text, x = Inf, y = -Inf, hjust = 1, vjust = 0,
+        size = 6
+    ) +
+    scale_fill_viridis_c() +
+    labs(x = "Nicotine t-stat", y = "Case-control t-stat") +
+    theme_bw(base_size = 15)
+pdf(file.path(plot_dir, 'nicotine_vs_dx.pdf'))
+print(p)
 dev.off()
 
 session_info()
