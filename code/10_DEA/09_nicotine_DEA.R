@@ -16,6 +16,7 @@ dx_dea_path = here(
     'processed-data', '10_DEA', '04_DEA', 
     'DEA_All-gene_qc-totAGene-qSVs-Hb-Thal.tsv'
 )
+nicotine_dea_out_path = here('processed-data', '10_DEA', 'nicotine_DEA.csv')
 plot_dir = here('plots', '10_DEA', '09_nicotine_DEA')
 covars = c(
     'nicotine_tox', 'AgeDeath', 'Flowcell', 'mitoRate', 'rRNA_rate', 'RIN',
@@ -136,4 +137,12 @@ pdf(file.path(plot_dir, 'nicotine_vs_dx.pdf'))
 print(p)
 dev.off()
 
+#   Export nicotine DEA results to CSV
+read_excel(supp_path, sheet = 'Table S8') |>
+    select(gencodeID) |>
+    left_join(top_genes, by = 'gencodeID') |>
+    select(gencodeID, logFC, AveExpr, t, P.Value, adj.P.Val, B) |>
+    rename_with(~ paste0('nicotine_', .), -gencodeID) |>
+    write_csv(nicotine_dea_out_path)
+    
 session_info()
