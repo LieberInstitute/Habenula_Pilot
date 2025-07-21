@@ -45,7 +45,7 @@ Files for this project are publicly available, either directly here or via contr
 The FASTQ files are available via Globus endpoint ['jhpce#habenulaPilotsnRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotsnRNAseq/index.html) endpoint.
 
 Main sce object for snRNA-seq data `processed-data/sce_objects/sce_Habenula_Pilot.Rdata` (Too large for Github).
-Available via Globus endpoint TODO.
+Also Available via Globus endpoint ['jhpce#habenulaPilotsnRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotsnRNAseq/index.html).
 
 ## bulk RNA-seq
 
