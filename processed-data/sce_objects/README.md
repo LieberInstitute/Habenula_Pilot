@@ -1,6 +1,8 @@
 Large files not on github
 
 `sce_Habenula_Pilot.Rdata` : main sce objects linked to `official_final_sce.RDATA` 
+Available via Globus endpoint ['jhpce#habenulaPilotsnRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotsnRNAseq/index.html).
+
 Created by `code/99_paper_figs/00_final_SCE.R`
 
 Other sce objects:
