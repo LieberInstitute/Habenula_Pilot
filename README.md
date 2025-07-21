@@ -50,6 +50,7 @@ Available via Globus endpoint TODO.
 ## bulk RNA-seq
 
 The RNA-seq FASTQ files are available via Globus endpoint ['jhpce#habenulaPilotbulkRNAseq'](https://research.libd.org/globus/jhpce_habenulaPilotbulkRNAseq/index.html) endpoint. The DNA genotype data is available via ['jhpce#habenulaPilotbulkDNAgenotype'](https://research.libd.org/globus/jhpce_habenulaPilotbulkDNAgenotype/index.html), however access to it is granted upon request given the protected nature of this data.
+
 Main rse object for bulk RNA-seq data [`rse_objects/rse_gene_Habenula_Pilot.rda`](https://github.com/LieberInstitute/Habenula_Pilot/blob/master/processed-data/rse_objects/rse_gene_Habenula_Pilot.rda).
 
 ## smFISH data
