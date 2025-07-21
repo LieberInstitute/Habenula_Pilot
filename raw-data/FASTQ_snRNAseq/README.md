@@ -1,3 +1,31 @@
+snRNA-seq SCE data
+==================
+
+[SingleCellExperiment](https://www.bioconductor.org/packages/devel/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html) 
+Object: `sce_Habenula_Pilot.Rdata`
+
+Usage: 
+
+```
+library(SingleCellExperiment)
+load("sce_Habenula_Pilot.Rdata", verbose = TRUE)
+# sce
+# class: SingleCellExperiment 
+# dim: 33848 16437 
+
+## fine cell type annotations
+table(sce$final_Annotations)
+
+ # Astrocyte       Endo Excit.Thal Inhib.Thal      LHb.1      LHb.2      LHb.3      LHb.4      LHb.5      LHb.6 
+ #       538         38       1800       7612        201        266        134        477         83         39 
+ #     LHb.7      MHb.1      MHb.2      MHb.3  Microglia      Oligo        OPC 
+ #      1014        152        540         18        145       2178       1202 
+
+```
+
+Main sce data for Habenula Pilot Project (copied from `processed-data/sce_objects/` Jun 21, 2025)
+
+
 snRNA-seq FASTQs
 ================
 
