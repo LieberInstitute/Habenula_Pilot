@@ -12,21 +12,20 @@ This project involves bulk RNA-seq data from the habenula of 69 donors with both
 
 We hope that this repository will be useful for your research. Please use the following [BibTeX](https://en.wikipedia.org/wiki/BibTeX) information to cite this code repository as well as the data released by this project. Thank you!
 
-> **Transcriptomic analysis of the human habenula in schizophrenia**
+> Yalcinbas, E. A., Ajanaku, B., Nelson, E. D., Garcia-Flores, R., Eagles, N. J., Montgomery, K. D., Stolz, J. M., Wu, J., Divecha, H. R., Chandra, A., Bharadwaj, R. A., Bach, S. V., Rajpurohit, A., Tao, R., Pertea, G., Shin, J.-H., Kleinman, J. E., Hyde, T. M., Weinberger, D. R., … Maynard, K. R. (2025). Transcriptomic Analysis of the Human Habenula in Schizophrenia. The American Journal of Psychiatry, 182(11), 991–1006. [https://doi.org/10.1176/appi.ajp.20240776](https://doi.org/10.1176/appi.ajp.20240776)
 
-> Ege A. Yalcinbas, Bukola Ajanaku, Erik D. Nelson, Renee Garcia-Flores, Kelsey D. Montgomery, Joshua M. Stolz, Joshua Wu, Heena R. Divecha, Atharv Chandra, Rahul Bharadwaj, Svitlana Bach, Anandita Rajpurohit, Ran Tao, Joo-Heon Shin, Joel E. Kleinman, Thomas M. Hyde, Louise A. Huuki-Myers, Leonardo Collado-Torres, Kristen R. Maynard.
-
-> bioRxiv 2024.02.26.582081; doi: <https://doi.org/10.1101/2024.02.26.582081>
 
 ```
-@article {Yalcinbas2024.02.26.582081,
-        author = {Ege A. Yalcinbas, Bukola Ajanaku, Erik D. Nelson, Renee Garcia-Flores, Kelsey D. Montgomery, Joshua M. Stolz, Joshua Wu, Heena R. Divecha, Atharv Chandra, Rahul Bharadwaj, Svitlana Bach, Anandita Rajpurohit, Ran Tao, Joo-Heon Shin, Joel E. Kleinman, Thomas M. Hyde, Louise A. Huuki-Myers, Leonardo Collado-Torres, Kristen R. Maynard},
-        title = {Transcriptomic analysis of the human habenula in schizophrenia},
-        year = {2024},
-        doi={10.1101/2024.02.26.582081},
-        publisher = {Cold Spring Harbor Laboratory},
-        journal = {bioRxiv}
-}
+@article{Yalcinbas_Ajanaku_Nelson_Garcia-Flores_Eagles_Montgomery_Stolz_Wu_Divecha_Chandra_et al._2025, 
+    title={Transcriptomic analysis of the human habenula in schizophrenia.}, 
+    volume={182},
+    DOI={10.1176/appi.ajp.20240776}, 
+    number={11}, 
+    journal={The American Journal of Psychiatry}, 
+    author={Yalcinbas, Ege A and Ajanaku, Bukola and Nelson, Erik D and Garcia-Flores, Renee and Eagles, Nicholas J and Montgomery, Kelsey D and Stolz, Joshua M and Wu, Joshua and Divecha, Heena R and Chandra, Atharv and et al.}, y
+    ear={2025}, 
+    month={Nov}, 
+    pages={991–1006}}
 ```
 
 # Interactive websites
