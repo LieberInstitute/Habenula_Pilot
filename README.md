@@ -12,20 +12,25 @@ This project involves bulk RNA-seq data from the habenula of 69 donors with both
 
 We hope that this repository will be useful for your research. Please use the following [BibTeX](https://en.wikipedia.org/wiki/BibTeX) information to cite this code repository as well as the data released by this project. Thank you!
 
-> Yalcinbas, E. A., Ajanaku, B., Nelson, E. D., Garcia-Flores, R., Eagles, N. J., Montgomery, K. D., Stolz, J. M., Wu, J., Divecha, H. R., Chandra, A., Bharadwaj, R. A., Bach, S. V., Rajpurohit, A., Tao, R., Pertea, G., Shin, J.-H., Kleinman, J. E., Hyde, T. M., Weinberger, D. R., … Maynard, K. R. (2025). Transcriptomic Analysis of the Human Habenula in Schizophrenia. The American Journal of Psychiatry, 182(11), 991–1006. [https://doi.org/10.1176/appi.ajp.20240776](https://doi.org/10.1176/appi.ajp.20240776)
+> Yalcinbas EA, Ajanaku B, Nelson ED, Garcia-Flores R, Eagles NJ, Montgomery KD, Stolz JM, Wu J, Divecha HR, Chandra A, Bharadwaj RA, Bach SV, Rajpurohit A, Tao R, Pertea G, Shin JH, Kleinman JE, Hyde TM, Weinberger DR, Huuki-Myers LA, Collado-Torres L, Maynard KR. Transcriptomic Analysis of the Human Habenula in Schizophrenia. Am J Psychiatry. 2025 Nov 1;182(11):991-1006. doi: [10.1176/appi.ajp.20240776](https://doi.org/10.1176/appi.ajp.20240776). PubMed PMID: [41174894](https://www.ncbi.nlm.nih.gov/pubmed/41174894/).
 
 
 ```
-@article{Yalcinbas_Ajanaku_Nelson_Garcia-Flores_Eagles_Montgomery_Stolz_Wu_Divecha_Chandra_et al._2025, 
-    title={Transcriptomic analysis of the human habenula in schizophrenia.}, 
-    volume={182},
-    DOI={10.1176/appi.ajp.20240776}, 
-    number={11}, 
-    journal={The American Journal of Psychiatry}, 
-    author={Yalcinbas, Ege A and Ajanaku, Bukola and Nelson, Erik D and Garcia-Flores, Renee and Eagles, Nicholas J and Montgomery, Kelsey D and Stolz, Joshua M and Wu, Joshua and Divecha, Heena R and Chandra, Atharv and et al.}, y
-    ear={2025}, 
-    month={Nov}, 
-    pages={991–1006}}
+@article{yalcinbas_transcriptomic_2025,
+	title = {Transcriptomic {Analysis} of the {Human} {Habenula} in {Schizophrenia}},
+	volume = {182},
+	issn = {0002-953X},
+	url = {https://psychiatryonline.org/doi/10.1176/appi.ajp.20240776},
+	doi = {10.1176/appi.ajp.20240776},
+	number = {11},
+	urldate = {2025-11-03},
+	journal = {American Journal of Psychiatry},
+	publisher = {American Psychiatric Publishing},
+	author = {Yalcinbas, Ege A. and Ajanaku, Bukola and Nelson, Erik D. and Garcia-Flores, Renee and Eagles, Nicholas J. and Montgomery, Kelsey D. and Stolz, Joshua M. and Wu, Joshua and Divecha, Heena R. and Chandra, Atharv and Bharadwaj, Rahul A. and Bach, Svitlana V. and Rajpurohit, Anandita and Tao, Ran and Pertea, Geo and Shin, Joo-Heon and Kleinman, Joel E. and Hyde, Thomas M. and Weinberger, Daniel R. and Huuki-Myers, Louise A. and Collado-Torres, Leonardo and Maynard, Kristen R.},
+	month = nov,
+	year = {2025},
+	pages = {991--1006}
+}
 ```
 
 # Interactive websites
